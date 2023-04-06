@@ -1,0 +1,151 @@
+{
+    "metadata": {
+      "num_examples": 36
+    },
+    "examples": {
+      "1": {
+        "input": "select max(a+1+2) from t;",
+        "output": "select max(a+3) from t;"
+      },
+      "2": {
+        "input":"select max(a+(1+2)) from t;",
+        "output":"select max(a+3) from t;"
+      },
+      "3": {
+        "input":"select * from t where a=1+2;",
+        "output":"select * from t where a=3;"
+      },
+      "4": {
+        "input":"select * from t where a+1=2;",
+        "output":"select * from t where a=1;"
+      },
+      "5": {
+        "input":"select int4ge(1,3);",
+        "output":"select false;"
+      },
+      "6": {
+        "input":"select * from t where ((a>0 and b>0) and (c>0 and d>0));",
+        "output":"select * from t where (a>0 and b>0 and c>0 and d>0);"
+      },
+      "7": {
+        "input":"select * from t where 1=2;",
+        "output":"select * from t where false;"
+      },
+      "8": {
+        "input":"select * from t where 1=1;",
+        "output":"select * from t where true;"
+      },
+      "9": {
+        "input":"select * from t where a>10 and b=6 and a>2;",
+        "output":"select * from t where a>10 and b=6;"
+      },
+      "10": {
+        "input":"select * from t where a>(10,2*5+3,sqrt(9));",
+        "output":"select * from t where a>3;"
+      },
+      "11": {
+        "input":"select * from t where -a=3;",
+        "output":"select * from t where a=-3;"
+      },
+      "12": {
+        "input":"select a from t group by a having a>0;",
+        "output":"select a from t where a>0 group by a;"
+      },
+      "13": {
+        "input":"select sum(degree), sno, cno from score group by sno, cno having sum(degree)>100 and cno>0;",
+        "output":"select sum(degree), sno, cno from score where cno>0 group by sno, cno having sum(degree)>100;"
+      },
+      "14": {
+        "input":"select * from student where sname like 'abc%';",
+        "output":"select * from student where sname>'abc' and sname<'abd';"
+      },
+      "15": {
+        "input":"select * from student where sname like 'abc';",
+        "output":"select * from student where sname='abc';"
+      },
+      "16": {
+        "input":"select * from student where sno between 10 and 20;",
+        "output":"select * from student where sno>=10 and sno<=20;"
+      },
+      "17": {
+        "input":"select * from student where not(sno!=10);",
+        "output":"select * from student where sno=10;"
+      },
+      "18": {
+        "input":"select * from t where not(a!=b);",
+        "output":"select * from t where a=b;"
+      },
+      "19": {
+        "input":"select * from t where not(a=b);",
+        "output":"select * from t where a!=b;"
+      },
+      "20": {
+        "input":"select * from t where not(a<b);",
+        "output":"select * from t where a>=b;"
+      },
+      "21": {
+        "input":"select * from t where not(a>b);",
+        "output":"select * from t where a<=b;"
+      },
+      "22": {
+        "input":"select * from t1,t2 where t1.a>t2.b and t2.b>2;",
+        "output":"select * from t1,t2 where t1.a>t2.b and t2.b>2 and t1.a>2;"
+      },
+      "23": {
+        "input":"select * from t1, t2 where t1.a=1 and t1.a=t2.b;",
+        "output":"select * from t1, t2 where t1.a=1 and t2.b=1;"
+      },
+      "24": {
+        "input":"select * from t1, (select * from t2 ) sub_t2 where a=1 and sub_t2.b=a;",
+        "output":"select * from t1, (select * from t2 where b=1 ) sub_t2 where a=1;"
+      },
+      "25": {
+        "input":"table student(sno int primary key, name varchar(10));select distinct(sno) from student;",
+        "output":"select sno from student;"
+      },
+      "26": {
+        "input":"table student(name varchar(30) not null);select * from student where name is null and age>18;",
+        "output":"select * from student where false;"
+      },
+      "27": {
+        "input":"select * from t1 full join t2 on t1.a=t2.a where t1.b>5 and t2.c<10;",
+        "output":"select * from t1 inner join t2 on t1.a=t2.a where t1.b>5 and t2.c<10;"
+      },
+      "28": {
+        "input":"select * from student where sno in (10,20,30);",
+        "output":"select * from student where sno=10 or sno=20 or sno=30;"
+      },
+      "29": {
+        "input":"select * from t1 where a1<10 and (exists (select a2 from t2 where t2.b2=1) or exists (select a2 from t2 where t2.b2=2 ));",
+        "output":"select * from t1 where a1<10 and (exists (select a2 from t2 where t2.b2=1 or t2.b2=2));"
+        },
+      "30": {
+        "input":"select * from student where (sex='f' and sno>15) or age>18;",
+        "output":"select * from student where (sex='f' and sno>15) union all select * from student where age>18;"
+      },
+      "31": {
+        "input":"select * from t1, (select * from t2 where t2.a2>10) v_t2 where t1.a1<10 and v_t2.a2<20;",
+        "output":"select * from t1,t2 where t1.a1<10 and t2.a2<20 and t2.a2>10;"
+      },
+      "32": {
+        "input":"select * from t1 where c1>(select max(t2.c2) from t2 where tc.c1=t1.c1)",
+        "output":"select t1.* from t1 join (select t2.c1 t2_c1, max(t2.c2) max_t2_c2 from t2 group by t2.c1) on t1.c1=t2_c1 where t1.c1>max_t2_c2"
+      },
+      "33": {
+        "input":"select a, c from t1 where t1.a=(select avg(a) from t3 where t1.b=t3.b) or exists (select * from t4 where t1.c=t4.c)",
+        "output":"select a, c from t1 left join (select avg(a) avg, t3.b from t3 group by t3.b) as t3 on (t1.a=avg and t1.b=t3.b) left join (select t4.c from t4 group by t4.c) where t3.b is not null or t4.c is not null;"
+      },
+      "34": {
+        "input":"select (select c2 from t2 where t1.c1=t2.c1) ssq, t1.c2 from t1 where t1.c2>10;",
+        "output":"with ssq as (select t2.c2 from t2) select ssq.c2, t1.c2 from t1 left join ssq on t1.c1=ssq.c2 where t1.c2>10;"
+      },
+      "35": {
+        "input":"select (select count(*) from t2 where t2.c1=t1.c1) cnt, t1.c1, t3.c1 from t1,t3 where t1.c1=t3.c1 order by cnt, t1.c1;",
+        "output":"with ssq as (select count(*) cnt, c1 from t2 group by c1) select case when ssq.cnt is null then 0 else ssq.cnt end cnt, t1.c1, t3.c1 from t1 left join ssq on ssq.c1=t1.c1,t3 where t1.c1=t3.c1 order by ssq.cnt, t1.c1;"
+      },
+      "36": {
+        "input":"select t1.c1, t1.c2 from t1 where t1.c1=(select agg() from t2.c2>t1.c2);",
+        "output":"with dt as (select t1.rowid, agg() aggref from t1,t2 where t1.c2>t2.c2 group by t1.rowid) select t1.c1, t1.c2 from t1, derived_table where t1.rowid=derived_table.rowid AND t1.c1=derived_table.aggref;"
+      }
+    }
+}

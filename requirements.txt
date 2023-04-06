@@ -1,0 +1,8 @@
+numpy==1.24.2
+openai==0.27.3
+psycopg2==2.9.6
+psycopg2_binary==2.9.6
+PyMySQL==1.0.3
+PyYAML==6.0
+sqlparse==0.4.3
+tqdm==4.65.0

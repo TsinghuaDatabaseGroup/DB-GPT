@@ -1,0 +1,145 @@
+{
+  "metadata": {
+    "num_examples": 12
+  },
+  "examples": {
+    "1": {
+      "rule_sequence": "[FILTER_AGGREGATE_TRANSPOSE, FILTER_CORRELATE, FILTER_INTO_JOIN, JOIN_CONDITION_PUSH, FILTER_MERGE, FILTER_MULTI_JOIN_MERGE, FILTER_PROJECT_TRANSPOSE, FILTER_SET_OP_TRANSPOSE, FILTER_TABLE_FUNCTION_TRANSPOSE, FILTER_SCAN, FILTER_REDUCE_EXPRESSIONS, PROJECT_REDUCE_EXPRESSIONS]",
+      "input_cost": "3284.9399",
+      "input": "SELECT COUNT(1)FROM shop_goods AS a,mall_goods AS b,mall_picture AS c WHERE shop_id='44c7cc30f1494fd6b00487c9a73927fa' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1;",
+      "output_cost": "2035.3300",
+      "output": "SELECT COUNT(*)FROM(SELECT * FROM shop_goods WHERE shop_id='44c7cc30f1494fd6b00487c9a73927fa' AND is_package=1 AND shop_goods_type=1)AS t5701 INNER JOIN mall_goods AS mall_goods1292 ON t5701.mall_goods_id=mall_goods1292.mall_goods_id INNER JOIN(SELECT * FROM mall_picture WHERE mall_picture_type='1')AS t5702 ON mall_goods1292.mall_goods_id=t5702.mall_goods_id;",
+      "dataset": "zhenzhi_shopmall",
+      "input_latency": "18.105",
+      "output_latency": "6.683",
+      "result_len": "1",
+      "result": "(325,)"
+    },
+    "2": {
+      "rule_sequence": "[FILTER_AGGREGATE_TRANSPOSE, FILTER_CORRELATE, FILTER_INTO_JOIN, JOIN_CONDITION_PUSH, FILTER_MERGE, FILTER_MULTI_JOIN_MERGE, FILTER_PROJECT_TRANSPOSE, FILTER_SET_OP_TRANSPOSE, FILTER_TABLE_FUNCTION_TRANSPOSE, FILTER_SCAN, FILTER_REDUCE_EXPRESSIONS, PROJECT_REDUCE_EXPRESSIONS]",
+      "input_cost": "3714.8201",
+      "input": "SELECT COUNT(distinct a.SPU_ID)FROM pro_spu_info_detail AS a INNER JOIN pro_spu_info_detail_scope AS e ON a.SPU_ID=e.SPU_ID WHERE STATE=1 and(e.DEPT_CODE='10000000000000000000' or e.DEPT_CODE='27910000000000000000' or e.DEPT_CODE='37917950000000000000');",
+      "output_cost": "3596.8401",
+      "output": "SELECT COUNT(DISTINCT t5725.spu_id)FROM(SELECT * FROM pro_spu_info_detail WHERE state=1)AS t5725 INNER JOIN(SELECT * FROM pro_spu_info_detail_scope WHERE dept_code IN('10000000000000000000','27910000000000000000','37917950000000000000'))AS t5726 ON t5725.spu_id=t5726.spu_id;",
+      "dataset": "zhenzhi_goods",
+      "input_latency": "33.392",
+      "output_latency": "32.256",
+      "result_len": "1",
+      "result": "(542,)"
+    },
+    "3": {
+      "rule_sequence": "[CALC_MERGE, CALC_REMOVE]",
+      "input_cost": "914.8100",
+      "input": "SELECT mall_goods_sku_id AS mallGoodsSkuId,sku_id AS skuId,sku_code AS skuCode,sku_name AS skuName,spu_id AS spuId FROM mall_goods_sku WHERE mall_id='27310000000000000000' and sku_id IN(null,'100018431918','863f94231ad34580b0ad99fb8c2c612f','a49beea870a54a8ab493972cb8243b4f','100005550235','100008184380');",
+      "output_cost": "913.7700",
+      "output": "SELECT mall_goods_sku_id AS mallGoodsSkuId,sku_id AS skuId,sku_code AS skuCode,sku_name AS skuName,spu_id AS spuId FROM mall_goods_sku WHERE mall_id='27310000000000000000' AND sku_id IN('100005550235','100008184380','100018431918','863f94231ad34580b0ad99fb8c2c612f','a49beea870a54a8ab493972cb8243b4f');",
+      "dataset": "zhenzhi_shopmall",
+      "input_latency": "3.147",
+      "output_latency": "4.664",
+      "result_len": "0"
+    },
+    "4": {
+      "rule_sequence": "[FILTER_AGGREGATE_TRANSPOSE, FILTER_CORRELATE, FILTER_INTO_JOIN, JOIN_CONDITION_PUSH, FILTER_MERGE, FILTER_MULTI_JOIN_MERGE, FILTER_PROJECT_TRANSPOSE, FILTER_SET_OP_TRANSPOSE, FILTER_TABLE_FUNCTION_TRANSPOSE, FILTER_SCAN, FILTER_REDUCE_EXPRESSIONS, PROJECT_REDUCE_EXPRESSIONS]",
+      "input_cost": "6265.8799",
+      "input": "SELECT COUNT(1)FROM shop_goods AS a,shop_goods_sku AS k,mall_goods AS b,mall_picture AS c WHERE shop_id='610c5b15aac34199aefa90ced6f6b820' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1 and a.shop_goods_id=k.shop_goods_id AND k.shop_member_rebate_status=1 AND a.is_package IS NULL;",
+      "output_cost": "0.0200",
+      "output": "SELECT COUNT(*)FROM(SELECT * FROM(VALUES(NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL))AS t(shop_goods_id,shop_goods_type,shop_goods_class_id,shop_goods_url,shop_goods_qr_code,shop_id,create_time,update_time,shop_good_template_id,mall_goods_id,recommend,take_their,sales,exchange_days,exchange_status,refund_status,refund_days,is_package,shop_goods_name,inventory_type,goods_recommend_status,new_mall_goods_id,shop_goods_sku_id,shop_goods_sku_sales_price,shop_goods_sku_type,shop_goods_id0,mall_goods_sku_id,shop_goods_sku_market_price,is_package0,shop_goods_sku_price_effective_time,shop_member_points_status,shop_member_rebate_status,shop_goods_sku_price,shop_goods_sku_market_price_timed,mall_goods_id0,mall_goods_name,spu_id,spu_code,mall_goods_brand_id,mall_goods_brand_name,mall_goods_class_id,mall_goods_class_level_name,mall_goods_class_name,mall_goods_self_operate,mall_goods_provinces,mall_goods_describe,mall_goods_pc_detail,mall_goods_app_detail,mall_id,mall_goods_publish_type,codification,dept_code,create_time0,update_time0,status,inventory_manage,inventory_type0,goods_recommend_status0,goods_hot_status,exchange_days0,exchange_status0,refund_status0,refund_days0,mall_shop_goods_class_id,mall_good_template_id,mobile,is_package1)WHERE 1=0)AS t8239 INNER JOIN(SELECT * FROM mall_picture WHERE mall_picture_type='1')AS t8240 ON t8239.mall_goods_id0=t8240.mall_goods_id;",
+      "dataset": "zhenzhi_shopmall",
+      "input_latency": "32.672",
+      "output_latency": "0.004",
+      "result_len": "1",
+      "result": "(0,)"
+    },
+    "5": {
+      "rule_sequence": "[FILTER_AGGREGATE_TRANSPOSE, FILTER_CORRELATE, FILTER_INTO_JOIN, JOIN_CONDITION_PUSH, FILTER_MERGE, FILTER_MULTI_JOIN_MERGE, FILTER_PROJECT_TRANSPOSE, FILTER_SET_OP_TRANSPOSE, FILTER_TABLE_FUNCTION_TRANSPOSE, FILTER_SCAN, FILTER_REDUCE_EXPRESSIONS, PROJECT_REDUCE_EXPRESSIONS]",
+      "input_cost": "2987.4900",
+      "input": "SELECT COUNT(1)FROM shop_goods AS a,mall_goods AS b,mall_picture AS c WHERE shop_id='66d0385b55a44af0b98049219cd32414' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1;",
+      "output_cost": "1824.1300",
+      "output": "SELECT COUNT(*)FROM(SELECT * FROM shop_goods WHERE shop_id='66d0385b55a44af0b98049219cd32414' AND is_package=1 AND shop_goods_type=1)AS t3877 INNER JOIN mall_goods AS mall_goods536 ON t3877.mall_goods_id=mall_goods536.mall_goods_id INNER JOIN(SELECT * FROM mall_picture WHERE mall_picture_type='1')AS t3878 ON mall_goods536.mall_goods_id=t3878.mall_goods_id;",
+      "dataset": "zhenzhi_shopmall",
+      "input_latency": "17.636",
+      "output_latency": "4.716",
+      "result_len": "1",
+      "result": "(633,)"
+    },
+    "6": {
+      "rule_sequence": "[FILTER_AGGREGATE_TRANSPOSE, FILTER_CORRELATE, FILTER_INTO_JOIN, JOIN_CONDITION_PUSH, FILTER_MERGE, FILTER_MULTI_JOIN_MERGE, FILTER_PROJECT_TRANSPOSE, FILTER_SET_OP_TRANSPOSE, FILTER_TABLE_FUNCTION_TRANSPOSE, FILTER_SCAN, FILTER_REDUCE_EXPRESSIONS, PROJECT_REDUCE_EXPRESSIONS]",
+      "input_cost": "2341.8501",
+      "input": "SELECT COUNT(1)FROM shop_goods AS a,mall_goods AS b,mall_picture AS c WHERE shop_id='9217410df1c04ffeab0b40d178dc7778' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1;",
+      "output_cost": "1312.3000",
+      "output": "SELECT COUNT(*)FROM(SELECT * FROM shop_goods WHERE shop_id='9217410df1c04ffeab0b40d178dc7778' AND is_package=1 AND shop_goods_type=1)AS t4600 INNER JOIN mall_goods AS mall_goods851 ON t4600.mall_goods_id=mall_goods851.mall_goods_id INNER JOIN(SELECT * FROM mall_picture WHERE mall_picture_type='1')AS t4601 ON mall_goods851.mall_goods_id=t4601.mall_goods_id;",
+      "dataset": "zhenzhi_shopmall",
+      "input_latency": "14.638",
+      "output_latency": "4.025",
+      "result_len": "1",
+      "result": "(270,)"
+    },
+    "7": {
+      "rule_sequence": "[FILTER_AGGREGATE_TRANSPOSE, FILTER_CORRELATE, FILTER_INTO_JOIN, JOIN_CONDITION_PUSH, FILTER_MERGE, FILTER_MULTI_JOIN_MERGE, FILTER_PROJECT_TRANSPOSE, FILTER_SET_OP_TRANSPOSE, FILTER_TABLE_FUNCTION_TRANSPOSE, FILTER_SCAN, FILTER_REDUCE_EXPRESSIONS, PROJECT_REDUCE_EXPRESSIONS]",
+      "input_cost": "544.0300",
+      "input": "SELECT COUNT(1)FROM shop_goods AS a,shop_goods_sku AS k,mall_goods AS b,mall_picture AS c WHERE shop_id='b37589add41d45b1a024b8833cd218e4' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1 and a.shop_goods_id=k.shop_goods_id AND k.shop_member_rebate_status=1 AND a.is_package IS NULL;",
+      "output_cost": "0.0200",
+      "output": "SELECT COUNT(*)FROM(SELECT * FROM(VALUES(NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL))AS t(shop_goods_id,shop_goods_type,shop_goods_class_id,shop_goods_url,shop_goods_qr_code,shop_id,create_time,update_time,shop_good_template_id,mall_goods_id,recommend,take_their,sales,exchange_days,exchange_status,refund_status,refund_days,is_package,shop_goods_name,inventory_type,goods_recommend_status,new_mall_goods_id,shop_goods_sku_id,shop_goods_sku_sales_price,shop_goods_sku_type,shop_goods_id0,mall_goods_sku_id,shop_goods_sku_market_price,is_package0,shop_goods_sku_price_effective_time,shop_member_points_status,shop_member_rebate_status,shop_goods_sku_price,shop_goods_sku_market_price_timed,mall_goods_id0,mall_goods_name,spu_id,spu_code,mall_goods_brand_id,mall_goods_brand_name,mall_goods_class_id,mall_goods_class_level_name,mall_goods_class_name,mall_goods_self_operate,mall_goods_provinces,mall_goods_describe,mall_goods_pc_detail,mall_goods_app_detail,mall_id,mall_goods_publish_type,codification,dept_code,create_time0,update_time0,status,inventory_manage,inventory_type0,goods_recommend_status0,goods_hot_status,exchange_days0,exchange_status0,refund_status0,refund_days0,mall_shop_goods_class_id,mall_good_template_id,mobile,is_package1)WHERE 1=0)AS t2319 INNER JOIN(SELECT * FROM mall_picture WHERE mall_picture_type='1')AS t2320 ON t2319.mall_goods_id0=t2320.mall_goods_id;",
+      "dataset": "zhenzhi_shopmall",
+      "input_latency": "0.095",
+      "output_latency": "0.003",
+      "result_len": "1",
+      "result": "(0,)"
+    },
+    "8": {
+      "input_cost": "3284.94",
+      "input": "SELECT COUNT(1)FROM shop_goods AS a,mall_goods AS b,mall_picture AS c WHERE shop_id='44c7cc30f1494fd6b00487c9a73927fa' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1;",
+      "output_cost": "2035.33",
+      "output": "SELECT COUNT(*)FROM(SELECT mall_goods1287.mall_goods_id FROM(SELECT * FROM shop_goods WHERE shop_id='44c7cc30f1494fd6b00487c9a73927fa' AND is_package=1 AND shop_goods_type=1)AS t5687,mall_goods AS mall_goods1287 WHERE t5687.mall_goods_id=mall_goods1287.mall_goods_id)AS t5688,(SELECT * FROM mall_picture WHERE mall_picture_type='1')AS t5689 WHERE t5689.mall_goods_id=t5688.mall_goods_id;",
+      "dataset": "zhenzhi_shopmall",
+      "input_latency": "18.117",
+      "output_latency": "2.478",
+      "result_len": "1",
+      "result": "(325,)"
+    },
+    "9": {
+      "rule_sequence": "[FILTER_AGGREGATE_TRANSPOSE, FILTER_CORRELATE, FILTER_INTO_JOIN, JOIN_CONDITION_PUSH, FILTER_MERGE, FILTER_MULTI_JOIN_MERGE, FILTER_PROJECT_TRANSPOSE, FILTER_SET_OP_TRANSPOSE, FILTER_TABLE_FUNCTION_TRANSPOSE, FILTER_SCAN, FILTER_REDUCE_EXPRESSIONS, PROJECT_REDUCE_EXPRESSIONS]",
+      "input_cost": "3244.7100",
+      "input": "SELECT COUNT(1)FROM shop_goods AS a,mall_goods AS b,mall_picture AS c WHERE shop_id='610c5b15aac34199aefa90ced6f6b820' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1;",
+      "output_cost": "2009.9200",
+      "output": "SELECT COUNT(*)FROM(SELECT * FROM shop_goods WHERE shop_id='610c5b15aac34199aefa90ced6f6b820' AND is_package=1 AND shop_goods_type=1)AS t2811 INNER JOIN mall_goods AS mall_goods423 ON t2811.mall_goods_id=mall_goods423.mall_goods_id INNER JOIN(SELECT * FROM mall_picture WHERE mall_picture_type='1')AS t2812 ON mall_goods423.mall_goods_id=t2812.mall_goods_id;",
+      "dataset": "zhenzhi_shopmall",
+      "input_latency": "16.983",
+      "output_latency": "6.313",
+      "result_len": "1",
+      "result": "(331,)"
+    },
+    "10": {
+      "input_cost": "4550.79",
+      "input": "SELECT DISTINCT b.SKU_ID AS skuId,a.SPU_ID AS spuId,a.VERSION AS version,a.CREATE_TIME AS createTime,b.SKU_CODE AS skuCode FROM pro_sku_info_detail AS b LEFT JOIN pro_spu_info_detail AS a ON a.SPU_ID=b.SPU_ID LEFT JOIN pro_brand AS c ON a.BRAND_ID=c.BRAND_ID LEFT JOIN pro_product_class AS d ON a.CLASS_ID=d.CLASS_ID INNER JOIN(SELECT * FROM pro_spu_info_scope WHERE(DEPT_CODE='10000000000000000000' or DEPT_CODE='27910000000000000000' or DEPT_CODE='37917950000000000000'))AS e ON a.SPU_ID=e.SPU_ID WHERE a.INVENTORY_MANAGE IN('0','1')and a.STATE=1 AND a.isSale=1 ORDER BY a.CREATE_TIME desc,b.SKU_CODE asc LIMIT 10 OFFSET 0;",
+      "output_cost": "4487.76",
+      "output": "SELECT sku_id AS skuId,spu_id AS spuId,version,create_time AS createTime,sku_code AS skuCode FROM(SELECT pro_sku_info_detail486.sku_id,pro_spu_info_detail318.spu_id,pro_spu_info_detail318.version,pro_spu_info_detail318.create_time,pro_sku_info_detail486.sku_code,pro_spu_info_detail318.inventory_manage,pro_spu_info_detail318.state,pro_spu_info_detail318.issale FROM pro_sku_info_detail AS pro_sku_info_detail486 LEFT JOIN pro_spu_info_detail AS pro_spu_info_detail318 ON pro_sku_info_detail486.spu_id=pro_spu_info_detail318.spu_id LEFT JOIN pro_brand AS pro_brand318 ON pro_spu_info_detail318.brand_id=pro_brand318.brand_id LEFT JOIN pro_product_class AS pro_product_class318 ON pro_spu_info_detail318.class_id=pro_product_class318.class_id CROSS JOIN(SELECT * FROM pro_spu_info_scope WHERE dept_code='10000000000000000000' OR dept_code='27910000000000000000' OR dept_code='37917950000000000000')AS t4954 WHERE pro_spu_info_detail318.spu_id=t4954.spu_id)AS t4955 WHERE(t4955.inventory_manage='0' OR t4955.inventory_manage='1')AND t4955.state=1 AND t4955.issale=1 GROUP BY sku_id,spu_id,version,create_time,sku_code ORDER BY create_time DESC,sku_code OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY;",
+      "dataset": "zhenzhi_goods",
+      "input_latency": "44.502",
+      "output_latency": "44.567",
+      "result_len": "10"
+    },
+    "11": {
+      "input_cost": "370.3",
+      "input": "SELECT COUNT(1)FROM shop_goods AS a,mall_goods AS b,mall_picture AS c WHERE shop_id='abb270c1063447a18a4a9d24f650bbb0' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1;",
+      "output_cost": "204.52",
+      "output": "SELECT COUNT(*)FROM(SELECT mall_goods361.mall_goods_id FROM(SELECT * FROM shop_goods WHERE shop_id='abb270c1063447a18a4a9d24f650bbb0' AND is_package=1 AND shop_goods_type=1)AS t2664,mall_goods AS mall_goods361 WHERE t2664.mall_goods_id=mall_goods361.mall_goods_id)AS t2665,(SELECT * FROM mall_picture WHERE mall_picture_type='1')AS t2666 WHERE t2666.mall_goods_id=t2665.mall_goods_id;",
+      "dataset": "zhenzhi_shopmall",
+      "input_latency": "0.877",
+      "output_latency": "0.357",
+      "result_len": "1",
+      "result": "(4,)"
+    },
+    "12": {
+        "rule_sequence": "[AGGREGATE_EXPAND_DISTINCT_AGGREGATES, AGGREGATE_EXPAND_DISTINCT_AGGREGATES_TO_JOIN, AGGREGATE_JOIN_TRANSPOSE_EXTENDED, AGGREGATE_PROJECT_MERGE, AGGREGATE_ANY_PULL_UP_CONSTANTS, AGGREGATE_UNION_AGGREGATE, AGGREGATE_UNION_TRANSPOSE, AGGREGATE_VALUES]",
+        "input_cost": "4980.1699",
+        "input": "SELECT DISTINCT b.SKU_ID AS skuId,a.SPU_ID AS spuId,a.VERSION AS version,a.CREATE_TIME AS createTime,b.SKU_CODE AS skuCode FROM pro_sku_info_detail AS b LEFT JOIN pro_spu_info_detail AS a ON a.SPU_ID=b.SPU_ID LEFT JOIN pro_brand AS c ON a.BRAND_ID=c.BRAND_ID LEFT JOIN pro_product_class AS d ON a.CLASS_ID=d.CLASS_ID INNER JOIN(SELECT * FROM pro_spu_info_scope WHERE(DEPT_CODE='10000000000000000000' or DEPT_CODE='22000000000000000000' or DEPT_CODE='32007590000000000000'))AS e ON a.SPU_ID=e.SPU_ID WHERE a.INVENTORY_MANAGE IN('0','1')and a.STATE=1 AND a.isSale=1 ORDER BY a.CREATE_TIME desc,b.SKU_CODE asc LIMIT 10 OFFSET 0;",
+        "output_cost": "4863.4102",
+        "output": "SELECT pro_sku_info_detail177.sku_id AS skuId,pro_spu_info_detail9.spu_id AS spuId,pro_spu_info_detail9.version,pro_spu_info_detail9.create_time AS createTime,pro_sku_info_detail177.sku_code AS skuCode FROM pro_sku_info_detail AS pro_sku_info_detail177 LEFT JOIN pro_spu_info_detail AS pro_spu_info_detail9 ON pro_sku_info_detail177.spu_id=pro_spu_info_detail9.spu_id LEFT JOIN pro_brand AS pro_brand9 ON pro_spu_info_detail9.brand_id=pro_brand9.brand_id LEFT JOIN pro_product_class AS pro_product_class9 ON pro_spu_info_detail9.class_id=pro_product_class9.class_id INNER JOIN(SELECT * FROM pro_spu_info_scope WHERE dept_code='10000000000000000000' OR dept_code='22000000000000000000' OR dept_code='32007590000000000000')AS t1214 ON pro_spu_info_detail9.spu_id=t1214.spu_id WHERE(pro_spu_info_detail9.inventory_manage='0' OR pro_spu_info_detail9.inventory_manage='1')AND pro_spu_info_detail9.state=1 AND pro_spu_info_detail9.issale=1 GROUP BY pro_sku_info_detail177.sku_id,pro_spu_info_detail9.spu_id,pro_spu_info_detail9.version,pro_spu_info_detail9.create_time,pro_sku_info_detail177.sku_code ORDER BY pro_spu_info_detail9.create_time DESC,pro_sku_info_detail177.sku_code OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY;",
+        "dataset": "zhenzhi_goods",
+        "input_latency": "49.204",
+        "output_latency": "49.24",
+        "result_len": "10"
+    }
+  }
+}
