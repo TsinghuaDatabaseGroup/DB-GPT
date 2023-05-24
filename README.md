@@ -22,7 +22,8 @@ The description of files included in each module is shown below (click correspon
 | automatic_prompt_engineer | Instruction induction method [APE](https://github.com/keirp/automatic_prompt_engineer), which uses in-context capability of LLM to generate instructions. |
 | [query_rewrite](./query_rewrite) | The implementation of LLM for query rewrite.        |
 | [index_tuning](./index_tuning) | The implementation of LLM for index tuning.        |
-| [tool_learning](https://github.com/OpenBMB/BMTools/tree/main/bmtools/tools/database) | The implementation of tool learning for database.        |
+| tool_learning | The implementation of LLM-based tool learning ([bmtools](https://github.com/OpenBMB/BMTools)) for database.        |
+| [text2sql](https://github.com/OpenBMB/BMTools/tree/main/bmtools/tools/database) | The implementation of requesting database tuples via natural language.        |
 | [database diagnosis](https://github.com/OpenBMB/BMTools/tree/main/bmtools/tools/db_diag) | The implementation of diagnosing root causes of database anomalies.        |
 | evaluation | Evaluation methods of database tasks. |
 | utils | Reusable functional modules among different tasks and algorithms. |
