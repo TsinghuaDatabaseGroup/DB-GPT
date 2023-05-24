@@ -23,7 +23,7 @@ The description of files included in each module is shown below (click correspon
 | [query_rewrite](./query_rewrite) | The implementation of LLM for query rewrite.        |
 | [index_tuning](./index_tuning) | The implementation of LLM for index tuning.        |
 | [tool_learning](https://github.com/OpenBMB/BMTools/tree/main/bmtools/tools/database) | The implementation of tool learning for database.        |
-| [database diagnosis](https://github.com/OpenBMB/BMTools/tree/main/bmtools/tools/db_diag) | The implementation of root causes of database anomalies.        |
+| [database diagnosis](https://github.com/OpenBMB/BMTools/tree/main/bmtools/tools/db_diag) | The implementation of diagnosing root causes of database anomalies.        |
 | evaluation | Evaluation methods of database tasks. |
 | utils | Reusable functional modules among different tasks and algorithms. |
 
