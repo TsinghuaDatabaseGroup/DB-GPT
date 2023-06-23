@@ -1,0 +1,50 @@
+[
+  {
+    "Input": "SELECT mall_goods_sku_id AS mallGoodsSkuId,sku_id AS skuId,sku_code AS skuCode,sku_name AS skuName,spu_id AS spuId FROM mall_goods_sku WHERE mall_id='27310000000000000000' and sku_id IN(null,'100018431918','863f94231ad34580b0ad99fb8c2c612f','a49beea870a54a8ab493972cb8243b4f','100005550235','100008184380');",
+    "Output": "SELECT mall_goods_sku_id AS mallGoodsSkuId,sku_id AS skuId,sku_code AS skuCode,sku_name AS skuName,spu_id AS spuId FROM mall_goods_sku WHERE mall_id='27310000000000000000' and (sku_id = '100018431918' OR sku_id = '863f94231ad34580b0ad99fb8c2c612f' OR sku_id = 'a49beea870a54a8ab493972cb8243b4f' OR sku_id = '100005550235' OR sku_id = '100008184380' OR sku_id IS NULL);"
+  },
+  {
+    "Input": "SELECT DISTINCT b.SKU_ID AS skuId,a.SPU_ID AS spuId,a.VERSION AS version,a.CREATE_TIME AS createTime,b.SKU_CODE AS skuCode FROM pro_sku_info_detail AS b LEFT JOIN pro_spu_info_detail AS a ON a.SPU_ID=b.SPU_ID LEFT JOIN pro_brand AS c ON a.BRAND_ID=c.BRAND_ID LEFT JOIN pro_product_class AS d ON a.CLASS_ID=d.CLASS_ID INNER JOIN(SELECT * FROM pro_spu_info_scope WHERE(DEPT_CODE='10000000000000000000' or DEPT_CODE='27910000000000000000' or DEPT_CODE='37917950000000000000'))AS e ON a.SPU_ID=e.SPU_ID WHERE a.INVENTORY_MANAGE IN('0','1')and a.STATE=1 AND a.isSale=1 ORDER BY a.CREATE_TIME desc,b.SKU_CODE asc LIMIT 10 OFFSET 0;",
+    "Output": "SELECT DISTINCT b.SKU_ID AS skuId, a.SPU_ID AS spuId, a.VERSION AS version, a.CREATE_TIME AS createTime, b.SKU_CODE AS skuCode \nFROM pro_sku_info_detail AS b \nINNER JOIN(SELECT * FROM pro_spu_info_scope WHERE(DEPT_CODE='10000000000000000000' or DEPT_CODE='27910000000000000000' or DEPT_CODE='37917950000000000000'))AS e \nON b.SPU_ID=e.SPU_ID \nLEFT JOIN pro_spu_info_detail AS a \nON a.SPU_ID=b.SPU_ID AND a.INVENTORY_MANAGE IN('0','1') AND a.STATE=1 AND a.isSale=1 \nLEFT JOIN pro_brand AS c \nON a.BRAND_ID=c.BRAND_ID \nLEFT JOIN pro_product_class AS d \nON a.CLASS_ID=d.CLASS_ID \nORDER BY a.CREATE_TIME desc,b.SKU_CODE asc \nLIMIT 10 OFFSET 0;"
+  },
+  {
+    "Input": "SELECT COUNT(1)FROM shop_goods AS a,mall_goods AS b,mall_picture AS c WHERE shop_id='abb270c1063447a18a4a9d24f650bbb0' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1;",
+    "Output": "SELECT COUNT(*) FROM shop_goods AS a\nINNER JOIN mall_goods AS b ON a.mall_goods_id = b.mall_goods_id\nINNER JOIN mall_picture AS c ON b.mall_goods_id = c.mall_goods_id\nWHERE a.shop_id = 'abb270c1063447a18a4a9d24f650bbb0'\nAND c.mall_picture_type = '1'\nAND (a.is_package = 1 OR a.is_package IS NULL)\nAND a.shop_goods_type = 1;"
+  },
+  {
+    "Input": "SELECT COUNT(distinct a.SPU_ID)FROM pro_spu_info_detail AS a INNER JOIN pro_spu_info_detail_scope AS e ON a.SPU_ID=e.SPU_ID WHERE STATE=1 and(e.DEPT_CODE='10000000000000000000' or e.DEPT_CODE='27910000000000000000' or e.DEPT_CODE='37917950000000000000');",
+    "Output": "SELECT COUNT(DISTINCT a.SPU_ID)\nFROM pro_spu_info_detail AS a \nINNER JOIN pro_spu_info_detail_scope AS e \nON a.SPU_ID=e.SPU_ID \nWHERE STATE=1 \nAND e.DEPT_CODE IN ('10000000000000000000', '27910000000000000000', '37917950000000000000');"
+  },
+  {
+    "Input": "SELECT DISTINCT b.SKU_ID AS skuId,a.SPU_ID AS spuId,a.VERSION AS version,a.CREATE_TIME AS createTime,b.SKU_CODE AS skuCode FROM pro_sku_info_detail AS b LEFT JOIN pro_spu_info_detail AS a ON a.SPU_ID=b.SPU_ID LEFT JOIN pro_brand AS c ON a.BRAND_ID=c.BRAND_ID LEFT JOIN pro_product_class AS d ON a.CLASS_ID=d.CLASS_ID INNER JOIN(SELECT * FROM pro_spu_info_scope WHERE(DEPT_CODE='10000000000000000000' or DEPT_CODE='22000000000000000000' or DEPT_CODE='32007590000000000000'))AS e ON a.SPU_ID=e.SPU_ID WHERE a.INVENTORY_MANAGE IN('0','1')and a.STATE=1 AND a.isSale=1 ORDER BY a.CREATE_TIME desc,b.SKU_CODE asc LIMIT 10 OFFSET 0;",
+    "Output": "SELECT DISTINCT b.SKU_ID AS skuId, a.SPU_ID AS spuId, a.VERSION AS version, a.CREATE_TIME AS createTime, b.SKU_CODE AS skuCode \nFROM pro_sku_info_detail AS b \nLEFT JOIN pro_spu_info_detail AS a ON a.SPU_ID=b.SPU_ID \nINNER JOIN (SELECT * FROM pro_spu_info_scope WHERE(DEPT_CODE='10000000000000000000' OR DEPT_CODE='22000000000000000000' OR DEPT_CODE='32007590000000000000'))AS e ON a.SPU_ID=e.SPU_ID \nWHERE a.INVENTORY_MANAGE IN('0','1') AND a.STATE=1 AND a.isSale=1 \nORDER BY a.CREATE_TIME DESC, b.SKU_CODE ASC \nLIMIT 10 OFFSET 0;"
+  },
+  {
+    "Input": "SELECT COUNT(1)FROM shop_goods AS a,mall_goods AS b,mall_picture AS c WHERE shop_id='44c7cc30f1494fd6b00487c9a73927fa' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1;",
+    "Output": "SELECT COUNT(1) FROM shop_goods AS a\nINNER JOIN mall_goods AS b ON a.mall_goods_id = b.mall_goods_id\nINNER JOIN mall_picture AS c ON c.mall_goods_id = b.mall_goods_id\nWHERE a.shop_id = '44c7cc30f1494fd6b00487c9a73927fa'\nAND c.mall_picture_type = '1'\nAND (a.is_package = 1 OR a.is_package IS NULL)\nAND a.shop_goods_type = 1;"
+  },
+  {
+    "Input": "SELECT COUNT(1)FROM shop_goods AS a,mall_goods AS b,mall_picture AS c WHERE shop_id='44c7cc30f1494fd6b00487c9a73927fa' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1;",
+    "Output": "SELECT COUNT(1) FROM shop_goods a \nINNER JOIN mall_goods b ON a.mall_goods_id = b.mall_goods_id \nINNER JOIN mall_picture c ON c.mall_goods_id = b.mall_goods_id \nWHERE a.shop_id = '44c7cc30f1494fd6b00487c9a73927fa' \nAND c.mall_picture_type = '1' \nAND (a.is_package = 1 OR a.is_package IS NULL) \nAND a.shop_goods_type = 1;"
+  },
+  {
+    "Input": "SELECT COUNT(1)FROM shop_goods AS a,mall_goods AS b,mall_picture AS c WHERE shop_id='66d0385b55a44af0b98049219cd32414' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1;",
+    "Output": "SELECT COUNT(1) FROM shop_goods AS a \nINNER JOIN mall_goods AS b ON a.mall_goods_id = b.mall_goods_id \nINNER JOIN mall_picture AS c ON c.mall_goods_id = b.mall_goods_id \nWHERE shop_id='66d0385b55a44af0b98049219cd32414' \nAND c.mall_picture_type='1' \nAND (a.is_package=1 OR a.is_package IS NULL) \nAND a.shop_goods_type=1;"
+  },
+  {
+    "Input": "SELECT COUNT(1)FROM shop_goods AS a,mall_goods AS b,mall_picture AS c WHERE shop_id='9217410df1c04ffeab0b40d178dc7778' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1;",
+    "Output": "SELECT COUNT(1) FROM shop_goods AS a INNER JOIN mall_goods AS b ON a.mall_goods_id = b.mall_goods_id INNER JOIN mall_picture AS c ON c.mall_goods_id = b.mall_goods_id WHERE shop_id='9217410df1c04ffeab0b40d178dc7778' AND c.mall_picture_type='1' AND (a.is_package=1 OR a.is_package IS NULL) AND a.shop_goods_type=1;"
+  },
+  {
+    "Input": "SELECT COUNT(1)FROM shop_goods AS a,mall_goods AS b,mall_picture AS c WHERE shop_id='610c5b15aac34199aefa90ced6f6b820' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1;",
+    "Output": "SELECT COUNT(1) FROM shop_goods AS a\nJOIN mall_goods AS b ON a.mall_goods_id = b.mall_goods_id\nJOIN mall_picture AS c ON c.mall_goods_id = b.mall_goods_id\nWHERE shop_id='610c5b15aac34199aefa90ced6f6b820'\nAND c.mall_picture_type='1'\nAND (a.is_package=1 OR a.is_package IS NULL)\nAND a.shop_goods_type=1;"
+  },
+  {
+    "Input": "SELECT COUNT(1)FROM shop_goods AS a,shop_goods_sku AS k,mall_goods AS b,mall_picture AS c WHERE shop_id='b37589add41d45b1a024b8833cd218e4' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1 and a.shop_goods_id=k.shop_goods_id AND k.shop_member_rebate_status=1 AND a.is_package IS NULL;",
+    "Output": "SELECT COUNT(1) FROM shop_goods AS a\nINNER JOIN shop_goods_sku AS k ON a.shop_goods_id = k.shop_goods_id\nINNER JOIN mall_goods AS b ON a.mall_goods_id = b.mall_goods_id\nINNER JOIN mall_picture AS c ON c.mall_goods_id = b.mall_goods_id\nWHERE shop_id='b37589add41d45b1a024b8833cd218e4' \nAND c.mall_picture_type='1' \nAND (a.is_package=1 OR a.is_package IS NULL) \nAND a.shop_goods_type=1 \nAND k.shop_member_rebate_status=1 \nAND a.is_package IS NULL; \n\nExplanation: \n- Replaced the comma separated join syntax with explicit JOIN clauses for better readability and performance. \n- Moved the conditions related to the join tables from the WHERE clause to their respective JOIN clauses for better query optimization."
+  },
+  {
+    "Input": "SELECT COUNT(1)FROM shop_goods AS a,shop_goods_sku AS k,mall_goods AS b,mall_picture AS c WHERE shop_id='610c5b15aac34199aefa90ced6f6b820' and a.mall_goods_id=b.mall_goods_id and c.mall_goods_id=b.mall_goods_id and c.mall_picture_type='1' AND(a.is_package=1 OR a.is_package IS NULL)and a.shop_goods_type=1 and a.shop_goods_id=k.shop_goods_id AND k.shop_member_rebate_status=1 AND a.is_package IS NULL;",
+    "Output": "SELECT COUNT(1) FROM shop_goods AS a\nJOIN shop_goods_sku AS k ON a.shop_goods_id=k.shop_goods_id AND k.shop_member_rebate_status=1\nJOIN mall_goods AS b ON a.mall_goods_id=b.mall_goods_id\nJOIN mall_picture AS c ON c.mall_goods_id=b.mall_goods_id AND c.mall_picture_type='1'\nWHERE a.shop_id='610c5b15aac34199aefa90ced6f6b820' AND a.is_package IN (1, NULL) AND a.shop_goods_type=1;"
+  }
+]
