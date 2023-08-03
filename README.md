@@ -22,7 +22,7 @@ The description of files included in each module is shown below (click correspon
 | [nl2sql](https://github.com/OpenBMB/BMTools/tree/main/bmtools/tools/database) | The implementation of requesting database tuples via natural language.        |
 | [query_rewrite](./query_rewrite) | The implementation of LLM for query rewrite.        |
 | [index_tuning](./index_tuning) | The implementation of LLM for index tuning.        |
-| [anomaly_diagnosis](https://github.com/OpenBMB/BMTools/tree/main/bmtools/tools/db_diag) | The implementation of diagnosing root causes of database anomalies.        |
+| [anomaly_diagnosis with mult-llm]([https://github.com/OpenBMB/BMTools/tree/main/bmtools/tools/db_diag](https://github.com/zhouxh19/AgentVerse_for_Database_Diagnosis)) | The implementation of diagnosing root causes of database anomalies.        |
 | automatic_prompt_engineer | Instruction induction method [APE](https://github.com/keirp/automatic_prompt_engineer), which uses in-context capability of LLM to generate instructions. |
 | tool_learning | The implementation of LLM-based tool learning ([bmtools](https://github.com/OpenBMB/BMTools)) for database.        |
 | evaluation | Evaluation methods of database tasks. |
