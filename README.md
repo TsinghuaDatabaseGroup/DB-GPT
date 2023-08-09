@@ -19,10 +19,9 @@ The description of files included in each module is shown below (click correspon
 
 | Module              | Description                                                  |
 | ------------------- | ------------------------------------------------------------ |
-| [nl2sql](https://github.com/OpenBMB/BMTools/tree/main/bmtools/tools/database) | The implementation of requesting database tuples via natural language.        |
-| [query_rewrite](./query_rewrite) | The implementation of LLM for query rewrite.        |
-| [index_tuning](./index_tuning) | The implementation of LLM for index tuning.        |
-| [anomaly_diagnosis](https://github.com/zhouxh19/AgentVerse_for_Database_Diagnosis) (multi-llm) | The implementation of diagnosing root causes of database anomalies.        |
+| [query_rewrite](./optimization/llm_based_tools/query_rewrite) | The implementation of LLM for query rewrite.        |
+| [index_tuning](./optimization/llm_based_tools/index_tuning) | The implementation of LLM for index tuning.        |
+| [anomaly_diagnosis](./diagnosis) (multi-llm) | The implementation of diagnosing root causes of database anomalies.        |
 | automatic_prompt_engineer | Instruction induction method [APE](https://github.com/keirp/automatic_prompt_engineer), which uses in-context capability of LLM to generate instructions. |
 | tool_learning | The implementation of LLM-based tool learning ([bmtools](https://github.com/OpenBMB/BMTools)) for database.        |
 | evaluation | Evaluation methods of database tasks. |
