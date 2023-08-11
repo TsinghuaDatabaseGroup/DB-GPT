@@ -3,12 +3,12 @@
 </div>
 
 <p align="center">
-  <a href="#-news">Leaderboard</a> •
+  <a href="#-news">News</a> •
   <a href="#-features">Features</a> •
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-cases">Cases</a> •
-  <a href="#-cases">Result Uploading</a> •
-  <a href="#-citation">Citation</a>
+  <a href="#-community">Community</a> •  
+  <a href="#-projects">Relevant Projects</a>
 </p>
 
 
@@ -21,8 +21,14 @@
 
 🧗 Database administrators (DBAs) play a crucial role in managing, maintaining and optimizing a database system to ensure data availability, performance, and reliability. However, it is hard and tedious for DBAs to manage a large number of database instances. Thus, we propose *D-Bot*, a LLM-based database administrator that can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
 
+
+<span id="-news"></span>
+
 ## What's New
 - **[2023/8/10]** Our [**vision paper**](https://arxiv.org/abs/2308.05481) is released.
+
+
+<span id="-features"></span>
 
 ## Features
 - **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knoweledge (with *document2experience*).
@@ -41,6 +47,9 @@
 **A demo of using D-Bot**
 
 https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
+
+
+<span id="-quickstart"></span>
 
 ## QuickStart
 
@@ -166,6 +175,8 @@ python3 main_demo.py --task db_diag
 After successfully launching the local server, you can visit [http://127.0.0.1:7860/](http://127.0.0.1:7860/) to trigger the diagnosis procedure (click the *Start Autoplay* button).
 
 
+<span id="-cases"></span>
+
 ## Cases
 
 <details><summary><b>xxx</b></summary>
@@ -188,10 +199,14 @@ xxx
 
 > The listed items are **urgent**, which we will fix within this month.
 
+<span id="-community"></span>
+
 ## Community
 
 - [Tsinghua University](https://www.tsinghua.edu.cn/en/)
 - [ModelBest](https://modelbest.cn/)
+
+<span id="-projects"></span>
 
 ## Relevant Projects
 
