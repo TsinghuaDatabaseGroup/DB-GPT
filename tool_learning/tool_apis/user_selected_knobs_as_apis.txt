@@ -1,0 +1,330 @@
+
+
+
+    @tool.get("/enable_or_disable_bitmapscan_operator")
+    def enable_or_disable_bitmapscan_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_bitmapscan to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_bitmapscan knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the bitmapscan operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the bitmapscan operator."
+
+        return text_output
+
+
+
+    @tool.get("/enable_or_disable_gathermerge_operator")
+    def enable_or_disable_gathermerge_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_gathermerge to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_gathermerge knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the gathermerge operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the gathermerge operator."
+
+        return text_output
+
+
+
+    @tool.get("/enable_or_disable_hashagg_operator")
+    def enable_or_disable_hashagg_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_hashagg to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_hashagg knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the hashagg operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the hashagg operator."
+
+        return text_output
+
+
+
+    @tool.get("/enable_or_disable_hashjoin_operator")
+    def enable_or_disable_hashjoin_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_hashjoin to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_hashjoin knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the hashjoin operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the hashjoin operator."
+
+        return text_output
+
+
+
+    @tool.get("/enable_or_disable_indexonlyscan_operator")
+    def enable_or_disable_indexonlyscan_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_indexonlyscan to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_indexonlyscan knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the indexonlyscan operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the indexonlyscan operator."
+
+        return text_output
+
+
+
+    @tool.get("/enable_or_disable_indexscan_operator")
+    def enable_or_disable_indexscan_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_indexscan to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_indexscan knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the indexscan operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the indexscan operator."
+
+        return text_output
+
+
+
+    @tool.get("/enable_or_disable_material_operator")
+    def enable_or_disable_material_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_material to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_material knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the material operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the material operator."
+
+        return text_output
+
+
+
+    @tool.get("/enable_or_disable_mergejoin_operator")
+    def enable_or_disable_mergejoin_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_mergejoin to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_mergejoin knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the mergejoin operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the mergejoin operator."
+
+        return text_output
+
+
+
+    @tool.get("/enable_or_disable_nestloop_operator")
+    def enable_or_disable_nestloop_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_nestloop to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_nestloop knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the nestloop operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the nestloop operator."
+
+        return text_output
+
+
+
+    @tool.get("/enable_or_disable_parallel_append_operator")
+    def enable_or_disable_parallel_append_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_parallel_append to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_parallel_append knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the parallel_append operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the parallel_append operator."
+
+        return text_output
+
+
+
+    @tool.get("/enable_or_disable_parallel_hash_operator")
+    def enable_or_disable_parallel_hash_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_parallel_hash to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_parallel_hash knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the parallel_hash operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the parallel_hash operator."
+
+        return text_output
+
+
+
+    @tool.get("/enable_or_disable_partition_pruning_operator")
+    def enable_or_disable_partition_pruning_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_partition_pruning to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_partition_pruning knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the partition_pruning operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the partition_pruning operator."
+
+        return text_output
+
+
+
+    @tool.get("/enable_or_disable_seqscan_operator")
+    def enable_or_disable_seqscan_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_seqscan to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_seqscan knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the seqscan operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the seqscan operator."
+
+        return text_output
+
+
+
+    @tool.get("/enable_or_disable_sort_operator")
+    def enable_or_disable_sort_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_sort to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_sort knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the sort operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the sort operator."
+
+        return text_output
+
+
+
+    @tool.get("/enable_or_disable_tidscan_operator")
+    def enable_or_disable_tidscan_operator(action : str, query : str):
+
+        # add hint to the query
+        new_query = f"set enable_tidscan to {action}; " + query
+
+        # execute the new query
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            # raise error
+            raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_tidscan knob.")
+        else:
+            if action == "ON":
+                text_output = f"The new query plan is {new_query_plan} after enabling the tidscan operator."
+            else:
+                text_output = f"The new query plan is {new_query_plan} after disabling the tidscan operator."
+
+        return text_output

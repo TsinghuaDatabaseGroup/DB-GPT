@@ -1,0 +1,1305 @@
+
+
+    @tool.get("/AGGREGATE_ANY_PULL_UP_CONSTANTS_rule")
+    def AGGREGATE_ANY_PULL_UP_CONSTANTS_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "AGGREGATE_ANY_PULL_UP_CONSTANTS"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/AGGREGATE_EXPAND_DISTINCT_AGGREGATES_rule")
+    def AGGREGATE_EXPAND_DISTINCT_AGGREGATES_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "AGGREGATE_EXPAND_DISTINCT_AGGREGATES"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/AGGREGATE_EXPAND_DISTINCT_AGGREGATES_TO_JOIN_rule")
+    def AGGREGATE_EXPAND_DISTINCT_AGGREGATES_TO_JOIN_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "AGGREGATE_EXPAND_DISTINCT_AGGREGATES_TO_JOIN"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/AGGREGATE_JOIN_REMOVE_rule")
+    def AGGREGATE_JOIN_REMOVE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "AGGREGATE_JOIN_REMOVE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/AGGREGATE_JOIN_TRANSPOSE_EXTENDED_rule")
+    def AGGREGATE_JOIN_TRANSPOSE_EXTENDED_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "AGGREGATE_JOIN_TRANSPOSE_EXTENDED"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/AGGREGATE_UNION_TRANSPOSE_rule")
+    def AGGREGATE_UNION_TRANSPOSE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "AGGREGATE_UNION_TRANSPOSE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/AGGREGATE_UNION_AGGREGATE_rule")
+    def AGGREGATE_UNION_AGGREGATE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "AGGREGATE_UNION_AGGREGATE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/AGGREGATE_VALUES_rule")
+    def AGGREGATE_VALUES_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "AGGREGATE_VALUES"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/AGGREGATE_PROJECT_MERGE_rule")
+    def AGGREGATE_PROJECT_MERGE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "AGGREGATE_PROJECT_MERGE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/FILTER_INTO_JOIN_rule")
+    def FILTER_INTO_JOIN_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "FILTER_INTO_JOIN"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/FILTER_MERGE_rule")
+    def FILTER_MERGE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "FILTER_MERGE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/FILTER_AGGREGATE_TRANSPOSE_rule")
+    def FILTER_AGGREGATE_TRANSPOSE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "FILTER_AGGREGATE_TRANSPOSE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/FILTER_PROJECT_TRANSPOSE_rule")
+    def FILTER_PROJECT_TRANSPOSE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "FILTER_PROJECT_TRANSPOSE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/FILTER_TABLE_FUNCTION_TRANSPOSE_rule")
+    def FILTER_TABLE_FUNCTION_TRANSPOSE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "FILTER_TABLE_FUNCTION_TRANSPOSE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/FILTER_SCAN_rule")
+    def FILTER_SCAN_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "FILTER_SCAN"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/FILTER_CORRELATE_rule")
+    def FILTER_CORRELATE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "FILTER_CORRELATE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/FILTER_SET_OP_TRANSPOSE_rule")
+    def FILTER_SET_OP_TRANSPOSE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "FILTER_SET_OP_TRANSPOSE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/FILTER_REDUCE_EXPRESSIONS_rule")
+    def FILTER_REDUCE_EXPRESSIONS_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "FILTER_REDUCE_EXPRESSIONS"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/JOIN_CONDITION_PUSH_rule")
+    def JOIN_CONDITION_PUSH_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "JOIN_CONDITION_PUSH"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/JOIN_EXTRACT_FILTER_rule")
+    def JOIN_EXTRACT_FILTER_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "JOIN_EXTRACT_FILTER"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/JOIN_PROJECT_BOTH_TRANSPOSE_rule")
+    def JOIN_PROJECT_BOTH_TRANSPOSE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "JOIN_PROJECT_BOTH_TRANSPOSE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/JOIN_PROJECT_LEFT_TRANSPOSE_rule")
+    def JOIN_PROJECT_LEFT_TRANSPOSE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "JOIN_PROJECT_LEFT_TRANSPOSE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/JOIN_PROJECT_RIGHT_TRANSPOSE_rule")
+    def JOIN_PROJECT_RIGHT_TRANSPOSE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "JOIN_PROJECT_RIGHT_TRANSPOSE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/JOIN_REDUCE_EXPRESSIONS_rule")
+    def JOIN_REDUCE_EXPRESSIONS_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "JOIN_REDUCE_EXPRESSIONS"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/JOIN_LEFT_UNION_TRANSPOSE_rule")
+    def JOIN_LEFT_UNION_TRANSPOSE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "JOIN_LEFT_UNION_TRANSPOSE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/JOIN_RIGHT_UNION_TRANSPOSE_rule")
+    def JOIN_RIGHT_UNION_TRANSPOSE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "JOIN_RIGHT_UNION_TRANSPOSE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/SEMI_JOIN_REMOVE_rule")
+    def SEMI_JOIN_REMOVE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "SEMI_JOIN_REMOVE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/PROJECT_CALC_MERGE_rule")
+    def PROJECT_CALC_MERGE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "PROJECT_CALC_MERGE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/PROJECT_CORRELATE_TRANSPOSE_rule")
+    def PROJECT_CORRELATE_TRANSPOSE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "PROJECT_CORRELATE_TRANSPOSE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/PROJECT_REDUCE_EXPRESSIONS_rule")
+    def PROJECT_REDUCE_EXPRESSIONS_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "PROJECT_REDUCE_EXPRESSIONS"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/PROJECT_SUB_QUERY_TO_CORRELATE_rule")
+    def PROJECT_SUB_QUERY_TO_CORRELATE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "PROJECT_SUB_QUERY_TO_CORRELATE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/PROJECT_MERGE_rule")
+    def PROJECT_MERGE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "PROJECT_MERGE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/PROJECT_REMOVE_rule")
+    def PROJECT_REMOVE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "PROJECT_REMOVE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/PROJECT_TO_CALC_rule")
+    def PROJECT_TO_CALC_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "PROJECT_TO_CALC"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/CALC_MERGE_rule")
+    def CALC_MERGE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "CALC_MERGE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/CALC_REMOVE_rule")
+    def CALC_REMOVE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "CALC_REMOVE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/SORT_UNION_TRANSPOSE_rule")
+    def SORT_UNION_TRANSPOSE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "SORT_UNION_TRANSPOSE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/SORT_REMOVE_rule")
+    def SORT_REMOVE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "SORT_REMOVE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/SORT_REMOVE_CONSTANT_KEYS_rule")
+    def SORT_REMOVE_CONSTANT_KEYS_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "SORT_REMOVE_CONSTANT_KEYS"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/SORT_JOIN_TRANSPOSE_rule")
+    def SORT_JOIN_TRANSPOSE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "SORT_JOIN_TRANSPOSE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/SORT_PROJECT_TRANSPOSE_rule")
+    def SORT_PROJECT_TRANSPOSE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "SORT_PROJECT_TRANSPOSE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/UNION_MERGE_rule")
+    def UNION_MERGE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "UNION_MERGE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/UNION_REMOVE_rule")
+    def UNION_REMOVE_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "UNION_REMOVE"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/UNION_PULL_UP_CONSTANTS_rule")
+    def UNION_PULL_UP_CONSTANTS_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "UNION_PULL_UP_CONSTANTS"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
+
+
+    @tool.get("/UNION_TO_DISTINCT_rule")
+    def UNION_TO_DISTINCT_rule(query):
+
+        param = {
+            "sql": query,
+            "rule": "UNION_TO_DISTINCT"
+        }
+        print("Rule param:", param)
+
+        headers = {'Content-Type': 'application/json'}
+        res_completion = requests.post(executor_url, data=json.dumps(param), headers=headers)
+
+        #print("============ res_completion", res_completion.text)
+
+        data = json.loads(res_completion.text.strip())
+        data = data.get('data')
+        new_query = data.get('rewritten_sql')
+
+        new_query_plan = db.pgsql_query_plan(new_query)
+
+        if new_query_plan == None:
+            text_output = f"Failed to optimize the query. The new query is still {query}"
+        else:
+            text_output = f"The new query is {new_query}. The plan of the new query is {new_query_plan}"
+
+        return text_output
+
