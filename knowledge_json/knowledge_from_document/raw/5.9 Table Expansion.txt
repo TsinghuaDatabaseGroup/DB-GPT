@@ -1,0 +1,1 @@
+In table expansion, the optimizer generates a plan that uses indexes on the read-mostly portion of a partitioned table, but not on the active portion of the table.

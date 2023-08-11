@@ -1,6 +1,13 @@
+import os
+import sys
+sys.path.append('../../../')
+
 import re
-from llms import CustomLLM
+import openai
 import json
+from Prompts.knowledge_code_prompt import EXTRACT_FUNCTION_PROMPT, EXTRACT_METRIC_PROMPT
+import pdb
+
 
 def add_to_json(cause_name, desc):
     # First, read the existing data
@@ -28,7 +35,7 @@ def write_to_json(cause_name, desc):
     try:
         with open('root_causes_dbmind.jsonl', 'r', encoding='utf-8') as rf:
             data = json.load(rf)
-    except json.JSONDecodeError:
+    except:
         data = []
 
     # Append the new data
@@ -65,52 +72,59 @@ def extract_function_name(string):
         return None
 
 
-def describe_functions(file_content):
-    functions = get_function_description(file_content)
+def describe_functions(file_content, key):
+
+
+    openai_model = "gpt-3.5-turbo"
+    openai.api_key = os.environ["OPENAI_API_KEY"]
+
+    functions = get_function_description(file_content)[:2]
 
     for i, f in enumerate(functions):
         function_name = extract_function_name(f)
 
-        '''
-        prompt = """Translate the following code lines like a diagnosis expert:
-                    {}
-        
-                    Note.
-                      1. The translation should be within one paragraph. 
-                      2. Do not involve words like "pice of code" and "code" in the translation!! Speak like an expert.
-                      3. Replace "returns False" with "not a root cause"; Replce "returns True" with "is a root cause".
-                      4. Do not mention the function name in the translation.
-                      5. The translation should be like an answer of a diagnosis expert.
-                      6. Replace "a certain threshold" or "threshold" with the exact variable name like "tuple_number_threshold".
-        """.format(f)
-        '''
-        prompt = """List all the system metrics that are used in the following code lines:
-                {}
-        
-                Note. Only the metric names are required. Do not describe these metrics!!
-        """.format(f)
+        if key == "desc":
+            prompt = EXTRACT_FUNCTION_PROMPT
+            prompt = prompt.replace("{function_content}", f)
 
-        prompt_response = openai.ChatCompletion.create(
-            engine="gpt-3.5-turbo",
-            messages=[
-                {"role": "user", "content": str(prompt)}
+            prompt_response = openai.ChatCompletion.create(
+                model=openai_model,
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": str(prompt)}
                 ]
-        )
-        output_analysis = prompt_response['choices'][0]['message']['content']
+            )            
+            output_analysis = prompt_response['choices'][0]['message']['content']
+            # llm = CustomLLM()
+            # output_analysis = llm(prompt)
 
-        # llm = CustomLLM()
-        # output_analysis = llm(prompt)
+            #pdb.set_trace()
+
+            write_to_json(function_name, output_analysis)
+
+        elif key == "metrics":
+            prompt = EXTRACT_METRIC_PROMPT
+            prompt = prompt.replace("{description_content}", f)
+
+            prompt_response = openai.ChatCompletion.create(
+                model=openai_model,
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": str(prompt)}
+                ]
+            )
+            output_analysis = prompt_response['choices'][0]['message']['content']
+
+            add_to_json(function_name, output_analysis)
+
+        else:
+            raise ValueError("key should be either 'desc' or 'metrics'")
 
 
-        print(f)
-        print("===========================================")
-        print(output_analysis)
-        # write_to_json(function_name, output_analysis)
-        add_to_json(function_name, output_analysis)
+if __name__ == "__main__":
+    with open('diagnosis_code.txt', 'r') as f:
+        file_content = f.read()
 
+    describe_functions(file_content, "desc")
 
-# input the content of python file
-with open('diagnosis_code.txt', 'r') as f:
-    file_content = f.read()
-
-describe_functions(file_content)
+    describe_functions(file_content, "metrics")

@@ -1,0 +1,30 @@
+This example illustrates the power of query rewrite with materialized views.
+
+Consider the following materialized view, cal_month_sales_mv, which provides an aggregation of the dollar amount sold in every month:
+
+
+Copy
+CREATE MATERIALIZED VIEW cal_month_sales_mv
+ENABLE QUERY REWRITE AS
+SELECT t.calendar_month_desc, SUM(s.amount_sold) AS dollars
+FROM sales s, times t WHERE s.time_id = t.time_id
+GROUP BY t.calendar_month_desc;
+Let us assume that, in a typical month, the number of sales in the store is around one million. So this materialized aggregate view has the precomputed aggregates for the dollar amount sold for each month.
+
+Consider the following query, which asks for the sum of the amount sold at the store for each calendar month:
+
+
+Copy
+SELECT t.calendar_month_desc, SUM(s.amount_sold)
+FROM sales s, times t WHERE s.time_id = t.time_id
+GROUP BY t.calendar_month_desc;
+In the absence of the previous materialized view and query rewrite feature, Oracle Database must access the sales table directly and compute the sum of the amount sold to return the results. This involves reading many million rows from the sales table, which will invariably increase the query response time due to the disk access. The join in the query will also further slow down the query response as the join needs to be computed on many million rows.
+
+In the presence of the materialized view cal_month_sales_mv, query rewrite will transparently rewrite the previous query into the following query:
+
+
+Copy
+SELECT calendar_month, dollars
+FROM cal_month_sales_mv;
+Because there are only a few dozen rows in the materialized view cal_month_sales_mv and no joins, Oracle Database returns the results instantly.
+

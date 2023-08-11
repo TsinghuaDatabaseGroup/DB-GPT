@@ -1,0 +1,138 @@
+This scenario demonstrates a star transformation of a star query.
+
+Example 5-5 Star Query
+
+The following query finds the total Internet sales amount in all cities in California for quarters Q1 and Q2 of year 1999:
+
+
+Copy
+SELECT c.cust_city, 
+       t.calendar_quarter_desc, 
+       SUM(s.amount_sold) sales_amount
+FROM   sales s, 
+       times t, 
+       customers c, 
+       channels ch
+WHERE  s.time_id = t.time_id
+AND    s.cust_id = c.cust_id
+AND    s.channel_id = ch.channel_id
+AND    c.cust_state_province = 'CA'
+AND    ch.channel_desc = 'Internet'
+AND    t.calendar_quarter_desc IN ('1999-01','1999-02')
+GROUP BY c.cust_city, t.calendar_quarter_desc;
+Sample output is as follows:
+
+
+Copy
+CUST_CITY                      CALENDA SALES_AMOUNT
+------------------------------ ------- ------------
+Montara                        1999-02      1618.01
+Pala                           1999-01      3263.93
+Cloverdale                     1999-01        52.64
+Cloverdale                     1999-02       266.28
+. . .
+In this example, sales is the fact table, and the other tables are dimension tables. The sales table contains one row for every sale of a product, so it could conceivably contain billions of sales records. However, only a few products are sold to customers in California through the Internet for the specified quarters.
+
+Example 5-6 Star Transformation
+
+This example shows a star transformation of the query in Example 5-5. The transformation avoids a full table scan of sales.
+
+
+Copy
+SELECT c.cust_city, t.calendar_quarter_desc, SUM(s.amount_sold) sales_amount
+FROM   sales s, times t, customers c
+WHERE  s.time_id = t.time_id
+AND    s.cust_id = c.cust_id
+AND    c.cust_state_province = 'CA'
+AND    t.calendar_quarter_desc IN ('1999-01','1999-02')
+AND    s.time_id IN ( SELECT time_id
+                      FROM   times 
+                      WHERE  calendar_quarter_desc IN('1999-01','1999-02') )
+AND    s.cust_id IN ( SELECT cust_id
+                      FROM   customers
+                      WHERE  cust_state_province='CA' )
+AND    s.channel_id IN ( SELECT channel_id  
+                         FROM   channels 
+                         WHERE  channel_desc = 'Internet' )
+GROUP BY c.cust_city, t.calendar_quarter_desc;
+Example 5-7 Partial Execution Plan for Star Transformation
+
+This example shows an edited version of the execution plan for the star transformation in Example 5-6.
+
+Line 26 shows that the sales table has an index access path instead of a full table scan. For each key value that results from the subqueries of channels (line 14), times (line 19), and customers (line 24), the database retrieves a bitmap from the indexes on the sales fact table (lines 15, 20, 25).
+
+Each bit in the bitmap corresponds to a row in the fact table. The bit is set when the key value from the subquery is same as the value in the row of the fact table. For example, in the bitmap 101000... (the ellipses indicates that the values for the remaining rows are 0), rows 1 and 3 of the fact table have matching key values from the subquery.
+
+The operations in lines 12, 17, and 22 iterate over the keys from the subqueries and retrieve the corresponding bitmaps. In Example 5-6, the customers subquery seeks the IDs of customers whose state or province is CA. Assume that the bitmap 101000... corresponds to the customer ID key value 103515 from the customers table subquery. Also assume that the customers subquery produces the key value 103516 with the bitmap 010000..., which means that only row 2 in sales has a matching key value from the subquery.
+
+The database merges (using the OR operator) the bitmaps for each subquery (lines 11, 16, 21). In our customers example, the database produces a single bitmap 111000... for the customers subquery after merging the two bitmaps:
+
+
+Copy
+101000...   # bitmap corresponding to key 103515
+010000...   # bitmap corresponding to key 103516
+---------
+111000...   # result of OR operation
+In line 10, the database applies the AND operator to the merged bitmaps. Assume that after the database has performed all OR operations, the resulting bitmap for channels is 100000... If the database performs an AND operation on this bitmap and the bitmap from customers subquery, then the result is as follows:
+
+
+Copy
+100000...   # channels bitmap after all OR operations performed
+111000...   # customers bitmap after all OR operations performed
+---------
+100000...   # bitmap result of AND operation for channels and customers
+In line 9, the database generates the corresponding rowids of the final bitmap. The database retrieves rows from the sales fact table using the rowids (line 26). In our example, the database generate only one rowid, which corresponds to the first row, and thus fetches only a single row instead of scanning the entire sales table.
+
+
+Copy
+---------------------------------------------------------------------------
+| Id  | Operation                         | Name
+---------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                  |    
+|   1 |  HASH GROUP BY                    | 
+|*  2 |   HASH JOIN                       |
+|*  3 |    TABLE ACCESS FULL              | CUSTOMERS
+|*  4 |    HASH JOIN                      | 
+|*  5 |     TABLE ACCESS FULL             | TIMES 
+|   6 |     VIEW                          | VW_ST_B1772830 
+|   7 |      NESTED LOOPS                 | 
+|   8 |       PARTITION RANGE SUBQUERY    |  
+|   9 |        BITMAP CONVERSION TO ROWIDS|  
+|  10 |         BITMAP AND                |
+|  11 |          BITMAP MERGE             | 
+|  12 |           BITMAP KEY ITERATION    | 
+|  13 |            BUFFER SORT            |
+|* 14 |             TABLE ACCESS FULL     | CHANNELS 
+|* 15 |            BITMAP INDEX RANGE SCAN| SALES_CHANNEL_BIX 
+|  16 |          BITMAP MERGE             | 
+|  17 |           BITMAP KEY ITERATION    |
+|  18 |            BUFFER SORT            |
+|* 19 |             TABLE ACCESS FULL     | TIMES 
+|* 20 |            BITMAP INDEX RANGE SCAN| SALES_TIME_BIX
+|  21 |          BITMAP MERGE             |
+|  22 |           BITMAP KEY ITERATION    | 
+|  23 |            BUFFER SORT            | 
+|* 24 |             TABLE ACCESS FULL     | CUSTOMERS 
+|* 25 |            BITMAP INDEX RANGE SCAN| SALES_CUST_BIX 
+|  26 |       TABLE ACCESS BY USER ROWID  | SALES
+---------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("ITEM_1"="C"."CUST_ID")
+   3 - filter("C"."CUST_STATE_PROVINCE"='CA')
+   4 - access("ITEM_2"="T"."TIME_ID")
+   5 - filter(("T"."CALENDAR_QUARTER_DESC"='1999-01' 
+               OR "T"."CALENDAR_QUARTER_DESC"='1999-02'))
+  14 - filter("CH"."CHANNEL_DESC"='Internet')
+  15 - access("S"."CHANNEL_ID"="CH"."CHANNEL_ID")
+  19 - filter(("T"."CALENDAR_QUARTER_DESC"='1999-01' 
+               OR "T"."CALENDAR_QUARTER_DESC"='1999-02'))
+  20 - access("S"."TIME_ID"="T"."TIME_ID")
+  24 - filter("C"."CUST_STATE_PROVINCE"='CA')
+  25 - access("S"."CUST_ID"="C"."CUST_ID")
+
+Note
+-----
+   - star transformation used for this statement

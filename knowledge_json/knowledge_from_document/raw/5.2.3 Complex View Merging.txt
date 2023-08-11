@@ -1,0 +1,124 @@
+In view merging, the optimizer merges views containing GROUP BY and DISTINCT views. Like simple view merging, complex merging enables the optimizer to consider additional join orders and access paths.
+
+The optimizer can delay evaluation of GROUP BY or DISTINCT operations until after it has evaluated the joins. Delaying these operations can improve or worsen performance depending on the data characteristics. If the joins use filters, then delaying the operation until after joins can reduce the data set on which the operation is to be performed. Evaluating the operation early can reduce the amount of data to be processed by subsequent joins, or the joins could increase the amount of data to be processed by the operation. The optimizer uses cost to evaluate view merging and merges the view only when it is the lower cost option.
+
+Aside from cost, the optimizer may be unable to perform complex view merging for the following reasons:
+
+The outer query tables do not have a rowid or unique column.
+
+The view appears in a CONNECT BY query block.
+
+The view contains GROUPING SETS, ROLLUP, or PIVOT clauses.
+
+The view or outer query block contains the MODEL clause.
+
+Example 5-3 Complex View Joins with GROUP BY
+
+The following view uses a GROUP BY clause:
+
+
+Copy
+CREATE VIEW cust_prod_totals_v AS
+SELECT SUM(s.quantity_sold) total, s.cust_id, s.prod_id
+FROM   sales s
+GROUP BY s.cust_id, s.prod_id;
+The following query finds all of the customers from the United States who have bought at least 100 fur-trimmed sweaters:
+
+
+Copy
+SELECT c.cust_id, c.cust_first_name, c.cust_last_name, c.cust_email
+FROM   customers c, products p, cust_prod_totals_v
+WHERE  c.country_id = 52790
+AND    c.cust_id = cust_prod_totals_v.cust_id
+AND    cust_prod_totals_v.total > 100
+AND    cust_prod_totals_v.prod_id = p.prod_id
+AND    p.prod_name = 'T3 Faux Fur-Trimmed Sweater';
+The cust_prod_totals_v view is eligible for complex view merging. After merging, the query is as follows:
+
+
+Copy
+SELECT c.cust_id, cust_first_name, cust_last_name, cust_email
+FROM   customers c, products p, sales s
+WHERE  c.country_id = 52790
+AND    c.cust_id = s.cust_id
+AND    s.prod_id = p.prod_id
+AND    p.prod_name = 'T3 Faux Fur-Trimmed Sweater'
+GROUP BY s.cust_id, s.prod_id, p.rowid, c.rowid, c.cust_email, c.cust_last_name, 
+         c.cust_first_name, c.cust_id
+HAVING SUM(s.quantity_sold) > 100;
+The transformed query is cheaper than the untransformed query, so the optimizer chooses to merge the view. In the untransformed query, the GROUP BY operator applies to the entire sales table in the view. In the transformed query, the joins to products and customers filter out a large portion of the rows from the sales table, so the GROUP BY operation is lower cost. The join is more expensive because the sales table has not been reduced, but it is not much more expensive because the GROUP BY operation does not reduce the size of the row set very much in the original query. If any of the preceding characteristics were to change, merging the view might no longer be lower cost. The final plan, which does not include a view, is as follows:
+
+
+Copy
+--------------------------------------------------------
+| Id  | Operation             | Name      | Cost (%CPU)|
+--------------------------------------------------------
+|   0 | SELECT STATEMENT      |           |  2101  (18)|
+|*  1 |  FILTER               |           |            |
+|   2 |   HASH GROUP BY       |           |  2101  (18)|
+|*  3 |    HASH JOIN          |           |  2099  (18)|
+|*  4 |     HASH JOIN         |           |  1801  (19)|
+|*  5 |      TABLE ACCESS FULL| PRODUCTS  |    96   (5)|
+|   6 |      TABLE ACCESS FULL| SALES     |  1620  (15)|
+|*  7 |     TABLE ACCESS FULL | CUSTOMERS |   296  (11)|
+--------------------------------------------------------
+Predicate Information (identified by operation id):
+---------------------------------------------------
+1 - filter(SUM("QUANTITY_SOLD")>100)
+3 - access("C"."CUST_ID"="CUST_ID")
+4 - access("PROD_ID"="P"."PROD_ID")
+5 - filter("P"."PROD_NAME"='T3 Faux Fur-Trimmed Sweater')
+7 - filter("C"."COUNTRY_ID"='US')
+Example 5-4 Complex View Joins with DISTINCT
+
+The following query of the cust_prod_v view uses a DISTINCT operator:
+
+
+Copy
+SELECT c.cust_id, c.cust_first_name, c.cust_last_name, c.cust_email
+FROM   customers c, products p,
+       ( SELECT DISTINCT s.cust_id, s.prod_id
+         FROM   sales s) cust_prod_v
+WHERE  c.country_id = 52790
+AND    c.cust_id = cust_prod_v.cust_id
+AND    cust_prod_v.prod_id = p.prod_id
+AND    p.prod_name = 'T3 Faux Fur-Trimmed Sweater';
+After determining that view merging produces a lower-cost plan, the optimizer rewrites the query into this equivalent query:
+
+
+Copy
+SELECT nwvw.cust_id, nwvw.cust_first_name, nwvw.cust_last_name, nwvw.cust_email
+FROM   ( SELECT DISTINCT(c.rowid), p.rowid, s.prod_id, s.cust_id,
+                c.cust_first_name, c.cust_last_name, c.cust_email
+         FROM   customers c, products p, sales s
+         WHERE  c.country_id = 52790
+         AND    c.cust_id = s.cust_id
+         AND    s.prod_id = p.prod_id
+         AND    p.prod_name = 'T3 Faux Fur-Trimmed Sweater' ) nwvw;
+The plan for the preceding query is as follows:
+
+
+Copy
+-------------------------------------------
+| Id  | Operation             | Name      |
+-------------------------------------------
+|   0 | SELECT STATEMENT      |           |
+|   1 |  VIEW                 | VM_NWVW_1 |
+|   2 |   HASH UNIQUE         |           |
+|*  3 |    HASH JOIN          |           |
+|*  4 |     HASH JOIN         |           |
+|*  5 |      TABLE ACCESS FULL| PRODUCTS  |
+|   6 |      TABLE ACCESS FULL| SALES     |
+|*  7 |     TABLE ACCESS FULL | CUSTOMERS |
+-------------------------------------------
+ 
+Predicate Information (identified by operation id):
+---------------------------------------------------
+  3 - access("C"."CUST_ID"="S"."CUST_ID")
+  4 - access("S"."PROD_ID"="P"."PROD_ID")
+  5 - filter("P"."PROD_NAME"='T3 Faux Fur-Trimmed Sweater')
+  7 - filter("C"."COUNTRY_ID"='US')
+The preceding plan contains a view named vm_nwvw_1, known as a projection view, even after view merging has occurred. Projection views appear in queries in which a DISTINCT view has been merged, or a GROUP BY view is merged into an outer query block that also contains GROUP BY, HAVING, or aggregates. In the latter case, the projection view contains the GROUP BY, HAVING, and aggregates from the original outer query block.
+
+In the preceding example of a projection view, when the optimizer merges the view, it moves the DISTINCT operator to the outer query block, and then adds several additional columns to maintain semantic equivalence with the original query. Afterward, the query can select only the desired columns in the SELECT list of the outer query block. The optimization retains all of the benefits of view merging: all tables are in one query block, the optimizer can permute them as needed in the final join order, and the DISTINCT operation has been delayed until after all of the joins complete.
+

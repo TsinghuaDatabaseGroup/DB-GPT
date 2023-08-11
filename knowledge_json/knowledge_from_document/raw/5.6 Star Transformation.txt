@@ -1,0 +1,1 @@
+Star transformation is an optimizer transformation that avoids full table scans of fact tables in a star schema.

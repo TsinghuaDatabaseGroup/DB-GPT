@@ -1,0 +1,26 @@
+The definition of the cursor-definition temporary table resides in memory. The table definition is associated with the cursor, and is only visible to the session executing the cursor.
+
+When using cursor-duration temporary tables, the database performs the following steps:
+
+Chooses a plan that uses a cursor-duration temporary table
+
+Creates the temporary table using a unique name
+
+Rewrites the query to refer to the temporary table
+
+Loads data into memory until no memory remains, in which case it creates temporary segments on disk
+
+Executes the query, returning data from the temporary table
+
+Truncates the table, releasing memory and any on-disk temporary segments
+
+Note:The metadata for the cursor-duration temporary table stays in memory as long as the cursor is in memory. The metadata is not stored in the data dictionary, which means it is not visible through data dictionary views. You cannot drop the metadata explicitly.
+The preceding scenario depends on the availability of memory. For serial queries, the temporary tables use PGA memory.
+
+The implementation of cursor-duration temporary tables is similar to sorts. If no more memory is available, then the database writes data to temporary segments. For cursor-duration temporary tables, the differences are as follows:
+
+The database releases memory and temporary segments at the end of the query rather than when the row source is no longer active.
+
+Data in memory stays in memory, unlike in sorts where data can move between memory and temporary segments.
+
+When the database uses cursor-duration temporary tables, the keyword CURSOR DURATION MEMORY appears in the execution plan.

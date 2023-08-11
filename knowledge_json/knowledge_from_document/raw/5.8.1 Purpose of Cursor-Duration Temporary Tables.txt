@@ -1,0 +1,3 @@
+Complex queries sometimes process the same query block multiple times, which creates unnecessary performance overhead.
+
+To avoid this scenario, Oracle Database can automatically create temporary tables for the query results and store them in memory for the duration of the cursor. For complex operations such as WITH clause queries, star transformations, and grouping sets, this optimization enhances the materialization of intermediate results from repetitively used subqueries. In this way, cursor-duration temporary tables improve performance and optimize I/O.

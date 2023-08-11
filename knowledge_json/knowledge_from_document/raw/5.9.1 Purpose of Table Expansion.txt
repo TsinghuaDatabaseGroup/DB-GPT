@@ -1,0 +1,3 @@
+Index-based plans can improve performance, but index maintenance creates overhead. In many databases, DML affects only a small portion of the data.
+
+Table expansion uses index-based plans for high-update tables. You can create an index only on the read-mostly data, eliminating index overhead on the active data. In this way, table expansion improves performance while avoiding index maintenance.

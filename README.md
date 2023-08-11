@@ -70,11 +70,45 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 - Prometheus and Grafana ([tutorial](https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/))
 
 
+
+### Installation
+
+Step1: Install python packages.
+
+```bash
+pip install -r requirements.txt
+```
+
+Step2: Configure environment variables.
+
+- Export your OpenAI API key
+```bash
+# Export your OpenAI API key
+export OPENAI_API_KEY="your_api_key_here"
+```
+
+- If accessing openai service via vpn, execute this command:
+```bash
+export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
+```
+
+Step3: Install BMTools.
+```bash
+git clone git+https://github.com/OpenBMB/BMTools.git
+cd BMTools
+pip install -r requirements.txt
+python setup.py develop
+```
+
 ### Preparation
 
 #### Diagnosis Knowledge
 
 - We extract knowledge from both code (./knowledge_json/knowledge_from_code) and documents (./knowledge_json/knowledge_from_document).
+
+    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script.
+
+
 
 #### Tool Usage
 
@@ -128,35 +162,6 @@ Within the *anomaly_scripts* directory, we offer scripts that could incur typica
 </details>
 
 ### Diagnosis & Optimization
-
-#### Installation
-
-Step1: Install python packages.
-
-```bash
-pip install -r requirements.txt
-```
-
-Step2: Configure environment variables.
-
-- Export your OpenAI API key
-```bash
-# Export your OpenAI API key
-export OPENAI_API_KEY="your_api_key_here"
-```
-
-- If accessing openai service via vpn, execute this command:
-```bash
-export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
-```
-
-Step3: Install BMTools.
-```bash
-git clone git+https://github.com/OpenBMB/BMTools.git
-cd BMTools
-pip install -r requirements.txt
-python setup.py develop
-```
 
 #### Command-line Interface
 

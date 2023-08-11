@@ -1,0 +1,28 @@
+The database supports join factorization of outer joins, antijoins, and semijoins, but only for the right tables in such joins.
+
+For example, join factorization can transform the following UNION ALL query by factorizing t2:
+
+
+Copy
+SELECT t1.c2, t2.c2
+FROM   t1, t2
+WHERE  t1.c1 = t2.c1(+) 
+AND    t1.c1 = 1
+UNION ALL
+SELECT t1.c2, t2.c2
+FROM   t1, t2
+WHERE  t1.c1 = t2.c1(+) 
+AND    t1.c1 = 2
+The following example shows the transformation. Table t2 now no longer appears in the UNION ALL branches of the subquery.
+
+
+Copy
+SELECT VW_JF_1.item_2, t2.c2
+FROM   t2, (SELECT t1.c1 item_1, t1.c2 item_2
+            FROM   t1
+            WHERE  t1.c1 = 1
+            UNION ALL
+            SELECT t1.c1 item_1, t1.c2 item_2
+            FROM   t1
+            WHERE  t1.c1 = 2) VW_JF_1
+WHERE  VW_JF_1.item_1 = t2.c1(+)

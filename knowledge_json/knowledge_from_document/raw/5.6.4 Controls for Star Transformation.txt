@@ -1,0 +1,20 @@
+The STAR_TRANSFORMATION_ENABLED initialization parameter controls star transformations.
+
+This parameter takes the following values:
+
+true
+
+The optimizer performs the star transformation by identifying the fact and constraint dimension tables automatically. The optimizer performs the star transformation only if the cost of the transformed plan is lower than the alternatives. Also, the optimizer attempts temporary table transformation automatically whenever materialization improves performance (see "Temporary Table Transformation: Scenario").
+
+false (default)
+
+The optimizer does not perform star transformations.
+
+TEMP_DISABLE
+
+This value is identical to true except that the optimizer does not attempt temporary table transformation.
+
+See Also:
+
+Oracle Database Reference to learn about the STAR_TRANSFORMATION_ENABLED initialization parameter
+

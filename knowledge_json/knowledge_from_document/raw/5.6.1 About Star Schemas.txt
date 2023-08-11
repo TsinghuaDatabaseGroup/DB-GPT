@@ -1,0 +1,17 @@
+A star schema divides data into facts and dimensions.
+
+Facts are the measurements of an event such as a sale and are typically numbers. Dimensions are the categories that identify facts, such as date, location, and product.
+
+A fact table has a composite key made up of the primary keys of the dimension tables of the schema. Dimension tables act as lookup or reference tables that enable you to choose values that constrain your queries.
+
+Diagrams typically show a central fact table with lines joining it to the dimension tables, giving the appearance of a star. The following graphic shows sales as the fact table and products, times, customers, and channels as the dimension tables.
+
+Figure 5-1 Star Schema
+
+Description of Figure 5-1 follows
+Description of "Figure 5-1 Star Schema"
+A snowflake schema is a star schema in which the dimension tables reference other tables. A snowstorm schema is a combination of snowflake schemas.
+
+See Also:
+
+Oracle Database Data Warehousing Guide to learn more about star schemas

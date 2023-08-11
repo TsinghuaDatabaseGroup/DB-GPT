@@ -1,0 +1,30 @@
+Query rewrite offers three levels of rewrite integrity that are controlled by the initialization parameter QUERY_REWRITE_INTEGRITY.
+
+The values that you can set for the QUERY_REWRITE_INTEGRITY parameter are as follows:
+
+ENFORCED
+
+This is the default mode. The optimizer only uses fresh data from the materialized views and only use those relationships that are based on ENABLED VALIDATED primary, unique, or foreign key constraints.
+
+TRUSTED
+
+In TRUSTED mode, the optimizer trusts that the relationships declared in dimensions and RELY constraints are correct. In this mode, the optimizer also uses prebuilt materialized views or materialized views based on views, and it uses relationships that are not enforced as well as those that are enforced. It also trusts declared but not ENABLED VALIDATED primary or unique key constraints and data relationships specified using dimensions. This mode offers greater query rewrite capabilities but also creates the risk of incorrect results if any of the trusted relationships you have declared are incorrect.
+
+STALE_TOLERATED
+
+In STALE_TOLERATED mode, the optimizer uses materialized views that are valid but contain stale data as well as those that contain fresh data. This mode offers the maximum rewrite capability but creates the risk of generating inaccurate results.
+
+If rewrite integrity is set to the safest level, ENFORCED, the optimizer uses only enforced primary key constraints and referential integrity constraints to ensure that the results of the query are the same as the results when accessing the detail tables directly.
+
+If the rewrite integrity is set to levels other than ENFORCED, there are several situations where the output with rewrite can be different from that without it:
+
+A materialized view can be out of synchronization with the primary copy of the data. This generally happens because the materialized view refresh procedure is pending following bulk load or DML operations to one or more detail tables of a materialized view. At some data warehouse sites, this situation is desirable because it is not uncommon for some materialized views to be refreshed at certain time intervals.
+
+The relationships implied by the dimension objects are invalid. For example, values at a certain level in a hierarchy do not roll up to exactly one parent value.
+
+The values stored in a prebuilt materialized view table might be incorrect.
+
+A wrong answer can occur because of bad data relationships defined by unenforced table or view constraints.
+
+You can set QUERY_REWRITE_INTEGRITY either in your initialization parameter file or using an ALTER SYSTEM or ALTER SESSION statement.
+

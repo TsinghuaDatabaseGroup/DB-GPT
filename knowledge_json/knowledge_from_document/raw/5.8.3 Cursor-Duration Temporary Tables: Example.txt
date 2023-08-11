@@ -1,0 +1,39 @@
+A WITH query that repeats the same subquery can sometimes benefit from a cursor-duration temporary table.
+
+The following query uses a WITH clause to create three subquery blocks:
+
+
+Copy
+WITH 
+  q1 AS (SELECT department_id, SUM(salary) sum_sal FROM hr.employees GROUP BY department_id),
+  q2 AS (SELECT * FROM q1),
+  q3 AS (SELECT department_id, sum_sal FROM q1)
+SELECT * FROM q1
+UNION ALL
+SELECT * FROM q2
+UNION ALL
+SELECT * FROM q3;
+The following sample plan shows the transformation:
+
+
+Copy
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'BASIC +ROWS +COST'));
+
+PLAN_TABLE_OUTPUT
+-------------------------------------------------------------------------------------------
+| Id | Operation                                 | Name                 |Rows |Cost (%CPU)|
+-------------------------------------------------------------------------------------------
+|  0 | SELECT STATEMENT                          |                           |    |6 (100)|
+|  1 |  TEMP TABLE TRANSFORMATION                |                           |    |       |
+|  2 |   LOAD AS SELECT (CURSOR DURATION MEMORY) | SYS_TEMP_0FD9D6606_1AE004 |    |       |
+|  3 |    HASH GROUP BY                          |                           | 11 | 3 (34)|
+|  4 |     TABLE ACCESS FULL                     | EMPLOYEES                 |107 | 2 (0) |
+|  5 |   UNION-ALL                               |                           |    |       |
+|  6 |    VIEW                                   |                           | 11 | 2 (0) |
+|  7 |     TABLE ACCESS FULL                     | SYS_TEMP_0FD9D6606_1AE004 | 11 | 2 (0) |
+|  8 |    VIEW                                   |                           | 11 | 2 (0) |
+|  9 |     TABLE ACCESS FULL                     | SYS_TEMP_0FD9D6606_1AE004 | 11 | 2 (0) |
+| 10 |    VIEW                                   |                           | 11 | 2 (0) |
+| 11 |     TABLE ACCESS FULL                     | SYS_TEMP_0FD9D6606_1AE004 | 11 | 2 (0) |
+-------------------------------------------------------------------------------------------
+In the preceding plan, TEMP TABLE TRANSFORMATION in Step 1 indicates that the database used cursor-duration temporary tables to execute the query. The CURSOR DURATION MEMORY keyword in Step 2 indicates that the database used memory, if available, to store the results of SYS_TEMP_0FD9D6606_1AE004. If memory was unavailable, then the database wrote the temporary data to disk.

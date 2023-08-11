@@ -1,0 +1,11 @@
+Star transformation adds subquery predicates, called bitmap semijoin predicates, corresponding to the constraint dimensions.
+
+The optimizer performs the transformation when indexes exist on the fact join columns. By driving bitmap AND and OR operations of key values supplied by the subqueries, the database only needs to retrieve relevant rows from the fact table. If the predicates on the dimension tables filter out significant data, then the transformation can be more efficient than a full scan on the fact table.
+
+After the database has retrieved the relevant rows from the fact table, the database may need to join these rows back to the dimension tables using the original predicates. The database can eliminate the join back of the dimension table when the following conditions are met:
+
+All the predicates on dimension tables are part of the semijoin subquery predicate.
+
+The columns selected from the subquery are unique.
+
+The dimension columns are not in the SELECT list, GROUP BY clause, and so on.

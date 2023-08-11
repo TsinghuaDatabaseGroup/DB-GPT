@@ -1,0 +1,21 @@
+Query rewrite behavior is controlled by certain database initialization parameters.
+
+Table 5-1 Initialization Parameters that Control Query Rewrite Behavior
+
+Initialization Parameter Name	Initialization Parameter Value	Behavior of Query Rewrite
+OPTIMIZER_MODE	ALL_ROWS (default), FIRST_ROWS, or FIRST_ROWS_n	
+With OPTIMIZER_MODE set to FIRST_ROWS, the optimizer uses a mix of costs and heuristics to find a best plan for fast delivery of the first few rows. When set to FIRST_ROWS_n, the optimizer uses a cost-based approach and optimizes with a goal of best response time to return the first n rows (where n = 1, 10, 100, 1000).
+
+QUERY_REWRITE_ENABLED	TRUE (default), FALSE, or FORCE	
+This option enables the query rewrite feature of the optimizer, enabling the optimizer to utilize materialized views to enhance performance. If set to FALSE, this option disables the query rewrite feature of the optimizer and directs the optimizer not to rewrite queries using materialized views even when the estimated query cost of the unrewritten query is lower.
+
+If set to FORCE, this option enables the query rewrite feature of the optimizer and directs the optimizer to rewrite queries using materialized views even when the estimated query cost of the unrewritten query is lower.
+
+QUERY_REWRITE_INTEGRITY	STALE_TOLERATED, TRUSTED, or ENFORCED (the default)	
+This parameter is optional. However, if it is set, the value must be one of these specified in the Initialization Parameter Value column.
+
+By default, the integrity level is set to ENFORCED. In this mode, all constraints must be validated. Therefore, if you use ENABLE NOVALIDATE RELY , certain types of query rewrite might not work. To enable query rewrite in this environment (where constraints have not been validated), you should set the integrity level to a lower level of granularity such as TRUSTED or STALE_TOLERATED.
+
+Related Topics
+
+About the Accuracy of Query Rewrite

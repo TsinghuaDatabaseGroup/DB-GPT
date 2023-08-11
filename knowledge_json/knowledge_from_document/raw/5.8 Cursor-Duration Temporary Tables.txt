@@ -1,0 +1,1 @@
+To materialize the intermediate results of a query, Oracle Database may implicitly create a cursor-duration temporary table in memory during query compilation.
