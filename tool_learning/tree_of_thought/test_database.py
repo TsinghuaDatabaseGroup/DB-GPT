@@ -1,7 +1,8 @@
 import sys
 sys.path.append('..')
+sys.path.append('../..')
 
-from LLM.openai_0613 import chatgpt_0613
+from models.openai_0613 import chatgpt_0613
 from termcolor import colored
 from Algorithms.UCT_vote_function import UCT_vote_function
 from Downstream_tasks.base_env import base_env

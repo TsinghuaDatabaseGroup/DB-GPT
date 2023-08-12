@@ -1,6 +1,4 @@
-'''
-探索新版调用模型的接口的可用性
-'''
+
 import ast
 import concurrent
 from csv import writer

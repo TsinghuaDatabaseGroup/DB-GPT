@@ -1,3 +1,7 @@
+import sys
+sys.path.append('..')
+sys.path.append('../..')
+
 from Tree.Tree import my_tree, tree_node
 from copy import deepcopy
 from Algorithms.base_search import base_search_method
