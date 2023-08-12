@@ -150,12 +150,11 @@ def test_single(input_description):
     print(colored(f"now playing {input_description}", "green"))
     env = wrap_diag(input_description)
 
-    pdb.set_trace()        
+    #pdb.set_trace()        
     llm_forward = chatgpt_0613()
     chain = UCT_vote_function(llm=llm_forward,io_func=env)
     result = chain.start(simulation_count=3,epsilon_new_node=0.3,choice_count=3,vote_candidates=2,vote_count=1,single_chain_max_step=40)
     chain = node_to_chain(result)
-    pdb.set_trace()
 
     return env, chain
 
