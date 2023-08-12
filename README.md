@@ -198,6 +198,24 @@ python3 main_demo.py --task db_diag
 After successfully launching the local server, you can visit [http://127.0.0.1:7860/](http://127.0.0.1:7860/) to trigger the diagnosis procedure (click the *Start Autoplay* button).
 
 
+### Prompt Template Generation
+
+Derive *high-quality prompt templates* from a small number of collected samples (splitting into training and evaluation sets), e.g.,
+
+1. Prompts for index tuning optimization
+
+```bash
+cd prompt_template_scripts/index_tuning
+./run.sh
+```
+
+2. Prompts for query rewrite optimization
+
+```bash
+cd prompt_template_scripts/query_rewrite
+./run.sh
+```
+
 <span id="-cases"></span>
 
 ## Cases

@@ -29,3 +29,7 @@ amadeus
 gradio
 gradio_tools
 peft
+numpy==1.24.2
+PyYAML==6.0
+sqlparse==0.4.3
+tqdm==4.65.0
