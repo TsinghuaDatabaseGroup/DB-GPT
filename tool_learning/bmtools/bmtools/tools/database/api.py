@@ -6,7 +6,6 @@ import openai
 from ..tool import Tool
 from bmtools.tools.database.utils.db_parser import get_conf
 from bmtools.tools.database.utils.database import DBArgs, Database
-from bmtools.models.customllm import CustomLLM
 
 def build_database_tool(config) -> Tool:
     tool = Tool(

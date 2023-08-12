@@ -69,11 +69,11 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
     ```bash
     [postgresql]
-    host = 
-    port = 
-    user = 
-    password = 
-    dbname = 
+    host = xxx.xxx.xxx.xxx
+    port = 5432
+    user = xxx
+    password = xxx
+    dbname = postgres
     ```
 
     > Additionally, install extensions like *[pg_stat_statements](https://pganalyze.com/docs/install/01_enabling_pg_stat_statements)* (track slow queries) and *[pg_hint_plan](https://pg-hint-plan.readthedocs.io/en/latest/installation.html)* (optimize physical operators)
@@ -131,6 +131,8 @@ python host_local_tools.py
 cd tool_learning/tree_of_thought
 python test_database.py
 ```
+
+> History messages may take up many tokens, and so carefully decide the *turn number*.
 
 ### Anomaly Generation & Detection
 

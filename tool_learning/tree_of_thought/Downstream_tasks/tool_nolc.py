@@ -5,12 +5,13 @@ import requests
 import yaml
 from bmtools.agent.apitool import RequestTool
 from bmtools import get_logger
-from bmtools.models.customllm import CustomLLM
+# from bmtools.models.customllm import CustomLLM
 from langchain.schema import AgentAction, AgentFinish
 from langchain.agents.agent import AgentOutputParser
 import re
 from pprint import pprint
 import pdb
+from langchain.llms import OpenAI
 
 logger = get_logger(__name__)
 
@@ -117,7 +118,9 @@ class STQuestionAnswerer:
         logger.info("Tool [{}] has the following apis: {}".format(name, self.all_tools_map[name]))
 
         if prompt_type == "react-with-tool-description":
-            customllm = CustomLLM()
+            #customllm = CustomLLM()
+            key = os.environ.get('OPENAI_API_KEY')
+            customllm = OpenAI(model_name="gpt-3.5-turbo", temperature=0.0, openai_api_key=key)
             description_for_model = meta_info['description_for_model'].strip()
 
             prefix = f"""Answer the following questions as best you can. General instructions are: {description_for_model}. Specifically, you have access to the following APIs:"""

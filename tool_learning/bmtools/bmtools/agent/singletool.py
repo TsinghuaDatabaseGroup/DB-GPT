@@ -10,7 +10,6 @@ from bmtools.agent.apitool import RequestTool
 from bmtools.agent.executor import Executor, AgentExecutorWithTranslation
 from bmtools import get_logger
 from bmtools.agent.BabyagiTools import BabyAGI
-from bmtools.models.customllm import CustomLLM
 
 
 logger = get_logger(__name__)
