@@ -1,10 +1,14 @@
 # Byte-compiled / optimized / DLL files
+tool_learning/bmtools/bmtools/tools/database/my_config.ini
+tool_learning/bmtools/bmtools/tools/db_diag/my_config.ini
 __pycache__/
 *.py[cod]
 *$py.class
 
 # C extensions
 *.so
+*.DS_Store
+.vscode/settings.json
 
 # Distribution / packaging
 .Python

@@ -1,32 +1,20 @@
 import sys
 sys.path.append('..')
 
-from LLM.fake_llm import chatGPT
 from LLM.openai_0613 import chatgpt_0613
 from termcolor import colored
-from Algorithms.single_chain import single_chain
-from Algorithms.reflexion import reflexion_chain
-from Algorithms.BFS import BFS_tree_search
-from Algorithms.UCT_abstract import UCT_abstract
-from Algorithms.UCT_vote import UCT_vote
 from Algorithms.UCT_vote_function import UCT_vote_function
 from Downstream_tasks.base_env import base_env
-from utils import do_24
 import re
 import os
-from functools import partial
 import json
-
 from typing import overload
-
 from Downstream_tasks.tool_nolc import load_single_tools,import_all_apis
-
-from pprint import pprint
 import pdb
 
-class wrap_wolframalpha(base_env):
+class wrap_diag(base_env):
     def __init__(self,input_description):
-        super(wrap_wolframalpha, self).__init__()
+        super(wrap_diag, self).__init__()
 
         self.input_description = input_description
 
@@ -108,7 +96,6 @@ class wrap_wolframalpha(base_env):
     def get_score(self):
         return 0.0
 
-
     def step(self, action_name="",action_input=""):
         # print(action_input)
 
@@ -159,43 +146,9 @@ def node_to_chain(node):
     return chain
 
 
-
-def test_all(method):
-    file_name = r"./Downstream_tasks/raw_data/17K_wolfram_processed.jsonl"
-    output_dir = rf"./test_result/17K_wolfram_{method}"
-    os.makedirs(output_dir,exist_ok=True)
-    data_list = []
-    with open(file_name,"r",encoding="utf-8") as f:
-        data_list = json.load(f)
-    
-    total = 0
-    win = 0
-    for k, data in enumerate(data_list):
-        total += 1
-
-        flatten_input = str(k)
-        if os.path.exists(os.path.join(output_dir,f"{flatten_input}.json")):
-            with open(os.path.join(output_dir,f"{flatten_input}.json"),"r",encoding="utf-8") as reader:
-                json_obj = json.load(reader)
-                if json_obj["win"] == True:
-                    win += 1
-            continue
-
-
-        env, chain = test_single(data["query"],method)
-        if chain.status == 1:
-            win += 1
-            print(colored(f"You Win, ratio={win}/{total}={win/total}","green"))
-        else:
-            print(colored(f"You Lose, ratio={win}/{total}={win/total}","green"))
-
-        with open(os.path.join(output_dir,f"{flatten_input}.json"),"w",encoding="utf-8") as writer:
-            json_obj = chain.to_json()
-            json.dump(json_obj,writer,indent=2)
-
 def test_single(input_description):
     print(colored(f"now playing {input_description}", "green"))
-    env = wrap_wolframalpha(input_description)
+    env = wrap_diag(input_description)
 
     pdb.set_trace()        
     llm_forward = chatgpt_0613()
@@ -208,10 +161,8 @@ def test_single(input_description):
 
 
 if __name__ == "__main__":
-    # task = '''Let $$x^8 + 3x^4 - 4 = p_1(x)p_2(x)\cdots p_k(x)$$, Where each non-constant polynomial p_i(x) is monic with integer coefficients, and cannot be factored further over the integers. Compute $$ p_1(1) + p_2(1) + \cdots + p_k(1) $$'''
-    # task = "Convert $\\sqrt{2} e^{11 \\pi i/4}$ to rectangular form.\n"
 
-    text = "SELECT s_comment FROM part As p,partsupp As ps,supplier As s WHERE p.p_partkey = ps.ps_partkey AND s.s_suppkey = ps.ps_suppkey AND ps.ps_availqty = 6331 AND p.p_type > 'LARGE POLISHED NICKEL' AND p.p_retailprice < 1758.76 ORDER BY s_comment DESC;"
+    slow_query = "SELECT s_comment FROM part As p,partsupp As ps,supplier As s WHERE p.p_partkey = ps.ps_partkey AND s.s_suppkey = ps.ps_suppkey AND ps.ps_availqty = 6331 AND p.p_type > 'LARGE POLISHED NICKEL' AND p.p_retailprice < 1758.76 ORDER BY s_comment DESC;"
 
     task = """ Given a SQL query:
     \"{}\"
@@ -230,7 +181,6 @@ if __name__ == "__main__":
     Requirements. 
     1) If an API is successfully called, do not call the same API again; 
     2) Do not use any image in the output; 
-    """.format(text)
+    """.format(slow_query)
 
     test_single(task)
-    #test_all("CoT")

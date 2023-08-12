@@ -92,29 +92,34 @@ export OPENAI_API_KEY="your_api_key_here"
 export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
 ```
 
-Step3: Install BMTools.
-```bash
-git clone git+https://github.com/OpenBMB/BMTools.git
-cd BMTools
-pip install -r requirements.txt
-python setup.py develop
-```
-
 ### Preparation
 
 #### Diagnosis Knowledge
 
-- We extract knowledge from both code (./knowledge_json/knowledge_from_code) and documents (./knowledge_json/knowledge_from_document).
+- Extract knowledge from both code (./knowledge_json/knowledge_from_code) and documents (./knowledge_json/knowledge_from_document).
 
-    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script.
-
+    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](./tool_learning/bmtools/bmtools/tools/db_diag/root_causes_dbmind.jsonl).
 
 
 #### Tool Usage
 
-- We extract hundreds of tool APIs to carry out different monitoring/optimization functions (./tool_learning/tool_apis).
+- Extract hundreds of tool APIs to carry out different monitoring/optimization functions (./tool_learning/tool_apis).
 
-- We support a basic *tree of thought* algorithm (./tool_learning/tree_of_thought).
+    - Check the update results and sync to [api.py](./tool_learning/bmtools/bmtools/tools/db_diag/api.py).
+
+- Start bmtools service.
+
+```bash
+cd tool_learning/bmtools
+python host_local_tools.py
+```
+
+- Test tool usage (basic *tree of thought* algorithm within *./tool_learning/tree_of_thought*).
+
+```bash
+cd tool_learning/tree_of_thought
+python test_database.py
+```
 
 ### Anomaly Generation & Detection
 

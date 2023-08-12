@@ -1,0 +1,1501 @@
+[
+    {
+        "sql": "SELECT company_name.name, movie_companies.company_id FROM movie_companies JOIN company_name ON company_name.id = movie_companies.company_id WHERE movie_companies.note <> '(2013) (Hong Kong) (DVD) (Blu-ray)' AND movie_companies.company_type_id < 2 AND company_name.name_pcode_sf <= 'A3463' AND movie_companies.id >= 22787 AND company_name.id <> 225408 AND company_name.country_code > '[de]'",
+        "extend": {
+            "indexes": [
+                "company_name#name_pcode_sf"
+            ],
+            "no_cost": 47995.05,
+            "ind_cost": 44134.57
+        },
+        "db2advis": {
+            "indexes": [
+                "company_name#name_pcode_sf"
+            ],
+            "no_cost": 47995.05,
+            "ind_cost": 44134.57
+        },
+        "auto_admin": {
+            "indexes": [
+                "company_name#name_pcode_sf"
+            ],
+            "no_cost": 47995.05,
+            "ind_cost": 44134.57
+        },
+        "drop": {
+            "indexes": [
+                "movie_info#id",
+                "person_info#note",
+                "char_name#name",
+                "company_name#name_pcode_sf",
+                "aka_title#note"
+            ],
+            "no_cost": 47995.05,
+            "ind_cost": 44134.57
+        },
+        "relaxation": {
+            "indexes": [
+                "company_name#name_pcode_sf"
+            ],
+            "no_cost": 47995.05,
+            "ind_cost": 44134.57
+        },
+        "anytime": {
+            "indexes": [
+                "company_name#name_pcode_sf"
+            ],
+            "no_cost": 47995.05,
+            "ind_cost": 44134.57
+        }
+    },
+    {
+        "sql": "SELECT char_name.surname_pcode, name.surname_pcode, cast_info.note FROM char_name JOIN cast_info ON cast_info.person_role_id = char_name.id JOIN name ON name.id = cast_info.person_id WHERE name.md5sum > '5acde07f252596bd4588d95d1a608601' AND char_name.name < 'Samuel J. Coles' AND name.name_pcode_cf <= 'B4252' AND cast_info.id <> 15138974 ORDER BY char_name.surname_pcode ASC, cast_info.note ASC, name.surname_pcode DESC",
+        "extend": {
+            "indexes": [
+                "char_name#id",
+                "name#name_pcode_cf"
+            ],
+            "no_cost": 1139696.93,
+            "ind_cost": 1001358.02
+        },
+        "db2advis": {
+            "indexes": [
+                "char_name#id",
+                "name#name_pcode_cf"
+            ],
+            "no_cost": 1139696.93,
+            "ind_cost": 1001358.02
+        },
+        "auto_admin": {
+            "indexes": [
+                "name#name_pcode_cf",
+                "char_name#id"
+            ],
+            "no_cost": 1139696.93,
+            "ind_cost": 1001358.02
+        },
+        "drop": {
+            "indexes": [
+                "char_name#id",
+                "name#name_pcode_cf",
+                "char_name#md5sum",
+                "aka_title#note",
+                "aka_title#md5sum"
+            ],
+            "no_cost": 1139696.93,
+            "ind_cost": 1001358.02
+        },
+        "relaxation": {
+            "indexes": [
+                "name#name_pcode_cf",
+                "char_name#id"
+            ],
+            "no_cost": 1139696.93,
+            "ind_cost": 1001358.02
+        },
+        "anytime": {
+            "indexes": [
+                "name#name_pcode_cf",
+                "char_name#id"
+            ],
+            "no_cost": 1139696.93,
+            "ind_cost": 1001358.02
+        }
+    },
+    {
+        "sql": "SELECT movie_info.info, info_type.info FROM info_type JOIN movie_info ON movie_info.info_type_id = info_type.id WHERE info_type.info > 'LD certification' AND movie_info.info <= 'Mexico:22' AND info_type.id = 59 AND movie_info.movie_id >= 1981890 AND movie_info.info_type_id > 107 ORDER BY info_type.info ASC, movie_info.info DESC",
+        "extend": {
+            "indexes": [
+                "movie_info#info_type_id"
+            ],
+            "no_cost": 287221.36,
+            "ind_cost": 276.84
+        },
+        "db2advis": {
+            "indexes": [],
+            "no_cost": 287221.36,
+            "ind_cost": 287221.36
+        },
+        "auto_admin": {
+            "indexes": [
+                "movie_info#info_type_id,movie_id"
+            ],
+            "no_cost": 287221.36,
+            "ind_cost": 123.03
+        },
+        "drop": {
+            "indexes": [
+                "movie_info#info_type_id",
+                "movie_info#movie_id",
+                "aka_title#movie_id",
+                "movie_info#id",
+                "movie_keyword#movie_id"
+            ],
+            "no_cost": 287221.36,
+            "ind_cost": 276.84
+        },
+        "relaxation": {
+            "indexes": [
+                "movie_info#info_type_id"
+            ],
+            "no_cost": 287221.36,
+            "ind_cost": 276.84
+        },
+        "anytime": {
+            "indexes": [],
+            "no_cost": 287221.36,
+            "ind_cost": 287221.36
+        }
+    },
+    {
+        "sql": "SELECT role_type.id, cast_info.id, char_name.imdb_index, COUNT(role_type.id) FROM role_type JOIN cast_info ON cast_info.role_id = role_type.id JOIN char_name ON char_name.id = cast_info.person_role_id WHERE cast_info.role_id >= 6 AND cast_info.nr_order <= 69 GROUP BY role_type.id, cast_info.id, char_name.imdb_index HAVING COUNT(role_type.id) > 9 ORDER BY COUNT(role_type.id) ASC",
+        "extend": {
+            "indexes": [],
+            "no_cost": 1428173.46,
+            "ind_cost": 1428173.46
+        },
+        "db2advis": {
+            "indexes": [],
+            "no_cost": 1428173.46,
+            "ind_cost": 1428173.46
+        },
+        "auto_admin": {
+            "indexes": [
+                "cast_info#role_id"
+            ],
+            "no_cost": 1428173.46,
+            "ind_cost": 1279123.71
+        },
+        "drop": {
+            "indexes": [
+                "cast_info#role_id",
+                "cast_info#person_role_id",
+                "aka_title#imdb_index",
+                "movie_info#id",
+                "char_name#name"
+            ],
+            "no_cost": 1428173.46,
+            "ind_cost": 1279123.71
+        },
+        "relaxation": {
+            "indexes": [],
+            "no_cost": 1428173.46,
+            "ind_cost": 1428173.46
+        },
+        "anytime": {
+            "indexes": [],
+            "no_cost": 1428173.46,
+            "ind_cost": 1428173.46
+        }
+    },
+    {
+        "sql": "SELECT movie_companies.company_id, company_name.md5sum FROM company_name, movie_companies WHERE company_name.name_pcode_sf > 'L2145' AND movie_companies.id < 228643 AND company_name.id > 203024 AND movie_companies.company_type_id < 2 AND movie_companies.company_id >= 3117 AND company_name.md5sum > 'c5c663cdbf970b308c778414031cb381' AND company_name.name > 'Five International' AND company_name.name_pcode_nf < 'A1364' AND movie_companies.movie_id >= 1365750 ORDER BY movie_companies.company_id ASC, company_name.md5sum ASC",
+        "extend": {
+            "indexes": [
+                "company_name#name_pcode_nf,id"
+            ],
+            "no_cost": 144272.18,
+            "ind_cost": 141113.4
+        },
+        "db2advis": {
+            "indexes": [
+                "company_name#name_pcode_nf,id"
+            ],
+            "no_cost": 144272.18,
+            "ind_cost": 141113.4
+        },
+        "auto_admin": {
+            "indexes": [
+                "company_name#name_pcode_nf,id"
+            ],
+            "no_cost": 144272.18,
+            "ind_cost": 141113.4
+        },
+        "drop": {
+            "indexes": [
+                "movie_info#id",
+                "company_name#name_pcode_nf",
+                "char_name#md5sum",
+                "company_name#name_pcode_sf",
+                "aka_title#md5sum"
+            ],
+            "no_cost": 144272.18,
+            "ind_cost": 141691.31
+        },
+        "relaxation": {
+            "indexes": [
+                "company_name#name_pcode_nf,id"
+            ],
+            "no_cost": 144272.18,
+            "ind_cost": 141113.4
+        },
+        "anytime": {
+            "indexes": [
+                "company_name#name_pcode_nf,id"
+            ],
+            "no_cost": 144272.18,
+            "ind_cost": 141113.4
+        }
+    },
+    {
+        "sql": "SELECT kind_type.kind, title.title FROM kind_type, title WHERE title.title < 'Die Todeszeche' AND title.episode_nr < 237 AND title.episode_of_id < 838473 AND title.phonetic_code <> 'U4352'",
+        "extend": {
+            "indexes": [
+                "title#episode_of_id"
+            ],
+            "no_cost": 76821.1,
+            "ind_cost": 51040.95
+        },
+        "db2advis": {
+            "indexes": [
+                "title#episode_of_id"
+            ],
+            "no_cost": 76821.1,
+            "ind_cost": 51040.95
+        },
+        "auto_admin": {
+            "indexes": [
+                "title#episode_of_id"
+            ],
+            "no_cost": 76821.1,
+            "ind_cost": 51040.95
+        },
+        "drop": {
+            "indexes": [
+                "title#episode_of_id",
+                "title#phonetic_code",
+                "kind_type#kind",
+                "title#title",
+                "movie_info#id"
+            ],
+            "no_cost": 76821.1,
+            "ind_cost": 51040.95
+        },
+        "relaxation": {
+            "indexes": [
+                "title#episode_of_id"
+            ],
+            "no_cost": 76821.1,
+            "ind_cost": 51040.95
+        },
+        "anytime": {
+            "indexes": [
+                "title#episode_of_id"
+            ],
+            "no_cost": 76821.1,
+            "ind_cost": 51040.95
+        }
+    },
+    {
+        "sql": "SELECT company_type.id, movie_companies.note, SUM(movie_companies.movie_id), MIN(company_type.kind) FROM movie_companies, company_type WHERE company_type.id < 1 AND movie_companies.note < '(2013) (Hong Kong) (DVD) (Blu-ray)' AND movie_companies.movie_id <> 2321181 AND movie_companies.company_id <= 3117 GROUP BY company_type.id, movie_companies.note ORDER BY MIN(company_type.kind) DESC, SUM(movie_companies.movie_id) ASC",
+        "extend": {
+            "indexes": [
+                "movie_companies#company_id"
+            ],
+            "no_cost": 72688.16,
+            "ind_cost": 61714.35
+        },
+        "db2advis": {
+            "indexes": [
+                "movie_companies#company_id"
+            ],
+            "no_cost": 72688.16,
+            "ind_cost": 61714.35
+        },
+        "auto_admin": {
+            "indexes": [
+                "movie_companies#company_id"
+            ],
+            "no_cost": 72688.16,
+            "ind_cost": 61714.35
+        },
+        "drop": {
+            "indexes": [
+                "movie_companies#company_id",
+                "movie_info#id",
+                "person_info#note",
+                "movie_keyword#movie_id",
+                "aka_title#note"
+            ],
+            "no_cost": 72688.16,
+            "ind_cost": 61714.35
+        },
+        "relaxation": {
+            "indexes": [
+                "movie_companies#company_id"
+            ],
+            "no_cost": 72688.16,
+            "ind_cost": 61714.35
+        },
+        "anytime": {
+            "indexes": [
+                "movie_companies#company_id"
+            ],
+            "no_cost": 72688.16,
+            "ind_cost": 61714.35
+        }
+    },
+    {
+        "sql": "SELECT name.id, person_info.id FROM name JOIN person_info ON person_info.person_id = name.id WHERE person_info.id < 1429826 AND person_info.person_id = 4158523 AND person_info.info_type_id < 24 AND name.name <> 'Jennings, James' AND name.surname_pcode <> 'F64'",
+        "extend": {
+            "indexes": [
+                "person_info#person_id,id",
+                "name#id"
+            ],
+            "no_cost": 61173.57,
+            "ind_cost": 56.41
+        },
+        "db2advis": {
+            "indexes": [
+                "person_info#person_id,id",
+                "name#id,surname_pcode"
+            ],
+            "no_cost": 61173.57,
+            "ind_cost": 56.41
+        },
+        "auto_admin": {
+            "indexes": [
+                "person_info#person_id,id",
+                "name#id,name"
+            ],
+            "no_cost": 61173.57,
+            "ind_cost": 56.41
+        },
+        "drop": {
+            "indexes": [
+                "person_info#person_id",
+                "name#id",
+                "movie_info#id",
+                "char_name#name",
+                "aka_name#surname_pcode"
+            ],
+            "no_cost": 61173.57,
+            "ind_cost": 97.01
+        },
+        "relaxation": {
+            "indexes": [
+                "person_info#person_id,id",
+                "name#id,surname_pcode"
+            ],
+            "no_cost": 61173.57,
+            "ind_cost": 56.41
+        },
+        "anytime": {
+            "indexes": [
+                "person_info#person_id,id",
+                "name#id,surname_pcode"
+            ],
+            "no_cost": 61173.57,
+            "ind_cost": 56.41
+        }
+    },
+    {
+        "sql": "SELECT cast_info.note, aka_name.name_pcode_nf, name.name, role_type.id FROM aka_name JOIN name ON name.id = aka_name.person_id JOIN cast_info ON cast_info.person_id = name.id JOIN role_type ON role_type.id = cast_info.role_id WHERE name.imdb_index < 'VII' AND role_type.role > 'cinematographer' AND aka_name.id <= 738700",
+        "extend": {
+            "indexes": [
+                "name#imdb_index"
+            ],
+            "no_cost": 930572.91,
+            "ind_cost": 902050.49
+        },
+        "db2advis": {
+            "indexes": [
+                "name#imdb_index"
+            ],
+            "no_cost": 930572.91,
+            "ind_cost": 902050.49
+        },
+        "auto_admin": {
+            "indexes": [
+                "name#imdb_index"
+            ],
+            "no_cost": 930572.91,
+            "ind_cost": 902050.49
+        },
+        "drop": {
+            "indexes": [
+                "name#imdb_index",
+                "person_info#note",
+                "company_name#name_pcode_nf",
+                "char_name#name",
+                "aka_title#note"
+            ],
+            "no_cost": 930572.91,
+            "ind_cost": 902050.49
+        },
+        "relaxation": {
+            "indexes": [
+                "name#imdb_index"
+            ],
+            "no_cost": 930572.91,
+            "ind_cost": 902050.49
+        },
+        "anytime": {
+            "indexes": [
+                "name#imdb_index"
+            ],
+            "no_cost": 930572.91,
+            "ind_cost": 902050.49
+        }
+    },
+    {
+        "sql": "SELECT keyword.phonetic_code, complete_cast.status_id, title.season_nr, movie_keyword.id FROM complete_cast JOIN title ON title.id = complete_cast.movie_id JOIN movie_keyword ON movie_keyword.movie_id = title.id JOIN keyword ON keyword.id = movie_keyword.keyword_id WHERE keyword.phonetic_code > 'N6253' AND complete_cast.subject_id > 1 AND title.production_year >= 1902",
+        "extend": {
+            "indexes": [
+                "title#id",
+                "movie_keyword#movie_id",
+                "keyword#id",
+                "complete_cast#subject_id"
+            ],
+            "no_cost": 163756.24,
+            "ind_cost": 99730.46
+        },
+        "db2advis": {
+            "indexes": [
+                "keyword#id",
+                "complete_cast#subject_id",
+                "movie_keyword#movie_id"
+            ],
+            "no_cost": 163756.24,
+            "ind_cost": 99730.46
+        },
+        "auto_admin": {
+            "indexes": [
+                "complete_cast#subject_id",
+                "movie_keyword#movie_id",
+                "keyword#id"
+            ],
+            "no_cost": 163756.24,
+            "ind_cost": 99730.46
+        },
+        "drop": {
+            "indexes": [
+                "keyword#id",
+                "movie_info#id",
+                "complete_cast#subject_id",
+                "movie_keyword#movie_id",
+                "title#season_nr"
+            ],
+            "no_cost": 163756.24,
+            "ind_cost": 99730.46
+        },
+        "relaxation": {
+            "indexes": [
+                "complete_cast#subject_id",
+                "movie_keyword#movie_id",
+                "keyword#id"
+            ],
+            "no_cost": 163756.24,
+            "ind_cost": 99730.46
+        },
+        "anytime": {
+            "indexes": [
+                "complete_cast#subject_id",
+                "movie_keyword#movie_id",
+                "keyword#id"
+            ],
+            "no_cost": 163756.24,
+            "ind_cost": 99730.46
+        }
+    },
+    {
+        "sql": "SELECT title.episode_nr, keyword.id, movie_keyword.id FROM title JOIN movie_keyword ON movie_keyword.movie_id = title.id JOIN keyword ON keyword.id = movie_keyword.keyword_id WHERE title.production_year > 1902 AND keyword.keyword <> 'civic-pride' AND title.episode_of_id = 314959 AND title.md5sum <> 'fdaa2163b540a7ceb52f48cdf4948239'",
+        "extend": {
+            "indexes": [
+                "title#episode_of_id",
+                "movie_keyword#movie_id",
+                "keyword#id"
+            ],
+            "no_cost": 129537.8,
+            "ind_cost": 863.57
+        },
+        "db2advis": {
+            "indexes": [
+                "keyword#id",
+                "title#episode_of_id",
+                "movie_keyword#movie_id"
+            ],
+            "no_cost": 129537.8,
+            "ind_cost": 863.57
+        },
+        "auto_admin": {
+            "indexes": [
+                "title#episode_of_id",
+                "movie_keyword#movie_id",
+                "keyword#id"
+            ],
+            "no_cost": 129537.8,
+            "ind_cost": 863.57
+        },
+        "drop": {
+            "indexes": [
+                "movie_keyword#movie_id",
+                "keyword#id",
+                "title#episode_of_id",
+                "char_name#md5sum",
+                "aka_title#md5sum"
+            ],
+            "no_cost": 129537.8,
+            "ind_cost": 863.57
+        },
+        "relaxation": {
+            "indexes": [
+                "title#episode_of_id",
+                "movie_keyword#movie_id",
+                "keyword#id"
+            ],
+            "no_cost": 129537.8,
+            "ind_cost": 863.57
+        },
+        "anytime": {
+            "indexes": [
+                "title#episode_of_id",
+                "movie_keyword#movie_id",
+                "keyword#id"
+            ],
+            "no_cost": 129537.8,
+            "ind_cost": 863.57
+        }
+    },
+    {
+        "sql": "SELECT cast_info.note, role_type.id FROM cast_info, role_type WHERE cast_info.nr_order <> 29 AND cast_info.person_id <= 2073951 AND cast_info.movie_id = 1902832 AND cast_info.id <= 15368241 ORDER BY cast_info.note ASC",
+        "extend": {
+            "indexes": [],
+            "no_cost": 510386.6,
+            "ind_cost": 510386.6
+        },
+        "db2advis": {
+            "indexes": [],
+            "no_cost": 510386.6,
+            "ind_cost": 510386.6
+        },
+        "auto_admin": {
+            "indexes": [
+                "cast_info#movie_id,id"
+            ],
+            "no_cost": 510386.6,
+            "ind_cost": 67.04
+        },
+        "drop": {
+            "indexes": [
+                "cast_info#movie_id",
+                "movie_info#id",
+                "person_info#note",
+                "movie_keyword#movie_id",
+                "aka_title#note"
+            ],
+            "no_cost": 510386.6,
+            "ind_cost": 151.55
+        },
+        "relaxation": {
+            "indexes": [],
+            "no_cost": 510386.6,
+            "ind_cost": 510386.6
+        },
+        "anytime": {
+            "indexes": [],
+            "no_cost": 510386.6,
+            "ind_cost": 510386.6
+        }
+    },
+    {
+        "sql": "SELECT person_info.info FROM person_info WHERE person_info.note < 'mcktusk@earlink.net' AND person_info.info_type_id <= 22 AND person_info.info <> '\"X Magazine\" (France), September 1991' AND person_info.person_id < 4158151 ORDER BY person_info.info DESC",
+        "extend": {
+            "indexes": [
+                "person_info#note,info_type_id"
+            ],
+            "no_cost": 80470.59,
+            "ind_cost": 50774.43
+        },
+        "db2advis": {
+            "indexes": [
+                "person_info#note,info_type_id"
+            ],
+            "no_cost": 80470.59,
+            "ind_cost": 50774.43
+        },
+        "auto_admin": {
+            "indexes": [
+                "person_info#note,info_type_id"
+            ],
+            "no_cost": 80470.59,
+            "ind_cost": 50774.43
+        },
+        "drop": {
+            "indexes": [
+                "cast_info#note",
+                "movie_companies#note",
+                "movie_info#id",
+                "person_info#note",
+                "aka_title#note"
+            ],
+            "no_cost": 80470.59,
+            "ind_cost": 58262.87
+        },
+        "relaxation": {
+            "indexes": [
+                "person_info#note,info_type_id"
+            ],
+            "no_cost": 80470.59,
+            "ind_cost": 50774.43
+        },
+        "anytime": {
+            "indexes": [
+                "person_info#note,info_type_id"
+            ],
+            "no_cost": 80470.59,
+            "ind_cost": 50774.43
+        }
+    },
+    {
+        "sql": "SELECT company_name.country_code, movie_companies.note FROM movie_companies, company_name WHERE movie_companies.movie_id < 1926053 AND movie_companies.company_id <= 71236 AND movie_companies.id >= 1098778 AND movie_companies.note = '(1958) (USA) (TV)'",
+        "extend": {
+            "indexes": [
+                "movie_companies#note"
+            ],
+            "no_cost": 1527410.47,
+            "ind_cost": 1491719.4
+        },
+        "db2advis": {
+            "indexes": [
+                "movie_companies#note,movie_id"
+            ],
+            "no_cost": 1527410.47,
+            "ind_cost": 1489450.0
+        },
+        "auto_admin": {
+            "indexes": [
+                "movie_companies#note,movie_id"
+            ],
+            "no_cost": 1527410.47,
+            "ind_cost": 1489450.0
+        },
+        "drop": {
+            "indexes": [
+                "movie_companies#note",
+                "movie_info#id",
+                "person_info#note",
+                "movie_keyword#movie_id",
+                "aka_title#note"
+            ],
+            "no_cost": 1527410.47,
+            "ind_cost": 1491719.4
+        },
+        "relaxation": {
+            "indexes": [
+                "movie_companies#note,movie_id"
+            ],
+            "no_cost": 1527410.47,
+            "ind_cost": 1489450.0
+        },
+        "anytime": {
+            "indexes": [
+                "movie_companies#note,movie_id"
+            ],
+            "no_cost": 1527410.47,
+            "ind_cost": 1489450.0
+        }
+    },
+    {
+        "sql": "SELECT info_type.id, movie_info.note FROM movie_info JOIN info_type ON info_type.id = movie_info.info_type_id WHERE movie_info.note <> 'Erik Urtz' AND movie_info.info_type_id > 50 AND info_type.id > 62 AND movie_info.id < 4184341 ORDER BY info_type.id ASC",
+        "extend": {
+            "indexes": [
+                "movie_info#info_type_id"
+            ],
+            "no_cost": 272540.8,
+            "ind_cost": 196497.71
+        },
+        "db2advis": {
+            "indexes": [],
+            "no_cost": 272540.8,
+            "ind_cost": 272540.8
+        },
+        "auto_admin": {
+            "indexes": [
+                "movie_info#info_type_id"
+            ],
+            "no_cost": 272540.8,
+            "ind_cost": 196497.71
+        },
+        "drop": {
+            "indexes": [
+                "movie_info#info_type_id",
+                "movie_companies#note",
+                "movie_info#id",
+                "person_info#note",
+                "aka_title#note"
+            ],
+            "no_cost": 272540.8,
+            "ind_cost": 196497.71
+        },
+        "relaxation": {
+            "indexes": [
+                "movie_info#info_type_id"
+            ],
+            "no_cost": 272540.8,
+            "ind_cost": 196497.71
+        },
+        "anytime": {
+            "indexes": [],
+            "no_cost": 272540.8,
+            "ind_cost": 272540.8
+        }
+    },
+    {
+        "sql": "SELECT movie_info.id FROM movie_info WHERE movie_info.info_type_id = 43 AND movie_info.note <> '(Chicago International Film Festival)' AND movie_info.id <> 11333021 AND movie_info.movie_id <> 544346 AND movie_info.info <> 'First sketch is ''Whistle Stop'' featuring San Fernando Red debating his opponent, Phineas Cuckamonga. Second skit is ''Gooney Gardner'' with Clem Kadiddlehopper and Daisy June taken in by a fast talking salesman with sketch morphing into a Tide commercial. Third skit is ''Secret Ballot'' with Mr. and Mrs. John Q. American casting their ballots at the polls.'",
+        "extend": {
+            "indexes": [
+                "movie_info#info_type_id"
+            ],
+            "no_cost": 302903.25,
+            "ind_cost": 52926.23
+        },
+        "db2advis": {
+            "indexes": [
+                "movie_info#info_type_id"
+            ],
+            "no_cost": 302903.25,
+            "ind_cost": 52926.23
+        },
+        "auto_admin": {
+            "indexes": [
+                "movie_info#info_type_id"
+            ],
+            "no_cost": 302903.25,
+            "ind_cost": 52926.23
+        },
+        "drop": {
+            "indexes": [
+                "movie_info#info_type_id",
+                "movie_info#id",
+                "person_info#note",
+                "movie_keyword#movie_id",
+                "aka_title#note"
+            ],
+            "no_cost": 302903.25,
+            "ind_cost": 52926.23
+        },
+        "relaxation": {
+            "indexes": [
+                "movie_info#info_type_id"
+            ],
+            "no_cost": 302903.25,
+            "ind_cost": 52926.23
+        },
+        "anytime": {
+            "indexes": [
+                "movie_info#info_type_id"
+            ],
+            "no_cost": 302903.25,
+            "ind_cost": 52926.23
+        }
+    },
+    {
+        "sql": "SELECT title.production_year, company_name.country_code, movie_keyword.id, movie_companies.movie_id FROM movie_keyword JOIN title ON title.id = movie_keyword.movie_id JOIN movie_companies ON movie_companies.movie_id = title.id JOIN company_name ON company_name.id = movie_companies.company_id WHERE movie_keyword.movie_id <> 1644942 AND movie_keyword.id >= 4229065 AND company_name.name_pcode_nf >= 'A1364'",
+        "extend": {
+            "indexes": [
+                "company_name#id",
+                "movie_companies#movie_id",
+                "title#id"
+            ],
+            "no_cost": 219953.5,
+            "ind_cost": 159303.03
+        },
+        "db2advis": {
+            "indexes": [
+                "company_name#id",
+                "title#id",
+                "movie_companies#movie_id"
+            ],
+            "no_cost": 219953.5,
+            "ind_cost": 159303.03
+        },
+        "auto_admin": {
+            "indexes": [
+                "movie_companies#movie_id",
+                "company_name#id",
+                "title#id"
+            ],
+            "no_cost": 219953.5,
+            "ind_cost": 159303.03
+        },
+        "drop": {
+            "indexes": [
+                "movie_companies#movie_id",
+                "title#id",
+                "company_name#id",
+                "company_name#name_pcode_nf",
+                "movie_keyword#movie_id"
+            ],
+            "no_cost": 219953.5,
+            "ind_cost": 159303.03
+        },
+        "relaxation": {
+            "indexes": [
+                "movie_companies#movie_id",
+                "company_name#id",
+                "title#id"
+            ],
+            "no_cost": 219953.5,
+            "ind_cost": 159303.03
+        },
+        "anytime": {
+            "indexes": [
+                "movie_companies#movie_id",
+                "company_name#id",
+                "title#id"
+            ],
+            "no_cost": 219953.5,
+            "ind_cost": 159303.03
+        }
+    },
+    {
+        "sql": "SELECT movie_keyword.movie_id, keyword.phonetic_code, SUM(movie_keyword.id) FROM movie_keyword JOIN keyword ON keyword.id = movie_keyword.keyword_id WHERE movie_keyword.movie_id > 2173745 AND keyword.id <= 104859 AND keyword.keyword < 'idol-singer' AND movie_keyword.id <> 971910 GROUP BY movie_keyword.movie_id, keyword.phonetic_code",
+        "extend": {
+            "indexes": [
+                "movie_keyword#movie_id"
+            ],
+            "no_cost": 145582.24,
+            "ind_cost": 138411.61
+        },
+        "db2advis": {
+            "indexes": [
+                "movie_keyword#movie_id"
+            ],
+            "no_cost": 145582.24,
+            "ind_cost": 138411.61
+        },
+        "auto_admin": {
+            "indexes": [
+                "movie_keyword#movie_id"
+            ],
+            "no_cost": 145582.24,
+            "ind_cost": 138411.61
+        },
+        "drop": {
+            "indexes": [
+                "movie_info#movie_id",
+                "aka_title#movie_id",
+                "title#phonetic_code",
+                "movie_info#id",
+                "movie_keyword#movie_id"
+            ],
+            "no_cost": 145582.24,
+            "ind_cost": 138411.61
+        },
+        "relaxation": {
+            "indexes": [
+                "movie_keyword#movie_id"
+            ],
+            "no_cost": 145582.24,
+            "ind_cost": 138411.61
+        },
+        "anytime": {
+            "indexes": [
+                "movie_keyword#movie_id"
+            ],
+            "no_cost": 145582.24,
+            "ind_cost": 138411.61
+        }
+    },
+    {
+        "sql": "SELECT person_info.id, info_type.info FROM person_info, info_type WHERE info_type.info >= 'copyright holder' AND person_info.person_id < 197068 AND person_info.info_type_id <> 24 AND person_info.note <> 'mcktusk@earlink.net'",
+        "extend": {
+            "indexes": [
+                "person_info#person_id"
+            ],
+            "no_cost": 80337.98,
+            "ind_cost": 64339.66
+        },
+        "db2advis": {
+            "indexes": [
+                "person_info#person_id"
+            ],
+            "no_cost": 80337.98,
+            "ind_cost": 64339.66
+        },
+        "auto_admin": {
+            "indexes": [
+                "person_info#person_id"
+            ],
+            "no_cost": 80337.98,
+            "ind_cost": 64339.66
+        },
+        "drop": {
+            "indexes": [
+                "person_info#person_id",
+                "movie_companies#note",
+                "movie_info#id",
+                "person_info#note",
+                "aka_title#note"
+            ],
+            "no_cost": 80337.98,
+            "ind_cost": 64339.66
+        },
+        "relaxation": {
+            "indexes": [
+                "person_info#person_id"
+            ],
+            "no_cost": 80337.98,
+            "ind_cost": 64339.66
+        },
+        "anytime": {
+            "indexes": [
+                "person_info#person_id"
+            ],
+            "no_cost": 80337.98,
+            "ind_cost": 64339.66
+        }
+    },
+    {
+        "sql": "SELECT movie_link.movie_id, title.md5sum, movie_info.info, info_type.info, movie_info_idx.info_type_id FROM movie_link JOIN title ON title.id = movie_link.movie_id JOIN movie_info ON movie_info.movie_id = title.id JOIN info_type ON info_type.id = movie_info.info_type_id JOIN movie_info_idx ON movie_info_idx.info_type_id = info_type.id WHERE title.id > 338998 AND movie_info.info_type_id <= 43 AND title.episode_of_id >= 801786",
+        "extend": {
+            "indexes": [
+                "movie_info_idx#info_type_id",
+                "movie_info#movie_id"
+            ],
+            "no_cost": 1797534.32,
+            "ind_cost": 1429170.5
+        },
+        "db2advis": {
+            "indexes": [
+                "movie_link#movie_id",
+                "movie_info_idx#info_type_id",
+                "movie_info#movie_id"
+            ],
+            "no_cost": 1797534.32,
+            "ind_cost": 1427480.13
+        },
+        "auto_admin": {
+            "indexes": [
+                "movie_info#movie_id",
+                "movie_info_idx#info_type_id",
+                "movie_link#movie_id"
+            ],
+            "no_cost": 1797534.32,
+            "ind_cost": 1427480.13
+        },
+        "drop": {
+            "indexes": [
+                "movie_info_idx#info_type_id",
+                "movie_link#movie_id",
+                "movie_info#movie_id",
+                "char_name#md5sum",
+                "aka_title#md5sum"
+            ],
+            "no_cost": 1797534.32,
+            "ind_cost": 1427480.13
+        },
+        "relaxation": {
+            "indexes": [
+                "movie_info#movie_id",
+                "movie_info_idx#info_type_id",
+                "movie_link#movie_id"
+            ],
+            "no_cost": 1797534.32,
+            "ind_cost": 1427480.13
+        },
+        "anytime": {
+            "indexes": [
+                "movie_info#movie_id",
+                "movie_info_idx#info_type_id",
+                "movie_link#movie_id"
+            ],
+            "no_cost": 1797534.32,
+            "ind_cost": 1427480.13
+        }
+    },
+    {
+        "sql": "SELECT kind_type.id, movie_link.link_type_id, title.episode_nr FROM movie_link, title, kind_type WHERE title.episode_nr = 237 AND title.season_nr >= 3 AND kind_type.kind > 'movie' ORDER BY title.episode_nr DESC",
+        "extend": {
+            "indexes": [
+                "title#episode_nr,season_nr"
+            ],
+            "no_cost": 100512.25,
+            "ind_cost": 47798.3
+        },
+        "db2advis": {
+            "indexes": [
+                "title#episode_nr,season_nr"
+            ],
+            "no_cost": 100512.25,
+            "ind_cost": 47798.3
+        },
+        "auto_admin": {
+            "indexes": [
+                "title#episode_nr,season_nr"
+            ],
+            "no_cost": 100512.25,
+            "ind_cost": 47798.3
+        },
+        "drop": {
+            "indexes": [
+                "title#episode_nr",
+                "kind_type#kind",
+                "title#title",
+                "movie_info#id",
+                "title#season_nr"
+            ],
+            "no_cost": 100512.25,
+            "ind_cost": 48274.69
+        },
+        "relaxation": {
+            "indexes": [
+                "title#episode_nr,season_nr"
+            ],
+            "no_cost": 100512.25,
+            "ind_cost": 47798.3
+        },
+        "anytime": {
+            "indexes": [
+                "title#episode_nr,season_nr"
+            ],
+            "no_cost": 100512.25,
+            "ind_cost": 47798.3
+        }
+    },
+    {
+        "sql": "SELECT title.id, movie_info_idx.movie_id, movie_companies.id, company_type.id FROM company_type JOIN movie_companies ON movie_companies.company_type_id = company_type.id JOIN title ON title.id = movie_companies.movie_id JOIN movie_info_idx ON movie_info_idx.movie_id = title.id WHERE movie_companies.note < '(1979) (USA: Midwest) (theatrical) (dubbed)' AND title.production_year = 1970 AND movie_info_idx.movie_id >= 2368869 AND movie_companies.company_type_id <> 2 ORDER BY title.id ASC, movie_companies.id DESC",
+        "extend": {
+            "indexes": [
+                "movie_info_idx#movie_id",
+                "title#production_year",
+                "movie_companies#movie_id"
+            ],
+            "no_cost": 101572.85,
+            "ind_cost": 24334.33
+        },
+        "db2advis": {
+            "indexes": [
+                "company_type#id",
+                "movie_info_idx#movie_id",
+                "title#production_year",
+                "movie_companies#movie_id"
+            ],
+            "no_cost": 101572.85,
+            "ind_cost": 24333.58
+        },
+        "auto_admin": {
+            "indexes": [
+                "company_type#id",
+                "movie_info_idx#movie_id",
+                "movie_companies#movie_id",
+                "title#production_year"
+            ],
+            "no_cost": 101572.85,
+            "ind_cost": 24333.58
+        },
+        "drop": {
+            "indexes": [
+                "movie_companies#movie_id",
+                "title#production_year",
+                "company_type#id",
+                "movie_info_idx#movie_id",
+                "aka_title#note"
+            ],
+            "no_cost": 101572.85,
+            "ind_cost": 24333.58
+        },
+        "relaxation": {
+            "indexes": [
+                "company_type#id",
+                "movie_companies#movie_id",
+                "movie_info_idx#movie_id",
+                "title#production_year"
+            ],
+            "no_cost": 101572.85,
+            "ind_cost": 24333.58
+        },
+        "anytime": {
+            "indexes": [
+                "movie_info_idx#movie_id",
+                "movie_companies#movie_id",
+                "title#production_year",
+                "company_type#id"
+            ],
+            "no_cost": 101572.85,
+            "ind_cost": 24333.58
+        }
+    },
+    {
+        "sql": "SELECT cast_info.movie_id, role_type.role FROM cast_info JOIN role_type ON role_type.id = cast_info.role_id WHERE cast_info.role_id >= 6 AND cast_info.movie_id <> 1455589 AND cast_info.person_role_id < 2164942 AND role_type.role >= 'director' AND cast_info.note = '(Italian QA lead: Square Enix Ltd.) (PlayStation 3 version)'",
+        "extend": {
+            "indexes": [],
+            "no_cost": 555832.51,
+            "ind_cost": 555832.51
+        },
+        "db2advis": {
+            "indexes": [],
+            "no_cost": 555832.51,
+            "ind_cost": 555832.51
+        },
+        "auto_admin": {
+            "indexes": [
+                "cast_info#note,role_id"
+            ],
+            "no_cost": 555832.51,
+            "ind_cost": 762.97
+        },
+        "drop": {
+            "indexes": [
+                "role_type#id",
+                "cast_info#note",
+                "person_info#note",
+                "movie_keyword#movie_id",
+                "aka_title#note"
+            ],
+            "no_cost": 555832.51,
+            "ind_cost": 4779.88
+        },
+        "relaxation": {
+            "indexes": [],
+            "no_cost": 555832.51,
+            "ind_cost": 555832.51
+        },
+        "anytime": {
+            "indexes": [],
+            "no_cost": 555832.51,
+            "ind_cost": 555832.51
+        }
+    },
+    {
+        "sql": "SELECT title.series_years, keyword.phonetic_code, movie_keyword.keyword_id, kind_type.kind FROM keyword JOIN movie_keyword ON movie_keyword.keyword_id = keyword.id JOIN title ON title.id = movie_keyword.movie_id JOIN kind_type ON kind_type.id = title.kind_id WHERE title.id <= 1680320 AND kind_type.id >= 4 AND title.title <= 'Neprikayannyy' AND movie_keyword.keyword_id <= 1116 ORDER BY movie_keyword.keyword_id DESC, kind_type.kind DESC",
+        "extend": {
+            "indexes": [],
+            "no_cost": 198868.62,
+            "ind_cost": 198868.62
+        },
+        "db2advis": {
+            "indexes": [],
+            "no_cost": 198868.62,
+            "ind_cost": 198868.62
+        },
+        "auto_admin": {
+            "indexes": [
+                "movie_info_idx#id"
+            ],
+            "no_cost": 198868.62,
+            "ind_cost": 198868.62
+        },
+        "drop": {
+            "indexes": [
+                "title#phonetic_code",
+                "kind_type#kind",
+                "title#title",
+                "movie_info#id",
+                "movie_keyword#movie_id"
+            ],
+            "no_cost": 198868.62,
+            "ind_cost": 198868.62
+        },
+        "relaxation": {
+            "indexes": [],
+            "no_cost": 198868.62,
+            "ind_cost": 198868.62
+        },
+        "anytime": {
+            "indexes": [],
+            "no_cost": 198868.62,
+            "ind_cost": 198868.62
+        }
+    },
+    {
+        "sql": "SELECT aka_name.md5sum, name.name_pcode_nf FROM aka_name, name WHERE name.name_pcode_nf = 'A5165' AND aka_name.name_pcode_nf < 'B5252' AND name.md5sum <> 'db5ceb54b692bd2ceeba0a7f970bdd98' AND aka_name.id > 765597 ORDER BY name.name_pcode_nf DESC, aka_name.md5sum DESC",
+        "extend": {
+            "indexes": [
+                "name#name_pcode_nf",
+                "aka_name#md5sum,id"
+            ],
+            "no_cost": 754497.61,
+            "ind_cost": 136899.13
+        },
+        "db2advis": {
+            "indexes": [
+                "aka_name#md5sum,name_pcode_nf",
+                "name#name_pcode_nf,id"
+            ],
+            "no_cost": 754497.61,
+            "ind_cost": 136710.2
+        },
+        "auto_admin": {
+            "indexes": [
+                "name#name_pcode_nf,id",
+                "aka_name#md5sum,name_pcode_nf"
+            ],
+            "no_cost": 754497.61,
+            "ind_cost": 136710.2
+        },
+        "drop": {
+            "indexes": [
+                "aka_name#md5sum",
+                "name#name_pcode_nf",
+                "company_name#name_pcode_nf",
+                "char_name#md5sum",
+                "aka_title#md5sum"
+            ],
+            "no_cost": 754497.61,
+            "ind_cost": 139557.02
+        },
+        "relaxation": {
+            "indexes": [
+                "name#name_pcode_nf,id",
+                "aka_name#md5sum,name_pcode_nf"
+            ],
+            "no_cost": 754497.61,
+            "ind_cost": 136710.2
+        },
+        "anytime": {
+            "indexes": [
+                "name#name_pcode_nf,id",
+                "aka_name#md5sum,name_pcode_nf"
+            ],
+            "no_cost": 754497.61,
+            "ind_cost": 136710.2
+        }
+    },
+    {
+        "sql": "SELECT movie_companies.company_type_id, company_type.kind, MAX(company_type.kind) FROM movie_companies JOIN company_type ON company_type.id = movie_companies.company_type_id WHERE movie_companies.note > '(1914) (USA) (theatrical)' AND movie_companies.company_type_id >= 1 AND movie_companies.movie_id <= 2466088 GROUP BY movie_companies.company_type_id, company_type.kind ORDER BY movie_companies.company_type_id ASC, company_type.kind DESC",
+        "extend": {
+            "indexes": [],
+            "no_cost": 45438.99,
+            "ind_cost": 45438.99
+        },
+        "db2advis": {
+            "indexes": [],
+            "no_cost": 45438.99,
+            "ind_cost": 45438.99
+        },
+        "auto_admin": {
+            "indexes": [
+                "movie_info_idx#id,note"
+            ],
+            "no_cost": 45438.99,
+            "ind_cost": 45438.99
+        },
+        "drop": {
+            "indexes": [
+                "movie_companies#note",
+                "movie_info#id",
+                "person_info#note",
+                "movie_keyword#movie_id",
+                "aka_title#note"
+            ],
+            "no_cost": 45438.99,
+            "ind_cost": 45438.99
+        },
+        "relaxation": {
+            "indexes": [],
+            "no_cost": 45438.99,
+            "ind_cost": 45438.99
+        },
+        "anytime": {
+            "indexes": [],
+            "no_cost": 45438.99,
+            "ind_cost": 45438.99
+        }
+    },
+    {
+        "sql": "SELECT movie_info_idx.info_type_id FROM movie_info_idx WHERE movie_info_idx.info <= '6.8' AND movie_info_idx.info_type_id <> 101 AND movie_info_idx.movie_id <= 2010299 AND movie_info_idx.id <> 310358 ORDER BY movie_info_idx.info_type_id DESC",
+        "extend": {
+            "indexes": [
+                "movie_info_idx#info_type_id"
+            ],
+            "no_cost": 88288.59,
+            "ind_cost": 81276.48
+        },
+        "db2advis": {
+            "indexes": [
+                "movie_info_idx#info_type_id"
+            ],
+            "no_cost": 88288.59,
+            "ind_cost": 81276.48
+        },
+        "auto_admin": {
+            "indexes": [
+                "movie_info_idx#info_type_id"
+            ],
+            "no_cost": 88288.59,
+            "ind_cost": 81276.48
+        },
+        "drop": {
+            "indexes": [
+                "movie_info_idx#info_type_id",
+                "movie_info#movie_id",
+                "aka_title#movie_id",
+                "movie_info#id",
+                "movie_keyword#movie_id"
+            ],
+            "no_cost": 88288.59,
+            "ind_cost": 81276.48
+        },
+        "relaxation": {
+            "indexes": [
+                "movie_info_idx#info_type_id"
+            ],
+            "no_cost": 88288.59,
+            "ind_cost": 81276.48
+        },
+        "anytime": {
+            "indexes": [
+                "movie_info_idx#info_type_id"
+            ],
+            "no_cost": 88288.59,
+            "ind_cost": 81276.48
+        }
+    },
+    {
+        "sql": "SELECT name.gender, aka_title.kind_id, aka_name.md5sum, cast_info.id, title.episode_of_id FROM aka_name JOIN name ON name.id = aka_name.person_id JOIN cast_info ON cast_info.person_id = name.id JOIN title ON title.id = cast_info.movie_id JOIN aka_title ON aka_title.movie_id = title.id WHERE aka_title.episode_nr <> 68 AND cast_info.id < 2283711 AND title.episode_of_id > 384768 ORDER BY aka_name.md5sum ASC, cast_info.id ASC",
+        "extend": {
+            "indexes": [
+                "aka_name#person_id",
+                "title#id"
+            ],
+            "no_cost": 129037.87,
+            "ind_cost": 104381.47
+        },
+        "db2advis": {
+            "indexes": [
+                "aka_name#person_id",
+                "title#id",
+                "name#id"
+            ],
+            "no_cost": 129037.87,
+            "ind_cost": 104200.41
+        },
+        "auto_admin": {
+            "indexes": [
+                "name#id",
+                "cast_info#movie_id,id",
+                "title#id",
+                "aka_name#person_id"
+            ],
+            "no_cost": 129037.87,
+            "ind_cost": 18642.81
+        },
+        "drop": {
+            "indexes": [
+                "title#id",
+                "aka_name#person_id",
+                "cast_info#movie_id",
+                "name#id",
+                "aka_title#md5sum"
+            ],
+            "no_cost": 129037.87,
+            "ind_cost": 18708.07
+        },
+        "relaxation": {
+            "indexes": [
+                "aka_name#person_id"
+            ],
+            "no_cost": 129037.87,
+            "ind_cost": 105189.6
+        },
+        "anytime": {
+            "indexes": [
+                "name#id",
+                "title#id",
+                "aka_name#person_id"
+            ],
+            "no_cost": 129037.87,
+            "ind_cost": 104200.41
+        }
+    },
+    {
+        "sql": "SELECT cast_info.person_id, name.gender, char_name.md5sum, aka_name.md5sum FROM char_name JOIN cast_info ON cast_info.person_role_id = char_name.id JOIN name ON name.id = cast_info.person_id JOIN aka_name ON aka_name.person_id = name.id WHERE cast_info.note <> '(as Chi-Li)' AND aka_name.md5sum > '71dd0debbfff908e88f5b88f0c5978f1' AND name.gender >= 'm' ORDER BY name.gender ASC",
+        "extend": {
+            "indexes": [
+                "char_name#id"
+            ],
+            "no_cost": 939852.58,
+            "ind_cost": 828586.87
+        },
+        "db2advis": {
+            "indexes": [
+                "char_name#id"
+            ],
+            "no_cost": 939852.58,
+            "ind_cost": 828586.87
+        },
+        "auto_admin": {
+            "indexes": [
+                "char_name#id"
+            ],
+            "no_cost": 939852.58,
+            "ind_cost": 828586.87
+        },
+        "drop": {
+            "indexes": [
+                "char_name#id",
+                "person_info#note",
+                "char_name#md5sum",
+                "aka_title#note",
+                "aka_title#md5sum"
+            ],
+            "no_cost": 939852.58,
+            "ind_cost": 828586.87
+        },
+        "relaxation": {
+            "indexes": [
+                "char_name#id"
+            ],
+            "no_cost": 939852.58,
+            "ind_cost": 828586.87
+        },
+        "anytime": {
+            "indexes": [
+                "char_name#id"
+            ],
+            "no_cost": 939852.58,
+            "ind_cost": 828586.87
+        }
+    },
+    {
+        "sql": "SELECT name.name, cast_info.movie_id, aka_name.name FROM aka_name JOIN name ON name.id = aka_name.person_id JOIN cast_info ON cast_info.person_id = name.id WHERE name.name_pcode_nf > 'M6216' AND name.id >= 438749 AND name.md5sum > 'dc464defcd75723260c6fe0100380030' AND cast_info.person_id <= 1277381",
+        "extend": {
+            "indexes": [
+                "aka_name#person_id",
+                "name#md5sum"
+            ],
+            "no_cost": 723356.16,
+            "ind_cost": 600862.06
+        },
+        "db2advis": {
+            "indexes": [
+                "name#md5sum,name_pcode_nf"
+            ],
+            "no_cost": 723356.16,
+            "ind_cost": 600304.81
+        },
+        "auto_admin": {
+            "indexes": [
+                "cast_info#person_id",
+                "name#md5sum,name_pcode_nf"
+            ],
+            "no_cost": 723356.16,
+            "ind_cost": 241511.55
+        },
+        "drop": {
+            "indexes": [
+                "name#md5sum",
+                "cast_info#person_id",
+                "company_name#name_pcode_nf",
+                "char_name#md5sum",
+                "aka_title#md5sum"
+            ],
+            "no_cost": 723356.16,
+            "ind_cost": 242068.81
+        },
+        "relaxation": {
+            "indexes": [],
+            "no_cost": 723356.16,
+            "ind_cost": 723356.16
+        },
+        "anytime": {
+            "indexes": [
+                "name#md5sum,name_pcode_nf"
+            ],
+            "no_cost": 723356.16,
+            "ind_cost": 600304.81
+        }
+    }
+]

@@ -1,0 +1,602 @@
+[
+    {
+        "rule": "EmptyProject",
+        "input_sql": "select z + x from (\n  select x + y as z, x from (\n    select * from (values (10, 1), (30, 3)) as t (x, y)\n    where x + y > 50));",
+        "output_sql": "SELECT *\nFROM (VALUES (NULL)) AS \"t\" (\"EXPR$0\")\nWHERE 1 = 0;"
+    },
+    {
+        "rule": "EmptyMinus",
+        "input_sql": "select * from (values (30, 3)) as t (x, y)\nwhere x > 30\nexcept\nselect * from (values (20, 2))\nexcept\nselect * from (values (40, 4));",
+        "output_sql": "SELECT *\nFROM (VALUES (NULL, NULL)) AS \"t\" (\"x\", \"y\")\nWHERE 1 = 0;"
+    },
+    {
+        "rule": "EmptySort",
+        "input_sql": "SELECT *\nFROM (VALUES (NULL, NULL, NULL)) AS \"t\" (\"DEPTNO\", \"DNAME\", \"LOC\")\nWHERE 1 = 0\nORDER BY \"DNAME\", \"DEPTNO\";",
+        "output_sql": "SELECT *\nFROM (VALUES (NULL, NULL, NULL)) AS \"t\" (\"DEPTNO\", \"DNAME\", \"LOC\")\nWHERE 1 = 0;"
+    },
+    {
+        "rule": "AggregateConstantKeyRule",
+        "input_sql": "select count(*) as c\nfrom emp\nwhere deptno = 10\ngroup by deptno, sal;",
+        "output_sql": "SELECT COUNT(*) AS \"c\"\nFROM \"EMP\"\nWHERE \"DEPTNO\" = 10\nGROUP BY \"SAL\";"
+    },
+    {
+        "rule": "ReduceConstantsDup",
+        "input_sql": "select d.deptno from dept d where d.deptno=7 and d.deptno=8;",
+        "output_sql": "SELECT \"DEPTNO\"\nFROM (VALUES (NULL, NULL)) AS \"t\" (\"DEPTNO\", \"NAME\")\nWHERE 1 = 0;"
+    },
+    {
+        "rule": "ReduceConstantsDupNotNull",
+        "input_sql": "select e.empno from emp e where not(e.mgr=7 and e.deptno=8 and e.mgr=8);",
+        "output_sql": "SELECT \"EMPNO\"\nFROM \"EMP\"\nWHERE \"MGR\" IS NOT NULL OR \"DEPTNO\" <> 8;"
+    },
+    {
+        "rule": "OrAlwaysTrue",
+        "input_sql": "SELECT *\nFROM (SELECT \"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"SLACKER\"\nFROM \"EMPNULLABLES\"\nWHERE \"DEPTNO\" = 20 AND \"SAL\" > 1000) AS \"t0\"\nWHERE \"SAL\" IS NULL OR \"SAL\" IS NOT NULL;",
+        "output_sql": "SELECT \"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"SLACKER\"\nFROM \"EMPNULLABLES\"\nWHERE \"DEPTNO\" = 20 AND \"SAL\" > 1000;"
+    },
+    {
+        "rule": "IsNullPushDown",
+        "input_sql": "select empno, deptno, w_count from (\n  select empno, deptno, count(empno) over (ROWS BETWEEN 10 PRECEDING AND 1 PRECEDING) w_count\n  from emp\n) sub_query where w_count is null;",
+        "output_sql": "SELECT \"EMPNO\", \"DEPTNO\", \"$2\" AS \"W_COUNT\"\nFROM (VALUES (NULL, NULL, NULL)) AS \"t\" (\"EMPNO\", \"DEPTNO\", \"$2\")\nWHERE 1 = 0;"
+    },
+    {
+        "rule": "PushProjectWithOverPastJoin",
+        "input_sql": "select e.sal + b.comm,\ncount(e.empno) over (partition by e.deptno)\nfrom emp e join bonus b\non e.ename = b.ename and e.deptno = 10;",
+        "output_sql": "SELECT \"t0\".\"SAL\" + \"t1\".\"COMM\", COUNT(\"t0\".\"EMPNO\") OVER (PARTITION BY \"t0\".\"DEPTNO\" ORDER BY \"t0\".\"DEPTNO\" RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)\nFROM (SELECT \"EMPNO\", \"ENAME\", \"SAL\", \"DEPTNO\", \"DEPTNO\" = 10 AS \"EXPR$0\"\nFROM \"EMP\") AS \"t0\"\nINNER JOIN (SELECT \"ENAME\", \"COMM\"\nFROM \"BONUS\") AS \"t1\" ON \"t0\".\"ENAME\" = \"t1\".\"ENAME\" AND \"t0\".\"EXPR$0\";"
+    },
+    {
+        "rule": "PushProjectWithOverPastJoin",
+        "input_sql": "select e.sal + b.comm,\ncount(b.sal) over (partition by b.job)\nfrom emp e join bonus b\non e.ename = b.ename and e.deptno = 10;",
+        "output_sql": "SELECT \"t0\".\"SAL\" + \"t1\".\"COMM\", COUNT(\"t1\".\"SAL\") OVER (PARTITION BY \"t1\".\"JOB\" ORDER BY \"t1\".\"JOB\" RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)\nFROM (SELECT \"ENAME\", \"SAL\", \"DEPTNO\" = 10 AS \"EXPR$0\"\nFROM \"EMP\") AS \"t0\"\nINNER JOIN (SELECT *\nFROM \"BONUS\") AS \"t1\" ON \"t0\".\"ENAME\" = \"t1\".\"ENAME\" AND \"t0\".\"EXPR$0\";"
+    },
+    {
+        "rule": "PushProjectWithOverPastJoin",
+        "input_sql": "select e.sal + b.comm,\nsum(b.sal + b.sal + 100) over (partition by b.job)\nfrom emp e join bonus b\non e.ename = b.ename and e.deptno = 10;",
+        "output_sql": "SELECT \"t0\".\"SAL\" + \"t1\".\"COMM\", SUM(\"t1\".\"EXPR$0\") OVER (PARTITION BY \"t1\".\"JOB\" ORDER BY \"t1\".\"JOB\" RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)\nFROM (SELECT \"ENAME\", \"SAL\", \"DEPTNO\" = 10 AS \"EXPR$0\"\nFROM \"EMP\") AS \"t0\"\nINNER JOIN (SELECT \"ENAME\", \"JOB\", \"COMM\", \"SAL\" + \"SAL\" + 100 AS \"EXPR$0\"\nFROM \"BONUS\") AS \"t1\" ON \"t0\".\"ENAME\" = \"t1\".\"ENAME\" AND \"t0\".\"EXPR$0\";"
+    },
+    {
+        "rule": "PullConstantThroughUnion",
+        "input_sql": "select 2, deptno, job from emp as e1\nunion all\nselect 2, deptno, job from emp as e2;",
+        "output_sql": "SELECT 2, \"DEPTNO\", \"JOB\"\nFROM (SELECT \"DEPTNO\", \"JOB\"\nFROM \"EMP\"\nUNION ALL\nSELECT \"DEPTNO\", \"JOB\"\nFROM \"EMP\") AS \"t4\";"
+    },
+    {
+        "rule": "WhereNotInCorrelated",
+        "input_sql": "select * from emp e1\n  where e1.empno NOT IN\n   (select empno from (select ename, empno, sal as r from emp) e2\n    where r > 2 and e1.ename= e2.ename);",
+        "output_sql": "SELECT \"EMP4\".\"EMPNO\", \"EMP4\".\"ENAME\", \"EMP4\".\"JOB\", \"EMP4\".\"MGR\", \"EMP4\".\"HIREDATE\", \"EMP4\".\"SAL\", \"EMP4\".\"COMM\", \"EMP4\".\"DEPTNO\", \"EMP4\".\"SLACKER\"\nFROM \"EMP\" AS \"EMP4\"\nLEFT JOIN (SELECT COUNT(*) AS \"c\", COUNT(*) AS \"ck\", \"ENAME\"\nFROM (SELECT \"ENAME\", \"EMPNO\", \"SAL\" AS \"r\"\nFROM \"EMP\") AS \"t15\"\nWHERE \"r\" > 2\nGROUP BY \"ENAME\") AS \"t19\" ON \"EMP4\".\"ENAME\" = \"t19\".\"ENAME\"\nLEFT JOIN (SELECT \"EMPNO\", TRUE AS \"i\", \"ENAME\"\nFROM (SELECT \"ENAME\", \"EMPNO\", \"SAL\" AS \"r\"\nFROM \"EMP\") AS \"t20\"\nWHERE \"r\" > 2) AS \"t22\" ON \"EMP4\".\"EMPNO\" = \"t22\".\"EMPNO\" AND \"EMP4\".\"ENAME\" = \"t22\".\"ENAME\"\nWHERE \"t19\".\"c\" = 0 OR (\"t22\".\"i\" IS NOT NULL OR \"t19\".\"ck\" < \"t19\".\"c\") IS NOT TRUE;"
+    },
+    {
+        "rule": "WhereNotInCorrelated",
+        "input_sql": "select sal from emp\nwhere empno NOT IN (\n  select deptno from dept\n  where emp.job = dept.name);",
+        "output_sql": "SELECT \"EMP1\".\"SAL\"\nFROM \"EMP\" AS \"EMP1\"\nLEFT JOIN (SELECT COUNT(*) AS \"c\", COUNT(*) AS \"ck\", \"NAME\"\nFROM \"DEPT\"\nGROUP BY \"NAME\") AS \"t14\" ON \"EMP1\".\"JOB\" = \"t14\".\"NAME\"\nLEFT JOIN (SELECT \"DEPTNO\", TRUE AS \"i\", \"NAME\"\nFROM \"DEPT\") AS \"t15\" ON \"EMP1\".\"EMPNO\" = \"t15\".\"DEPTNO\" AND \"EMP1\".\"JOB\" = \"t15\".\"NAME\"\nWHERE \"t14\".\"c\" = 0 OR (\"t15\".\"i\" IS NOT NULL OR \"t14\".\"ck\" < \"t14\".\"c\") IS NOT TRUE;"
+    },
+    {
+        "rule": "JoinConditionPushdown",
+        "input_sql": "select *\nfrom emp e1, emp e2, dept d2\nwhere e1.deptno = d2.deptno and e2.deptno = d2.deptno;",
+        "output_sql": "SELECT *\nFROM \"EMP\" AS \"EMP1\"\nINNER JOIN \"EMP\" AS \"EMP2\" ON \"EMP1\".\"DEPTNO\" = \"EMP2\".\"DEPTNO\"\nINNER JOIN \"DEPT\" AS \"DEPT0\" ON \"EMP1\".\"DEPTNO\" = \"DEPT0\".\"DEPTNO\";"
+    },
+    {
+        "rule": "JoinConditionPushdown",
+        "input_sql": "select *\nfrom emp e, dept d\nwhere e.deptno = d.deptno and e.empno = d.deptno;",
+        "output_sql": "SELECT *\nFROM (SELECT *\nFROM \"EMP\"\nWHERE \"DEPTNO\" = \"EMPNO\") AS \"t1\"\nINNER JOIN \"DEPT\" AS \"DEPT0\" ON \"t1\".\"DEPTNO\" = \"DEPT0\".\"DEPTNO\";"
+    },
+    {
+        "rule": "JoinConditionPushdown",
+        "input_sql": "SELECT \"DEPTNO\"\nFROM (SELECT \"DEPTNO\", \"ENAME\"\nFROM \"SCOTT_EMP\"\nWHERE EXISTS (SELECT 1\nFROM (SELECT \"DEPTNO\", \"DNAME\"\nFROM \"SCOTT_DEPT\") AS \"t0\"\nWHERE \"DEPTNO\" = \"t0\".\"DEPTNO\" AND \"DEPTNO\" = \"t0\".\"DNAME\")) AS \"t\";",
+        "output_sql": "SELECT \"DEPTNO\"\nFROM (SELECT *\nFROM \"SCOTT_EMP\"\nWHERE EXISTS (SELECT 1\nFROM (SELECT *\nFROM (SELECT \"DEPTNO\", \"DNAME\"\nFROM \"SCOTT_DEPT\") AS \"t3\"\nWHERE \"DEPTNO\" = \"DNAME\") AS \"t4\"\nWHERE \"EMP0\".\"DEPTNO\" = \"t4\".\"DEPTNO\")) AS \"EMP0\";"
+    },
+    {
+        "rule": "JoinConditionPushdown",
+        "input_sql": "select *\nfrom emp e right join dept d\non e.deptno = d.deptno and e.empno = d.deptno;",
+        "output_sql": "SELECT *\nFROM (SELECT *\nFROM \"EMP\"\nWHERE \"DEPTNO\" = \"EMPNO\") AS \"t0\"\nRIGHT JOIN \"DEPT\" AS \"DEPT0\" ON \"t0\".\"DEPTNO\" = \"DEPT0\".\"DEPTNO\";"
+    },
+    {
+        "rule": "WhereExpressionInCorrelated",
+        "input_sql": "select ename from (\n  select ename, deptno, sal + 1 as salPlus from emp) as e\nwhere deptno in (\n  select deptno from emp where sal + 1 = e.salPlus);",
+        "output_sql": "SELECT \"t11\".\"ENAME\"\nFROM (SELECT \"ENAME\", \"DEPTNO\", \"SAL\" + 1 AS \"SALPLUS\"\nFROM \"EMP\") AS \"t11\"\nINNER JOIN (SELECT \"DEPTNO\", \"SAL\" + 1 AS \"$f9\"\nFROM \"EMP\"\nGROUP BY \"DEPTNO\", \"SAL\" + 1) AS \"t13\" ON \"t11\".\"SALPLUS\" = \"t13\".\"$f9\" AND \"t11\".\"DEPTNO\" = \"t13\".\"DEPTNO\";"
+    },
+    {
+        "rule": "LeftCorrelateWithBothEmpty",
+        "input_sql": "SELECT *\nFROM (SELECT *\nFROM (VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)) AS \"t\" (\"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO\")\nWHERE 1 = 0) AS \"$cor0\",\nLATERAL (SELECT *\nFROM (VALUES (NULL, NULL, NULL)) AS \"t\" (\"DEPTNO\", \"DNAME\", \"LOC\")\nWHERE 1 = 0) AS \"t0\";",
+        "output_sql": "SELECT \"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO\", CAST(NULL AS TINYINT) AS \"DEPTNO0\", CAST(NULL AS VARCHAR(14) CHARACTER SET \"ISO-8859-1\") AS \"DNAME\", CAST(NULL AS VARCHAR(13) CHARACTER SET \"ISO-8859-1\") AS \"LOC\"\nFROM (VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)) AS \"t\" (\"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO\")\nWHERE 1 = 0;"
+    },
+    {
+        "rule": "LeftCorrelateWithBothEmpty",
+        "input_sql": "SELECT *\nFROM (SELECT *\nFROM (VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)) AS \"t\" (\"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO\")\nWHERE 1 = 0) AS \"$cor0\",\nLATERAL (SELECT *\nFROM (VALUES (NULL, NULL, NULL)) AS \"t\" (\"DEPTNO\", \"DNAME\", \"LOC\")\nWHERE 1 = 0) AS \"t0\";",
+        "output_sql": "SELECT *\nFROM (VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)) AS \"t\" (\"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO\", \"DEPTNO0\", \"DNAME\", \"LOC\")\nWHERE 1 = 0;"
+    },
+    {
+        "rule": "LeftCorrelateWithBothEmpty",
+        "input_sql": "SELECT *\nFROM (SELECT *\nFROM (VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)) AS \"t\" (\"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO\")\nWHERE 1 = 0) AS \"$cor0\",\nLATERAL (SELECT *\nFROM (VALUES (NULL, NULL, NULL)) AS \"t\" (\"DEPTNO\", \"DNAME\", \"LOC\")\nWHERE 1 = 0) AS \"t0\";",
+        "output_sql": "SELECT \"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO\", CAST(NULL AS TINYINT) AS \"DEPTNO0\", CAST(NULL AS VARCHAR(14) CHARACTER SET \"ISO-8859-1\") AS \"DNAME\", CAST(NULL AS VARCHAR(13) CHARACTER SET \"ISO-8859-1\") AS \"LOC\"\nFROM (VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)) AS \"t\" (\"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO\")\nWHERE 1 = 0;"
+    },
+    {
+        "rule": "ReduceConstantsDup",
+        "input_sql": "select *\nfrom emp\nwhere deptno=7 and deptno=8\nand empno = 10 and mgr is null and empno = 10;",
+        "output_sql": "SELECT 10 AS \"EMPNO\", \"ENAME\", \"JOB\", CAST(NULL AS INTEGER) AS \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO\", \"SLACKER\"\nFROM (VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)) AS \"t\" (\"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO\", \"SLACKER\")\nWHERE 1 = 0;"
+    },
+    {
+        "rule": "ReduceConstantsDup",
+        "input_sql": "select d.deptno from dept d where d.deptno<>7 or d.deptno<>8;",
+        "output_sql": "SELECT \"DEPTNO\"\nFROM \"DEPT\";"
+    },
+    {
+        "rule": "AggregateRemove",
+        "input_sql": "select empno, sum(sal), min(sal), max(sal), bit_and(distinct sal), bit_or(sal), count(distinct sal) from emp group by empno, deptno;",
+        "output_sql": "SELECT \"EMPNO\", \"SAL\", \"SAL\", \"SAL\", \"SAL\", \"SAL\", 1\nFROM \"EMP\";"
+    },
+    {
+        "rule": "AggregateRemove",
+        "input_sql": "select distinct empno, deptno from emp;",
+        "output_sql": "SELECT \"EMPNO\", \"DEPTNO\"\nFROM \"EMP\";"
+    },
+    {
+        "rule": "AggregateRemove",
+        "input_sql": "select empno, count(mgr) from emp group by empno, deptno;",
+        "output_sql": "SELECT \"EMPNO\", CASE WHEN \"MGR\" IS NOT NULL THEN 1 ELSE 0 END\nFROM \"EMP\";"
+    },
+    {
+        "rule": "AggregateRemove",
+        "input_sql": "select mgr, sum(sum_sal)\nfrom\n(select mgr, deptno, sum(sal) sum_sal\n from emp\n group by mgr, deptno)\nwhere deptno=100\ngroup by mgr;",
+        "output_sql": "SELECT \"MGR\", SUM(\"SAL\") AS \"SUM_SAL\"\nFROM \"EMP\"\nGROUP BY \"MGR\", \"DEPTNO\"\nHAVING \"DEPTNO\" = 100;"
+    },
+    {
+        "rule": "PushAggregateThroughOuterJoin",
+        "input_sql": "select e.ename\nfrom (select * from emp where ename = 'A') as e\nleft outer join dept as d on e.job = d.name\ngroup by e.ename;",
+        "output_sql": "SELECT \"t4\".\"ENAME\"\nFROM (SELECT \"ENAME\", \"JOB\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"ENAME\", \"JOB\") AS \"t4\"\nLEFT JOIN (SELECT \"NAME\"\nFROM \"DEPT\"\nGROUP BY \"NAME\") AS \"t5\" ON \"t4\".\"JOB\" = \"t5\".\"NAME\"\nGROUP BY \"t4\".\"ENAME\";"
+    },
+    {
+        "rule": "PushAggregateThroughOuterJoin",
+        "input_sql": "select d.ename\nfrom (select * from emp where ename = 'A') as e\nleft outer join emp as d on e.job = d.job\ngroup by d.ename;",
+        "output_sql": "SELECT \"t5\".\"ENAME\"\nFROM (SELECT \"JOB\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"JOB\") AS \"t4\"\nLEFT JOIN (SELECT \"ENAME\", \"JOB\"\nFROM \"EMP\"\nGROUP BY \"ENAME\", \"JOB\") AS \"t5\" ON \"t4\".\"JOB\" = \"t5\".\"JOB\"\nGROUP BY \"t5\".\"ENAME\";"
+    },
+    {
+        "rule": "PushAggregateThroughOuterJoin",
+        "input_sql": "select e.ename, d.mgr\nfrom (select * from emp where ename = 'A') as e\nleft outer join emp as d on e.job = d.job\ngroup by e.ename,d.mgr;",
+        "output_sql": "SELECT \"t4\".\"ENAME\", \"t5\".\"MGR\"\nFROM (SELECT \"ENAME\", \"JOB\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"ENAME\", \"JOB\") AS \"t4\"\nLEFT JOIN (SELECT \"JOB\", \"MGR\"\nFROM \"EMP\"\nGROUP BY \"JOB\", \"MGR\") AS \"t5\" ON \"t4\".\"JOB\" = \"t5\".\"JOB\"\nGROUP BY \"t4\".\"ENAME\", \"t5\".\"MGR\";"
+    },
+    {
+        "rule": "PushAggregateThroughOuterJoin",
+        "input_sql": "select e.job\nfrom (select * from emp where ename = 'A') as e\nleft outer join dept as d on e.job = d.name\ngroup by e.job;",
+        "output_sql": "SELECT \"t4\".\"JOB\"\nFROM (SELECT \"JOB\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"JOB\") AS \"t4\"\nLEFT JOIN (SELECT \"NAME\"\nFROM \"DEPT\"\nGROUP BY \"NAME\") AS \"t5\" ON \"t4\".\"JOB\" = \"t5\".\"NAME\";"
+    },
+    {
+        "rule": "PushAggregateThroughOuterJoin",
+        "input_sql": "select d.name\nfrom (select * from emp where ename = 'A') as e\nleft outer join dept as d on e.job = d.name\ngroup by d.name;",
+        "output_sql": "SELECT \"t5\".\"NAME\"\nFROM (SELECT \"JOB\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"JOB\") AS \"t4\"\nLEFT JOIN (SELECT \"NAME\"\nFROM \"DEPT\"\nGROUP BY \"NAME\") AS \"t5\" ON \"t4\".\"JOB\" = \"t5\".\"NAME\"\nGROUP BY \"t5\".\"NAME\";"
+    },
+    {
+        "rule": "PushAggregateThroughOuterJoin",
+        "input_sql": "select e.job,d.name\nfrom (select * from emp where ename = 'A') as e\nleft outer join dept as d on e.job = d.name\ngroup by e.job,d.name;",
+        "output_sql": "SELECT *\nFROM (SELECT \"JOB\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"JOB\") AS \"t4\"\nLEFT JOIN (SELECT \"NAME\"\nFROM \"DEPT\"\nGROUP BY \"NAME\") AS \"t5\" ON \"t4\".\"JOB\" = \"t5\".\"NAME\";"
+    },
+    {
+        "rule": "PushAggregateThroughOuterJoin",
+        "input_sql": "select e.job\nfrom (select * from emp where ename = 'A') as e\nleft outer join dept as d on e.job = d.name\nand e.deptno + e.empno = d.deptno + 5\ngroup by e.job;",
+        "output_sql": "SELECT \"t5\".\"JOB\"\nFROM (SELECT \"JOB\", \"DEPTNO\" + \"EMPNO\" AS \"$f9\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"JOB\", \"DEPTNO\" + \"EMPNO\") AS \"t5\"\nLEFT JOIN (SELECT \"NAME\", \"DEPTNO\" + 5 AS \"$f2\"\nFROM \"DEPT\"\nGROUP BY \"NAME\", \"DEPTNO\" + 5) AS \"t7\" ON \"t5\".\"JOB\" = \"t7\".\"NAME\" AND \"t5\".\"$f9\" = \"t7\".\"$f2\"\nGROUP BY \"t5\".\"JOB\";"
+    },
+    {
+        "rule": "PushAggregateThroughOuterJoin",
+        "input_sql": "select d.name\nfrom (select * from emp where ename = 'A') as e\nleft outer join dept as d on e.job = d.name\nand e.deptno + e.empno = d.deptno + 5\ngroup by d.name;",
+        "output_sql": "SELECT \"t7\".\"NAME\"\nFROM (SELECT \"JOB\", \"DEPTNO\" + \"EMPNO\" AS \"$f9\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"JOB\", \"DEPTNO\" + \"EMPNO\") AS \"t5\"\nLEFT JOIN (SELECT \"NAME\", \"DEPTNO\" + 5 AS \"$f2\"\nFROM \"DEPT\"\nGROUP BY \"NAME\", \"DEPTNO\" + 5) AS \"t7\" ON \"t5\".\"JOB\" = \"t7\".\"NAME\" AND \"t5\".\"$f9\" = \"t7\".\"$f2\"\nGROUP BY \"t7\".\"NAME\";"
+    },
+    {
+        "rule": "PushAggregateThroughOuterJoin",
+        "input_sql": "select e.job, d.name\nfrom (select * from emp where ename = 'A') as e\nleft outer join dept as d on e.job = d.name\nand e.deptno + e.empno = d.deptno + 5\ngroup by e.job, d.name;",
+        "output_sql": "SELECT \"t5\".\"JOB\", \"t7\".\"NAME\"\nFROM (SELECT \"JOB\", \"DEPTNO\" + \"EMPNO\" AS \"$f9\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"JOB\", \"DEPTNO\" + \"EMPNO\") AS \"t5\"\nLEFT JOIN (SELECT \"NAME\", \"DEPTNO\" + 5 AS \"$f2\"\nFROM \"DEPT\"\nGROUP BY \"NAME\", \"DEPTNO\" + 5) AS \"t7\" ON \"t5\".\"JOB\" = \"t7\".\"NAME\" AND \"t5\".\"$f9\" = \"t7\".\"$f2\"\nGROUP BY \"t5\".\"JOB\", \"t7\".\"NAME\";"
+    },
+    {
+        "rule": "DistinctCountGroupingSets",
+        "input_sql": "select deptno, job, count(distinct ename)\nfrom emp group by rollup(deptno,job);",
+        "output_sql": "SELECT \"DEPTNO\", \"JOB\", COUNT(\"ENAME\") FILTER (WHERE \"$g_0\")\nFROM (SELECT \"DEPTNO\", \"JOB\", \"ENAME\", GROUPING(\"DEPTNO\", \"JOB\", \"ENAME\") = 0 AS \"$g_0\"\nFROM \"EMP\"\nGROUP BY \"DEPTNO\", \"JOB\", \"ENAME\") AS \"t3\"\nGROUP BY ROLLUP(\"DEPTNO\", \"JOB\");"
+    },
+    {
+        "rule": "DistinctCountGroupingSets",
+        "input_sql": "select deptno, job, count(distinct ename), sum(sal)\nfrom emp group by rollup(deptno,job);",
+        "output_sql": "SELECT \"DEPTNO\", \"JOB\", COUNT(\"ENAME\") FILTER (WHERE \"$g_0\"), CAST(MIN(\"EXPR$3\") FILTER (WHERE \"$g_1\") AS INTEGER)\nFROM (SELECT \"DEPTNO\", \"JOB\", \"ENAME\", SUM(\"SAL\") AS \"EXPR$3\", GROUPING(\"DEPTNO\", \"JOB\", \"ENAME\") = 0 AS \"$g_0\", GROUPING(\"DEPTNO\", \"JOB\", \"ENAME\") = 1 AS \"$g_1\"\nFROM \"EMP\"\nGROUP BY GROUPING SETS((\"DEPTNO\", \"JOB\", \"ENAME\"), (\"DEPTNO\", \"JOB\"))) AS \"t3\"\nGROUP BY ROLLUP(\"DEPTNO\", \"JOB\");"
+    },
+    {
+        "rule": "EmptySort",
+        "input_sql": "select * from emp where false order by deptno;",
+        "output_sql": "SELECT *\nFROM (VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)) AS \"t\" (\"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO\", \"SLACKER\")\nWHERE 1 = 0;"
+    },
+    {
+        "rule": "ReduceConstantsDupNot",
+        "input_sql": "select d.deptno from dept d where not(d.deptno=7 and d.deptno=8);",
+        "output_sql": "SELECT \"DEPTNO\"\nFROM \"DEPT\";"
+    },
+    {
+        "rule": "ExpressionSimplification",
+        "input_sql": "select * from emp\nwhere ename <> '' and ename <> '3';",
+        "output_sql": "SELECT *\nFROM \"EMP\"\nWHERE \"ENAME\" NOT IN ('', '3');"
+    },
+    {
+        "rule": "ExpressionSimplification",
+        "input_sql": "select * from emp\nwhere (ename < '' or ename > '') and (ename < '3' or ename > '3');",
+        "output_sql": "SELECT *\nFROM \"EMP\"\nWHERE \"ENAME\" NOT IN ('', '3');"
+    },
+    {
+        "rule": "SortUnionTranspose",
+        "input_sql": "select a.name from dept a\nunion all\nselect b.name from dept b\norder by name limit 10;",
+        "output_sql": "SELECT *\nFROM ((SELECT \"NAME\"\nFROM \"DEPT\"\nORDER BY \"NAME\"\nFETCH NEXT 10 ROWS ONLY)\nUNION ALL\n(SELECT \"NAME\"\nFROM \"DEPT\"\nORDER BY \"NAME\"\nFETCH NEXT 10 ROWS ONLY))\nORDER BY \"NAME\"\nFETCH NEXT 10 ROWS ONLY;"
+    },
+    {
+        "rule": "IsNullPushDown",
+        "input_sql": "select empno, deptno, w_count from (\n  select empno, deptno, count(empno) over (w) w_count\n  from emp\n  window w as (partition by deptno order by empno)\n) sub_query where w_count is null;",
+        "output_sql": "SELECT \"EMPNO\", \"DEPTNO\", \"$2\" AS \"W_COUNT\"\nFROM (VALUES (NULL, NULL, NULL)) AS \"t\" (\"EMPNO\", \"DEPTNO\", \"$2\")\nWHERE 1 = 0;"
+    },
+    {
+        "rule": "PullAggregateThroughUnion",
+        "input_sql": "select deptno, job from (select deptno, job from emp as e1 group by deptno,job  union all select deptno, job from emp as e2 group by deptno,job) group by deptno,job;",
+        "output_sql": "SELECT \"DEPTNO\", \"JOB\"\nFROM (SELECT \"DEPTNO\", \"JOB\"\nFROM \"EMP\"\nUNION ALL\nSELECT \"DEPTNO\", \"JOB\"\nFROM \"EMP\") AS \"t7\"\nGROUP BY \"DEPTNO\", \"JOB\";"
+    },
+    {
+        "rule": "ReduceNullableToNotNull",
+        "input_sql": "select\n  empno + case when 'a' = 'a' then 1 else null end as newcol\nfrom emp;",
+        "output_sql": "SELECT \"EMPNO\" + 1 AS \"NEWCOL\"\nFROM \"EMP\";"
+    },
+    {
+        "rule": "AggregateJoinRemove",
+        "input_sql": "SELECT e.deptno, COUNT(DISTINCT d1.name, d2.name)\nFROM emp e\nLEFT JOIN dept d1 ON e.deptno = d1.deptno\nLEFT JOIN dept d2 ON e.deptno = d2.deptno\nGROUP BY e.deptno;",
+        "output_sql": "SELECT \"EMP0\".\"DEPTNO\", COUNT(DISTINCT \"DEPT1\".\"NAME\", \"DEPT2\".\"NAME\")\nFROM \"EMP\" AS \"EMP0\"\nLEFT JOIN \"DEPT\" AS \"DEPT1\" ON \"EMP0\".\"DEPTNO\" = \"DEPT1\".\"DEPTNO\"\nLEFT JOIN \"DEPT\" AS \"DEPT2\" ON \"EMP0\".\"DEPTNO\" = \"DEPT2\".\"DEPTNO\"\nGROUP BY \"EMP0\".\"DEPTNO\";"
+    },
+    {
+        "rule": "AggregateJoinRemove",
+        "input_sql": "select e.deptno, count(distinct e.slacker)\nfrom emp e\nleft outer join dept d on e.deptno = d.deptno\ngroup by e.deptno;",
+        "output_sql": "SELECT \"DEPTNO\", COUNT(DISTINCT \"SLACKER\")\nFROM \"EMP\"\nGROUP BY \"DEPTNO\";"
+    },
+    {
+        "rule": "ProjectJoinRemove",
+        "input_sql": "SELECT e.deptno, e.slacker\nFROM emp e\nLEFT JOIN dept d ON e.deptno = d.deptno;",
+        "output_sql": "SELECT \"DEPTNO\", \"SLACKER\"\nFROM \"EMP\";"
+    },
+    {
+        "rule": "SortJoinTranspose",
+        "input_sql": "select * from emp e left join (\n  select * from dept d) d on e.deptno = d.deptno\norder by sal limit 10;",
+        "output_sql": "SELECT \"t2\".\"EMPNO\", \"t2\".\"ENAME\", \"t2\".\"JOB\", \"t2\".\"MGR\", \"t2\".\"HIREDATE\", \"t2\".\"SAL\", \"t2\".\"COMM\", \"t2\".\"DEPTNO\", \"t2\".\"SLACKER\", \"t3\".\"DEPTNO\" AS \"DEPTNO0\", \"t3\".\"NAME\"\nFROM (SELECT \"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO\", \"SLACKER\"\nFROM \"EMP\"\nORDER BY \"SAL\"\nFETCH NEXT 10 ROWS ONLY) AS \"t2\"\nLEFT JOIN (SELECT *\nFROM \"DEPT\") AS \"t3\" ON \"t2\".\"DEPTNO\" = \"t3\".\"DEPTNO\"\nORDER BY \"t2\".\"SAL\"\nFETCH NEXT 10 ROWS ONLY;"
+    },
+    {
+        "rule": "SortJoinTranspose",
+        "input_sql": "select * from emp e right join (\n  select * from dept d) d on e.deptno = d.deptno\norder by name;",
+        "output_sql": "SELECT \"EMP0\".\"EMPNO\", \"EMP0\".\"ENAME\", \"EMP0\".\"JOB\", \"EMP0\".\"MGR\", \"EMP0\".\"HIREDATE\", \"EMP0\".\"SAL\", \"EMP0\".\"COMM\", \"EMP0\".\"DEPTNO\", \"EMP0\".\"SLACKER\", \"t3\".\"DEPTNO\" AS \"DEPTNO0\", \"t3\".\"NAME\"\nFROM \"EMP\" AS \"EMP0\"\nRIGHT JOIN (SELECT \"DEPTNO\", \"NAME\"\nFROM \"DEPT\"\nORDER BY \"NAME\") AS \"t3\" ON \"EMP0\".\"DEPTNO\" = \"t3\".\"DEPTNO\"\nORDER BY \"t3\".\"NAME\";"
+    },
+    {
+        "rule": "SortJoinTranspose",
+        "input_sql": "select * from emp e right join (\n  select * from dept d) d on e.deptno = d.deptno\norder by name;",
+        "output_sql": "SELECT \"EMP0\".\"EMPNO\", \"EMP0\".\"ENAME\", \"EMP0\".\"JOB\", \"EMP0\".\"MGR\", \"EMP0\".\"HIREDATE\", \"EMP0\".\"SAL\", \"EMP0\".\"COMM\", \"EMP0\".\"DEPTNO\", \"EMP0\".\"SLACKER\", \"t3\".\"DEPTNO\" AS \"DEPTNO0\", \"t3\".\"NAME\"\nFROM \"EMP\" AS \"EMP0\"\nRIGHT JOIN (SELECT \"DEPTNO\", \"NAME\"\nFROM \"DEPT\"\nORDER BY \"NAME\") AS \"t3\" ON \"EMP0\".\"DEPTNO\" = \"t3\".\"DEPTNO\"\nORDER BY \"t3\".\"NAME\";"
+    },
+    {
+        "rule": "SortJoinTranspose",
+        "input_sql": "select d.deptno, empno from dept d\nright join emp e using (deptno) limit 10 offset 2;",
+        "output_sql": "SELECT \"DEPT0\".\"DEPTNO\", \"t1\".\"EMPNO\"\nFROM \"DEPT\" AS \"DEPT0\"\nRIGHT JOIN (SELECT \"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO\", \"SLACKER\"\nFROM \"EMP\"\nOFFSET 2 ROWS\nFETCH NEXT 10 ROWS ONLY) AS \"t1\" ON \"DEPT0\".\"DEPTNO\" = \"t1\".\"DEPTNO\"\nOFFSET 2 ROWS\nFETCH NEXT 10 ROWS ONLY;"
+    },
+    {
+        "rule": "JoinDeriveIsNotNullFilterRule",
+        "input_sql": "select t1.deptno from emp t1 inner join emp t2 on t1.mgr = t2.mgr;",
+        "output_sql": "SELECT \"t0\".\"DEPTNO\"\nFROM (SELECT *\nFROM \"EMP\"\nWHERE \"MGR\" IS NOT NULL) AS \"t0\"\nINNER JOIN (SELECT *\nFROM \"EMP\"\nWHERE \"MGR\" IS NOT NULL) AS \"t1\" ON \"t0\".\"MGR\" = \"t1\".\"MGR\";"
+    },
+    {
+        "rule": "JoinDeriveIsNotNullFilterRule",
+        "input_sql": "select t1.deptno from (select * from emp where mgr is not null) t1 join emp t2 on t1.mgr = t2.mgr;",
+        "output_sql": "SELECT \"t3\".\"DEPTNO\"\nFROM (SELECT *\nFROM \"EMP\"\nWHERE \"MGR\" IS NOT NULL) AS \"t3\"\nINNER JOIN (SELECT *\nFROM \"EMP\"\nWHERE \"MGR\" IS NOT NULL) AS \"t4\" ON \"t3\".\"MGR\" = \"t4\".\"MGR\";"
+    },
+    {
+        "rule": "JoinDeriveIsNotNullFilterRule",
+        "input_sql": "select t1.deptno from emp t1 inner join emp t2 on t1.mgr > t2.mgr;",
+        "output_sql": "SELECT \"t0\".\"DEPTNO\"\nFROM (SELECT *\nFROM \"EMP\"\nWHERE \"MGR\" IS NOT NULL) AS \"t0\"\nINNER JOIN (SELECT *\nFROM \"EMP\"\nWHERE \"MGR\" IS NOT NULL) AS \"t1\" ON \"t0\".\"MGR\" > \"t1\".\"MGR\";"
+    },
+    {
+        "rule": "JoinDeriveIsNotNullFilterRule",
+        "input_sql": "select t1.deptno from empnullables t1 inner join\nempnullables t2 on t1.ename = t2.ename and t1.mgr > t2.mgr;",
+        "output_sql": "SELECT \"t0\".\"DEPTNO\"\nFROM (SELECT *\nFROM \"EMPNULLABLES\"\nWHERE \"ENAME\" IS NOT NULL AND \"MGR\" IS NOT NULL) AS \"t0\"\nINNER JOIN (SELECT *\nFROM \"EMPNULLABLES\"\nWHERE \"ENAME\" IS NOT NULL AND \"MGR\" IS NOT NULL) AS \"t1\" ON \"t0\".\"ENAME\" = \"t1\".\"ENAME\" AND \"t0\".\"MGR\" > \"t1\".\"MGR\";"
+    },
+    {
+        "rule": "JoinDeriveIsNotNullFilterRule",
+        "input_sql": "select t1.deptno from (select ename, deptno+1 as deptno from\nempnullables where ename is not null) t1 inner join\nempnullables t2 on t1.ename = t2.ename;",
+        "output_sql": "SELECT \"t3\".\"DEPTNO\"\nFROM (SELECT \"ENAME\", \"DEPTNO\" + 1 AS \"DEPTNO\"\nFROM \"EMPNULLABLES\"\nWHERE \"ENAME\" IS NOT NULL) AS \"t3\"\nINNER JOIN (SELECT *\nFROM \"EMPNULLABLES\"\nWHERE \"ENAME\" IS NOT NULL) AS \"t4\" ON \"t3\".\"ENAME\" = \"t4\".\"ENAME\";"
+    },
+    {
+        "rule": "AggregateMerge",
+        "input_sql": "select deptno c, min(y), max(z) z,\nsum(r), sum(m) n, sum(x) sal from (\n   select deptno, ename, sum(sal) x, max(sal) z,\n      min(sal) y, count(hiredate) m, count(mgr) r\n   from emp group by deptno, ename) t\ngroup by deptno;",
+        "output_sql": "SELECT \"DEPTNO\", MIN(\"SAL\"), MAX(\"SAL\") AS \"z\", COUNT(\"MGR\"), COUNT(*) AS \"n\", SUM(\"SAL\") AS \"SAL\"\nFROM \"EMP\"\nGROUP BY \"DEPTNO\";"
+    },
+    {
+        "rule": "AggregateMerge",
+        "input_sql": "select deptno, empno, sum(x), sum(y)\nfrom (\n  select ename, empno, deptno, sum(sal) x, count(mgr) y\n    from emp\n  group by deptno, ename, empno) t\ngroup by grouping sets(deptno, empno);",
+        "output_sql": "SELECT \"DEPTNO\", \"EMPNO\", SUM(\"SAL\"), COUNT(\"MGR\")\nFROM \"EMP\"\nGROUP BY GROUPING SETS(\"EMPNO\", \"DEPTNO\");"
+    },
+    {
+        "rule": "AggregateMerge",
+        "input_sql": "select sum(x) x, min(y) z from (\n  select sum(sal) x, min(sal) y from emp);",
+        "output_sql": "SELECT SUM(\"SAL\") AS \"x\", MIN(\"SAL\") AS \"z\"\nFROM \"EMP\";"
+    },
+    {
+        "rule": "ReduceConstantsDupNot",
+        "input_sql": "select d.deptno from dept d where not(d.deptno=7 and d.name='foo' and d.deptno=8);",
+        "output_sql": "SELECT \"DEPTNO\"\nFROM \"DEPT\";"
+    },
+    {
+        "rule": "ReduceConstantsDupNotNull",
+        "input_sql": "select e.empno from emp e where not(e.mgr=7 and e.mgr=8);",
+        "output_sql": "SELECT \"EMPNO\"\nFROM \"EMP\"\nWHERE \"MGR\" IS NOT NULL;"
+    },
+    {
+        "rule": "PushAggregateThroughOuterJoin",
+        "input_sql": "select e.job\nfrom (select * from emp where ename = 'A') as e\nright outer join dept as d on e.job = d.name\ngroup by e.job;",
+        "output_sql": "SELECT \"t4\".\"JOB\"\nFROM (SELECT \"JOB\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"JOB\") AS \"t4\"\nRIGHT JOIN (SELECT \"NAME\"\nFROM \"DEPT\"\nGROUP BY \"NAME\") AS \"t5\" ON \"t4\".\"JOB\" = \"t5\".\"NAME\"\nGROUP BY \"t4\".\"JOB\";"
+    },
+    {
+        "rule": "PushAggregateThroughOuterJoin",
+        "input_sql": "select e.job\nfrom (select * from emp where ename = 'A') as e\nfull outer join dept as d on e.job = d.name\ngroup by e.job;",
+        "output_sql": "SELECT \"t4\".\"JOB\"\nFROM (SELECT \"JOB\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"JOB\") AS \"t4\"\nFULL JOIN (SELECT \"NAME\"\nFROM \"DEPT\"\nGROUP BY \"NAME\") AS \"t5\" ON \"t4\".\"JOB\" = \"t5\".\"NAME\"\nGROUP BY \"t4\".\"JOB\";"
+    },
+    {
+        "rule": "PushAggregateThroughOuterJoin",
+        "input_sql": "select e.mgr, d.mgr\nfrom emp as e\nfull outer join emp as d on e.mgr = d.mgr\ngroup by d.mgr, e.mgr;",
+        "output_sql": "SELECT \"t2\".\"MGR\", \"t3\".\"MGR\" AS \"MGR0\"\nFROM (SELECT \"MGR\"\nFROM \"EMP\"\nGROUP BY \"MGR\") AS \"t2\"\nFULL JOIN (SELECT \"MGR\"\nFROM \"EMP\"\nGROUP BY \"MGR\") AS \"t3\" ON \"t2\".\"MGR\" = \"t3\".\"MGR\"\nGROUP BY \"t2\".\"MGR\", \"t3\".\"MGR\";"
+    },
+    {
+        "rule": "PushAggregateThroughOuterJoin",
+        "input_sql": "select e.ename, d.mgr\nfrom (select * from emp where ename = 'A') as e\nfull outer join emp as d on e.job = d.job\ngroup by e.ename,d.mgr;",
+        "output_sql": "SELECT \"t4\".\"ENAME\", \"t5\".\"MGR\"\nFROM (SELECT \"ENAME\", \"JOB\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"ENAME\", \"JOB\") AS \"t4\"\nFULL JOIN (SELECT \"JOB\", \"MGR\"\nFROM \"EMP\"\nGROUP BY \"JOB\", \"MGR\") AS \"t5\" ON \"t4\".\"JOB\" = \"t5\".\"JOB\"\nGROUP BY \"t4\".\"ENAME\", \"t5\".\"MGR\";"
+    },
+    {
+        "rule": "PushAggregateThroughOuterJoin",
+        "input_sql": "select e.job\nfrom (select * from emp where ename = 'A') as e\nfull outer join dept as d on e.job = d.name\nand e.deptno + e.empno = d.deptno + 5\ngroup by e.job;",
+        "output_sql": "SELECT \"t5\".\"JOB\"\nFROM (SELECT \"JOB\", \"DEPTNO\" + \"EMPNO\" AS \"$f9\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"JOB\", \"DEPTNO\" + \"EMPNO\") AS \"t5\"\nFULL JOIN (SELECT \"NAME\", \"DEPTNO\" + 5 AS \"$f2\"\nFROM \"DEPT\"\nGROUP BY \"NAME\", \"DEPTNO\" + 5) AS \"t7\" ON \"t5\".\"JOB\" = \"t7\".\"NAME\" AND \"t5\".\"$f9\" = \"t7\".\"$f2\"\nGROUP BY \"t5\".\"JOB\";"
+    },
+    {
+        "rule": "PushFilterPastAggWithGroupingSets",
+        "input_sql": "select ddeptno, dname, c from\n             (select deptno ddeptno, name dname, count(*) as c\n             from dept group by rollup(deptno,name)) t\n              where dname = 'Charlie';",
+        "output_sql": "SELECT \"DEPTNO\" AS \"DDEPTNO\", \"NAME\" AS \"DNAME\", COUNT(*) AS \"c\"\nFROM \"DEPT\"\nGROUP BY ROLLUP(\"DEPTNO\", \"NAME\")\nHAVING \"NAME\" = 'Charlie';"
+    },
+    {
+        "rule": "PushFilterPastAggWithGroupingSets",
+        "input_sql": "select dname, ddeptno, c from\n             (select name dname, deptno ddeptno, count(*) as c\n             from dept group by grouping sets ((name,deptno),(name))) t\n              where dname = 'Charlie';",
+        "output_sql": "SELECT \"DNAME\", \"DDEPTNO\", COUNT(*) AS \"c\"\nFROM (SELECT \"NAME\" AS \"DNAME\", \"DEPTNO\" AS \"DDEPTNO\"\nFROM \"DEPT\") AS \"t3\"\nWHERE \"DNAME\" = 'Charlie'\nGROUP BY GROUPING SETS((\"DNAME\", \"DDEPTNO\"), \"DNAME\");"
+    },
+    {
+        "rule": "ReduceNullableToNotNull",
+        "input_sql": "select\n  empno + case when 'a' = 'a' then 1 else null end as newcol\nfrom emp;",
+        "output_sql": "SELECT \"EMPNO\" + 1 AS \"NEWCOL\"\nFROM \"EMP\";"
+    },
+    {
+        "rule": "ReduceConstants",
+        "input_sql": "select e.mgr is not distinct from f.mgr from emp e join emp f on (e.mgr=f.mgr) where e.mgr is null;",
+        "output_sql": "SELECT \"EMP2\".\"MGR\" IS NULL\nFROM \"EMP\" AS \"EMP1\"\nINNER JOIN \"EMP\" AS \"EMP2\" ON \"EMP1\".\"MGR\" = \"EMP2\".\"MGR\"\nWHERE \"EMP1\".\"MGR\" IS NULL;"
+    },
+    {
+        "rule": "AggregateJoinRemove",
+        "input_sql": "select distinct e.deptno from emp e\nleft outer join dept d on e.deptno = d.deptno;",
+        "output_sql": "SELECT \"DEPTNO\"\nFROM \"EMP\"\nGROUP BY \"DEPTNO\";"
+    },
+    {
+        "rule": "AggregateJoinRemove",
+        "input_sql": "select e.deptno, count(distinct e.job)\nfrom emp e\nleft outer join dept d on e.deptno = d.deptno\ngroup by e.deptno;",
+        "output_sql": "SELECT \"DEPTNO\", COUNT(DISTINCT \"JOB\")\nFROM \"EMP\"\nGROUP BY \"DEPTNO\";"
+    },
+    {
+        "rule": "AggregateJoinRemove",
+        "input_sql": "select e.deptno, count(distinct d.name)\nfrom emp e\nleft outer join dept d on e.deptno = d.deptno\ngroup by e.deptno;",
+        "output_sql": "SELECT \"EMP0\".\"DEPTNO\", COUNT(DISTINCT \"DEPT0\".\"NAME\")\nFROM \"EMP\" AS \"EMP0\"\nLEFT JOIN \"DEPT\" AS \"DEPT0\" ON \"EMP0\".\"DEPTNO\" = \"DEPT0\".\"DEPTNO\"\nGROUP BY \"EMP0\".\"DEPTNO\";"
+    },
+    {
+        "rule": "AggregateJoinRemove",
+        "input_sql": "select distinct d.deptno\nfrom emp e\nright outer join dept d on e.deptno = d.deptno;",
+        "output_sql": "SELECT \"DEPTNO\"\nFROM \"DEPT\";"
+    },
+    {
+        "rule": "AggregateJoinRemove",
+        "input_sql": "select d.deptno, count(distinct d.name)\nfrom emp e\nright outer join dept d on e.deptno = d.deptno\ngroup by d.deptno;",
+        "output_sql": "SELECT \"DEPTNO\", COUNT(DISTINCT \"NAME\")\nFROM \"DEPT\"\nGROUP BY \"DEPTNO\";"
+    },
+    {
+        "rule": "AggregateJoinRemove",
+        "input_sql": "select d.deptno, count(distinct e.job)\nfrom emp e\nright outer join dept d on e.deptno = d.deptno\ngroup by d.deptno;",
+        "output_sql": "SELECT \"DEPT0\".\"DEPTNO\" AS \"DEPTNO0\", COUNT(DISTINCT \"EMP0\".\"JOB\")\nFROM \"EMP\" AS \"EMP0\"\nRIGHT JOIN \"DEPT\" AS \"DEPT0\" ON \"EMP0\".\"DEPTNO\" = \"DEPT0\".\"DEPTNO\"\nGROUP BY \"DEPT0\".\"DEPTNO\";"
+    },
+    {
+        "rule": "AggregateJoinRemove",
+        "input_sql": "SELECT distinct e.deptno\nFROM emp e\nLEFT JOIN dept d1 ON e.deptno = d1.deptno\nLEFT JOIN dept d2 ON e.deptno = d2.deptno;",
+        "output_sql": "SELECT \"EMP0\".\"DEPTNO\"\nFROM \"EMP\" AS \"EMP0\"\nLEFT JOIN \"DEPT\" AS \"DEPT1\" ON \"EMP0\".\"DEPTNO\" = \"DEPT1\".\"DEPTNO\"\nGROUP BY \"EMP0\".\"DEPTNO\";"
+    },
+    {
+        "rule": "AggregateJoinRemove",
+        "input_sql": "SELECT e.deptno, COUNT(DISTINCT d2.name)\nFROM emp e\nLEFT JOIN dept d1 ON e.deptno = d1.deptno\nLEFT JOIN dept d2 ON e.deptno = d2.deptno\nGROUP BY e.deptno;",
+        "output_sql": "SELECT \"EMP0\".\"DEPTNO\", COUNT(DISTINCT \"DEPT1\".\"NAME\")\nFROM \"EMP\" AS \"EMP0\"\nLEFT JOIN \"DEPT\" AS \"DEPT1\" ON \"EMP0\".\"DEPTNO\" = \"DEPT1\".\"DEPTNO\"\nGROUP BY \"EMP0\".\"DEPTNO\";"
+    },
+    {
+        "rule": "AggregateJoinRemove",
+        "input_sql": "SELECT distinct e.deptno, d2.name\nFROM emp e\nLEFT JOIN dept d1 ON e.deptno = d1.deptno\nLEFT JOIN dept d2 ON e.deptno = d2.deptno;",
+        "output_sql": "SELECT \"EMP0\".\"DEPTNO\", \"DEPT1\".\"NAME\"\nFROM \"EMP\" AS \"EMP0\"\nLEFT JOIN \"DEPT\" AS \"DEPT1\" ON \"EMP0\".\"DEPTNO\" = \"DEPT1\".\"DEPTNO\"\nGROUP BY \"EMP0\".\"DEPTNO\", \"DEPT1\".\"NAME\";"
+    },
+    {
+        "rule": "EmptyMinus",
+        "input_sql": "select * from (values (30, 3)) as t (x, y)\nexcept\nselect * from (values (20, 2)) as t (x, y) where x > 30\nexcept\nselect * from (values (40, 4))\nexcept\nselect * from (values (50, 5)) as t (x, y) where x > 50;",
+        "output_sql": "SELECT *\nFROM (VALUES (30, 3)) AS \"t\" (\"x\", \"y\")\nEXCEPT\nSELECT *\nFROM (VALUES (40, 4)) AS \"t\" (\"EXPR$0\", \"EXPR$1\");"
+    },
+    {
+        "rule": "SomeWithEquality",
+        "input_sql": "select * from emp e1\n  where e1.deptno = SOME (select deptno from dept);",
+        "output_sql": "SELECT \"EMP1\".\"EMPNO\", \"EMP1\".\"ENAME\", \"EMP1\".\"JOB\", \"EMP1\".\"MGR\", \"EMP1\".\"HIREDATE\", \"EMP1\".\"SAL\", \"EMP1\".\"COMM\", \"EMP1\".\"DEPTNO\", \"EMP1\".\"SLACKER\"\nFROM \"EMP\" AS \"EMP1\"\nINNER JOIN (SELECT \"DEPTNO\"\nFROM \"DEPT\") AS \"t5\" ON \"EMP1\".\"DEPTNO\" = \"t5\".\"DEPTNO\";"
+    },
+    {
+        "rule": "PushAggregateThroughJoin",
+        "input_sql": "select e.job,d.name\nfrom (select * from emp where ename = 'A') as e\njoin dept as d on e.job = d.name\ngroup by e.job,d.name;",
+        "output_sql": "SELECT *\nFROM (SELECT \"JOB\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"JOB\") AS \"t4\"\nINNER JOIN (SELECT \"NAME\"\nFROM \"DEPT\"\nGROUP BY \"NAME\") AS \"t5\" ON \"t4\".\"JOB\" = \"t5\".\"NAME\";"
+    },
+    {
+        "rule": "PushAggregateThroughJoin",
+        "input_sql": "select e.job,d.name\nfrom (select * from emp where ename = 'A') as e\njoin dept as d on e.job = d.name\nand e.deptno + e.empno = d.deptno + 5\ngroup by e.job,d.name;",
+        "output_sql": "SELECT \"t5\".\"JOB\", \"t7\".\"NAME\"\nFROM (SELECT \"JOB\", \"DEPTNO\" + \"EMPNO\" AS \"$f9\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'A'\nGROUP BY \"JOB\", \"DEPTNO\" + \"EMPNO\") AS \"t5\"\nINNER JOIN (SELECT \"NAME\", \"DEPTNO\" + 5 AS \"$f2\"\nFROM \"DEPT\"\nGROUP BY \"NAME\", \"DEPTNO\" + 5) AS \"t7\" ON \"t5\".\"JOB\" = \"t7\".\"NAME\" AND \"t5\".\"$f9\" = \"t7\".\"$f2\"\nGROUP BY \"t5\".\"JOB\", \"t7\".\"NAME\";"
+    },
+    {
+        "rule": "PushAggregateThroughJoin",
+        "input_sql": "select e.deptno\nfrom emp as e join dept as d on e.deptno = d.deptno\ngroup by e.deptno;",
+        "output_sql": "SELECT \"t0\".\"DEPTNO\"\nFROM (SELECT \"DEPTNO\"\nFROM \"EMP\"\nGROUP BY \"DEPTNO\") AS \"t0\"\nINNER JOIN (SELECT \"DEPTNO\"\nFROM \"DEPT\") AS \"t1\" ON \"t0\".\"DEPTNO\" = \"t1\".\"DEPTNO\";"
+    },
+    {
+        "rule": "PushAggregateThroughJoin",
+        "input_sql": "select e.deptno, d.deptno\nfrom emp as e join dept as d on e.deptno = d.deptno\ngroup by e.deptno, d.deptno;",
+        "output_sql": "SELECT *\nFROM (SELECT \"DEPTNO\"\nFROM \"EMP\"\nGROUP BY \"DEPTNO\") AS \"t1\"\nINNER JOIN (SELECT \"DEPTNO\"\nFROM \"DEPT\") AS \"t2\" ON \"t1\".\"DEPTNO\" = \"t2\".\"DEPTNO\";"
+    },
+    {
+        "rule": "PushAggregateThroughJoin",
+        "input_sql": "select sum(B.sal)\nfrom emp as A\njoin (select distinct sal from emp) as B\non A.sal=B.sal;",
+        "output_sql": "SELECT SUM(CAST(\"t1\".\"$f1\" * \"t2\".\"SAL\" AS INTEGER))\nFROM (SELECT \"SAL\", COUNT(*) AS \"$f1\"\nFROM \"EMP\"\nGROUP BY \"SAL\") AS \"t1\"\nINNER JOIN (SELECT \"SAL\"\nFROM \"EMP\"\nGROUP BY \"SAL\") AS \"t2\" ON \"t1\".\"SAL\" = \"t2\".\"SAL\";"
+    },
+    {
+        "rule": "PushAggregateThroughJoin",
+        "input_sql": "select any_value(distinct B.sal)\nfrom emp as A\njoin (select distinct sal from emp) as B\non A.sal=B.sal;",
+        "output_sql": "SELECT ANY_VALUE(\"t2\".\"SAL\")\nFROM (SELECT \"SAL\"\nFROM \"EMP\"\nGROUP BY \"SAL\") AS \"t1\"\nINNER JOIN (SELECT \"SAL\"\nFROM \"EMP\"\nGROUP BY \"SAL\") AS \"t2\" ON \"t1\".\"SAL\" = \"t2\".\"SAL\";"
+    },
+    {
+        "rule": "PushAggregateThroughJoin",
+        "input_sql": "select single_value(distinct B.sal)\nfrom emp as A\njoin (select distinct sal from emp) as B\non A.sal=B.sal;",
+        "output_sql": "SELECT SINGLE_VALUE(\"t2\".\"SAL\")\nFROM (SELECT \"SAL\"\nFROM \"EMP\"\nGROUP BY \"SAL\") AS \"t1\"\nINNER JOIN (SELECT \"SAL\"\nFROM \"EMP\"\nGROUP BY \"SAL\") AS \"t2\" ON \"t1\".\"SAL\" = \"t2\".\"SAL\";"
+    },
+    {
+        "rule": "ReduceConstants",
+        "input_sql": "select 1+2, d.deptno+(3+4), (5+6)+d.deptno, cast(null as integer), coalesce(2,null), row(7+8) from dept d inner join emp e on d.deptno = e.deptno + (5-5) where d.deptno=(7+8) and d.deptno=(8+7) and d.deptno=coalesce(2,null);",
+        "output_sql": "SELECT 3, 22, 26, CAST(NULL AS INTEGER), CAST(2 AS INTEGER), (15)\nFROM (VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)) AS \"t\" (\"DEPTNO\", \"NAME\", \"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO0\", \"SLACKER\")\nWHERE 1 = 0;"
+    },
+    {
+        "rule": "ReduceConstantsCaseEquals",
+        "input_sql": "select count(1) from emp\nwhere case deptno\n  when 20 then 2\n  when 10 then 1\n  else 3 end = 1;",
+        "output_sql": "SELECT COUNT(*)\nFROM \"EMP\"\nWHERE \"DEPTNO\" = 10;"
+    },
+    {
+        "rule": "EmptyProject",
+        "input_sql": "select z + x from (\n  select x + y as z, x from (\n    select * from (values (10, 1), (30, 3)) as t (x, y)\n    where x + y > 50));",
+        "output_sql": "SELECT *\nFROM (VALUES (NULL)) AS \"t\" (\"EXPR$0\")\nWHERE 1 = 0;"
+    },
+    {
+        "rule": "WhereExpressionInCorrelated",
+        "input_sql": "select name from (\n  select name, deptno, deptno - 10 as deptnoMinus from dept) as d\nwhere deptno in (\n  select deptno from emp where sal + 1 = d.deptnoMinus);",
+        "output_sql": "SELECT \"t11\".\"NAME\"\nFROM (SELECT \"NAME\", \"DEPTNO\", \"DEPTNO\" - 10 AS \"DEPTNOMINUS\"\nFROM \"DEPT\") AS \"t11\"\nINNER JOIN (SELECT \"DEPTNO\", \"SAL\" + 1 AS \"$f9\"\nFROM \"EMP\"\nGROUP BY \"DEPTNO\", \"SAL\" + 1) AS \"t13\" ON \"t11\".\"DEPTNOMINUS\" = \"t13\".\"$f9\" AND \"t11\".\"DEPTNO\" = \"t13\".\"DEPTNO\";"
+    },
+    {
+        "rule": "PullAggregateThroughUnion",
+        "input_sql": "select deptno, job from (select deptno, job from emp as e1 group by deptno,job  union all select deptno, job from emp as e2 group by deptno,job) group by deptno,job;",
+        "output_sql": "SELECT \"DEPTNO\", \"JOB\"\nFROM (SELECT \"DEPTNO\", \"JOB\"\nFROM \"EMP\"\nUNION ALL\nSELECT \"DEPTNO\", \"JOB\"\nFROM \"EMP\") AS \"t7\"\nGROUP BY \"DEPTNO\", \"JOB\";"
+    },
+    {
+        "rule": "DistinctCount",
+        "input_sql": "select deptno, count(distinct ename)\nfrom emp group by deptno;",
+        "output_sql": "SELECT \"DEPTNO\", COUNT(\"ENAME\")\nFROM (SELECT \"ENAME\", \"DEPTNO\"\nFROM \"EMP\"\nGROUP BY \"ENAME\", \"DEPTNO\") AS \"t1\"\nGROUP BY \"DEPTNO\";"
+    },
+    {
+        "rule": "DistinctCount",
+        "input_sql": "select deptno, count(distinct ename), sum(sal)\nfrom emp group by deptno;",
+        "output_sql": "SELECT \"DEPTNO\", COUNT(\"ENAME\") FILTER (WHERE \"$g_0\"), CAST(MIN(\"EXPR$2\") FILTER (WHERE \"$g_1\") AS INTEGER)\nFROM (SELECT \"DEPTNO\", \"ENAME\", SUM(\"SAL\") AS \"EXPR$2\", GROUPING(\"DEPTNO\", \"ENAME\") = 0 AS \"$g_0\", GROUPING(\"DEPTNO\", \"ENAME\") = 1 AS \"$g_1\"\nFROM \"EMP\"\nGROUP BY GROUPING SETS((\"ENAME\", \"DEPTNO\"), \"DEPTNO\")) AS \"t3\"\nGROUP BY \"DEPTNO\";"
+    },
+    {
+        "rule": "DistinctCount",
+        "input_sql": "select count(distinct deptno), sum(sal) from emp group by deptno;",
+        "output_sql": "SELECT COUNT(\"DEPTNO\") FILTER (WHERE \"$g_0\"), CAST(MIN(\"EXPR$1\") FILTER (WHERE \"$g_0\") AS INTEGER)\nFROM (SELECT \"DEPTNO\", SUM(\"SAL\") AS \"EXPR$1\", GROUPING(\"DEPTNO\") = 0 AS \"$g_0\"\nFROM \"EMP\"\nGROUP BY \"DEPTNO\") AS \"t4\"\nGROUP BY \"DEPTNO\";"
+    },
+    {
+        "rule": "OrAlwaysTrue",
+        "input_sql": "SELECT *\nFROM (SELECT \"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"SLACKER\"\nFROM \"EMPNULLABLES\"\nWHERE \"DEPTNO\" = 20 AND \"SAL\" > 1000) AS \"t0\"\nWHERE \"SAL\" IS NOT NULL OR \"SAL\" IS NULL;",
+        "output_sql": "SELECT \"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"SLACKER\"\nFROM \"EMPNULLABLES\"\nWHERE \"DEPTNO\" = 20 AND \"SAL\" > 1000;"
+    },
+    {
+        "rule": "AggregateProjectPullUpConstants",
+        "input_sql": "select ename, sal\nfrom (select '1', ename, sal from emp where ename = 'John') subq\ngroup by ename, sal;",
+        "output_sql": "SELECT 'John' AS \"ENAME\", \"SAL\"\nFROM \"EMP\"\nWHERE \"ENAME\" = 'John'\nGROUP BY \"SAL\";"
+    },
+    {
+        "rule": "DistinctNonDistinctAggregatesWithGrouping",
+        "input_sql": "SELECT deptno,\n  SUM(deptno), SUM(DISTINCT sal), MAX(deptno), MAX(comm)\nFROM emp\nGROUP BY deptno;",
+        "output_sql": "SELECT \"DEPTNO\", SUM(\"EXPR$1\"), SUM(\"SAL\"), MAX(\"EXPR$3\"), MAX(\"EXPR$4\")\nFROM (SELECT \"DEPTNO\", \"SAL\", SUM(\"DEPTNO\") AS \"EXPR$1\", MAX(\"DEPTNO\") AS \"EXPR$3\", MAX(\"COMM\") AS \"EXPR$4\"\nFROM \"EMP\"\nGROUP BY \"DEPTNO\", \"SAL\") AS \"t2\"\nGROUP BY \"DEPTNO\";"
+    },
+    {
+        "rule": "DistinctNonDistinctAggregatesWithGrouping",
+        "input_sql": "SELECT deptno, COUNT(deptno), SUM(DISTINCT sal)\nFROM emp\nGROUP BY deptno;",
+        "output_sql": "SELECT \"DEPTNO\", COALESCE(SUM(\"EXPR$1\"), 0), SUM(\"SAL\")\nFROM (SELECT \"DEPTNO\", \"SAL\", COUNT(*) AS \"EXPR$1\"\nFROM \"EMP\"\nGROUP BY \"DEPTNO\", \"SAL\") AS \"t2\"\nGROUP BY \"DEPTNO\";"
+    },
+    {
+        "rule": "DistinctCountMixed",
+        "input_sql": "select deptno, count(distinct deptno, job) as cddj,\n  sum(sal) as s\nfrom emp group by deptno;",
+        "output_sql": "SELECT \"DEPTNO\", COUNT(\"DEPTNO\", \"JOB\") FILTER (WHERE \"$g_0\") AS \"CDDJ\", CAST(MIN(\"s\") FILTER (WHERE \"$g_1\") AS INTEGER) AS \"s\"\nFROM (SELECT \"DEPTNO\", \"JOB\", SUM(\"SAL\") AS \"s\", GROUPING(\"DEPTNO\", \"JOB\") = 0 AS \"$g_0\", GROUPING(\"DEPTNO\", \"JOB\") = 1 AS \"$g_1\"\nFROM \"EMP\"\nGROUP BY GROUPING SETS((\"DEPTNO\", \"JOB\"), \"DEPTNO\")) AS \"t3\"\nGROUP BY \"DEPTNO\";"
+    },
+    {
+        "rule": "PullConstantIntoJoin",
+        "input_sql": "select * from (select * from emp where empno = 10) as e\nleft join dept as d on e.empno = d.deptno;",
+        "output_sql": "SELECT *\nFROM (SELECT *\nFROM \"EMP\"\nWHERE \"EMPNO\" = 10) AS \"t3\"\nLEFT JOIN (SELECT *\nFROM \"DEPT\"\nWHERE \"DEPTNO\" = 10) AS \"t4\" ON TRUE;"
+    },
+    {
+        "rule": "ReduceConstantsCaseEquals",
+        "input_sql": "select count(1) from emp\nwhere case deptno\n  when 20 then 2\n  when 10 then 1\n  else cast(null as integer) end = 1;",
+        "output_sql": "SELECT COUNT(*)\nFROM \"EMP\"\nWHERE \"DEPTNO\" = 10;"
+    },
+    {
+        "rule": "ReduceConstantsCaseEquals",
+        "input_sql": "select count(1) from emp\nwhere case deptno\n  when 30 then 1\n  when 20 then 2\n  when 10 then 1\n  when 30 then 111\n  else 0 end = 1;",
+        "output_sql": "SELECT COUNT(*)\nFROM \"EMP\"\nWHERE \"DEPTNO\" IN (10, 30);"
+    },
+    {
+        "rule": "AggregateProjectPullUpConstants",
+        "input_sql": "select job, empno, sal, sum(sal) as s\nfrom emp where empno = 10\ngroup by job, empno, sal;",
+        "output_sql": "SELECT \"JOB\", 10 AS \"EMPNO\", \"SAL\", SUM(\"SAL\") AS \"s\"\nFROM \"EMP\"\nWHERE \"EMPNO\" = 10\nGROUP BY \"JOB\", \"SAL\";"
+    },
+    {
+        "rule": "AggregateConstantKeyRule",
+        "input_sql": "select job\nfrom emp\nwhere mgr is null and job = 'Clerk'\ngroup by mgr, job\nhaving count(*) > 3;",
+        "output_sql": "SELECT \"JOB\"\nFROM (SELECT \"MGR\", 'Clerk' AS \"JOB\", COUNT(*) AS \"$f2\"\nFROM \"EMP\"\nWHERE \"MGR\" IS NULL AND \"JOB\" = 'Clerk'\nGROUP BY \"MGR\") AS \"t7\"\nWHERE \"$f2\" > 3;"
+    },
+    {
+        "rule": "PullConstantIntoJoin",
+        "input_sql": "select * from (select * from emp where empno = 10) as e\njoin dept as d on e.empno = d.deptno and e.deptno + e.empno = d.deptno + 5;",
+        "output_sql": "SELECT 10 AS \"EMPNO\", \"t4\".\"ENAME\", \"t4\".\"JOB\", \"t4\".\"MGR\", \"t4\".\"HIREDATE\", \"t4\".\"SAL\", \"t4\".\"COMM\", \"t4\".\"DEPTNO\", \"t4\".\"SLACKER\", 10 AS \"DEPTNO0\", \"t6\".\"NAME\"\nFROM (SELECT 10 AS \"EMPNO\", \"ENAME\", \"JOB\", \"MGR\", \"HIREDATE\", \"SAL\", \"COMM\", \"DEPTNO\", \"SLACKER\", \"DEPTNO\" + 10 AS \"$f9\"\nFROM \"EMP\"\nWHERE \"EMPNO\" = 10) AS \"t4\"\nINNER JOIN (SELECT 10 AS \"DEPTNO\", \"NAME\", 15 AS \"$f2\"\nFROM \"DEPT\"\nWHERE \"DEPTNO\" = 10) AS \"t6\" ON \"t4\".\"$f9\" = 15;"
+    },
+    {
+        "rule": "ProjectJoinRemove",
+        "input_sql": "SELECT e.deptno, d2.deptno\nFROM emp e\nLEFT JOIN dept d1 ON e.deptno = d1.deptno\nLEFT JOIN dept d2 ON e.deptno = d2.deptno;",
+        "output_sql": "SELECT \"EMP0\".\"DEPTNO\", \"DEPT1\".\"DEPTNO\" AS \"DEPTNO0\"\nFROM \"EMP\" AS \"EMP0\"\nLEFT JOIN \"DEPT\" AS \"DEPT1\" ON \"EMP0\".\"DEPTNO\" = \"DEPT1\".\"DEPTNO\";"
+    },
+    {
+        "rule": "ProjectJoinRemove",
+        "input_sql": "SELECT e.deptno\nFROM emp e\nLEFT JOIN dept d ON e.deptno = d.deptno;",
+        "output_sql": "SELECT \"DEPTNO\"\nFROM \"EMP\";"
+    },
+    {
+        "rule": "ProjectJoinRemove",
+        "input_sql": "SELECT e.deptno\nFROM dept d\nRIGHT JOIN emp e ON e.deptno = d.deptno;",
+        "output_sql": "SELECT \"DEPTNO\"\nFROM \"EMP\";"
+    },
+    {
+        "rule": "DistinctCountMixed",
+        "input_sql": "select deptno, count(distinct ename) as cde,\ncount(distinct job, ename) as cdje,\ncount(distinct deptno, job) as cddj,\nsum(sal) as s\nfrom emp group by deptno;",
+        "output_sql": "SELECT \"DEPTNO\", COUNT(\"ENAME\") FILTER (WHERE \"$g_1\") AS \"CDE\", COUNT(\"JOB\", \"ENAME\") FILTER (WHERE \"$g_0\") AS \"CDJE\", COUNT(\"DEPTNO\", \"JOB\") FILTER (WHERE \"$g_2\") AS \"CDDJ\", CAST(MIN(\"s\") FILTER (WHERE \"$g_3\") AS INTEGER) AS \"s\"\nFROM (SELECT \"DEPTNO\", \"ENAME\", \"JOB\", SUM(\"SAL\") AS \"s\", GROUPING(\"DEPTNO\", \"ENAME\", \"JOB\") = 0 AS \"$g_0\", GROUPING(\"DEPTNO\", \"ENAME\", \"JOB\") = 1 AS \"$g_1\", GROUPING(\"DEPTNO\", \"ENAME\", \"JOB\") = 2 AS \"$g_2\", GROUPING(\"DEPTNO\", \"ENAME\", \"JOB\") = 3 AS \"$g_3\"\nFROM \"EMP\"\nGROUP BY GROUPING SETS((\"ENAME\", \"JOB\", \"DEPTNO\"), (\"ENAME\", \"DEPTNO\"), (\"JOB\", \"DEPTNO\"), \"DEPTNO\")) AS \"t2\"\nGROUP BY \"DEPTNO\";"
+    },
+    {
+        "rule": "SortUnionTranspose",
+        "input_sql": "select a.name from dept a\nunion all\nselect b.name from dept b\norder by name;",
+        "output_sql": "SELECT *\nFROM ((SELECT \"NAME\"\nFROM \"DEPT\"\nORDER BY \"NAME\")\nUNION ALL\n(SELECT \"NAME\"\nFROM \"DEPT\"\nORDER BY \"NAME\"))\nORDER BY \"NAME\";"
+    },
+    {
+        "rule": "SortUnionTranspose",
+        "input_sql": "select a.name from dept a\nunion all\nselect b.name from dept b\norder by name limit 0;",
+        "output_sql": "SELECT *\nFROM ((SELECT \"NAME\"\nFROM \"DEPT\"\nORDER BY \"NAME\"\nFETCH NEXT 0 ROWS ONLY)\nUNION ALL\n(SELECT \"NAME\"\nFROM \"DEPT\"\nORDER BY \"NAME\"\nFETCH NEXT 0 ROWS ONLY))\nORDER BY \"NAME\"\nFETCH NEXT 0 ROWS ONLY;"
+    },
+    {
+        "rule": "SomeWithEquality",
+        "input_sql": "select * from emp e1\n  where e1.ename= SOME (select name from dept);",
+        "output_sql": "SELECT \"EMP1\".\"EMPNO\", \"EMP1\".\"ENAME\", \"EMP1\".\"JOB\", \"EMP1\".\"MGR\", \"EMP1\".\"HIREDATE\", \"EMP1\".\"SAL\", \"EMP1\".\"COMM\", \"EMP1\".\"DEPTNO\", \"EMP1\".\"SLACKER\"\nFROM \"EMP\" AS \"EMP1\"\nINNER JOIN (SELECT \"NAME\"\nFROM \"DEPT\"\nGROUP BY \"NAME\") AS \"t7\" ON \"EMP1\".\"ENAME\" = \"t7\".\"NAME\";"
+    },
+    {
+        "rule": "PullConstantThroughUnion",
+        "input_sql": "select 2, 3 from emp as e1\nunion all\nselect 2, 3 from emp as e2;",
+        "output_sql": "SELECT 2, 3\nFROM (SELECT 2 AS \"EXPR$0\"\nFROM \"EMP\"\nUNION ALL\nSELECT 2 AS \"EXPR$0\"\nFROM \"EMP\") AS \"t4\";"
+    },
+    {
+        "rule": "JoinDeriveIsNotNullFilterRule",
+        "input_sql": "select t1.deptno from empnullables t1 inner join\nempnullables t2 on t1.ename = t2.ename and t1.mgr is not distinct from t2.mgr;",
+        "output_sql": "SELECT \"t0\".\"DEPTNO\"\nFROM (SELECT *\nFROM \"EMPNULLABLES\"\nWHERE \"ENAME\" IS NOT NULL) AS \"t0\"\nINNER JOIN (SELECT *\nFROM \"EMPNULLABLES\"\nWHERE \"ENAME\" IS NOT NULL) AS \"t1\" ON \"t0\".\"ENAME\" = \"t1\".\"ENAME\" AND \"t0\".\"MGR\" IS NOT DISTINCT FROM \"t1\".\"MGR\";"
+    },
+    {
+        "rule": "JoinDeriveIsNotNullFilterRule",
+        "input_sql": "select t1.deptno from empnullables t1 inner join\nempnullables t2 on nullif(t1.ename, t2.ename) = 'abc';",
+        "output_sql": "SELECT \"t0\".\"DEPTNO\"\nFROM (SELECT *\nFROM \"EMPNULLABLES\"\nWHERE \"ENAME\" IS NOT NULL) AS \"t0\"\nINNER JOIN \"EMPNULLABLES\" AS \"EMPNULLABLES2\" ON CASE WHEN \"t0\".\"ENAME\" = \"EMPNULLABLES2\".\"ENAME\" THEN NULL ELSE \"t0\".\"ENAME\" END = 'abc';"
+    }
+]

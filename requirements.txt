@@ -6,7 +6,26 @@ py3langid
 iso-639
 openai
 opencv-python
-gradio
 httpx[socks]
 icecream
 astunparse
+pandas
+SPARQLWrapper
+matplotlib
+python-pptx
+bs4
+transformers
+sentencepiece
+faiss-cpu
+psycopg2-binary; platform_python_implementation == "CPython"
+psycopg2; platform_python_implementation != "CPython"
+pymysql
+arxiv
+googlemaps
+steamship
+IPython
+google-search-results
+amadeus
+gradio
+gradio_tools
+peft
