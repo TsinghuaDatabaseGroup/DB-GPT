@@ -5,8 +5,8 @@ sys.path.append('../..')
 from Tree.Tree import my_tree, tree_node
 from copy import deepcopy
 from Algorithms.base_search import base_search_method
-from Prompts.Tree_search_prompts import  MAKE_REFLECTION_RPOMPT,DIVERSITY_PROMPT,VOTE_BEST_SYSTEM_PROMPT,VOTE_BEST_USER_PROMPT,DEFAULT_POLICY_SYSTEM_PROMPT, DEFAULT_POLICY_USER_PROMPT
-from Prompts.Reflexion_prompts import MAKE_REFLEXION_USER_PROMPT
+from prompts.Tree_search_prompts import  MAKE_REFLECTION_RPOMPT,DIVERSITY_PROMPT,VOTE_BEST_SYSTEM_PROMPT,VOTE_BEST_USER_PROMPT,DEFAULT_POLICY_SYSTEM_PROMPT, DEFAULT_POLICY_USER_PROMPT
+from prompts.Reflexion_prompts import MAKE_REFLEXION_USER_PROMPT
 from termcolor import colored
 import numpy as np
 import re
