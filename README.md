@@ -201,6 +201,7 @@ xxx
 
 ## Todo
 
+- [ ] Project cleaning
 - [ ] (framework update) Integrate components as a whole 
 - [ ] Public generated anomaly training data
 - [ ] Fine-tune open-source Model
