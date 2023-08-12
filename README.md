@@ -65,6 +65,17 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 - PostgreSQL v12 or higher
 
+    Add database settings into [config.ini](tool_learning/bmtools/bmtools/tools/db_diag/config.ini) and rename into *my_config.ini*:
+
+    ```bash
+    [postgresql]
+    host = 
+    port = 
+    user = 
+    password = 
+    dbname = 
+    ```
+
     > Additionally, install extensions like *[pg_stat_statements](https://pganalyze.com/docs/install/01_enabling_pg_stat_statements)* (track slow queries) and *[pg_hint_plan](https://pg-hint-plan.readthedocs.io/en/latest/installation.html)* (optimize physical operators)
 
 - Prometheus and Grafana ([tutorial](https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/))
