@@ -230,6 +230,7 @@ https://github.com/TsinghuaDatabaseGroup/DB-GPT/assets/17394639/5a9a91bf-fc1f-41
 ## Todo
 
 - [ ] Project cleaning
+- [ ] None-resource problem diagnosis
 - [ ] (framework update) Integrate components as a whole 
 - [ ] Public generated anomaly training data
 - [ ] Fine-tune open-source Model
