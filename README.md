@@ -220,13 +220,20 @@ cd prompt_template_scripts/query_rewrite
 
 ## Cases
 
-<details><summary><b>xxx</b></summary>
+<details><summary><b>INSERT_LARGE_DATA</b></summary>
 
-<div align="center">
-xxx
-</div>
+https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
 
 </details>
+
+
+<details><summary><b>INSERT_LARGE_DATA</b></summary>
+
+https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
+
+</details>
+
+
 
 
 

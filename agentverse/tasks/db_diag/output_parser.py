@@ -17,7 +17,7 @@ import pdb
 @output_parser_registry.register("db_diag")
 class DBDiag(OutputParser):
     def parse(self, output: LLMResult) -> Union[AgentAction, AgentFinish]:
-        #pdb.set_trace()
+        # pdb.set_trace()
         text = output.content
         cleaned_output = text.strip()
         cleaned_output = re.sub(r"\n+", "\n", cleaned_output)
@@ -35,7 +35,7 @@ class DBDiag(OutputParser):
         print(colored("new action", "red"))
         print(cleaned_output)
 
-        pdb.set_trace()
+        # pdb.set_trace()
 
         if action in ["Speak"]:
 

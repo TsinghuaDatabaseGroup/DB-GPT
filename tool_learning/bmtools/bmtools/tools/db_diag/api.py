@@ -124,8 +124,9 @@ def build_db_diag_tool(config) -> Tool:
         # 1691563950.0 1691564190.0
         # 1691570940.0 1691571120.0
         # 1691571630.0 1691571720.0
-        return {"start_time": 1691571630, "end_time": 1691571720}
         # 1691463840.0 1691463990.0
+        return {"start_time": 1691463840, "end_time": 1691463990}
+
         # Create SSH client
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())

@@ -15,24 +15,22 @@ agent = stqa.load_tools(tool_name, tool_config, prompt_type="react-with-tool-des
 
 # database on 123.56.63.105
 
-# POOR\_JOIN\_PERFORMANCE WORKLOAD\_CONTENTION
-start_timestamp_str = "2023-08-08 11:04:00"
-end_timestamp_str = "2023-08-08 11:06:30"
+# fetch_large_data /  correlated_subquery
+start_timestamp_str = "2023-08-09 17:00:30"
+end_timestamp_str = "2023-08-09 17:02:00"
 
 # INSERT\_LARGE\_DATA IO\_CONTENTION CPU\_CONTENTION
 start_timestamp_str = "2023-08-09 14:52:30"
 end_timestamp_str = "2023-08-09 14:56:30"
 
-
-# fetch_large_data /  correlated_subquery
-start_timestamp_str = "2023-08-09 17:00:30"
-end_timestamp_str = "2023-08-09 17:02:00"
+# POOR\_JOIN\_PERFORMANCE WORKLOAD\_CONTENTION
+start_timestamp_str = "2023-08-08 11:04:00"
+end_timestamp_str = "2023-08-08 11:06:30"
 
 
 dt = datetime.datetime.strptime(start_timestamp_str, "%Y-%m-%d %H:%M:%S")
 timestamp = dt.timestamp()
 start_time = timestamp
-
 
 dt = datetime.datetime.strptime(end_timestamp_str, "%Y-%m-%d %H:%M:%S")
 timestamp = dt.timestamp()
