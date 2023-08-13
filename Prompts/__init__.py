@@ -1,1 +1,0 @@
-from .knowledge_code_prompt import EXTRACT_FUNCTION_PROMPT, EXTRACT_METRIC_PROMPT
