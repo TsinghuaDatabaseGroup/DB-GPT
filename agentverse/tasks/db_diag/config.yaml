@@ -73,7 +73,7 @@ prompts:
     Action Input: {"start_time": 1684646375, "end_time": 1684646378, "metric_name": "cpu_usage"}
 
     Next you must diagnose root causes by using the tools, and must use the following format (any other choice is not allowed):
-    Thought:The CPU usage is abnormal, so I need to diagnose the cause of the anomaly using cpu_diagnosis_agent.
+    Thought: No matter cpu usage is abnormal or normal, I must to diagnose the cause of the anomaly using cpu_diagnosis_agent.
     Action: cpu_diagnosis_agent
     Action Input: {"start_time": 1684646375, "end_time": 1684646378}
 
@@ -113,8 +113,8 @@ prompts:
     Action: whether_is_abnormal_metric
     Action Input: {"start_time": 1684646375, "end_time": 1684646378, "metric_name": "memory_usage"}
 
-    Next you can diagnose root causes by using the tools, and use the following format:
-    Thought:The memory usage is abnormal, so I need to diagnose the cause of the anomaly using memory_diagnosis_agent.
+    Next you must diagnose root causes by using the tools, and use the following format:
+    Thought: No matter memory usage is abnormal or normal, I must diagnose the cause of the anomaly using memory_diagnosis_agent.
     Action: memory_diagnosis_agent
     Action Input: {"start_time": 1684646375, "end_time": 1684646378}
 

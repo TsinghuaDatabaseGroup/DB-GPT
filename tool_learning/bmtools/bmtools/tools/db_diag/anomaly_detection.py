@@ -42,7 +42,7 @@ def detect_anomalies(data, significance_level=0.2):
     # Calculate the critical value based on the significance level and sample size
     critical_value = np.sqrt(-0.1 * np.log(significance_level / 2) / n)
 
-    pdb.set_trace()
+    # pdb.set_trace()
 
     # Compare the KS statistic with the critical value
     anomalies = np.where(ks_statistic > critical_value, True, False)

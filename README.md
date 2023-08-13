@@ -220,6 +220,15 @@ cd prompt_template_scripts/query_rewrite
 
 ## Cases
 
+<details><summary><b>INSUFFICIENT_MEMORY_ALLOCATION</b></summary>
+<br>
+<div align="center">
+<img src="imgs/memory.png" width="800px">
+</div>
+<br>
+</details>
+
+
 <details><summary><b>POOR_JOIN_PERFORMANCE</b></summary>
 
 https://github.com/TsinghuaDatabaseGroup/DB-GPT/assets/17394639/5a9a91bf-fc1f-415e-8a59-ec8ab5a705df

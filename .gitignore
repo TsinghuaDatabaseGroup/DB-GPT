@@ -60,6 +60,8 @@ cover/
 *.mo
 *.pot
 
+materials/
+
 # Django stuff:
 *.log
 local_settings.py

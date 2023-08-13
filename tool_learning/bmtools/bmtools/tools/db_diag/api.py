@@ -214,13 +214,26 @@ def build_db_diag_tool(config) -> Tool:
 
         detailed_cpu_metrics = obtain_values_of_metrics(start_time, end_time, cpu_metrics)
 
+        openai.api_key = os.environ["OPENAI_API_KEY"]
+
+        db = Database(dbargs, timeout=-1)
+        slow_queries = db.obtain_historical_slow_queries()
+
+        slow_query_state = ""
+        for i,query in enumerate(slow_queries):
+            slow_query_state += str(i+1) + '. ' + str(query) + "\n"
+
+        print(slow_query_state)
+
         docs_str = knowledge_matcher.match(detailed_cpu_metrics)
 
-        prompt = """The CPU metric is abnormal. Then obtain the CPU relevant metric values from Prometheus: {}.
+        prompt = """The CPU metric is abnormal. Then obtain the CPU relevant metric values from Prometheus: {}. The slow queries are:
+        {}
 
 Next output the analysis of potential causes of the high CPU usage based on the CPU relevant metric values,
 
-{}""".format(detailed_cpu_metrics, docs_str)
+Note: include the important slow queries in the output, but not all queries.
+{}""".format(detailed_cpu_metrics, slow_query_state, docs_str)
 
         print(prompt)
 
@@ -310,7 +323,7 @@ Output the analysis of potential causes of the high memory usage based on the me
 Note: include the important slow queries in the output.
 """.format(detailed_memory_metrics, slow_query_state, docs_str)
 
-        # print(prompt)
+        print(prompt)
 
         # response = openai.Completion.create(
         # model="text-davinci-003",

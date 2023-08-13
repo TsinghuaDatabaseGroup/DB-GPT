@@ -5,7 +5,7 @@ sys.path.append('../../../')
 import re
 import openai
 import json
-from prompts.knowledge_code_prompt import EXTRACT_FUNCTION_PROMPT, EXTRACT_METRIC_PROMPT
+from prompt_templates.knowledge_code_prompt import EXTRACT_FUNCTION_PROMPT, EXTRACT_METRIC_PROMPT
 import pdb
 
 
