@@ -125,7 +125,9 @@ def build_db_diag_tool(config) -> Tool:
         # 1691570940.0 1691571120.0
         # 1691571630.0 1691571720.0
         # 1691463840.0 1691463990.0
-        return {"start_time": 1691463840, "end_time": 1691463990}
+        # 1691897340.0 1691897430.0
+
+        return {"start_time": 1691897340, "end_time": 1691897430}
 
         # Create SSH client
         ssh = paramiko.SSHClient()
@@ -180,7 +182,7 @@ def build_db_diag_tool(config) -> Tool:
     def whether_is_abnormal_metric(start_time:int, end_time:int, metric_name : str="cpu_usage"):
 
         interval_time = 5
-        metric_values = prometheus('api/v1/query_range', {'query': prometheus_metrics[metric_name], 'start': start_time-interval_time*60, 'end': end_time+interval_time*60, 'step': '3'})
+        metric_values = prometheus('api/v1/query_range', {'query': prometheus_metrics[metric_name], 'start': start_time, 'end': end_time, 'step': '3'})
         # prometheus('api/v1/query_range', {'query': '100 - (avg(irate(node_cpu_seconds_total{instance=~"172.27.58.65:9100",mode="idle"}[1m])) * 100)', 'start': '1684412385', 'end': '1684413285', 'step': '3'})
         # print(" === metric_values", metric_values)
 
@@ -191,8 +193,7 @@ def build_db_diag_tool(config) -> Tool:
         else:
             raise Exception("No metric values found for the given time range")
 
-        #is_abnormal = detect_anomalies(np.array([float(value) for _, value in metric_values]))
-        is_abnormal = True
+        is_abnormal = detect_anomalies(np.array([float(value) for _, value in metric_values]))
 
         if is_abnormal:
             return "The metric is abnormal"

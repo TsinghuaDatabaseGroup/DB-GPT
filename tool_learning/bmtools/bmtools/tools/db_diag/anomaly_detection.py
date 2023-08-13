@@ -1,6 +1,7 @@
 import numpy as np
 import requests
 import json
+import pdb
 
 
 def prometheus(url, params):
@@ -11,7 +12,7 @@ def prometheus(url, params):
     return res.json()
 
 
-def detect_anomalies(data, significance_level=0.05):
+def detect_anomalies(data, significance_level=0.2):
 
     # assume the workload is steadily running 
 
@@ -26,7 +27,6 @@ def detect_anomalies(data, significance_level=0.05):
         numpy.ndarray: Boolean array indicating anomalies (True) and non-anomalies (False).
     """
 
-    """
     sorted_data = np.sort(data)
     n = len(sorted_data)
     
@@ -40,12 +40,14 @@ def detect_anomalies(data, significance_level=0.05):
     ks_statistic = np.max(np.abs(empirical_cdf - expected_cdf))
     
     # Calculate the critical value based on the significance level and sample size
-    critical_value = np.sqrt(-0.5 * np.log(significance_level / 2) / n)
-    
+    critical_value = np.sqrt(-0.1 * np.log(significance_level / 2) / n)
+
+    pdb.set_trace()
+
     # Compare the KS statistic with the critical value
     anomalies = np.where(ks_statistic > critical_value, True, False)
-    """
 
+    '''
     # Calculate the mean and standard deviation of the data
     anomalies = False
 
@@ -55,9 +57,9 @@ def detect_anomalies(data, significance_level=0.05):
     #print("mean: ", mean)
     #print("max_value: ", max_value)
 
-    # KS-Test
-
     if max_value > 2.05 * mean:
         anomalies = True
+    
+    '''
     
     return anomalies
