@@ -220,21 +220,11 @@ cd prompt_template_scripts/query_rewrite
 
 ## Cases
 
-<details><summary><b>INSERT_LARGE_DATA</b></summary>
+<details><summary><b>POOR_JOIN_PERFORMANCE</b></summary>
 
-https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
-
-</details>
-
-
-<details><summary><b>INSERT_LARGE_DATA</b></summary>
-
-https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
+https://github.com/TsinghuaDatabaseGroup/DB-GPT/assets/17394639/5a9a91bf-fc1f-415e-8a59-ec8ab5a705df
 
 </details>
-
-
-
 
 
 ## Todo
