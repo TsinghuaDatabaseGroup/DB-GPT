@@ -5,6 +5,9 @@ import numpy as np
 import openai
 import paramiko
 
+import sys
+sys.path.append(".")
+
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet, stopwords
 from nltk.tokenize import word_tokenize
@@ -22,6 +25,13 @@ from bmtools.tools.db_diag.example_generate import bm25
 
 from termcolor import colored
 import pdb
+
+import configparser
+from .optimization_tools.index_selection.selection_utils import selec_com
+from .optimization_tools.index_selection.selection_utils.workload import Workload
+from .optimization_tools.index_selection.selection_algorithms.extend_algorithm import ExtendAlgorithm
+from .optimization_tools.index_selection.selection_utils.postgres_dbms import PostgresDatabaseConnector
+
 
 
 import warnings
@@ -77,6 +87,70 @@ def find_abnormal_metrics(start_time, end_time, monitoring_metrics, resource):
     return abnormal_metrics
 
 
+INDEX_SELECTION_ALGORITHMS = {
+    # "auto_admin": AutoAdminAlgorithm,
+    # "db2advis": DB2AdvisAlgorithm,
+    # "drop": DropHeuristicAlgorithm,
+    "extend": ExtendAlgorithm,
+    # "relaxation": RelaxationAlgorithm,
+    # "anytime": AnytimeAlgorithm
+}
+
+
+def get_index_result(algo, work_list, connector, columns,
+                        sel_params="parameters", process=False, overhead=False):
+    exp_conf_file = f"./selection_data/{algo}_config_tpch.json" #TODO
+    with open(exp_conf_file, "r") as rf:
+        exp_config = json.load(rf)
+
+    data = list()
+    configs = selec_com.find_parameter_list(exp_config["algorithms"][0],
+                                            params=sel_params)
+    for config in configs:
+        workload = Workload(selec_com.read_row_query(work_list, exp_config,
+                                                        columns, type=""))
+        connector.drop_hypo_indexes()
+
+        algorithm = INDEX_SELECTION_ALGORITHMS[algo](
+            connector, config["parameters"], process)
+
+        if not process and not overhead:
+            sel_info = ""
+            indexes = algorithm.calculate_best_indexes(
+                workload, overhead=overhead)
+        else:
+            indexes, sel_info = algorithm.calculate_best_indexes(
+                workload, overhead=overhead)
+
+        indexes = [str(ind) for ind in indexes]
+        cols = [ind.split(",") for ind in indexes]
+        cols = [list(map(lambda x: x.split(".")[-1], col)) for col in cols]
+        indexes = [
+            f"{ind.split('.')[0]}#{','.join(col)}" for ind, col in zip(indexes, cols)]
+
+        no_cost, ind_cost = list(), list()
+        total_no_cost, total_ind_cost = 0, 0
+        for sql in work_list:
+            no_cost_ = connector.get_ind_cost(sql, "")
+            total_no_cost += no_cost_
+            no_cost.append(no_cost_)
+
+            ind_cost_ = connector.get_ind_cost(sql, indexes)
+            total_ind_cost += ind_cost_
+            ind_cost.append(ind_cost_)
+
+        data.append({"config": config["parameters"],
+                        "workload": work_list,
+                        "indexes": indexes,
+                        "no_cost": no_cost,
+                        "total_no_cost": total_no_cost,
+                        "ind_cost": ind_cost,
+                        "total_ind_cost": total_ind_cost,
+                        "sel_info": sel_info})
+
+    return data
+
+
 def build_db_diag_tool(config) -> Tool:
     tool = Tool(
         "Database Diagnosis",
@@ -128,6 +202,10 @@ def build_db_diag_tool(config) -> Tool:
         # 1691897340.0 1691897430.0
 
         return {"start_time": 1691897340, "end_time": 1691897430}
+
+        '''
+        If the anomaly period is recorded on the server side, you can use the following code to obtain the start and end time of the anomaly.q
+        '''
 
         # Create SSH client
         ssh = paramiko.SSHClient()
@@ -363,5 +441,64 @@ Note: include the important slow queries in the output.
         # output_analysis = llm(prompt)
 
         return {"diagnose": output_analysis, "knowledge": docs_str}
+
+
+    @tool.get("/run_extend_selection")
+    def run_extend_selection(workload: str):
+        """run_extend_selection(workload: str) returns the recommended index by running the algorithm 'Extend'. 
+           This method uses a recursive algorithm that considers only a limited subset of index candidates.
+           The method exploits structures and properties that are typical for real-world workloads and the performance of indexes.
+           It identifies beneficial indexes and does not construct similar indexes.
+           The recursion only realizes index selections/extensions with significant additional performance per size ratio.
+
+           Overall, 'Extend' has the following advantages:
+           (1) it is applicable in scenarios where problems are large. Due to the recursive nature of the approach,
+           in each construction step, there is just a small number of possibilities which have to be evaluated;
+           (2) it scales and quickly provides near-optimal index selections;
+           (3) it outperforms other strategies if the set of candidates is small compared to the set of all potential candidates;
+           (4) it is particularly effective for large problems;
+           (5) the index width does not have a significant impact on the runtime and it identifies wide indexes (≥ 4) in an acceptable amount of time;
+           (6) provide the good combination of runtime and solution quality in a wide range of scenarios;
+
+           However, 'Extend' has the following limitations:
+           (1) the method might miss beneficial indexes in case they require a previous expensive but not directly beneficial index to append to;
+           (2) An index A can be applied to more queries than an (extended) index AB and requires less memory. If this property is not satisfied, the method might not identify beneficial indexes effectively;
+           (3) Similar indexes AB and AC typically cannibalize each other, meaning when both are selected together they can only marginally increase the overall workload performance compared to a scenario where just one of them is selected.
+               If this property is not satisfied, the method might construct similar indexes, which could lead to inefficiencies.
+
+           The following is an example:
+           Thoughts: I will use the \\\'run_extend_selection\\\' command to recommend the index for the given workload.
+           Reasoning: I need to recommend the effective index for the given workload. I will use the \\\'run_extend_selection\\\' command to get the index from 'Extend' and return the result.
+           Plan: - Use the \\\'run_extend_selection\\\' command to get the index. 
+           Command: {"name": "run_extend_selection", 
+                     "args": {"workload": "SELECT A.col1 from A join B where A.col2 = B.col2 and B.col3 > 2 group by A.col1"}}
+           Result: Command run_extend_selection returned: "A#col2; B#col2,col3"
+        """
+
+        sel_params = "parameters"
+        process, overhead = True, True
+
+        bench, data_size = "tpch", "_1gb" #TODO
+        schema_file = f"./selection_data/schema_{bench}{data_size}.json"
+        tables, columns = selec_com.get_columns_from_schema(schema_file)
+
+        db_conf_file = f"my_config.ini" #TODO
+        db_config = configparser.ConfigParser()
+        db_config.read(db_conf_file)
+        connector = PostgresDatabaseConnector(db_config, autocommit=True)
+
+        # data_load = f"./selection_data/{bench}_template_{temp_num}.sql"
+        # with open(data_load, "r") as rf:
+        #     work_list = rf.readlines()
+
+        algo = "extend"
+        workload = workload.split(";")
+        indexes, no_cost, total_no_cost, \
+        ind_cost, total_ind_cost, sel_info = get_index_result(algo, workload, connector,
+                                                              columns, sel_params=sel_params,
+                                                              process=process, overhead=overhead)
+
+
+        return f"The recommended indexes by 'Extend' are: {indexes}."
 
     return tool

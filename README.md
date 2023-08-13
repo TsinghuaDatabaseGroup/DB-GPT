@@ -25,6 +25,8 @@
 <span id="-news"></span>
 
 ## What's New
+- **[2023/8/13]** Support [**optimization functions**] during diagnosis.
+
 - **[2023/8/10]** Our [**vision paper**](https://arxiv.org/abs/2308.05481) is released.
 
 
@@ -114,18 +116,20 @@ export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_pr
 
 #### Tool Usage
 
-- Extract hundreds of tool APIs to carry out different monitoring/optimization functions (./tool_learning/tool_apis).
+- Extract dozens of tool APIs to carry out different optimization functions (./tool_learning/tool_apis/).
 
     - Check the update results and sync to [api.py](./tool_learning/bmtools/bmtools/tools/db_diag/api.py).
 
-- Start bmtools service.
+- Start bmtools service (kept alive for <a href="#-tot">*tree of thought*</a> and <a href="#-diagnosis">*diagnosis*</a>).
 
 ```bash
 cd tool_learning/bmtools
 python host_local_tools.py
 ```
 
-- Test tool usage (basic *tree of thought* algorithm within *./tool_learning/tree_of_thought*).
+<span id="-tot"></span>
+
+- Test tool utilization with *tree of thought* algorithm.
 
 ```bash
 cd tool_learning/tree_of_thought
@@ -179,6 +183,8 @@ Within the *anomaly_scripts* directory, we offer scripts that could incur typica
 <br>
 </details>
 
+<span id="-diagnosis"></span>
+
 ### Diagnosis & Optimization
 
 #### Command-line Interface
@@ -226,6 +232,26 @@ cd prompt_template_scripts/query_rewrite
 <img src="imgs/memory.png" width="800px">
 </div>
 <br>
+
+```vim
+[Chief DBA]: The anomaly started at 1691897340 and ended at 1691897430.
+
+[CPU Agent]: Based on the CPU relevant metric values, the root cause of high CPU usage could be a high load value, too many active processes, blocked processes, high CPU scrape collector duration, and low entropy.
+I suggest reviewing system logs and identifying any recent changes or updates. We should also analyze other relevant metrics such as memory usage, disk I/O, network traffic, and check for any abnormal behavior from specific processes or applications.
+----------------------------
+(matched knowledge) missing_index: This function checks for the presence of a required index using a workload-index-recommend interface. If the recommended index information is available, it indicates that a required index is missing and provides a suggestion for the recommended index. If the information is not available, it is not a root cause for the issue.
+
+[Memory Agent]: The root cause of the high memory usage could be disk spill and insufficient memory allocation.
+I suggest analyzing the actual resource usage during query execution, performing a thorough analysis of the query plans, and evaluating the system configuration settings related to memory allocation, such as 'work_mem' and 'shared_buffers.' More information about the sort spill count or hash spill count and the threshold values is needed to confirm if disk spill is the root cause. If the free memory is consistently low and close to the total memory capacity, consider increasing the memory allocation for the system.
+----------------------------
+(matched knowledge) disk_spill: This function checks whether there is a possibility of disk spill during the execution of SQL. If the plan parse information is not available, it checks whether the sort spill count or hash spill count exceeds the sort rate threshold. If the plan parse information is available, it calculates the total cost of the plan and checks whether the cost rate of the sort or hash operators exceeds the cost rate threshold. If abnormal operator details are found and the sort or hash spill count is greater than 0, it indicates that the SORT/HASH operation may spill.
+
+[Chief DBA]: The identified root causes of the anomaly are high CPU usage due to high load value, too many active processes, blocked processes, high CPU scrape collector duration, and low entropy. The high memory usage could be due to disk spill and insufficient memory allocation.
+----------------------------
+(solution) To resolve the high CPU usage, we should review system logs and identify any recent changes or updates. We should also analyze other relevant metrics such as memory usage, disk I/O, network traffic, and check for any abnormal behavior from specific processes or applications.
+To mitigate the high memory usage, we should analyze the actual resource usage during query execution, perform a thorough analysis of the query plans, and evaluate the system configuration settings related to memory allocation, such as 'work_mem' and 'shared_buffers.' More information about the sort spill count or hash spill count and the threshold values is needed to confirm if disk spill is the root cause. If the free memory is consistently low and close to the total memory capacity, consider increasing the memory allocation for the system.
+```
+
 </details>
 
 
