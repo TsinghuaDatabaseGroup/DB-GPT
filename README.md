@@ -9,6 +9,7 @@
   <a href="#-cases">Cases</a> •
   <a href="#-community">Community</a> •  
   <a href="#-projects">Relevant Projects</a>
+  <a href="#-citation">Citation</a>    
 </p>
 
 
@@ -19,7 +20,7 @@
 <br>
 
 
-🧗 Database administrators (DBAs) play a crucial role in managing, maintaining and optimizing a database system to ensure data availability, performance, and reliability. However, it is hard and tedious for DBAs to manage a large number of database instances. Thus, we propose *D-Bot*, a LLM-based database administrator that can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
+🧗 Database administrators (DBAs) play a crucial role in managing, maintaining and optimizing a database system to ensure data availability, performance, and reliability. However, it is hard and tedious for DBAs to manage a large number of database instances. Thus, we propose *DBAgent*, a LLM-based database administrator that can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
 
 
 <span id="-news"></span>
@@ -33,11 +34,11 @@
 <span id="-features"></span>
 
 ## Features
-- **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knoweledge (with *document2experience*).
+- **Well-Founded Diagnosis**: DBAgent can provide founded diagnosis by utilizing relevant database knoweledge (with *document2experience*).
 
-- **Practical Tool Utilization**: D-Bot can utilize both monitoring and optimization tools to improve the maintenance capability (with *tool learning* and *tree of thought*).
+- **Practical Tool Utilization**: DBAgent can utilize both monitoring and optimization tools to improve the maintenance capability (with *tool learning* and *tree of thought*).
 
-- **In-depth Reasoning**: Compared with vanilla LLMs, D-Bot will achieve competitive reasoning capability to analyze root causes (with *multi-llm communications*).
+- **In-depth Reasoning**: Compared with vanilla LLMs, DBAgent will achieve competitive reasoning capability to analyze root causes (with *multi-llm communications*).
 
 <br>
 <div align="center">
@@ -46,7 +47,7 @@
 <br>
 
 
-**A demo of using D-Bot**
+**A demo of using DBAgent**
 
 https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
 
@@ -291,15 +292,17 @@ https://github.com/OpenBMB/BMTools
 
 https://github.com/OpenBMB/ToolBench
 
-<!--## Citation
+<span id="-citation"></span>
+
+## Citation
 Feel free to cite us if you like this project.
 ```bibtex
 @misc{zhou2023llm4diag,
       title={LLM As DBA}, 
       author={Xuanhe Zhou, Guoliang Li, Zhiyuan Liu},
       year={2023},
-      eprint={xxxx},
+      eprint={2308.05481},
       archivePrefix={arXiv},
-      primaryClass={xxxx}
+      primaryClass={cs.DB}
 }
-```-->
+```
