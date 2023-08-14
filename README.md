@@ -85,7 +85,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 
 
-### Installation
+### Package Installation
 
 Step1: Install python packages.
 
@@ -226,6 +226,17 @@ cd prompt_template_scripts/query_rewrite
 <span id="-cases"></span>
 
 ## Cases
+
+<details><summary><b>MISSING_INDEXES → INDEX_SELECTION</b></summary>
+<br>
+<div align="center">
+<img src="imgs/memory.png" width="800px">
+</div>
+<br>
+
+
+</details>
+
 
 <details><summary><b>INSUFFICIENT_MEMORY_ALLOCATION</b></summary>
 <br>

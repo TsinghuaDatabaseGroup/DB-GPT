@@ -103,58 +103,50 @@ def get_index_result(algo, work_list, connector, columns,
     script_path = os.path.abspath(__file__)
     script_dir = os.path.dirname(script_path)
 
-    pdb.set_trace()
+    # pdb.set_trace()
 
     exp_conf_file = script_dir + f"/optimization_tools/index_selection/selection_data/algo_conf/{algo}_config.json"
     with open(exp_conf_file, "r") as rf:
         exp_config = json.load(rf)
 
     data = list()
-    configs = selec_com.find_parameter_list(exp_config["algorithms"][0],
-                                            params=sel_params)
-    for config in configs:
-        workload = Workload(selec_com.read_row_query(work_list, exp_config,
-                                                        columns, type=""))
-        connector.drop_hypo_indexes()
+    config = selec_com.find_parameter_list(exp_config["algorithms"][0],
+                                            params=sel_params)[0]
+    
+    workload = Workload(selec_com.read_row_query(work_list, exp_config,
+                                                    columns, type=""))
+    connector.drop_hypo_indexes()
 
-        algorithm = INDEX_SELECTION_ALGORITHMS[algo](
-            connector, config["parameters"], process)
+    algorithm = INDEX_SELECTION_ALGORITHMS[algo](
+        connector, config["parameters"], process)
 
-        if not process and not overhead:
-            sel_info = ""
-            indexes = algorithm.calculate_best_indexes(
-                workload, overhead=overhead)
-        else:
-            indexes, sel_info = algorithm.calculate_best_indexes(
-                workload, overhead=overhead)
+    indexes = algorithm.calculate_best_indexes(
+        workload, overhead=overhead)
 
-        indexes = [str(ind) for ind in indexes]
-        cols = [ind.split(",") for ind in indexes]
-        cols = [list(map(lambda x: x.split(".")[-1], col)) for col in cols]
-        indexes = [
-            f"{ind.split('.')[0]}#{','.join(col)}" for ind, col in zip(indexes, cols)]
+    # pdb.set_trace()
 
-        no_cost, ind_cost = list(), list()
-        total_no_cost, total_ind_cost = 0, 0
-        for sql in work_list:
-            no_cost_ = connector.get_ind_cost(sql, "")
-            total_no_cost += no_cost_
-            no_cost.append(no_cost_)
+    indexes = indexes[0]
 
-            ind_cost_ = connector.get_ind_cost(sql, indexes)
-            total_ind_cost += ind_cost_
-            ind_cost.append(ind_cost_)
+    indexes = [str(ind) for ind in indexes]
+    cols = [ind.split(",") for ind in indexes]
+    cols = [list(map(lambda x: x.split(".")[-1], col)) for col in cols]
+    indexes = [
+        f"{ind.split('.')[0]}#{','.join(col)}" for ind, col in zip(indexes, cols)]
 
-        data.append({"config": config["parameters"],
-                        "workload": work_list,
-                        "indexes": indexes,
-                        "no_cost": no_cost,
-                        "total_no_cost": total_no_cost,
-                        "ind_cost": ind_cost,
-                        "total_ind_cost": total_ind_cost,
-                        "sel_info": sel_info})
+    no_cost, ind_cost = list(), list()
+    total_no_cost, total_ind_cost = 0, 0
+    for sql in work_list:
+        no_cost_ = connector.get_ind_cost(sql, "")
+        total_no_cost += no_cost_
+        no_cost.append(no_cost_)
 
-    return data
+        ind_cost_ = connector.get_ind_cost(sql, indexes)
+        total_ind_cost += ind_cost_
+        ind_cost.append(ind_cost_)
+
+    # pdb.set_trace()
+
+    return indexes, total_no_cost, total_ind_cost
 
 
 def build_db_diag_tool(config) -> Tool:
@@ -464,6 +456,7 @@ Note: include the important slow queries in the output.
            Result: Command optimize_index_selection returned: "A#col2; B#col2,col3"
         """
         algo = "extend"
+        dbname = "imdbload"
         sel_params = "parameters"
         process, overhead = True, True
         script_path = os.path.abspath(__file__)
@@ -481,6 +474,7 @@ Note: include the important slow queries in the output.
 
         config = get_conf(script_dir + '/my_config.ini', 'postgresql')
         db_config["postgresql"] = config
+        db_config["postgresql"]["dbname"] = dbname
         connector = PostgresDatabaseConnector(db_config, autocommit=True)
 
         workload = []
@@ -488,13 +482,10 @@ Note: include the important slow queries in the output.
             for line in rf.readlines():
                 workload.append(line.strip())
 
-        indexes, no_cost, total_no_cost, \
-        ind_cost, total_ind_cost, sel_info = get_index_result(algo, workload, connector,
+        indexes, total_no_cost, total_ind_cost = get_index_result(algo, workload, connector,
                                                               columns, sel_params=sel_params,
                                                               process=process, overhead=overhead)
 
-        pdb.set_trace()
-
-        return f"The recommended indexes by 'Extend' are: {indexes}."
+        return f"The recommended indexes are: {indexes}, which reduces cost from {total_no_cost} to {total_ind_cost}."
 
     return tool

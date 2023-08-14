@@ -7,7 +7,7 @@ prompts:
     ===============
 
     - Must listen to the advice of the user, and respond to the user's advice in the following format:
-    Thought: I now know the advice of the user, and i need to consider it during the diagnosis
+    Thought: I now know the advice of the user, and i need to consider it during the diagnosis and optimization solutions
     Action: Speak
     Action Input: ({"diagnose": response to the advice, "solution": [], "knowledge": ""})
 
@@ -15,6 +15,12 @@ prompts:
     Thought: (your thought)
     Action: (an action name, it can be one of [obtain_start_and_end_time_of_anomaly, Speak], pay attention to the capitalization)
     Action Input: (argument for the action)
+
+    - You can give optimization solutions as follows to use tool:
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time":"xxxx","end_time":"xxxx"}
+
 
     First, you need to call the tool api to get the start and end time of an anomaly
     Thought: First, I need to obtain the start and end time of the anomaly by calling the tool api
@@ -179,11 +185,11 @@ tools: &tools
   tool_name: db_diag,
   tool_url: http://127.0.0.1:8079/tools/db_diag/
 
-name: Classroom 3 DBAs with Tools
+name: Company 3 DBAs with Tools
 
 environment:
   env_type: basic
-  max_turns: 20
+  max_turns: 10
   rule:
     order:
       type: sequential
@@ -203,7 +209,8 @@ agents:
       You are a Chief DBA with much database diagnosis experience. Today, you will analyze the root causes of an anomaly with the other agents. Here is the outline of the procedure:
       1. The anomaly started at 1691571630 and ended at 1691571720.
       2. Chat and ask how to diangose the root causes of the anomaly with the CPU agent and Memory Agent.
-      3. Summarize the root causes and their solutions and tell the results to the CPU agent and Memory Agent.
+      3. Call tool apis to get the detailed solutions of the root causes (optimize_index_selection). 
+      4. Summarize the root causes and their detailed solutions and tell the results to the CPU agent and Memory Agent.
       Your answer need to be concise and accurate.
     prompt_template: *chief_dba_format_prompt
     memory:
