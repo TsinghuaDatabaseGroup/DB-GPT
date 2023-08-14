@@ -26,9 +26,10 @@
 <span id="-news"></span>
 
 ## What's New
-- **[2023/8/13]** Support [**optimization functions**] during diagnosis.
+- **[2023/8/13]** Support <a href="#-cases">optimization functions</a> during diagnosis.
 
 - **[2023/8/10]** Our [**vision paper**](https://arxiv.org/abs/2308.05481) is released.
+
 
 
 <span id="-features"></span>
@@ -228,6 +229,7 @@ cd prompt_template_scripts/query_rewrite
 ## Cases
 
 <details><summary><b>MISSING_INDEXES → INDEX_SELECTION</b></summary>
+
 <br>
 <div align="center">
 <img src="imgs/index_selection.png" width="800px">
