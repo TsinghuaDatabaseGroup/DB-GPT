@@ -182,8 +182,6 @@ def build_db_diag_tool(config) -> Tool:
     script_dir = os.path.dirname(script_path)
     config = get_conf(script_dir + '/my_config.ini', 'postgresql')
     dbargs = DBArgs("postgresql", config=config)  # todo assign database name
-
-    # send request to database
     db = Database(dbargs, timeout=-1)
 
     server_config = get_conf(script_dir + '/my_config.ini', 'benchserver')
@@ -443,9 +441,9 @@ Note: include the important slow queries in the output.
         return {"diagnose": output_analysis, "knowledge": docs_str}
 
 
-    @tool.get("/run_extend_selection")
-    def run_extend_selection(workload: str):
-        """run_extend_selection(workload: str) returns the recommended index by running the algorithm 'Extend'. 
+    @tool.get("/optimize_index_selection")
+    def optimize_index_selection(start_time : int, end_time : int):
+        """optimize_index_selection(start_time : int, end_time : int) returns the recommended index by running the algorithm 'Extend'. 
            This method uses a recursive algorithm that considers only a limited subset of index candidates.
            The method exploits structures and properties that are typical for real-world workloads and the performance of indexes.
            It identifies beneficial indexes and does not construct similar indexes.
@@ -467,32 +465,37 @@ Note: include the important slow queries in the output.
                If this property is not satisfied, the method might construct similar indexes, which could lead to inefficiencies.
 
            The following is an example:
-           Thoughts: I will use the \\\'run_extend_selection\\\' command to recommend the index for the given workload.
-           Reasoning: I need to recommend the effective index for the given workload. I will use the \\\'run_extend_selection\\\' command to get the index from 'Extend' and return the result.
-           Plan: - Use the \\\'run_extend_selection\\\' command to get the index. 
-           Command: {"name": "run_extend_selection", 
+           Thoughts: I will use the \\\'optimize_index_selection\\\' command to recommend the index for the given workload.
+           Reasoning: I need to recommend the effective index for the given workload. I will use the \\\'optimize_index_selection\\\' command to get the index from 'Extend' and return the result.
+           Plan: - Use the \\\'optimize_index_selection\\\' command to get the index. 
+           Command: {"name": "optimize_index_selection", 
                      "args": {"workload": "SELECT A.col1 from A join B where A.col2 = B.col2 and B.col3 > 2 group by A.col1"}}
-           Result: Command run_extend_selection returned: "A#col2; B#col2,col3"
+           Result: Command optimize_index_selection returned: "A#col2; B#col2,col3"
         """
-
+        algo = "extend"
         sel_params = "parameters"
         process, overhead = True, True
+        schema_file = f"./selection_data/schema_job.json"
+        workload_file = f"./selection_data/schema_job.json"
 
-        bench, data_size = "tpch", "_1gb" #TODO
-        schema_file = f"./selection_data/schema_{bench}{data_size}.json"
+
+        # bench, data_size = "tpch", "_1gb" #TODO
         tables, columns = selec_com.get_columns_from_schema(schema_file)
 
-        db_conf_file = f"my_config.ini" #TODO
-        db_config = configparser.ConfigParser()
-        db_config.read(db_conf_file)
+
+        # load db settings
+        db_config = {}
+        script_path = os.path.abspath(__file__)
+        script_dir = os.path.dirname(script_path)
+        config = get_conf(script_dir + '/my_config.ini', 'postgresql')
+        db_config["postgresql"] = config
         connector = PostgresDatabaseConnector(db_config, autocommit=True)
 
-        # data_load = f"./selection_data/{bench}_template_{temp_num}.sql"
-        # with open(data_load, "r") as rf:
-        #     work_list = rf.readlines()
+        workload = []
+        with open(workload_file, "r") as rf:
+            for line in rf.readlines():
+                workload.append(line.strip())
 
-        algo = "extend"
-        workload = workload.split(";")
         indexes, no_cost, total_no_cost, \
         ind_cost, total_ind_cost, sel_info = get_index_result(algo, workload, connector,
                                                               columns, sel_params=sel_params,

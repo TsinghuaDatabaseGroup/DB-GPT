@@ -25,7 +25,7 @@ class PostgresDatabaseConnector(DatabaseConnector):
         if db_name is not None:
             self.db_name = db_name
         else:
-            self.db_name = config["postgresql"]["database"]
+            self.db_name = config["postgresql"]["dbname"]
 
         if user is not None:
             self.user = user
