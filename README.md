@@ -230,9 +230,38 @@ cd prompt_template_scripts/query_rewrite
 <details><summary><b>MISSING_INDEXES → INDEX_SELECTION</b></summary>
 <br>
 <div align="center">
-<img src="imgs/memory.png" width="800px">
+<img src="imgs/index_selection.png" width="800px">
 </div>
 <br>
+
+Note *optimize_index_selection* takes dozens of minutes to explore beneficial index combinations.
+
+```vim
+[Chief DBA]: The anomaly started at 1691897340 and ended at 1691897430.
+
+[CPU Agent]: The anomaly is caused by high CPU usage due to the high number of running processes and the relatively high load averages, especially in the past 1 minute. In addition, slow queries also contribute to the high CPU usage.
+1. Optimize the slow queries by analyzing their execution plans, identifying any missing indexes, and tuning the queries accordingly.
+2. Monitor and manage the number of running processes on the node, ensuring that it remains within acceptable limits.
+3. Investigate and address any system or infrastructure issues that may be contributing to the high load averages.
+4. Consider scaling up or adding more resources to the system if the current CPU usage is consistently high and impacting performance.
+5. Add the recommended indexes: ['movie_info#movie_id', 'movie_companies#movie_id', 'keyword#keyword', 'aka_name#person_id'] to reduce cost from 46856716.92000003 to 31393898.919999983.
+----------------------------
+(matched knowledge) The high CPU usage may be due to the high number of running processes and the relatively high load averages. Slow queries can also contribute to the high CPU usage. The missing_index function checks for the presence of a required index using a workload-index-recommend interface.
+
+[Memory Agent]: The potential causes of high memory usage could be complex queries, insufficient memory allocation, and possibility of disk spill. The slow queries mentioned involve complex operations such as filtering, grouping, and joining multiple tables, which can consume a significant amount of memory, especially if they involve large data sets. The abnormal memory metric values suggest that the available memory might be insufficient to handle the workload. Adjusting parameters like 'work_mem' and 'shared_buffers' might help alleviate memory issues. The complexity and size of the slow queries could potentially lead to disk spill during execution, which can significantly impact performance.
+1. Further investigate and optimize the slow queries mentioned above for better memory utilization.
+2. Monitor and adjust the memory allocation parameters like 'work_mem' and 'shared_buffers' to optimize memory usage.
+3. Analyze the query plans and consider adjustments to parameters like 'work_mem' and 'shared_buffers' to help reduce or eliminate disk spilling.
+----------------------------
+(matched knowledge) Disk spill is a function that checks whether there is a possibility of disk spill during the execution of SQL. If the plan parse information is not available, it checks whether the sort spill count or hash spill count exceeds the sort rate threshold. If the plan parse information is available, it calculates the total cost of the plan and checks whether the cost rate of the sort or hash operators exceeds the cost rate threshold. If abnormal operator details are found and the sort or hash spill count is greater than 0, it indicates that the SORT/HASH operation may spill to disk. The suggestion is to analyze whether the business needs to adjust parameters like work_mem and shared_buffers. If disk spill is detected, it is a root cause, otherwise it is not a root cause.
+
+[Chief DBA]: The identified root causes of the anomaly are high CPU usage due to the high number of running processes and high load averages, slow queries, and high memory usage due to complex queries, insufficient memory allocation, and the possibility of disk spill.
+----------------------------
+(solution) 1. Monitor and manage the number of running processes on the node, ensuring that it remains within acceptable limits.
+2. Add the recommended indexes: ['movie_info#movie_id', 'movie_companies#movie_id', 'keyword#keyword', 'aka_name#person_id'] to reduce cost.
+3. Analyze the query plans and consider adjustments to parameters like 'work_mem' and 'shared_buffers' to help reduce or eliminate disk spilling.
+4. Investigate and address any system or infrastructure issues that may be contributing to the high load averages.
+```
 
 
 </details>
@@ -279,6 +308,7 @@ https://github.com/TsinghuaDatabaseGroup/DB-GPT/assets/17394639/5a9a91bf-fc1f-41
 - [ ] Project cleaning
 - [ ] None-resource problem diagnosis
 - [ ] (framework update) Integrate components as a whole 
+- [ ] Reduce useless content in the responses
 - [ ] Public generated anomaly training data
 - [ ] Fine-tune open-source Model
 - [ ] Support other databases like *MySQL*

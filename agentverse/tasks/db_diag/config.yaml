@@ -70,8 +70,13 @@ prompts:
 
     - You can respond as follows to use tool:
     Thought: (your thought)
-    Action: (an action name, it can be one of [whether_is_abnormal_metric, cpu_diagnosis_agent, Speak], pay attention to the capitalization)
+    Action: (an action name, it can be one of [whether_is_abnormal_metric, cpu_diagnosis_agent, optimize_index_selection, Speak], pay attention to the capitalization)
     Action Input: (argument for the action)
+
+    - You can give optimization solutions as follows to use tool:
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time":"xxxx","end_time":"xxxx"}
 
     You can first determine abnormal metrics by using the tools, and use the following format:
     Thought: Now that I have obtained the start and end time of the anomaly, check whether the CPU usage is abnormal during that time period.
@@ -82,6 +87,11 @@ prompts:
     Thought: No matter cpu usage is abnormal or normal, I must to diagnose the cause of the anomaly using cpu_diagnosis_agent.
     Action: cpu_diagnosis_agent
     Action Input: {"start_time": 1684646375, "end_time": 1684646378}
+
+    Besides, if you find that the indexes are missing, you need to call the optimize_index_selection API to obtain the recommended indexes.
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time":"xxxx","end_time":"xxxx"}
 
     After you have got the observation from cpu_diagnosis_agent, announce it to the chief DBA, and use the following format:
     Thought: I now know the root cause of the anomaly, and i need to report it to the chief DBA  
@@ -233,7 +243,7 @@ agents:
   -
     agent_type: tool
     name: CPU Agent
-    role_description: You are a CPU agent that can use the db_diag tool to check CPU usage (whether_is_abnormal_metric) and analyze the root causes of high CPU usage (cpu_diagnosis_agent).
+    role_description: You are a CPU agent that can use the db_diag tool to check CPU usage (whether_is_abnormal_metric), analyze the root causes of high CPU usage (cpu_diagnosis_agent), and give optimization solutions (optimize_index_selection).
     prompt_template: *cpu_agent_format_prompt
     memory:
       memory_type: chat_history
