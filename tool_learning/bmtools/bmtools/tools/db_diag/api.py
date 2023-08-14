@@ -99,7 +99,13 @@ INDEX_SELECTION_ALGORITHMS = {
 
 def get_index_result(algo, work_list, connector, columns,
                         sel_params="parameters", process=False, overhead=False):
-    exp_conf_file = f"./selection_data/{algo}_config_tpch.json" #TODO
+    
+    script_path = os.path.abspath(__file__)
+    script_dir = os.path.dirname(script_path)
+
+    pdb.set_trace()
+
+    exp_conf_file = script_dir + f"/optimization_tools/index_selection/selection_data/algo_conf/{algo}_config.json"
     with open(exp_conf_file, "r") as rf:
         exp_config = json.load(rf)
 
@@ -449,21 +455,6 @@ Note: include the important slow queries in the output.
            It identifies beneficial indexes and does not construct similar indexes.
            The recursion only realizes index selections/extensions with significant additional performance per size ratio.
 
-           Overall, 'Extend' has the following advantages:
-           (1) it is applicable in scenarios where problems are large. Due to the recursive nature of the approach,
-           in each construction step, there is just a small number of possibilities which have to be evaluated;
-           (2) it scales and quickly provides near-optimal index selections;
-           (3) it outperforms other strategies if the set of candidates is small compared to the set of all potential candidates;
-           (4) it is particularly effective for large problems;
-           (5) the index width does not have a significant impact on the runtime and it identifies wide indexes (≥ 4) in an acceptable amount of time;
-           (6) provide the good combination of runtime and solution quality in a wide range of scenarios;
-
-           However, 'Extend' has the following limitations:
-           (1) the method might miss beneficial indexes in case they require a previous expensive but not directly beneficial index to append to;
-           (2) An index A can be applied to more queries than an (extended) index AB and requires less memory. If this property is not satisfied, the method might not identify beneficial indexes effectively;
-           (3) Similar indexes AB and AC typically cannibalize each other, meaning when both are selected together they can only marginally increase the overall workload performance compared to a scenario where just one of them is selected.
-               If this property is not satisfied, the method might construct similar indexes, which could lead to inefficiencies.
-
            The following is an example:
            Thoughts: I will use the \\\'optimize_index_selection\\\' command to recommend the index for the given workload.
            Reasoning: I need to recommend the effective index for the given workload. I will use the \\\'optimize_index_selection\\\' command to get the index from 'Extend' and return the result.
@@ -475,18 +466,19 @@ Note: include the important slow queries in the output.
         algo = "extend"
         sel_params = "parameters"
         process, overhead = True, True
-        schema_file = f"./selection_data/schema_job.json"
-        workload_file = f"./selection_data/schema_job.json"
+        script_path = os.path.abspath(__file__)
+        script_dir = os.path.dirname(script_path)
+        config = get_conf(script_dir + '/my_config.ini', 'postgresql')
+        schema_file = script_dir + f"/optimization_tools/index_selection/selection_data/data_info/schema_job.json"
+        workload_file = script_dir + f"/optimization_tools/index_selection/selection_data/data_info/job_templates.sql"
 
-
-        # bench, data_size = "tpch", "_1gb" #TODO
         tables, columns = selec_com.get_columns_from_schema(schema_file)
-
 
         # load db settings
         db_config = {}
         script_path = os.path.abspath(__file__)
         script_dir = os.path.dirname(script_path)
+
         config = get_conf(script_dir + '/my_config.ini', 'postgresql')
         db_config["postgresql"] = config
         connector = PostgresDatabaseConnector(db_config, autocommit=True)
@@ -501,6 +493,7 @@ Note: include the important slow queries in the output.
                                                               columns, sel_params=sel_params,
                                                               process=process, overhead=overhead)
 
+        pdb.set_trace()
 
         return f"The recommended indexes by 'Extend' are: {indexes}."
 
