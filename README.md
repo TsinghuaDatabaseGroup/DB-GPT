@@ -8,7 +8,7 @@
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-cases">Cases</a> •
   <a href="#-community">Community</a> •  
-  <a href="#-projects">Relevant Projects</a>
+  <a href="#-projects">Relevant Projects</a> •  
   <a href="#-citation">Citation</a>    
 </p>
 
