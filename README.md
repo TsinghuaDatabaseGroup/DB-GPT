@@ -110,39 +110,6 @@ export OPENAI_API_KEY="your_api_key_here"
 export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
 ```
 
-### Preparation
-
-#### Diagnosis Knowledge
-
-- Extract knowledge from both code (./knowledge_json/knowledge_from_code) and documents (./knowledge_json/knowledge_from_document).
-
-    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](./tool_learning/bmtools/bmtools/tools/db_diag/root_causes_dbmind.jsonl).
-
-
-#### Tool Usage
-
-- Extract dozens of tool APIs to carry out different optimization functions (./tool_learning/tool_apis/).
-
-    - Check the update results and sync to [api.py](./tool_learning/bmtools/bmtools/tools/db_diag/api.py).
-
-- Start bmtools service (kept alive for <a href="#-tot">*tree of thought*</a> and <a href="#-diagnosis">*diagnosis*</a>).
-
-```bash
-cd tool_learning/bmtools
-python host_local_tools.py
-```
-
-<span id="-tot"></span>
-
-- Test tool utilization with *tree of thought* algorithm.
-
-```bash
-cd tool_learning/tree_of_thought
-python test_database.py
-```
-
-> History messages may take up many tokens, and so carefully decide the *turn number*.
-
 ### Anomaly Generation & Detection
 
 Within the *anomaly_scripts* directory, we offer scripts that could incur typical anomalies, e.g., 
@@ -188,6 +155,19 @@ Within the *anomaly_scripts* directory, we offer scripts that could incur typica
 <br>
 </details>
 
+### Set Up Tool Service
+
+Start bmtools service (kept alive for <a href="#-diagnosis">*diagnosis*</a> and <a href="#-tot">*tree of thought*</a>).
+
+```bash
+cd tool_learning/bmtools
+python host_local_tools.py
+```
+
+<span id="-tot"></span>
+
+
+
 <span id="-diagnosis"></span>
 
 ### Diagnosis & Optimization
@@ -195,7 +175,7 @@ Within the *anomaly_scripts* directory, we offer scripts that could incur typica
 #### Command-line Interface
 
 ```shell
-python3 main.py --task db_diag
+python main.py --task db_diag
 ```
 
 #### Website Interface
@@ -203,13 +183,38 @@ python3 main.py --task db_diag
 We also provide a local website demo for this environment. You can launch it with
 
 ```shell
-python3 main_demo.py --task db_diag
+python main_demo.py --task db_diag
 ```
 
 After successfully launching the local server, you can visit [http://127.0.0.1:7860/](http://127.0.0.1:7860/) to trigger the diagnosis procedure (click the *Start Autoplay* button).
 
 
-### Prompt Template Generation
+### Preparation (optional)
+
+#### Knowledge Preparation
+
+- Extract knowledge from both code (./knowledge_json/knowledge_from_code) and documents (./knowledge_json/knowledge_from_document).
+
+    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](./tool_learning/bmtools/bmtools/tools/db_diag/root_causes_dbmind.jsonl).
+
+
+#### Tool Preparation
+
+- Extract tool APIs to carry out different optimization functions (./tool_learning/tool_apis/).
+
+    - Check the update results and sync to [api.py](./tool_learning/bmtools/bmtools/tools/db_diag/api.py).
+
+- Test tool utilization with *tree of thought* algorithm.
+
+```bash
+cd tool_learning/tree_of_thought
+python test_database.py
+```
+
+> History messages may take up many tokens, and so carefully decide the *turn number*.
+
+
+### Prompt Template Generation (optional)
 
 Derive *high-quality prompt templates* from a small number of collected samples (splitting into training and evaluation sets), e.g.,
 
