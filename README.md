@@ -9,7 +9,8 @@
   <a href="#-cases">Cases</a> •
   <a href="#-community">Community</a> •  
   <a href="#-projects">Relevant Projects</a> •  
-  <a href="#-citation">Citation</a>    
+  <a href="#-citation">Citation</a> •  
+  <a href="#-contributors">Contributors</a>        
 </p>
 
 
@@ -388,3 +389,17 @@ Feel free to cite us if you like this project.
       primaryClass={cs.DB}
 }
 ```
+
+
+<span id="-contributors"></span>
+
+## Contributors
+
+<!-- Copy-paste in your Readme.md file -->
+
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/network/dependencies">
+  <img src="https://contrib.rocks/image?repo=TsinghuaDatabaseGroup/DB-GPT" />
+</a>
+
+We thank all the  contributors to this project, more contributors are welcome!
+
