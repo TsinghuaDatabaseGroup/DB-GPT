@@ -35,7 +35,7 @@
 <span id="-features"></span>
 
 ## Features
-- **Well-Founded Diagnosis**: DBAgent can provide founded diagnosis by utilizing relevant database knoweledge (with *document2experience*).
+- **Well-Founded Diagnosis**: DBAgent can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
 
 - **Practical Tool Utilization**: DBAgent can utilize both monitoring and optimization tools to improve the maintenance capability (with *tool learning* and *tree of thought*).
 
