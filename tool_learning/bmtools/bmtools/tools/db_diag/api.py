@@ -127,6 +127,10 @@ def get_index_result(algo, work_list, connector, columns,
 
     indexes = indexes[0]
 
+    if indexes == []:
+        return [], -1, -1
+    
+
     indexes = [str(ind) for ind in indexes]
     cols = [ind.split(",") for ind in indexes]
     cols = [list(map(lambda x: x.split(".")[-1], col)) for col in cols]
@@ -485,6 +489,9 @@ Note: include the important slow queries in the output.
         indexes, total_no_cost, total_ind_cost = get_index_result(algo, workload, connector,
                                                               columns, sel_params=sel_params,
                                                               process=process, overhead=overhead)
+
+        if indexes == []:
+            return "No beneficial single-column indexes can be found!"
 
         return f"The recommended indexes are: {indexes}, which reduces cost from {total_no_cost} to {total_ind_cost}."
 
