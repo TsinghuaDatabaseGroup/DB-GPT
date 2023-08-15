@@ -26,6 +26,8 @@
 <span id="-news"></span>
 
 ## What's New
+- **[2023/8/15]** Initialize <a href="#-solid_response">solid response</a> mechanism.
+
 - **[2023/8/13]** Support <a href="#-cases">optimization functions</a> during diagnosis.
 
 - **[2023/8/10]** Our [**vision paper**](https://arxiv.org/abs/2308.05481) is released.
@@ -224,6 +226,44 @@ cd prompt_template_scripts/query_rewrite
 ./run.sh
 ```
 
+<span id="-solid_response"></span>
+
+### Mechanisms for Solid Responses
+
+#### Remove redundant content in llm responses 
+
+```python 
+python ./response_formalize_scripts/combine_similar_answer.py # test 
+```
+
+
+<details><summary><b>Before Cleaning</b></summary>
+
+```vim
+[Chief DBA]: The identified root causes of the anomaly are high CPU usage due to the high number of running processes and high load averages, slow queries, and high memory usage due to complex queries, insufficient memory allocation, and the possibility of disk spill.
+Optimize the slow queries by analyzing their execution plans, identifying any missing indexes, and tuning the queries accordingly
+Polisih the slow queries by checking their execution plans, identifying any missing indexes, and tuning the queries accordingly
+Monitor and manage the number of running processes on the node, ensuring that it remains within acceptable limits
+Investigate and address any system or infrastructure issues that may be contributing to the high load averages
+Consider scaling up or adding more resources to the system if the current CPU usage is consistently high and impacting performance
+Add the recommended indexes: ['movie_info#movie_id', 'movie_companies#movie_id', 'keyword#keyword', 'aka_name#person_id'] to reduce cost
+Further investigate and optimize the slow queries for better memory utilization
+Monitor and adjust the memory allocation parameters like 'work_mem' and 'shared_buffers' to optimize memory usage
+Analyze the query plans and consider adjustments to parameters like 'work_mem' and 'shared_buffers' to help reduce or eliminate disk spilling
+```
+</details>
+
+<details><summary><b>After Cleaning</b></summary>
+
+```vim
+[Chief DBA]: The identified root causes of the anomaly are high CPU usage due to the high number of running processes and high load averages, slow queries, and high memory usage due to complex queries, insufficient memory allocation, and the possibility of disk spill.
+Polisih the slow queries by checking their execution plans, identifying any missing indexes, and tuning the queries accordingly.
+Monitor and manage the number of running processes on the node, ensuring that it remains within acceptable limits.
+Add the recommended indexes: ['movie_info#movie_id', 'movie_companies#movie_id', 'keyword#keyword', 'aka_name#person_id'] to reduce cost.
+```
+</details>
+
+
 <span id="-cases"></span>
 
 ## Cases
@@ -264,7 +304,6 @@ Note *optimize_index_selection* takes dozens of minutes to explore beneficial in
 3. Analyze the query plans and consider adjustments to parameters like 'work_mem' and 'shared_buffers' to help reduce or eliminate disk spilling.
 4. Investigate and address any system or infrastructure issues that may be contributing to the high load averages.
 ```
-
 
 </details>
 

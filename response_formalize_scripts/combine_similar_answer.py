@@ -15,10 +15,13 @@ headers = {
 similarity = lambda x, y: 1 - spatial.distance.cosine(x, y)
 
 
-def combine_similar_answers(text):
+def combine_similar_answers(text, output_format='str'):
 
-    text = text.strip()
-    tmp_sentences = re.split(r'[.\n]', text)
+    if output_format == 'str':
+        text = text.strip()
+        tmp_sentences = re.split(r'[.\n]', text)
+    else:
+        tmp_sentences = text
 
     # compute text embedding (1536 dimen) for each sentence
     sentences = []
@@ -56,7 +59,8 @@ def combine_similar_answers(text):
 
         combined_sentences.append(similar_sentences[0])
 
-    updated_response = '\n'.join(combined_sentences)
+    if output_format == 'str':
+       updated_response = '\n'.join(combined_sentences)
 
     return updated_response
 

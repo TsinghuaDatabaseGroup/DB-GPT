@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import sys
+sys.path.append('../../../')
+
 import re
 from typing import Union
 import json
@@ -11,6 +14,8 @@ from agentverse.parser import OutputParserError, output_parser_registry
 from agentverse.parser import OutputParser
 from agentverse.llms.base import LLMResult
 from termcolor import colored
+
+from response_formalize_scripts.combine_similar_answer import combine_similar_answers
 
 import pdb
 
@@ -48,10 +53,16 @@ class DBDiag(OutputParser):
             action_input = json.loads(action_input)
 
             action_json = {"diagnose": "", "solution": [], "knowledge": ""}
+            
             for key in action_input:
                 if "diagnose" in key:
+                    if action_input[key] != "":
+                        action_input[key] = combine_similar_answers(action_input[key])
                     action_json["diagnose"] = action_input[key]
-                elif "solution" in key:
+                elif "solution" in key: # list
+                    if action_input[key] != []:
+                        action_input[key] = combine_similar_answers(action_input[key], output_format='list')
+
                     potential_solutions = action_input[key]
                     if isinstance(potential_solutions, str):
                         potential_solutions = potential_solutions.strip()
@@ -60,8 +71,9 @@ class DBDiag(OutputParser):
 
                     action_json["solution"] = potential_solutions
                 elif "knowledge" in key:
+                    if action_input[key] != "":
+                        action_input[key] = combine_similar_answers(action_input[key])
                     action_json["knowledge"] = action_input[key]
-
 
             return AgentFinish({"output": action_json}, text)
         

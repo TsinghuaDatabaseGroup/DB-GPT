@@ -1,8 +1,6 @@
 import logging
 import re
-
 import psycopg2
-
 from .database_connector import DatabaseConnector
 
 
