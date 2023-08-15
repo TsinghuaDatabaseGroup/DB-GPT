@@ -495,4 +495,7 @@ Note: include the important slow queries in the output.
 
         return f"The recommended indexes are: {indexes}, which reduces cost from {total_no_cost} to {total_ind_cost}."
 
+
+
+
     return tool

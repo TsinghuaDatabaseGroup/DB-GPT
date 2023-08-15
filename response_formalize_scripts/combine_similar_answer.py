@@ -19,7 +19,7 @@ def combine_similar_answers(text, output_format='str'):
 
     if output_format == 'str':
         text = text.strip()
-        tmp_sentences = re.split(r'[.\n]', text)
+        tmp_sentences = re.split(r'(?<=[^.])\.(?:\s|\n|$)|\n', text)
     else:
         tmp_sentences = text
 
@@ -60,7 +60,9 @@ def combine_similar_answers(text, output_format='str'):
         combined_sentences.append(similar_sentences[0])
 
     if output_format == 'str':
-       updated_response = '\n'.join(combined_sentences)
+        updated_response = '\n'.join(combined_sentences)
+    else:
+        updated_response = combined_sentences
 
     return updated_response
 

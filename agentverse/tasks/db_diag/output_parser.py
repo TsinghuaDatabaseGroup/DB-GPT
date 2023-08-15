@@ -56,14 +56,19 @@ class DBDiag(OutputParser):
             
             for key in action_input:
                 if "diagnose" in key:
-                    if action_input[key] != "":
+                    if type(action_input[key]) == list and action_input[key] != []:
+                        action_input[key] = combine_similar_answers(action_input[key], output_format='list')
+                    elif type(action_input[key]) == str and action_input[key] != "":
                         action_input[key] = combine_similar_answers(action_input[key])
+
                     action_json["diagnose"] = action_input[key]
                 elif "solution" in key: # list
-                    if action_input[key] != []:
+                    if type(action_input[key]) == list and action_input[key] != []:
                         action_input[key] = combine_similar_answers(action_input[key], output_format='list')
-
+                    elif type(action_input[key]) == str and action_input[key] != "":
+                        action_input[key] = combine_similar_answers(action_input[key])
                     potential_solutions = action_input[key]
+
                     if isinstance(potential_solutions, str):
                         potential_solutions = potential_solutions.strip()
                         potential_solutions = re.sub(r"\n+", "\n", potential_solutions)
@@ -71,8 +76,11 @@ class DBDiag(OutputParser):
 
                     action_json["solution"] = potential_solutions
                 elif "knowledge" in key:
-                    if action_input[key] != "":
+                    if type(action_input[key]) == list and action_input[key] != []:
+                        action_input[key] = combine_similar_answers(action_input[key], output_format='list')
+                    elif type(action_input[key]) == str and action_input[key] != "":
                         action_input[key] = combine_similar_answers(action_input[key])
+
                     action_json["knowledge"] = action_input[key]
 
             return AgentFinish({"output": action_json}, text)

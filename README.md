@@ -277,7 +277,7 @@ Add the recommended indexes: ['movie_info#movie_id', 'movie_companies#movie_id',
 </div>
 <br>
 
-Note *optimize_index_selection* takes dozens of minutes to explore beneficial index combinations.
+Note *optimize_index_selection* takes minutes to explore beneficial index combinations.
 
 ```vim
 [Chief DBA]: The anomaly started at 1691897340 and ended at 1691897430.
