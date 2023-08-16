@@ -360,6 +360,8 @@ https://github.com/TsinghuaDatabaseGroup/DB-GPT/assets/17394639/5a9a91bf-fc1f-41
 
 ## Todo
 
+- [ ] Change to vue frontend
+- [ ] More powerful anomaly trigger
 - [ ] Project cleaning
 - [ ] (framework update) Integrate components as a whole 
 - [ ] Public generated anomaly training data
