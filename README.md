@@ -27,7 +27,7 @@
 ## What's New
 - **[2023/8/15]** Initialize <a href="#-solid_response">solid response</a> mechanism.
 
-- **[2023/8/13]** Support <a href="#-cases">optimization functions</a> during diagnosis.
+- **[2023/8/13]** Support <a href="#-tools">optimization functions</a> during diagnosis.
 
 - **[2023/8/10]** Our [**vision paper**](https://arxiv.org/abs/2308.05481) is released.
 
@@ -196,6 +196,8 @@ After successfully launching the local server, you can visit [http://127.0.0.1:7
     - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](./tool_learning/bmtools/bmtools/tools/db_diag/root_causes_dbmind.jsonl).
 
 
+<span id="-tools"></span>
+
 #### Tool Preparation
 
 - Tool APIs (for optimization)
@@ -206,7 +208,7 @@ After successfully launching the local server, you can visit [http://127.0.0.1:7
     | [query_rewrite](./tool_learning/bmtools/bmtools/tools/db_diag/optimization_tools/query_rewrite)           | *45* rules  |
     | [physical_hint](./tool_learning/bmtools/bmtools/tools/db_diag/optimization_tools/physical_operator_hint)           | *15* parameters  |
 
-    For each modle function, you can use the *api_test.py* script to verify the effectiveness. 
+    For each module function, you can use the *api_test.py* script within the corresponding directory to verify the effectiveness. 
 
     If the function actually works, append it to [api.py](./tool_learning/bmtools/bmtools/tools/db_diag/api.py).
 
@@ -359,9 +361,7 @@ https://github.com/TsinghuaDatabaseGroup/DB-GPT/assets/17394639/5a9a91bf-fc1f-41
 ## Todo
 
 - [ ] Project cleaning
-- [ ] None-resource problem diagnosis
 - [ ] (framework update) Integrate components as a whole 
-- [ ] Reduce useless content in the responses
 - [ ] Public generated anomaly training data
 - [ ] Fine-tune open-source Model
 - [ ] Support other databases like *MySQL*
