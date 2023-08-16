@@ -412,5 +412,6 @@ Feel free to cite us if you like this project.
   <img src="https://contrib.rocks/image?repo=TsinghuaDatabaseGroup/DB-GPT" />
 </a>
 
-We thank all the  contributors to this project, more contributors are welcome!
+Collaborators not previously mentioned: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](https://github.com/LikyThu).
 
+We thank all the contributors to this project. Do not hesitate if you would like to get involved or contribute!
