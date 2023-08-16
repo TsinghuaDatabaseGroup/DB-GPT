@@ -208,7 +208,7 @@ After successfully launching the local server, you can visit [http://127.0.0.1:7
     | [query_rewrite](./tool_learning/bmtools/bmtools/tools/db_diag/optimization_tools/query_rewrite)           | *45* rules  |
     | [physical_hint](./tool_learning/bmtools/bmtools/tools/db_diag/optimization_tools/physical_operator_hint)           | *15* parameters  |
 
-    For each module function, you can use the *api_test.py* script within the corresponding directory to verify the effectiveness. 
+    For functions within [[query_rewrite](./tool_learning/bmtools/bmtools/tools/db_diag/optimization_tools/query_rewrite), [physical_hint](./tool_learning/bmtools/bmtools/tools/db_diag/optimization_tools/physical_operator_hint)], you can use *api_test.py* script to verify the effectiveness. 
 
     If the function actually works, append it to [api.py](./tool_learning/bmtools/bmtools/tools/db_diag/api.py).
 
