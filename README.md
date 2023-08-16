@@ -8,9 +8,7 @@
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-cases">Cases</a> •
   <a href="#-community">Community</a> •  
-  <a href="#-projects">Relevant Projects</a> •  
-  <a href="#-citation">Citation</a> •  
-  <a href="#-contributors">Contributors</a>        
+  <a href="#-contributors">Contributors</a>
 </p>
 
 
@@ -200,18 +198,26 @@ After successfully launching the local server, you can visit [http://127.0.0.1:7
 
 #### Tool Preparation
 
-- Extract tool APIs to carry out different optimization functions (./tool_learning/tool_apis/).
+- Tool APIs (for optimization)
 
-    - Check the update results and sync to [api.py](./tool_learning/bmtools/bmtools/tools/db_diag/api.py).
+    | Module                  | Functions |
+    |-------------------------|-----------|
+    | [index_selection](./tool_learning/bmtools/bmtools/tools/db_diag/optimization_tools/index_selection) (equipped)          | *heuristic* algorithm  |
+    | [query_rewrite](./tool_learning/bmtools/bmtools/tools/db_diag/optimization_tools/query_rewrite)           | *45* rules  |
+    | [physical_hint](./tool_learning/bmtools/bmtools/tools/db_diag/optimization_tools/physical_operator_hint)           | *15* parameters  |
 
-- Test tool utilization with *tree of thought* algorithm.
+    For each modle function, you can use the *api_test.py* script to verify the effectiveness. 
 
-```bash
-cd tool_learning/tree_of_thought
-python test_database.py
-```
+    If the function actually works, append it to [api.py](./tool_learning/bmtools/bmtools/tools/db_diag/api.py).
 
-> History messages may take up many tokens, and so carefully decide the *turn number*.
+- Tool Usage Algorithm (*tree of thought*)
+
+    ```bash
+    cd tool_learning/tree_of_thought
+    python test_database.py
+    ```
+
+    > History messages may take up many tokens, and so carefully decide the *turn number*.
 
 
 ### Prompt Template Generation (optional)

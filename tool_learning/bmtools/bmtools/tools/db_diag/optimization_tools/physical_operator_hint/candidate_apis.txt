@@ -14,10 +14,10 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_bitmapscan knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the bitmapscan operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the bitmapscan operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the bitmapscan operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the bitmapscan operator."
 
         return text_output
 
@@ -36,10 +36,10 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_gathermerge knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the gathermerge operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the gathermerge operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the gathermerge operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the gathermerge operator."
 
         return text_output
 
@@ -58,10 +58,10 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_hashagg knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the hashagg operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the hashagg operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the hashagg operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the hashagg operator."
 
         return text_output
 
@@ -80,10 +80,10 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_hashjoin knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the hashjoin operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the hashjoin operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the hashjoin operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the hashjoin operator."
 
         return text_output
 
@@ -102,10 +102,10 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_indexonlyscan knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the indexonlyscan operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the indexonlyscan operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the indexonlyscan operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the indexonlyscan operator."
 
         return text_output
 
@@ -124,10 +124,10 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_indexscan knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the indexscan operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the indexscan operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the indexscan operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the indexscan operator."
 
         return text_output
 
@@ -146,10 +146,10 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_material knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the material operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the material operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the material operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the material operator."
 
         return text_output
 
@@ -168,10 +168,10 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_mergejoin knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the mergejoin operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the mergejoin operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the mergejoin operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the mergejoin operator."
 
         return text_output
 
@@ -190,10 +190,10 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_nestloop knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the nestloop operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the nestloop operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the nestloop operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the nestloop operator."
 
         return text_output
 
@@ -212,10 +212,10 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_parallel_append knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the parallel_append operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the parallel_append operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the parallel_append operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the parallel_append operator."
 
         return text_output
 
@@ -234,10 +234,10 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_parallel_hash knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the parallel_hash operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the parallel_hash operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the parallel_hash operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the parallel_hash operator."
 
         return text_output
 
@@ -256,10 +256,10 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_partition_pruning knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the partition_pruning operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the partition_pruning operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the partition_pruning operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the partition_pruning operator."
 
         return text_output
 
@@ -278,10 +278,10 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_seqscan knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the seqscan operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the seqscan operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the seqscan operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the seqscan operator."
 
         return text_output
 
@@ -300,10 +300,10 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_sort knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the sort operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the sort operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the sort operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the sort operator."
 
         return text_output
 
@@ -322,9 +322,9 @@
             # raise error
             raise Exception(status_code=400, detail=f"Failed to explain the query after changing the enable_tidscan knob.")
         else:
-            if action == "ON":
-                text_output = f"The new query plan is {new_query_plan} after enabling the tidscan operator."
+            if action == "ON" or action == "on" or action == "On":
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after enabling the tidscan operator."
             else:
-                text_output = f"The new query plan is {new_query_plan} after disabling the tidscan operator."
+                text_output = f"The query cost can be reduced from {cost} to {new_cost} after disabling the tidscan operator."
 
         return text_output
