@@ -25,9 +25,9 @@
 <span id="-news"></span>
 
 ## What's New
-- **[2023/8/15]** Initialize <a href="#-solid_response">solid response</a> mechanism.
+- **[2023/8/16]** Support multi-level <a href="#-tools">optimization functions</a>.
 
-- **[2023/8/13]** Support <a href="#-tools">optimization functions</a> during diagnosis.
+- **[2023/8/15]** Initialize <a href="#-solid_response">solid response</a> mechanism.
 
 - **[2023/8/10]** Our [**vision paper**](https://arxiv.org/abs/2308.05481) is released.
 
