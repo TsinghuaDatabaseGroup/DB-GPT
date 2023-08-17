@@ -36,6 +36,10 @@ dt = datetime.datetime.strptime(end_timestamp_str, "%Y-%m-%d %H:%M:%S")
 timestamp = dt.timestamp()
 end_time = timestamp
 
+# 1691897340.0 1691897430.0
+start_time = 1691897340
+end_time = 1691897430
+
 print(" ===== time period: ", start_time, end_time)
 
 text = "The database performance is bad during {} to {}. Please help me to diagnose the causes and give some optimization suggestions.".format(start_time, end_time)
@@ -44,24 +48,18 @@ text = "The database performance is bad during {} to {}. Please help me to diagn
 
 agent(""" {}
 
-First, you need to diagnose the causes of the anomaly from the following two aspects:
+First, call the optimize_index_selection API to obtain the recommended indexes.
 
-    - call the whether_is_abnormal_metric API and examine whether CPU usage is high (or abnormal). Next, if the CPU usage is high (or abnormal), cpu_diagnosis_agent and obtain the diagnosis results.
-
-    - call the whether_is_abnormal_metric API and examine whether memory usage is high (or abnormal). Next, if the memory usage is high (or abnormal), memory_diagnosis_agent and obtain the diagnosis results.
-
-Second, you need to give potential optimization solutions for each root causes.
-
-Finally, list the above diagnosed causes and their matched solutions in easy-to-understand format using bullet points.
+Finally, list the above diagnosed causes and the recommended indexes in easy-to-understand format using bullet points.
 
 ================================
 A Demonstration example:
 
-Thought: I need to check whether the CPU usage is high or abnormal during the given time period.
+Thought: I need to recommend indexes that are missing and cause performance degradation.
 
-Action: whether_is_abnormal_metric
+Action: optimize_index_selection
 
-Action Input: {{"start_time": xxxx, "end_time": xxxx, "metric_name": "cpu_usage"}}
+Action Input: {{"start_time": xxxx, "end_time": xxxx}}
 
 Note. 1) Do not use any image in the output; 
 2) Give some optimization suggestions based on the diagnosis results.
@@ -87,4 +85,26 @@ Note. 1) Do not use any image in the output;
  Based on these metrics, it is difficult to pinpoint the exact cause of the high CPU usage. However, the high number of running processes, blocked processes, and high system load could be contributing factors. It is recommended to further investigate the specific processes or applications that are consuming the most CPU resources to identify the root cause of the issue.",
  
  "knowledge":"missing_index: This function checks for the presence of a required index using a workload-index-recommend interface. If the recommended index information is available, it indicates that a required index is missing and provides a suggestion for the recommended index. If the information is not available, it is not a root cause for the issue.\n\n"}
+'''
+
+'''
+First, you need to diagnose the causes of the anomaly from the following two aspects:
+
+    - call the whether_is_abnormal_metric API and examine whether memory usage is high (or abnormal). Next, if the memory usage is high (or abnormal), memory_diagnosis_agent and obtain the diagnosis results.
+
+    - call the whether_is_abnormal_metric API and examine whether CPU usage is high (or abnormal). Next, if the CPU usage is high (or abnormal), cpu_diagnosis_agent and obtain the diagnosis results.      
+
+Second, you need to give potential optimization solutions for each root causes.
+
+Third, if the index is missing
+
+================================
+A Demonstration example:
+
+Thought: I need to check whether the CPU usage is high or abnormal during the given time period.
+
+Action: whether_is_abnormal_metric
+
+Action Input: {{"start_time": xxxx, "end_time": xxxx, "metric_name": "cpu_usage"}}
+
 '''

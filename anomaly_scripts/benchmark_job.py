@@ -15,9 +15,9 @@ class Database():
     def __init__(self):
         self.conn = None
         self.conn = psycopg2.connect(database='imdbload',
-                                     user='dbmind',
-                                     password='DBMINDdbmind2020',
-                                     host='123.56.63.105',
+                                     user='xxxx',
+                                     password='xxxx',
+                                     host='xxxx',
                                      port=5432)
 
     def execute_sql(self, sql):

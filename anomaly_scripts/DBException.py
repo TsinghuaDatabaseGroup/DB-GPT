@@ -17,7 +17,7 @@ class DBException:
     def trigger_sysbench_exception(self):
         """触发异常"""
         self.run_shell_cmd([
-            'sysbench --db-driver=pgsql --threads=90 --tables=2 --pgsql-host=123.56.63.105 --pgsql-user=dbmind --pgsql-password=DBMINDdbmind2020 --pgsql-port=5432 --pgsql-db=sysbench --time=60 --rand-type=uniform --table_size=10000000 oltp_read_only run'
+            'sysbench --db-driver=pgsql --threads=90 --tables=2 --pgsql-host=xxxx --pgsql-user=xxxx --pgsql-password=xxxx --pgsql-port=5432 --pgsql-db=sysbench --time=60 --rand-type=uniform --table_size=10000000 oltp_read_only run'
         ])
 
     def run_shell_cmd(self, target_sql_list):
