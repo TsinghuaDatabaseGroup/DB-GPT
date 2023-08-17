@@ -21,8 +21,6 @@ from bmtools.knowledge.knowledge_extraction import KnowledgeExtraction
 from bmtools.tools.db_diag.anomaly_detection import detect_anomalies
 from bmtools.tools.db_diag.anomaly_detection import prometheus
 
-from bmtools.tools.db_diag.example_generate import bm25
-
 from termcolor import colored
 import pdb
 
@@ -182,6 +180,7 @@ def build_db_diag_tool(config) -> Tool:
     # load db settings
     script_path = os.path.abspath(__file__)
     script_dir = os.path.dirname(script_path)
+    script_dir = os.path.dirname(script_dir)
     config = get_conf(script_dir + '/my_config.ini', 'postgresql')
     dbargs = DBArgs("postgresql", config=config)  # todo assign database name
     db = Database(dbargs, timeout=-1)
@@ -465,6 +464,7 @@ Note: include the important slow queries in the output.
         process, overhead = True, True
         script_path = os.path.abspath(__file__)
         script_dir = os.path.dirname(script_path)
+        script_dir = os.path.dirname(script_dir)
         config = get_conf(script_dir + '/my_config.ini', 'postgresql')
         schema_file = script_dir + f"/optimization_tools/index_selection/selection_data/data_info/schema_job.json"
         workload_file = script_dir + f"/optimization_tools/index_selection/selection_data/data_info/job_templates.sql"
@@ -475,6 +475,7 @@ Note: include the important slow queries in the output.
         db_config = {}
         script_path = os.path.abspath(__file__)
         script_dir = os.path.dirname(script_path)
+        script_dir = os.path.dirname(script_dir)
 
         config = get_conf(script_dir + '/my_config.ini', 'postgresql')
         db_config["postgresql"] = config

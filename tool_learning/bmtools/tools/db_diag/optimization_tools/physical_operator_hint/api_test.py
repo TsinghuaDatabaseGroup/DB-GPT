@@ -13,6 +13,8 @@ if __name__ == '__main__':
     script_dir = os.path.dirname(script_path)
     script_dir = os.path.dirname(script_dir)
     script_dir = os.path.dirname(script_dir)
+    script_dir = os.path.dirname(script_dir)
+    
     config = get_conf(script_dir + '/my_config.ini', 'postgresql')
     dbargs = DBArgs("postgresql", config=config)  # todo assign 
     dbargs.dbname = "tpch"

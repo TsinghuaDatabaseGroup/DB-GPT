@@ -12,7 +12,7 @@ import nltk
 from utils.db_parser import get_conf
 from utils.database import DBArgs, Database
 
-from example_generate import bm25
+from info_retrieval_algorithm import bm25
 
 # match with external knowledge for in-context learning
 

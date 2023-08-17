@@ -96,6 +96,7 @@ def build_database_tool(config) -> Tool:
     # load db settings
     script_path = os.path.abspath(__file__)
     script_dir = os.path.dirname(script_path)
+    script_dir = os.path.dirname(script_dir)
     config = get_conf(script_dir + '/my_config.ini', 'postgresql')
     dbargs = DBArgs("postgresql", config=config)  # todo assign database name
 

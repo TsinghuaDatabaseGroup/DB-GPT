@@ -3,8 +3,7 @@ from typing import List
 import heapq
 import openai
 # import editdistance
-from gensim.summarization.bm25 import BM25
-import gensim
+from rank_bm25 import BM25Okapi
 import json
 from nltk import pos_tag
 # from nltk.stem import WordNetLemmatizer
@@ -100,7 +99,7 @@ def simple_tok(sent:str):
 
 def bm25(k, target:List[str], sample:List[List[str]]):
     tok_corpus = sample
-    bm25 = BM25(tok_corpus)
+    bm25 = BM25Okapi(tok_corpus)
     query = target
     scores = bm25.get_scores(query)
 

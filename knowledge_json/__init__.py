@@ -1,0 +1,1 @@
+from knowledge_json.info_retrieval_algorithm import bm25

@@ -1,3 +1,11 @@
+import sys
+import os
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+three_up_path = os.path.abspath(os.path.join(script_dir, '..', '..', '..'))
+sys.path.append(three_up_path)
+
+
 import json
 import os
 import requests
@@ -9,12 +17,7 @@ from nltk.corpus import wordnet, stopwords
 from nltk.tokenize import word_tokenize
 import nltk
 
-from bmtools.tools.database.utils.db_parser import get_conf
-from bmtools.tools.database.utils.database import DBArgs, Database
-from bmtools.tools.db_diag.anomaly_detection import detect_anomalies
-from bmtools.tools.db_diag.anomaly_detection import prometheus
-
-from bmtools.tools.db_diag.example_generate import bm25
+from knowledge_json.info_retrieval_algorithm import bm25
 
 # match with external knowledge for in-context learning
 

@@ -15,7 +15,7 @@ def run_tool_server():
 
     # tool_choice = input("Enter 'ALL' to load all tools, or enter the specific tools you want to load (comma-separated): ")
     
-    load_database_tool()
+    # load_database_tool()
     load_db_diag_tool()
 
     server.serve()

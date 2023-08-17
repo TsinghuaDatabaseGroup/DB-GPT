@@ -70,7 +70,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 - PostgreSQL v12 or higher
 
-    Add database settings into [config.ini](tool_learning/bmtools/bmtools/tools/db_diag/config.ini) and rename into *my_config.ini*:
+    Add database settings into [config.ini](tool_learning/bmtools/bmtools/tools/config.ini) and rename into *my_config.ini*:
 
     ```bash
     [postgresql]
@@ -213,6 +213,21 @@ After successfully launching the local server, you can visit [http://127.0.0.1:7
     If the function actually works, append it to [api.py](./tool_learning/bmtools/bmtools/tools/db_diag/api.py).
 
 - Tool Usage Algorithm (*tree of thought*)
+
+    Step1: Remove the comment of 18th code line in [host_local_tools.py](tool_learning/host_local_tools.py).
+
+    ```python
+    load_database_tool()
+    ```
+
+    Step2: Reset up the bmtools service.
+
+    ```bash
+    cd tool_learning/bmtools
+    python host_local_tools.py
+    ```
+
+    Step3: Run the test script.
 
     ```bash
     cd tool_learning/tree_of_thought
