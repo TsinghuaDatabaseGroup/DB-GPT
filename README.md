@@ -158,7 +158,7 @@ Within the *anomaly_scripts* directory, we offer scripts that could incur typica
 Start bmtools service (kept alive for <a href="#-diagnosis">*diagnosis*</a> and <a href="#-tot">*tree of thought*</a>).
 
 ```bash
-cd tool_learning/bmtools
+cd tool_learning
 python host_local_tools.py
 ```
 
@@ -223,7 +223,7 @@ After successfully launching the local server, you can visit [http://127.0.0.1:7
     Step2: Reset up the bmtools service.
 
     ```bash
-    cd tool_learning/bmtools
+    cd tool_learning
     python host_local_tools.py
     ```
 
