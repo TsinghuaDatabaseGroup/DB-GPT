@@ -14,7 +14,7 @@
 
 <br>
 <div align="center">
-<img src="imgs/demo_example.png" width="400px">
+<img src="imgs/dbagent.png" width="400px">
 </div>
 <br>
 
