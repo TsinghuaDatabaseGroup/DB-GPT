@@ -162,7 +162,7 @@ cd tool_learning
 python host_local_tools.py
 ```
 
-<span id="-tot"></span>
+<span id="-diagnosis"></span>
 
 
 
@@ -211,6 +211,8 @@ After successfully launching the local server, you can visit [http://127.0.0.1:7
     For functions within [[query_rewrite](./tool_learning/bmtools/tools/db_diag/optimization_tools/query_rewrite), [physical_hint](./tool_learning/bmtools/tools/db_diag/optimization_tools/physical_operator_hint)], you can use *api_test.py* script to verify the effectiveness. 
 
     If the function actually works, append it to [api.py](./tool_learning/bmtools/tools/db_diag/api.py).
+
+<span id="-tot"></span>
 
 - Tool Usage Algorithm (*tree of thought*)
 
