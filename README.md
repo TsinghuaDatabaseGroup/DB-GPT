@@ -29,7 +29,7 @@
 
 - **[2023/8/15]** Initialize <a href="#-solid_response">solid response</a> mechanism.
 
-- **[2023/8/10]** Our [**vision paper**](https://arxiv.org/abs/2308.05481) is released.
+- **[2023/8/10]** Our [**vision paper**](https://arxiv.org/abs/2308.05481) is released ([中文解读](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q)).
 
 
 
