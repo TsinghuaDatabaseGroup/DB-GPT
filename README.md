@@ -70,7 +70,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 - PostgreSQL v12 or higher
 
-    Add database settings into [config.ini](tool_learning/bmtools/bmtools/tools/config.ini) and rename into *my_config.ini*:
+    Add database settings into [config.ini](tool_learning/bmtools/tools/config.ini) and rename into *my_config.ini*:
 
     ```bash
     [postgresql]
@@ -193,7 +193,7 @@ After successfully launching the local server, you can visit [http://127.0.0.1:7
 
 - Extract knowledge from both code (./knowledge_json/knowledge_from_code) and documents (./knowledge_json/knowledge_from_document).
 
-    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](./tool_learning/bmtools/bmtools/tools/db_diag/root_causes_dbmind.jsonl).
+    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](./tool_learning/bmtools/tools/db_diag/root_causes_dbmind.jsonl).
 
 
 <span id="-tools"></span>
@@ -204,13 +204,13 @@ After successfully launching the local server, you can visit [http://127.0.0.1:7
 
     | Module                  | Functions |
     |-------------------------|-----------|
-    | [index_selection](./tool_learning/bmtools/bmtools/tools/db_diag/optimization_tools/index_selection) (equipped)          | *heuristic* algorithm  |
-    | [query_rewrite](./tool_learning/bmtools/bmtools/tools/db_diag/optimization_tools/query_rewrite)           | *45* rules  |
-    | [physical_hint](./tool_learning/bmtools/bmtools/tools/db_diag/optimization_tools/physical_operator_hint)           | *15* parameters  |
+    | [index_selection](./tool_learning/bmtools/tools/db_diag/optimization_tools/index_selection) (equipped)          | *heuristic* algorithm  |
+    | [query_rewrite](./tool_learning/bmtools/tools/db_diag/optimization_tools/query_rewrite)           | *45* rules  |
+    | [physical_hint](./tool_learning/bmtools/tools/db_diag/optimization_tools/physical_operator_hint)           | *15* parameters  |
 
-    For functions within [[query_rewrite](./tool_learning/bmtools/bmtools/tools/db_diag/optimization_tools/query_rewrite), [physical_hint](./tool_learning/bmtools/bmtools/tools/db_diag/optimization_tools/physical_operator_hint)], you can use *api_test.py* script to verify the effectiveness. 
+    For functions within [[query_rewrite](./tool_learning/bmtools/tools/db_diag/optimization_tools/query_rewrite), [physical_hint](./tool_learning/bmtools/tools/db_diag/optimization_tools/physical_operator_hint)], you can use *api_test.py* script to verify the effectiveness. 
 
-    If the function actually works, append it to [api.py](./tool_learning/bmtools/bmtools/tools/db_diag/api.py).
+    If the function actually works, append it to [api.py](./tool_learning/bmtools/tools/db_diag/api.py).
 
 - Tool Usage Algorithm (*tree of thought*)
 
