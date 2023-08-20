@@ -9,7 +9,7 @@ tool_learning/bmtools/tools/my_config.ini
 
 # C extensions
 *.so
-*.DS_Store
+.DS_Store
 .vscode/settings.json
 
 # Distribution / packaging
