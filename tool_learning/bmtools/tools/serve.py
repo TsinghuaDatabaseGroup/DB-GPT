@@ -4,6 +4,8 @@ from .registry import build_tool, list_tools
 from .retriever import Retriever
 from typing import List, Dict
 from pydantic import BaseModel
+import pdb
+
 
 class RetrieveRequest(BaseModel):
     query: str
@@ -55,6 +57,7 @@ def _bind_tool_server(t : "ToolServer"):
 
     @t.api.post("/retrieve")
     def retrieve(request: RetrieveRequest):
+
         tool_list = t.retrieve(request.query, request.topk)
         return {
             "tools": tool_list

@@ -8,6 +8,7 @@ from pydantic import Field
 from agentverse.memory import BaseMemory, ChatHistoryMemory
 from agentverse.message import Message
 from agentverse.utils import AgentAction, AgentFinish
+from agentverse.external_tool_process.api_retrieval import api_retriever
 
 import pdb
 
@@ -149,6 +150,7 @@ class ToolAgent(BaseAgent):
     def _fill_prompt_template(
         self, env_description: str = "", tool_observation: List[str] = []
     ) -> str:
+        
         """Fill the placeholders in the prompt template
 
         In the tool agent, these placeholders are supported:
@@ -160,9 +162,13 @@ class ToolAgent(BaseAgent):
         - ${tool_names}: the list of tool names
         - ${tool_observations}: the observation of the tool in this turn
         """
-        tools = "\n".join([f"> {tool.name}: {tool.description}" for tool in self.tools])
+        retriever = api_retriever()
+        
+        relevant_tools = retriever.query(Template(self.prompt_template).safe_substitute({"chat_history": self.memory.to_string(add_sender_prefix=True)}), self.tools)
+
+        tools = "\n".join([f"> {tool.name}: {tool.description}" for tool in relevant_tools])
         tools = tools.replace("{{", "{").replace("}}", "}")
-        tool_names = ", ".join([tool.name for tool in self.tools])
+        tool_names = ", ".join([tool.name for tool in relevant_tools])
         input_arguments = {
             "agent_name": self.name,
             "env_description": env_description,

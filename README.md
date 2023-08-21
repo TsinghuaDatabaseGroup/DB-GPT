@@ -25,6 +25,8 @@
 <span id="-news"></span>
 
 ## What's New
+- **[2023/8/22]** Support tool retrieval for 60+ APIs</a>.
+
 - **[2023/8/16]** Support multi-level <a href="#-tools">optimization functions</a>.
 
 - **[2023/8/15]** Initialize <a href="#-solid_response">solid response</a> mechanism.
@@ -205,8 +207,8 @@ After successfully launching the local server, you can visit [http://127.0.0.1:7
     | Module                  | Functions |
     |-------------------------|-----------|
     | [index_selection](./tool_learning/bmtools/tools/db_diag/optimization_tools/index_selection) (equipped)          | *heuristic* algorithm  |
-    | [query_rewrite](./tool_learning/bmtools/tools/db_diag/optimization_tools/query_rewrite)           | *45* rules  |
-    | [physical_hint](./tool_learning/bmtools/tools/db_diag/optimization_tools/physical_operator_hint)           | *15* parameters  |
+    | [query_rewrite](./tool_learning/bmtools/tools/db_diag/optimization_tools/query_rewrite) (equipped)           | *45* rules  |
+    | [physical_hint](./tool_learning/bmtools/tools/db_diag/optimization_tools/physical_operator_hint) (equipped)           | *15* parameters  |
 
     For functions within [[query_rewrite](./tool_learning/bmtools/tools/db_diag/optimization_tools/query_rewrite), [physical_hint](./tool_learning/bmtools/tools/db_diag/optimization_tools/physical_operator_hint)], you can use *api_test.py* script to verify the effectiveness. 
 
@@ -215,21 +217,6 @@ After successfully launching the local server, you can visit [http://127.0.0.1:7
 <span id="-tot"></span>
 
 - Tool Usage Algorithm (*tree of thought*)
-
-    Step1: Remove the comment of 18th code line in [host_local_tools.py](tool_learning/host_local_tools.py).
-
-    ```python
-    load_database_tool()
-    ```
-
-    Step2: Reset up the bmtools service.
-
-    ```bash
-    cd tool_learning
-    python host_local_tools.py
-    ```
-
-    Step3: Run the test script.
 
     ```bash
     cd tool_learning/tree_of_thought
@@ -431,6 +418,6 @@ Feel free to cite us if you like this project.
   <img src="https://contrib.rocks/image?repo=TsinghuaDatabaseGroup/DB-GPT" />
 </a>
 
-Collaborators not previously mentioned: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](https://github.com/LikyThu).
+Other Collaborators: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](https://github.com/LikyThu).
 
 We thank all the contributors to this project. Do not hesitate if you would like to get involved or contribute!

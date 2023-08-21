@@ -19,7 +19,7 @@ class wrap_diag(base_env):
 
         self.input_description = input_description
 
-        tool_name, tool_url = 'database',  "http://127.0.0.1:8079/tools/database/"
+        tool_name, tool_url = 'db_diag',  "http://127.0.0.1:8079/tools/db_diag/"
         tool_name, tool_config = load_single_tools(tool_name, tool_url)
 
         self.tool, _ = import_all_apis(tool_config)

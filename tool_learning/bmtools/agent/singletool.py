@@ -176,39 +176,6 @@ class STQuestionAnswerer:
                 SystemMessage,
             )
 
-            # customllm = CustomLLM()
-            # class MyChatOpenAI(ChatOpenAI):
-            #     def _create_chat_result(self, response):
-            #         generations = []
-            #         for res in response["choices"]:
-            #             message = self._convert_dict_to_message(res["message"])
-            #             gen = ChatGeneration(message=message)
-            #             generations.append(gen)
-            #         llm_output = {"token_usage": response["usage"], "model_name": self.model_name}
-            #         return ChatResult(generations=generations, llm_output=llm_output)
-                
-            #     def _generate(self, messages, stop):
-            #         message_dicts, params = self._create_message_dicts(messages, stop)
-            #         response = customllm(message_dicts)
-            #         response = json.loads(response)
-            #         # response = self.completion_with_retry(messages=message_dicts, **params)
-            #         return self._create_chat_result(response)
-                
-            #     def _convert_dict_to_message(self, _dict: dict):
-            #         role = _dict["role"]
-            #         if role == "user":
-            #             return HumanMessage(content=_dict["content"])
-            #         elif role == "assistant":
-            #             return AIMessage(content=_dict["content"])
-            #         elif role == "system":
-            #             return SystemMessage(content=_dict["content"])
-            #         else:
-            #             return ChatMessage(content=_dict["content"], role=role)
-
-            # should integrate WriteFile and ReadFile into tools, will fix later.
-            # for tool in [WriteFileTool(), ReadFileTool()]:
-            #     self.all_tools_map[name].append(tool)
-
             agent = AutoGPT.from_llm_and_tools(
                 ai_name="Tom",
                 ai_role="Assistant",
