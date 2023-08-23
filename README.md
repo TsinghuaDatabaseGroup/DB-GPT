@@ -11,7 +11,6 @@
   <a href="#-contributors">Contributors</a>
 </p>
 
-
 <br>
 <div align="center">
 <img src="imgs/dbagent.png" width="400px">
@@ -25,14 +24,19 @@
 <span id="-news"></span>
 
 ## What's New
-- **[2023/8/22]** Support tool retrieval for 60+ APIs</a>.
+<!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- **[2023/8/16]** Support multi-level <a href="#-tools">optimization functions</a>.
+- [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗]()
 
-- **[2023/8/15]** Initialize <a href="#-solid_response">solid response</a> mechanism.
+- [x] **[2023/8/16]** Support multi-level optimization functions <a href="#-tools">🔗</a>
 
-- **[2023/8/10]** Our [**vision paper**](https://arxiv.org/abs/2308.05481) is released ([中文解读](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q)).
+- [x] **[2023/8/10]** Our vision papers are released (continuously update) 
 
+    * *LLM As DBA.* [[Paper]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[Twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw)
+
+    * *DB-GPT: Large Language Model Meets Database.* [[Paper]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
+
+> *DBAgent* continues to evolve with new features. Don't forget to star ⭐ and watch 👀 this repo to stay up to date :)
 
 
 <span id="-features"></span>
@@ -191,7 +195,7 @@ After successfully launching the local server, you can visit [http://127.0.0.1:7
 
 ### Preparation (optional)
 
-#### Knowledge Preparation
+#### 1. Knowledge Preparation
 
 - Extract knowledge from both code (./knowledge_json/knowledge_from_code) and documents (./knowledge_json/knowledge_from_document).
 
@@ -200,7 +204,7 @@ After successfully launching the local server, you can visit [http://127.0.0.1:7
 
 <span id="-tools"></span>
 
-#### Tool Preparation
+#### 2. Tool Preparation
 
 - Tool APIs (for optimization)
 
@@ -246,9 +250,13 @@ cd prompt_template_scripts/query_rewrite
 
 <span id="-solid_response"></span>
 
-### Mechanisms for Solid Responses
+### Robust Responses Mechanisms
 
-#### Remove redundant content in llm responses 
+<!-- #### 100% Accurate Tool Calling -->
+
+#### Refined diagnostics
+
+Remove redundant content in llm responses.
 
 ```python 
 python ./response_formalize_scripts/combine_similar_answer.py # test 

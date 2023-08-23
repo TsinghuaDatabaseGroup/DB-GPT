@@ -2,8 +2,8 @@ import json
 import os
 import requests
 
-from bmtools.tools.database.utils.db_parser import get_conf
-from bmtools.tools.database.utils.database import DBArgs, Database
+from bmtools.tools.db_diag.utils.db_parser import get_conf
+from bmtools.tools.db_diag.utils.database import DBArgs, Database
 
 if __name__ == '__main__':
 

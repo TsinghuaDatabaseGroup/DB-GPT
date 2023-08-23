@@ -14,8 +14,8 @@ from nltk.tokenize import word_tokenize
 import nltk
 
 from ..tool import Tool
-from bmtools.tools.database.utils.db_parser import get_conf
-from bmtools.tools.database.utils.database import DBArgs, Database
+from bmtools.tools.db_diag.utils.db_parser import get_conf
+from bmtools.tools.db_diag.utils.database import DBArgs, Database
 # from bmtools.models.customllm import CustomLLM
 from bmtools.knowledge.knowledge_extraction import KnowledgeExtraction
 from bmtools.tools.db_diag.anomaly_detection import detect_anomalies

@@ -9,10 +9,11 @@ import json
 import aiohttp
 import http.client
 import pdb
+import os
 
 http.client._MAXLINE = 655360
 
-from bmtools import get_logger
+from tool_learning.bmtools.utils.logging import get_logger
 
 logger = get_logger(__name__)
 

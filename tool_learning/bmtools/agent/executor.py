@@ -4,8 +4,8 @@ from typing import Any, Dict, List, Tuple, Union
 from langchain.agents import AgentExecutor
 from langchain.input import get_color_mapping
 from langchain.schema import AgentAction, AgentFinish
-from bmtools.agent.translator import Translator
-from bmtools import get_logger
+from tool_learning.bmtools.agent.translator import Translator
+from tool_learning.bmtools import get_logger
 
 logger = get_logger(__name__)
 

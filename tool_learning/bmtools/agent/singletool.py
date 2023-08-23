@@ -6,10 +6,10 @@ import json
 import os
 import requests
 import yaml
-from bmtools.agent.apitool import RequestTool
-from bmtools.agent.executor import Executor, AgentExecutorWithTranslation
-from bmtools import get_logger
-from bmtools.agent.BabyagiTools import BabyAGI
+from .apitool import RequestTool
+from .executor import Executor, AgentExecutorWithTranslation
+from tool_learning.bmtools.utils.logging import get_logger
+from .BabyagiTools import BabyAGI
 
 
 logger = get_logger(__name__)

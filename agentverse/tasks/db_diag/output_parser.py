@@ -34,6 +34,7 @@ class DBDiag(OutputParser):
             and cleaned_output[2].startswith("Action Input")
         ):
             raise OutputParserError(text)
+        
         action = cleaned_output[1][len("Action:") :].strip()
         action_input = cleaned_output[2][len("Action Input:") :].strip()
 
@@ -91,5 +92,17 @@ class DBDiag(OutputParser):
             return AgentFinish({"output": "[RaiseHand] " + action_input}, text)
         elif action == "Listen":
             return AgentFinish({"output": ""}, text)
-        else:
+        else:            
             return AgentAction(action.lower(), action_input, text)
+
+            # p action.lower()
+            # 'obtain_start_and_end_time_of_anomaly'
+            # p action_input
+            # '{"input": "1692588540, 1692588630"}'
+
+            # p action.lower()
+            # 'whether_is_abnormal_metric'
+            # p action_input
+            # '{"start_time": 1692588540, "end_time": 1692588630, "metric_name": "cpu_usage"}'
+            # p text
+            # 'Thought: Now that I have obtained the start and end time of the anomaly, I should check whether the CPU usage is abnormal during that time period.\nAction: whether_is_abnormal_metric\nAction Input: {"start_time": 1692588540, "end_time": 1692588630, "metric_name": "cpu_usage"}'

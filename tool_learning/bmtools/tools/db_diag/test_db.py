@@ -4,8 +4,8 @@ import requests
 import numpy as np
 import openai
 
-from bmtools.tools.database.utils.db_parser import get_conf
-from bmtools.tools.database.utils.database import DBArgs, Database
+from bmtools.tools.db_diag.utils.db_parser import get_conf
+from bmtools.tools.db_diag.utils.database import DBArgs, Database
 
 # load db settings
 script_path = os.path.abspath(__file__)
