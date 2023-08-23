@@ -26,17 +26,17 @@
 ## What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗]()
+- [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗](tool_learning/bmtools/tools/db_diag/api.py)
 
 - [x] **[2023/8/16]** Support multi-level optimization functions <a href="#-tools">🔗</a>
 
 - [x] **[2023/8/10]** Our vision papers are released (continuously update) 
 
-    * *LLM As DBA.* [[Paper]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[Twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw)
+    * *LLM As DBA.* [[paper]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw)
 
-    * *DB-GPT: Large Language Model Meets Database.* [[Paper]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
+    * *DB-GPT: Large Language Model Meets Database.* [[paper]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
 
-> *DBAgent* continues to evolve with new features. Don't forget to star ⭐ and watch 👀 this repo to stay up to date :)
+> *DBAgent* is evolving with new features! Don't forget to star ⭐ and watch 👀 to stay up to date :)
 
 
 <span id="-features"></span>

@@ -1,9 +1,6 @@
 from typing import List
-
 from pydantic import Field
-
 from agentverse.message import Message
-
 from . import memory_registry
 from .base import BaseMemory
 
