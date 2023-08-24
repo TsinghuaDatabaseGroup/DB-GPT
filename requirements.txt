@@ -43,3 +43,4 @@ flask_cors==3.0.10
 flask==2.1.1
 tiktoken
 requests
+bmtools

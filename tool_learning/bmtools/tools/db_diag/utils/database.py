@@ -6,6 +6,22 @@ import os
 from enum import IntEnum
 import time
 
+def extract_node_types(json_tree):
+    node_types = []
+    
+    def traverse_tree(node):
+        if isinstance(node, dict):
+            if 'Node Type' in node:
+                node_types.append(node['Node Type'])
+            for key, value in node.items():
+                traverse_tree(value)
+        elif isinstance(node, list):
+            for item in node:
+                traverse_tree(item)
+    
+    traverse_tree(json_tree)
+    return node_types
+
 class DataType(IntEnum):
     VALUE = 0
     TIME = 1
@@ -101,14 +117,14 @@ class Database():
 
     def execute_sql(self, sql):
         fail = 1
-        self.conn = self.resetConn(timeout=2)
+        self.conn = self.resetConn(timeout=-1)
         cur = self.conn.cursor()
         i = 0
         cnt = 5 # retry times
         while fail == 1 and i < cnt:
             try:
                 fail = 0
-                print("========== start execution time:", time.time())
+                print("========== start execution", i)
                 cur.execute(sql)
             except BaseException:
                 fail = 1
@@ -156,10 +172,16 @@ class Database():
                 return plan
             else:
                 logging.error('pgsql_query_plan Fails!')
-                return 0
+                return None
         except Exception as error:
             logging.error('pgsql_query_plan Exception', error)
-            return 0
+            return None
+
+    def query_plan_statistics(self, plan):
+        operators = extract_node_types(plan)
+
+        return plan['Total Cost'], operators
+
 
     def pgsql_cost_estimation(self, sql):
         try:
@@ -283,6 +305,26 @@ class Database():
         result = self.execute_sql(statement)
 
         return result
+    
+    def obtain_historical_slow_queries(self):
+        try:
+            #success, res = self.execute_sql('explain (FORMAT JSON, analyze) ' + sql)
+            #command = "SELECT query, calls, total_time FROM pg_stat_statements ORDER BY total_time DESC LIMIT 2;"
+            command = "SELECT s.query, s.calls, s.total_time FROM pg_stat_statements s JOIN pg_database d ON s.dbid = d.oid where d.datname='tpch' ORDER BY s.total_time DESC LIMIT 5;"
+            success, res = self.execute_sql(command)
+            if success == 1:
+                slow_queries = []
+                for sql_stat in res:
+                    print("===== loged slow query: ", sql_stat[0],sql_stat[1],sql_stat[2])
+                    slow_queries.append({"sql": sql_stat[0], "calls": sql_stat[1], "total_time": sql_stat[2]})
+
+                return slow_queries
+            else:
+                logging.error('obtain_historical_slow_queries Fails!')
+                return 0
+        except Exception as error:
+            logging.error('obtain_historical_slow_queries Exception', error)
+            return 0        
 
     def drop_simulated_index(self, oid):
         statement = f"select * from hypopg_drop_index({oid})"
