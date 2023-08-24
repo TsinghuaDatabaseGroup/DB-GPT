@@ -7,6 +7,7 @@
   <a href="#-features">Features</a> •
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-cases">Cases</a> •
+  <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-contributors">Contributors</a>
 </p>
@@ -36,7 +37,8 @@
 
     * *DB-GPT: Large Language Model Meets Database.* [[paper]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
 
-> *DBAgent* is evolving with new features! Don't forget to star ⭐ and watch 👀 to stay up to date :)
+> *DBAgent* is evolving with new features 👫👫<br/> 
+> Don't forget to star ⭐ and watch 👀 to stay up to date :)
 
 
 <span id="-features"></span>
@@ -105,9 +107,15 @@ Step2: Configure environment variables.
 
 - Export your OpenAI API key
 ```bash
-# Export your OpenAI API key
+# macos
 export OPENAI_API_KEY="your_api_key_here"
 ```
+
+```bash
+# windows
+set OPENAI_API_KEY="your_api_key_here"
+```
+
 
 - If accessing openai service via vpn, execute this command:
 ```bash
@@ -367,6 +375,30 @@ To mitigate the high memory usage, we should analyze the actual resource usage d
 
 https://github.com/TsinghuaDatabaseGroup/DB-GPT/assets/17394639/5a9a91bf-fc1f-415e-8a59-ec8ab5a705df
 
+</details>
+
+<span id="-FAQ"></span>
+
+## FAQ
+
+<details><summary><b>🤨 The '.sh' script command cannot be executed on windows system.</b></summary>
+Switch the shell to *git bash* or use *git bash* to execute the '.sh' script.
+</details>
+
+<details><summary><b>🤨 "No module named 'xxx'" on windows system.</b></summary>
+This error is caused by issues with the Python runtime environment path. You need to perform the following steps:
+
+Step1: Check Environment Variables.
+
+<div align="center">
+<img src="imgs/faq2.png" width="800px">
+</div>
+
+You must configure the "Scripts" in the environment variables.
+
+Step2: Check IDE Settings.
+
+For VS Code, download the Python extension for code. For PyCharm, specify the Python version for the current project.
 </details>
 
 
