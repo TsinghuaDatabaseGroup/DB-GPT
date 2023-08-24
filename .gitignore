@@ -61,7 +61,7 @@ cover/
 *.mo
 *.pot
 
-materials/
+materials/videos
 
 # Django stuff:
 *.log
