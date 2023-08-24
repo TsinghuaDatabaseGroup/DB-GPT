@@ -1,17 +1,50 @@
 <template>
   <div class="c-flex-column c-relative" style="width: 100%; height: 100%; margin-left: 5px">
     <div id="scroll-container" class="scroll-container c-relative">
-      <div class="item-space"/>
       <div v-for="(item, index) in messages" :key="index">
         <div :class="[item.isSelf === 1 ? 'text-item c-flex-row right' : 'text-item c-flex-row left']">
-          <img v-if="item.isSelf === 1" src="@/assets/avatar-user.png" class="face">
-          <img v-else src="@/assets/avatar-robot.png" class="face">
-          <div class="content flex-row">{{ item.content }}</div>
+          <template v-if="item.isSelf === 1">
+            <img src="@/assets/avatar-user.png" class="face">
+          </template>
+          <template v-else>
+            <img v-if="item.sender === 'Chief DBA'" src="@/assets/dba_robot.png" class="face">
+            <img v-if="item.sender === 'CPU Agent'" src="@/assets/cpu_robot.png" class="face">
+            <img v-if="item.sender === 'Memory Agent'" src="@/assets/mem_robot.png" class="face">
+          </template>
+          <div v-if="!item.loading" class="c-flex-column">
+            <span style="font-size: 12px; color: #666666; margin-bottom: 5px">{{ item.sender }}</span>
+            <div class="content c-flex-column">
+              <span style="font-size: 14px">{{ item.content.diagnose }}</span>
+            </div>
+            <div
+              v-if="item.content.solution && item.content.solution.length > 0"
+              class="content c-flex-column"
+              style="background: rgba(103, 194, 58, 0.03); color: #ffffff"
+            >
+              <span class="c-flex-column" style="color: RGBA(43, 127, 1, 0.8); margin: 10px 0">
+                <span style="color: RGBA(43, 127, 1, 1.00)">Matched Solution：</span>
+                <span v-for="(solu, soluIndex) in item.content.solution" :key="soluIndex">
+                  {{ solu }}
+                </span>
+              </span>
+            </div>
+            <div v-if="item.content.knowledge" class="content c-flex-column" style="background: RGBA(230, 162, 60, 0.03)">
+              <span class="c-flex-column" style="color: RGBA(230, 162, 60, 0.8); padding: 5px 0;">
+                <span style="color: RGBA(230, 162, 60, 1)">Matched Knowledge：</span>
+                <span>{{ item.content.knowledge || '' }}</span>
+              </span>
+            </div>
+          </div>
+          <div v-else>
+            <div class="content c-flex-row c-justify-content-left" style="padding: 10px 40px 10px 20px">
+              <i class="el-icon-loading" style="font-size: 20px; color: #000000" />
+            </div>
+          </div>
         </div>
       </div>
-      <div class="item-space"/>
+      <div class="item-space" />
     </div>
-    <div class="bottom-input-container">
+    <div v-if="false" class="bottom-input-container">
       <el-popover
         v-model="phraseVisible"
         placement="left"
@@ -53,15 +86,19 @@ import { parseTime } from '@/utils'
 
 export default {
   name: 'Chat',
+  props: {
+    messages: {
+      type: Array,
+      required: true,
+      default: function() {
+        return []
+      }
+    }
+  },
   data() {
     return {
       chats: [],
       loading: false,
-      messages: [
-        { isSelf: 1, content: '测试内容' },
-        { isSelf: 0, content: '测试内容11111111111' },
-        { isSelf: 1, content: '测试内容' }
-      ],
       openChat: {},
       chatText: '',
       pageNow: 1,
@@ -133,39 +170,16 @@ export default {
   position: absolute;
 }
 
-.chat-item {
-  padding: 15px 20px;
-  border-bottom: 1px solid #eaeaea;
-  margin: 0;
-  position: relative;
-  cursor: pointer;
-}
-
-.chat-table-container {
-  overflow: auto;
-  width: 20%;
-  padding-bottom: 10px;
-  height: 100%;
-  min-width: 300px;
-}
-
-.tag {
-  padding: 3px 5px;
-  background-color: #f7f7f7;
-  border-radius: 2px;
-  margin-right: 5px;
-  color: #66656c;
-  font-size: 11px;
-}
-
 .scroll-container {
   transition: all 0.1s ease;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
   padding-bottom: 60px;
-  width: 100%;
-  height: 100%;
+  width: calc(100% - 20px);
+  padding-left: 10px;
+  padding-right: 10px;
+  height: calc(100vh - 140px);
 
   .item-space {
     height: 15px;
@@ -186,17 +200,8 @@ export default {
     color: #9d9d9d;
   }
 
-  .job-item {
-    margin: 0 15px 15px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 5px;
-    padding: 10px 12px;
-    background-color: white;
-  }
-
   .text-item {
-    margin: 0 15px 15px;
+    margin: 20px 0;
     align-items: flex-start;
     justify-content: flex-start;
 
@@ -207,12 +212,13 @@ export default {
     }
 
     .content {
-      color: #111111;
+      color: #333333;
       font-size: 14px;
       min-height: 20px;
-      border-radius: 5px;
+      border-radius: 20px;
       padding: 6px 12px;
-      background-color: #F2F2F2;
+      line-height: 20px;
+      background-color: #ffffff;
       word-break: break-all;
       word-wrap: break-word;
       max-width: calc(100% - 55px);

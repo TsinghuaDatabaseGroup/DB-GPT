@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'has-logo':showLogo}" style="box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.05);">
+  <div :class="{'has-logo':showLogo}">
     <logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
@@ -16,8 +16,8 @@
         <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
       </el-menu>
     </el-scrollbar>
-    <div style="width: 100%;" class="c-justify-content-center c-flex-row">
-      <i class="el-icon-setting seeting-logo" />
+    <div class="en-container c-justify-content-center c-flex-row" @click="onEnClick">
+      <img src="@/assets/ch_to_en.png" style="width: 30px; height: 30px;">
     </div>
   </div>
 </template>
@@ -55,6 +55,20 @@ export default {
     isCollapse() {
       return !this.sidebar.opened
     }
+  },
+  methods: {
+    onEnClick() {
+      this.$i18n.locale = this.$i18n.locale === 'en' ? 'zh' : 'en'
+      localStorage.setItem('LanguageSwitching', this.$i18n.locale)
+    }
   }
 }
 </script>
+
+<style>
+.en-container {
+  cursor: pointer;
+  width: 100%;
+  height: 50px;
+}
+</style>

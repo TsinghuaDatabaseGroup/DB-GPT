@@ -13,7 +13,9 @@ import '@/styles/common.css'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/lib/codemirror'
+
 Vue.use(codemirror)
+import VueI18n from 'vue-i18n'
 
 import App from './App'
 import store from './store'
@@ -21,6 +23,8 @@ import router from './router'
 
 import '@/icons' // icon
 import '@/permission' // permission control
+
+import i18n from './lang'
 
 import hljs from 'highlight.js'
 Vue.use(hljs.vuePlugin)
@@ -53,5 +57,6 @@ new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   render: h => h(App)
 })

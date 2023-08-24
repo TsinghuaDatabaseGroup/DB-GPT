@@ -1,15 +1,15 @@
 <template>
   <div v-loading="loading" class="container">
 
-    <el-form ref="form" :inline="true" label-position="left" size="mini">
+    <el-form ref="form" class="c-shaow-card" :inline="true" label-position="left" size="mini" style="padding-top: 20px; margin: 0 20px; padding-left: 20px">
 
-      <el-form-item label="Instance:">
+      <el-form-item :label="$t('instanceTip') + ':'">
         <el-select
           v-model="dbSelectCondition"
           style="min-width: 120px"
           clearable
           filterable
-          placeholder="请选择"
+          placeholder=""
         >
           <el-option
             v-for="item in dbSelecteds"
@@ -20,12 +20,12 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="查询时间:">
+      <el-form-item :label="$t('queryTimeTip') + ':'">
         <el-date-picker
           v-model="timeRange"
           type="datetimerange"
           :picker-options="pickerOptions"
-          range-separator="至"
+          range-separator="-"
           format="yyyy-MM-dd HH:mm:ss"
           value-format="timestamp"
           start-placeholder="开始日期"
@@ -36,25 +36,25 @@
         />
       </el-form-item>
 
-      <el-form-item label="查询间隔:">
-        <el-select
-          v-model="timeSelectCondition"
-          style="min-width: 80px"
-          clearable
-          filterable
-          placeholder="请选择"
-          @change="reloadRefreshTimer"
-        >
-          <el-option
-            v-for="item in timeSelecteds"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
+      <!--      <el-form-item label="查询间隔:">-->
+      <!--        <el-select-->
+      <!--          v-model="timeSelectCondition"-->
+      <!--          style="min-width: 80px"-->
+      <!--          clearable-->
+      <!--          filterable-->
+      <!--          placeholder="请选择"-->
+      <!--          @change="reloadRefreshTimer"-->
+      <!--        >-->
+      <!--          <el-option-->
+      <!--            v-for="item in timeSelecteds"-->
+      <!--            :key="item.value"-->
+      <!--            :label="item.label"-->
+      <!--            :value="item.value"-->
+      <!--          />-->
+      <!--        </el-select>-->
+      <!--      </el-form-item>-->
 
-      <el-form-item label="自动刷新:">
+      <el-form-item :label="$t('refreshTip') + ':'">
         <el-switch
           v-model="autoRefresh"
           active-color="#13ce66"
@@ -64,52 +64,54 @@
 
     </el-form>
 
-    <el-card shadow="always" style="flex-shrink: 0">
-      <div class="status-card-container">
-        <div v-for="(item, index) in osStatus" :key="index" class="status-card">
-          <div class="top-card-title">{{ item.label }}</div>
-          <div class="top-card-detail">{{ item.value }}</div>
-        </div>
+    <div class="status-card-container" style="flex-shrink: 0; margin: 20px">
+      <div v-for="(item, index) in osStatus" :key="index" class="status-card c-shaow-card">
+        <div class="top-card-title">{{ item.label }}</div>
+        <div class="top-card-detail">{{ item.value }}</div>
       </div>
-    </el-card>
-
-    <div class="nineGridContainer" style="margin-top: 10px">
-      <el-card class="nineGrid" shadow="always">
-        <div class="card-header-title">Average CPU Usage</div>
-        <el-divider />
-        <lineChart class="lineChart" :chart-option="averageCPUUsageChartOption" />
-      </el-card>
-
-      <el-card class="nineGrid" shadow="always">
-        <div class="card-header-title">Average Memory Usage</div>
-        <el-divider />
-        <lineChart class="lineChart" :chart-option="averageMemoryUsageChartOption" />
-      </el-card>
-      <el-card class="nineGrid" shadow="always">
-        <div class="card-header-title">Open File Descriptors</div>
-        <el-divider />
-        <lineChart class="lineChart" :chart-option="openFileDescriptorsChartOption" />
-      </el-card>
-
-      <el-card class="nineGrid" shadow="always">
-        <div class="card-header-title">Active sessions</div>
-        <el-divider />
-        <lineChart class="lineChart" :chart-option="activeSessionsChartOption" />
-      </el-card>
-      <el-card class="nineGrid" style="width: calc(200% + 10px)" shadow="always">
-        <div class="card-header-title">Buffers (bgwriter)</div>
-        <el-divider />
-        <lineChart class="lineChart" :chart-option="buggersChartOption" />
-      </el-card>
-      <div />
-      <el-card class="nineGrid" style="width: calc(200%)" shadow="always">
-        <div class="card-header-title">Checkpoint Stats</div>
-        <el-divider />
-        <lineChart class="lineChart" :chart-option="checkpointStatsChartOption" />
-      </el-card>
-      <div />
     </div>
 
+    <div style="width: 100%; overflow-y: scroll">
+      <div class="nineGridContainer">
+
+        <el-card class="nineGrid" shadow="never">
+          <div class="card-header-title">Average CPU Usage</div>
+          <el-divider />
+          <lineChart class="lineChart" :chart-option="averageCPUUsageChartOption" />
+        </el-card>
+
+        <el-card class="nineGrid" shadow="never">
+          <div class="card-header-title">Average Memory Usage</div>
+          <el-divider />
+          <lineChart class="lineChart" :chart-option="averageMemoryUsageChartOption" />
+        </el-card>
+
+        <el-card class="nineGrid" shadow="never">
+          <div class="card-header-title">Open File Descriptors</div>
+          <el-divider />
+          <lineChart class="lineChart" :chart-option="openFileDescriptorsChartOption" />
+        </el-card>
+
+        <el-card class="nineGrid" shadow="never">
+          <div class="card-header-title">Active sessions</div>
+          <el-divider />
+          <lineChart class="lineChart" :chart-option="activeSessionsChartOption" />
+        </el-card>
+
+        <el-card class="nineGrid" style="width: calc(200% + 10px)" shadow="never">
+          <div class="card-header-title">Buffers (bgwriter)</div>
+          <el-divider />
+          <lineChart class="lineChart" :chart-option="buggersChartOption" />
+        </el-card>
+        <div />
+        <el-card class="nineGrid" style="width: calc(200% + 10px)" shadow="never">
+          <div class="card-header-title">Checkpoint Stats</div>
+          <el-divider />
+          <lineChart class="lineChart" :chart-option="checkpointStatsChartOption" />
+        </el-card>
+        <div />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -119,7 +121,6 @@ import { query, query_range } from '@/api/prometheus'
 import { bytesToSize, stringFoFixed2 } from '@/utils'
 import lineChart from '@/components/echarts/vue-chart'
 import { lineChartOption } from '@/utils/echart-ori-options'
-import { pickerOptions } from '@/utils/date_time_picker_options'
 import moment from 'moment'
 
 export default {
@@ -155,7 +156,7 @@ export default {
       refreshTimer: undefined,
       timeSelectCondition: '1m',
       queryStep: '1m',
-      pickerOptions: pickerOptions,
+      pickerOptions: [],
       timeRange: [],
       alarmHistoaryRecentlyData: [],
       alarmHistoaryRecentlyAllData: [],
@@ -212,7 +213,7 @@ export default {
         return stringFoFixed2(value * 1000) + 'ms'
       }
       this.averageCPUUsageChartOption.xAxis.type = 'time'
-      this.averageCPUUsageChartOption.color = ['#00FFFF']
+      this.averageCPUUsageChartOption.color = ['#E6A23C']
       this.averageCPUUsageChartOption.xAxis.axisLabel.formatter = '{HH}:{mm}'
       this.averageCPUUsageChartOption.legend.data = ['CPU Time']
       this.averageCPUUsageChartOption.series = [
@@ -243,7 +244,7 @@ export default {
         return bytesToSize(value)
       }
       this.averageMemoryUsageChartOption.xAxis.type = 'time'
-      this.averageMemoryUsageChartOption.color = ['#975FE4', '#01DF3A']
+      this.averageMemoryUsageChartOption.color = ['#975FE4', '#F56C6C']
       this.averageMemoryUsageChartOption.xAxis.axisLabel.formatter = '{HH}:{mm}'
       this.averageMemoryUsageChartOption.legend.data = ['Resident Mem', 'Virtual Mem']
       this.averageMemoryUsageChartOption.series = [
@@ -288,7 +289,8 @@ export default {
           data: [],
           type: 'line',
           smooth: true,
-          showSymbol: false
+          showSymbol: false,
+          areaStyle: { type: 'default' }
         }
       ]
 
@@ -306,12 +308,12 @@ export default {
         return 'loading...'
       }
       this.activeSessionsChartOption.xAxis.type = 'time'
-      this.activeSessionsChartOption.color = ['#01DF3A', '#FFFF00', '#1890FF']
+      this.activeSessionsChartOption.color = ['#2B9C0F']
       this.activeSessionsChartOption.xAxis.axisLabel.formatter = '{HH}:{mm}'
-      this.activeSessionsChartOption.legend.data = ['dbmind']
+      this.activeSessionsChartOption.legend.data = []
       this.activeSessionsChartOption.series = [
         {
-          name: 'dbmind',
+          name: '',
           data: [],
           type: 'line',
           smooth: true,
@@ -571,6 +573,9 @@ export default {
 .container >>> .el-collapse-item__header {
   background: #f9f9f9;
 }
+.el-input__inner {
+  border-radius: 20px;
+}
 </style>
 
 <style lang="scss" scoped>
@@ -579,22 +584,21 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 20px;
   height: 100%;
 }
 
 .status-card-container {
-  margin: auto;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  overflow-x: auto;
+  width: calc(100% - 40px);
+  margin: 20px 0;
 }
 
 .status-card {
-  min-width: 80px;
-  margin-right: 10px;
+  padding: 20px;
+  width: calc(20% - 20px);
   display: flex;
   min-height: 50px;
   flex-direction: column;
@@ -638,12 +642,15 @@ export default {
   grid-template-columns: repeat(2, 1fr); /* 相当于 1fr 1fr 1fr */
   grid-gap: 10px; /* grid-column-gap 和 grid-row-gap的简写 */
   grid-auto-flow: row;
-  overflow-y: scroll;
+  margin: 0 20px;
   .nineGrid {
     background-color: #FFFFFF;
     height: 300px;
+    border-radius: 20px;
+    box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.03);
+    border: none;
+    pointer-events: none;
   }
-  margin-top: 20px;
 }
 
 .lineChart {

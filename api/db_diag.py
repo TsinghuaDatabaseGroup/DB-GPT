@@ -30,9 +30,14 @@ def run():
     # 将start_at和end_at写入文件
     with open("tool_learning/bmtools/diag_time.txt", "a") as f:
         f.write(str(start_at) + "-" + str(end_at) + "\n")
-
-    message = agentverse.next()
-    res.update(data=str(message))
+    agentverse.reset()
+    results = agentverse.next()
+    result = {}
+    # 判断是否是数组，如果是数组，且长度大于1，取第一个值
+    if isinstance(results, list) and len(results) > 0:
+        result = results[0]
+        result = {"content": result.content, "sender": result.sender}
+    res.update(data=result)
     return res.data
 
 
@@ -43,8 +48,13 @@ def next_step():
     :return:
     """
     res = ResMsg()
-    message = agentverse.next()
-    res.update(data=str(message))
+    results = agentverse.next()
+    result = {}
+    # 判断是否是数组，如果是数组，且长度大于1，取第一个值
+    if isinstance(results, list) and len(results) > 0:
+        result = results[0]
+        result = {"content": result.content, "sender": result.sender}
+    res.update(data=result)
     return res.data
 
 @route(bp, '/submit', methods=["POST"])
@@ -54,16 +64,15 @@ def submit():
     :return:
     """
     res = ResMsg()
-
-    # obj = request.get_json(force=True)
-    # dataset_name = obj.get("dataset")
-    # # 未获取到参数或参数不存在
-    # if not obj or not dataset_name:
-    #     res.update(code=ResponseCode.InvalidParameter)
-    #     return res.data
-
-
-    res.update(data=agentverse.submit())
+    obj = request.get_json(force=True)
+    message = obj.get("message")
+    results = agentverse.submit(message)
+    result = None
+    # 判断是否是数组，如果是数组，且长度大于1，取第一个值
+    if isinstance(results, list) and len(results) > 0:
+        result = results[0]
+        result = {"content": result.content, "sender": result.sender}
+    res.update(data=result)
     return res.data
 
 
@@ -74,81 +83,7 @@ def reset():
     :return:
     """
     res = ResMsg()
-
-    # obj = request.get_json(force=True)
-    # dataset_name = obj.get("dataset")
-    # # 未获取到参数或参数不存在
-    # if not obj or not dataset_name:
-    #     res.update(code=ResponseCode.InvalidParameter)
-    #     return res.data
-
     agentverse.reset()
     res.update(data={})
     return res.data
 
-#
-# @route(bp, '/distribution', methods=["POST"])
-# def distribution():
-#     """
-#     return the data and workload statistics of the dataset
-#     :return:
-#     """
-#     res = ResMsg()
-#     obj = request.get_json(force=True)
-#     dataset_name = obj.get("dataset")
-#     # 未获取到参数或参数不存在
-#     if not obj or not dataset_name:
-#         res.update(code=ResponseCode.InvalidParameter)
-#         return res.data
-#
-#     # 生成参数
-#     args = PartitionConfig()
-#     args.database = dataset_name
-#     # 生成路径
-#     success, msg = args.generate_paths()
-#     # 生成路径失败
-#     if not success:
-#         res.update(code=ResponseCode.InvalidParameter, msg=msg)
-#         return res.data
-#
-#     # obtain the table info
-#     tbls = table_statistics(args)
-#     # {'lineitem': ['l_quantity', 'l_shipdate'], 'orders': ['o_orderkey', 'o_custkey'], 'customer': ['c_custkey']}
-#
-#     # obtain the column info (in column graph)
-#     graph = Column2Graph(args)
-#
-#     # todo：graph.vertex_matrix graph.edge_matrix 取值，需要转变成 json 识别的格式
-#     # json format
-#
-#     # 数据集获取
-#     vertex_json = graph.vertex_json
-#     edge_json = graph.edge_json
-#     nodes = []
-#     links = []
-#     categories = []
-#     for i, key in enumerate(vertex_json.keys()):
-#         nodes.append({
-#             "name": key,
-#             "symbolSize": min(max(graph.vertex_json[key] * 1000, 16), 40),
-#             "id": key,
-#             "value": graph.vertex_json[key],
-#             "category": i
-#         })
-#         categories.append(i)
-#
-#     for i, key in enumerate(edge_json.keys()):
-#         edge_json_value = edge_json[key]
-#         edge_json_value.setdefault('lineStyle', {})
-#         edge_json_value.get('lineStyle').setdefault('width', min(max(edge_json_value.get('value') / 100, 1), 20))
-#         links.append(edge_json_value)
-#     data = {
-#         "distributions": tbls,
-#         "column2Graph": {
-#             "nodes": nodes,
-#             "categories": categories,
-#             "links": links
-#         }
-#     }
-#     res.update(data=data)
-#     return res.data

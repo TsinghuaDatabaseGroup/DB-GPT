@@ -1,35 +1,36 @@
 <template>
-  <div class="c-flex-row c-align-items-center c-justify-content-between" style="height: calc(100vh - 80px)">
-    <PgsqlDashboard class="c-shaow-card" style="width: 60%; height: 100%" />
-    <div class="c-shaow-card c-flex-column" style="width: 40%; height: 100%; margin-left: 20px">
-      <iframe src="http://127.0.0.1:7860/" style="height: 100%; width: 100%" />
-      <!--      <div class="c-flex-column" style="padding: 20px; box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.02);">-->
-      <!--        <span style="color: #666666">请选择异常发生时间进行分析：</span>-->
-      <!--        <div class="c-flex-row c-align-items-center" style="margin-top: 10px">-->
-      <!--          <el-date-picker-->
-      <!--            v-model="timeRange"-->
-      <!--            style="width: 400px;"-->
-      <!--            type="datetimerange"-->
-      <!--            :picker-options="pickerOptions"-->
-      <!--            range-separator="至"-->
-      <!--            format="yyyy-MM-dd HH:mm:ss"-->
-      <!--            value-format="timestamp"-->
-      <!--            start-placeholder="开始日期"-->
-      <!--            end-placeholder="结束日期"-->
-      <!--            :clearable="false"-->
-      <!--            :editable="false"-->
-      <!--            @change="timeRangeOnChange"-->
-      <!--          />-->
-      <!--          <div-->
-      <!--            class="u-text-center"-->
-      <!--            style="background: #682FF9; border-radius: 5px; padding: 10px; color: #FFFFFF; flex-shrink: 0; margin-left: 10px; cursor: pointer"-->
-      <!--            @click="onChatConfirm()"-->
-      <!--          >-->
-      <!--            分析-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--      </div>-->
-      <!--      <Chat />-->
+  <div class="c-flex-row c-justify-content-between" style="height: 100vh;">
+    <PgsqlDashboard style="width: 65%; height: calc(100% - 40px); margin: 20px 0" />
+    <div class="c-flex-column" style="width: 35%; height: 100%; background: RGBA(242, 246, 255, 1.00); padding: 20px;">
+      <div class="c-shaow-card">
+        <div class="c-flex-column" style="padding: 20px;">
+          <span style="color: #666666">{{ $t('timeRangeTip') }}：</span>
+          <div class="c-flex-row c-align-items-center" style="margin-top: 10px">
+            <el-date-picker
+              v-model="timeRange"
+              style="width: calc(100% - 50px);"
+              type="datetimerange"
+              :picker-options="pickerOptions"
+              range-separator="-"
+              format="yyyy-MM-dd HH:mm:ss"
+              value-format="timestamp"
+              :start-placeholder="$t('timeStartTip')"
+              :end-placeholder="$t('timeEndTip')"
+              :clearable="false"
+              :editable="false"
+            />
+            <div
+              class="u-text-center"
+              style="background: #682FF9; border-radius: 20px; padding: 10px; color: #FFFFFF; flex-shrink: 0; margin-left: 10px; cursor: pointer"
+              @click="onChatConfirm()"
+            >
+              {{ $t('analysisButton') }}
+            </div>
+          </div>
+        </div>
+        <Chat :messages="messages" />
+      </div>
+
     </div>
   </div>
 </template>
@@ -37,33 +38,80 @@
 <script>
 
 import PgsqlDashboard from '@/components/PgsqlDashboard'
-// import Chat from '@/components/Chat'
-import { pickerOptions } from '@/utils/date_time_picker_options'
+import Chat from '@/components/Chat'
+import { nextStep, run } from '@/api/api'
+const MESSAGEKEY = 'chat_messages'
 
 export default {
-  components: { PgsqlDashboard },
+  components: { PgsqlDashboard, Chat },
   filters: {},
   data() {
     return {
       timeRange: [],
-      pickerOptions: pickerOptions
+      pickerOptions: [],
+      messages: []
     }
   },
   watch: {},
   mounted() {
+    this.messages = JSON.parse(localStorage.getItem(MESSAGEKEY) || '[]')
+    this.addLoadingMessage()
   },
   beforeDestroy() {},
   methods: {
-
-    timeRangeOnChange() {
+    addLoadingMessage() {
+      this.messages.push({
+        loading: true
+      })
+    },
+    removeLoadingMessage() {
+      this.messages = this.messages.filter(item => {
+        return !item.loading
+      })
+    },
+    onChatConfirm() {
+      if (this.timeRange.length === 0) {
+        this.$message.warning(this.$t('timeRangeSelectTip'))
+        return
+      }
+      this.addLoadingMessage()
+      run({ start_at: parseInt(this.timeRange[0] / 1000), end_at: parseInt(this.timeRange[0] / 1000) }).then(res => {
+        if (res.data) {
+          this.removeLoadingMessage()
+          this.messages.push(res.data)
+          localStorage.setItem(MESSAGEKEY, JSON.stringify(this.messages))
+          this.runNextStep()
+        }
+      }).catch(() => {
+        this.removeLoadingMessage()
+      })
+    },
+    runNextStep() {
+      this.messages.push({
+        loading: true
+      })
+      this.addLoadingMessage()
+      nextStep({}).then(res => {
+        if (res.data) {
+          this.removeLoadingMessage()
+          this.messages.push(res.data)
+          localStorage.setItem(MESSAGEKEY, JSON.stringify(this.messages))
+          this.runNextStep()
+        }
+      }).catch(() => {
+        this.removeLoadingMessage()
+      })
     }
   }
 }
 </script>
 
-<style scoped>
+<style>
 .container >>> .el-collapse-item__header {
   background: #f9f9f9;
+}
+.el-input__inner {
+  border-radius: 20px;
 }
 </style>
 
@@ -147,4 +195,17 @@ export default {
   height: 300px;
 }
 
+.breathing-box {
+  box-shadow: 0 0 5px 5px RGBA(103, 194, 58, 0.5);
+  animation: breathing 1.8s infinite alternate;
+}
+
+@keyframes breathing {
+  0% {
+    box-shadow: 0 5px 5px RGBA(103, 194, 58, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 5px 5px RGBA(103, 194, 58, 0.5);
+  }
+}
 </style>
