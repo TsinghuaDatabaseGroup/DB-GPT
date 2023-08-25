@@ -1,5 +1,5 @@
 <div align= "center">
-    <h1> <img src="imgs/dbagent.png" width="80px"> LLM As Database Administrator</h1>
+    <h1> <img src="imgs/dbagent.png" width="100px"> LLM As Database Administrator</h1>
 </div>
 
 <p align="center">
@@ -99,9 +99,11 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
     > Additionally, install extensions like *[pg_stat_statements](https://pganalyze.com/docs/install/01_enabling_pg_stat_statements)* (track slow queries), *[pg_hint_plan](https://pg-hint-plan.readthedocs.io/en/latest/installation.html)* (optimize physical operators), and *[hypopg](https://github.com/HypoPG/hypopg)* (create hypothetical Indexes).
 
-- Prometheus and Grafana ([tutorial](https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/))
+- Prometheus ~~and Grafana ([tutorial](https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/))~~
 
+    Check [prometheus.md](materials/help_documents/prometheus.md) for detailed installation guides.
 
+    > Grafana is no longer a necessity with our vue-based frontend.
 
 ### Package Installation
 
