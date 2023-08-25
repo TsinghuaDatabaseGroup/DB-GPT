@@ -1,5 +1,5 @@
 <div align= "center">
-    <h1> LLM As Database Administrator</h1>
+    <h1> <img src="imgs/dbagent.png" width="100px"> LLM As Database Administrator</h1>
 </div>
 
 <p align="center">
@@ -12,14 +12,20 @@
   <a href="#-contributors">Contributors</a>
 </p>
 
-<br>
+<!-- <br>
 <div align="center">
 <img src="imgs/dbagent.png" width="400px">
+</div>
+<br> -->
+
+<br>
+<div align="center">
+<img src="imgs/frontendv2.png" width="800px">
 </div>
 <br>
 
 
-🧗 Database administrators (DBAs) play a crucial role in managing, maintaining and optimizing a database system to ensure data availability, performance, and reliability. However, it is hard and tedious for DBAs to manage a large number of database instances. Thus, we propose *DBAgent*, a LLM-based database administrator that can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
+🧗 Database administrators (DBAs) play a crucial role in managing, maintaining and optimizing a database system to ensure data availability, performance, and reliability. However, it is hard and tedious for DBAs to manage a large number of database instances. Thus, we propose *D-Bot*, a LLM-based database administrator that can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
 
 
 <span id="-news"></span>
@@ -27,7 +33,7 @@
 ## What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [x] **[2023/8/25]** Support vue-based frontend. More flexible and beautiful! <a href="#-frontend">🔗</a>
+- [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗</a>
 
 - [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗](tool_learning/bmtools/tools/db_diag/api.py)
 
@@ -39,18 +45,18 @@
 
     <!-- * *DB-GPT: Large Language Model Meets Database.* [[paper]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf) -->
 
-> *DBAgent* is evolving with new features 👫👫<br/> 
+> *D-Bot* is evolving with new features 👫👫<br/> 
 > Don't forget to star ⭐ and watch 👀 to stay up to date :)
 
 
 <span id="-features"></span>
 
 ## Features
-- **Well-Founded Diagnosis**: DBAgent can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
+- **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
 
-- **Practical Tool Utilization**: DBAgent can utilize both monitoring and optimization tools to improve the maintenance capability (with *tool learning* and *tree of thought*).
+- **Practical Tool Utilization**: D-Bot can utilize both monitoring and optimization tools to improve the maintenance capability (with *tool learning* and *tree of thought*).
 
-- **In-depth Reasoning**: Compared with vanilla LLMs, DBAgent will achieve competitive reasoning capability to analyze root causes (with *multi-llm communications*).
+- **In-depth Reasoning**: Compared with vanilla LLMs, D-Bot will achieve competitive reasoning capability to analyze root causes (with *multi-llm communications*).
 
 <br>
 <div align="center">
@@ -59,7 +65,7 @@
 <br>
 
 
-**A demo of using DBAgent**
+**A demo of using D-Bot**
 
 https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
 
@@ -93,9 +99,11 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
     > Additionally, install extensions like *[pg_stat_statements](https://pganalyze.com/docs/install/01_enabling_pg_stat_statements)* (track slow queries), *[pg_hint_plan](https://pg-hint-plan.readthedocs.io/en/latest/installation.html)* (optimize physical operators), and *[hypopg](https://github.com/HypoPG/hypopg)* (create hypothetical Indexes).
 
-- Prometheus and Grafana ([tutorial](https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/))
+- Prometheus ~~and Grafana ([tutorial](https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/))~~
 
+    Check [prometheus.md](materials/help_documents/prometheus.md) for detailed installation guides.
 
+    > Grafana is no longer a necessity with our vue-based frontend.
 
 ### Package Installation
 
@@ -186,12 +194,6 @@ python host_local_tools.py
 
 ### Diagnosis & Optimization
 
-#### Command-line Interface
-
-```shell
-python main.py --task db_diag
-```
-
 <span id="-frontend"></span>
 
 #### Website Interface
@@ -212,6 +214,14 @@ sh run_demo.sh
 > Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python installed.
 
 After successfully launching the local server, you can visit [http://127.0.0.1:9228/](http://127.0.0.1:9228/) to trigger the diagnosis procedure .
+
+
+#### Command-line Interface
+
+```shell
+python main.py --task db_diag
+```
+
 
 ### Preparation (optional)
 
@@ -279,7 +289,8 @@ cd prompt_template_scripts/query_rewrite
 Remove redundant content in llm responses.
 
 ```python 
-python ./response_formalize_scripts/combine_similar_answer.py # test 
+cd response_formalize_scripts
+python combine_similar_answer.py # test 
 ```
 
 
@@ -416,7 +427,6 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 ## Todo
 
-- [ ] Change to vue frontend
 - [ ] More powerful anomaly trigger
 - [ ] Project cleaning
 - [ ] (framework update) Integrate components as a whole 
