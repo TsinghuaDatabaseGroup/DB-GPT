@@ -1,7 +1,7 @@
 export const lineChartOption = {
   title: { show: false },
   grid: {
-    left: 40,
+    left: '60',
     top: 10,
     bottom: 50,
     right: 20
@@ -11,6 +11,7 @@ export const lineChartOption = {
     textStyle: {
       align: 'left'
     },
+    show: true,
     confine: true,
     axisPointer: {
       type: 'shadow'

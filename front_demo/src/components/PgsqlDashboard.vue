@@ -1,24 +1,14 @@
 <template>
   <div v-loading="loading" class="container">
 
-    <el-form ref="form" class="c-shaow-card" :inline="true" label-position="left" size="mini" style="padding-top: 20px; margin: 0 20px; padding-left: 20px">
-
-      <el-form-item :label="$t('instanceTip') + ':'">
-        <el-select
-          v-model="dbSelectCondition"
-          style="width: 160px"
-          clearable
-          filterable
-          placeholder=""
-        >
-          <el-option
-            v-for="item in dbSelecteds"
-            :key="item.instance"
-            :label="item.instance"
-            :value="item.instance"
-          />
-        </el-select>
-      </el-form-item>
+    <el-form
+      ref="form"
+      class="c-shaow-card"
+      :inline="true"
+      label-position="left"
+      size="mini"
+      style="padding-top: 20px; margin: 0 20px; padding-left: 20px; margin-bottom: 20px"
+    >
 
       <el-form-item :label="$t('refreshTip') + ':'">
         <el-switch
@@ -47,26 +37,39 @@
 
     </el-form>
 
-    <div class="status-card-container" style="flex-shrink: 0; margin: 20px">
-      <div v-for="(item, index) in osStatus" :key="index" class="status-card c-shaow-card">
-        <div class="top-card-title">{{ item.label }}</div>
-        <div class="top-card-detail">{{ item.value }}</div>
-      </div>
-    </div>
-
     <div style="width: 100%; overflow-y: scroll">
-      <div class="nineGridContainer">
 
+      <div class="status-card-container" style="flex-shrink: 0; margin: 20px; margin-top: 0">
+        <div v-for="(item, index) in osStatus" :key="index" class="status-card c-shaow-card">
+          <div class="top-card-title">{{ item.label }}</div>
+          <div class="top-card-detail">{{ item.value }}</div>
+        </div>
+      </div>
+
+      <el-card class="nineGrid" style="width: calc(100% - 40px); margin: 0 20px; flex-shrink: 0" shadow="never">
+        <div class="card-header-title">CPU Usage</div>
+        <el-divider />
+        <lineChart class="lineChart" :chart-option="cpuUsageRateChartOption" />
+      </el-card>
+
+      <div class="status-card-container" style="flex-shrink: 0; margin: 20px">
+        <div v-for="(item, index) in nodeStatus" :key="index" class="status-card c-shaow-card" style="width: calc(100%/7 - 20px);">
+          <div class="top-card-title">{{ item.label }}</div>
+          <div class="top-card-detail">{{ item.value }}</div>
+        </div>
+      </div>
+
+      <div class="nineGridContainer">
         <el-card class="nineGrid" shadow="never">
-          <div class="card-header-title">Average CPU Usage</div>
+          <div class="card-header-title">System Average Load</div>
           <el-divider />
-          <lineChart class="lineChart" :chart-option="averageCPUUsageChartOption" />
+          <lineChart class="lineChart" :chart-option="avgLoadChartOption" />
         </el-card>
 
         <el-card class="nineGrid" shadow="never">
-          <div class="card-header-title">Average Memory Usage</div>
+          <div class="card-header-title">Memory Usage</div>
           <el-divider />
-          <lineChart class="lineChart" :chart-option="averageMemoryUsageChartOption" />
+          <lineChart class="lineChart" :chart-option="memoryChartOption" />
         </el-card>
 
         <el-card class="nineGrid" shadow="never">
@@ -101,10 +104,11 @@
 <script>
 
 import { query, query_range } from '@/api/prometheus'
-import { bytesToSize, stringFoFixed2 } from '@/utils'
+import { bytesToSize, bytesToSizeSecondsRate, formatSeconds, stringFoFixed2, stringToPercent } from '@/utils'
 import lineChart from '@/components/echarts/vue-chart'
 import { lineChartOption } from '@/utils/echart-ori-options'
 import moment from 'moment'
+import { instances } from '@/api/api'
 
 export default {
   components: { lineChart },
@@ -118,9 +122,8 @@ export default {
   },
   data() {
     return {
-      dbSelecteds: [],
+      nodeSelectCondition: undefined,
       dbSelectCondition: undefined,
-      collapseActiveNames: ['1'],
       timeSelecteds: [
         { label: '10s', value: '10s' },
         { label: '30s', value: '30s' },
@@ -141,15 +144,25 @@ export default {
         { label: 'Current Update Data', value: '' },
         { label: 'MAX Connections', value: '' }
       ],
+      nodeStatus: [
+        { label: 'CPU Cores', value: '' },
+        { label: 'Total Memory', value: '' },
+        { label: 'CPU Usage', value: '' },
+        { label: 'Mem Usage', value: '' },
+        { label: 'Disk Usage', value: '' },
+        { label: 'TCP_tw', value: '' },
+        { label: 'Disk Read', value: '' }
+      ],
       loading: false,
       autoRefresh: true,
-      averageCPUUsageChartOption: JSON.parse(JSON.stringify(lineChartOption)),
-      averageMemoryUsageChartOption: JSON.parse(JSON.stringify(lineChartOption)),
+      cpuUsageRateChartOption: JSON.parse(JSON.stringify(lineChartOption)),
+      memoryChartOption: JSON.parse(JSON.stringify(lineChartOption)),
       openFileDescriptorsChartOption: JSON.parse(JSON.stringify(lineChartOption)),
       activeSessionsChartOption: JSON.parse(JSON.stringify(lineChartOption)),
       buggersChartOption: JSON.parse(JSON.stringify(lineChartOption)),
       checkpointStatsChartOption: JSON.parse(JSON.stringify(lineChartOption)),
-      detectorDiagnosticChartOption: JSON.parse(JSON.stringify(lineChartOption))
+      detectorDiagnosticChartOption: JSON.parse(JSON.stringify(lineChartOption)),
+      avgLoadChartOption: JSON.parse(JSON.stringify(lineChartOption))
     }
   },
   watch: {
@@ -158,7 +171,6 @@ export default {
     },
     autoRefresh: {
       handler(value) {
-        console.log('======:', value)
         if (value) {
           this.reloadRefreshTimer()
         } else {
@@ -180,28 +192,38 @@ export default {
   methods: {
     chartOptionSeeting() {
       //  Average CPU UsageChart
-      this.averageCPUUsageChartOption.tooltip.formatter = function(params, ticket, callback) {
-        var result = params[0].axisValueLabel + '</br>'
-        for (let i = 0; i < params.length; i++) {
-          const param = params[i]
-          result = result + `${param.marker}&nbsp${param.seriesName}:&nbsp ${stringFoFixed2(param.value[1] * 1000)}ms</br>`
-        }
-        setTimeout(function() {
-          // 仅为了模拟异步回调
-          callback(ticket, result)
-        }, 100)
-        return 'loading...'
-      }
-      this.averageCPUUsageChartOption.yAxis.axisLabel.formatter = function(value, index) {
-        return stringFoFixed2(value * 1000) + 'ms'
-      }
-      this.averageCPUUsageChartOption.xAxis.type = 'time'
-      this.averageCPUUsageChartOption.color = ['#E6A23C']
-      this.averageCPUUsageChartOption.xAxis.axisLabel.formatter = '{HH}:{mm}'
-      this.averageCPUUsageChartOption.legend.data = ['CPU Time']
-      this.averageCPUUsageChartOption.series = [
+      this.cpuUsageRateChartOption.xAxis.type = 'time'
+      this.cpuUsageRateChartOption.color = ['#1890FF', '#00FFFF', '#FFFF00', '#975FE4']
+      this.cpuUsageRateChartOption.xAxis.axisLabel.formatter = '{HH}:{mm}'
+      this.cpuUsageRateChartOption.yAxis.axisLabel.formatter = '{value} %'
+      this.cpuUsageRateChartOption.legend.data = ['idle rate', 'user rate', 'system rate', 'iowait rate']
+      this.cpuUsageRateChartOption.series = [
         {
-          name: 'CPU Time',
+          name: 'idle rate',
+          data: [],
+          type: 'line',
+          smooth: true,
+          showSymbol: false,
+          areaStyle: { type: 'default' }
+        },
+        {
+          name: 'user rate',
+          data: [],
+          type: 'line',
+          smooth: true,
+          showSymbol: false,
+          areaStyle: { type: 'default' }
+        },
+        {
+          name: 'system rate',
+          data: [],
+          type: 'line',
+          smooth: true,
+          showSymbol: false,
+          areaStyle: { type: 'default' }
+        },
+        {
+          name: 'iowait rate',
           data: [],
           type: 'line',
           smooth: true,
@@ -210,8 +232,8 @@ export default {
         }
       ]
 
-      //  Average Memory Usage
-      this.averageMemoryUsageChartOption.tooltip.formatter = function(params, ticket, callback) {
+      //  Memory Usage
+      this.memoryChartOption.tooltip.formatter = function(params, ticket, callback) {
         var result = params[0].axisValueLabel + '</br>'
         for (let i = 0; i < params.length; i++) {
           const param = params[i]
@@ -223,16 +245,17 @@ export default {
         }, 100)
         return 'loading...'
       }
-      this.averageMemoryUsageChartOption.yAxis.axisLabel.formatter = function(value, index) {
+      this.memoryChartOption.xAxis.type = 'time'
+      this.memoryChartOption.grid.left = 60
+      this.memoryChartOption.color = ['#FE2E2E', '#01DF01', '#1890FF']
+      this.memoryChartOption.yAxis.axisLabel.formatter = function(value, index) {
         return bytesToSize(value)
       }
-      this.averageMemoryUsageChartOption.xAxis.type = 'time'
-      this.averageMemoryUsageChartOption.color = ['#975FE4', '#F56C6C']
-      this.averageMemoryUsageChartOption.xAxis.axisLabel.formatter = '{HH}:{mm}'
-      this.averageMemoryUsageChartOption.legend.data = ['Resident Mem', 'Virtual Mem']
-      this.averageMemoryUsageChartOption.series = [
+      this.memoryChartOption.xAxis.axisLabel.formatter = '{HH}:{mm}'
+      this.memoryChartOption.legend.data = ['Total Memory', 'Available Memory', 'Used Memory']
+      this.memoryChartOption.series = [
         {
-          name: 'Resident Mem',
+          name: 'Total Memory',
           data: [],
           type: 'line',
           smooth: true,
@@ -240,7 +263,48 @@ export default {
           areaStyle: { type: 'default' }
         },
         {
-          name: 'Virtual Mem',
+          name: 'Available Memory',
+          data: [],
+          type: 'line',
+          smooth: true,
+          showSymbol: false,
+          areaStyle: { type: 'default' }
+        },
+        {
+          name: 'Used Memory',
+          data: [],
+          type: 'line',
+          smooth: true,
+          showSymbol: false,
+          areaStyle: { type: 'default' }
+        }
+      ]
+
+      //  系统平均负载
+      this.avgLoadChartOption.xAxis.type = 'time'
+      this.avgLoadChartOption.grid.left = 60
+      this.avgLoadChartOption.color = ['#FE2E2E', '#01DF3A', '#FFFF00']
+      this.avgLoadChartOption.xAxis.axisLabel.formatter = '{HH}:{mm}'
+      this.avgLoadChartOption.legend.data = ['15M', '5M', '1M']
+      this.avgLoadChartOption.series = [
+        {
+          name: '15M',
+          data: [],
+          type: 'line',
+          smooth: true,
+          showSymbol: false,
+          areaStyle: { type: 'default' }
+        },
+        {
+          name: '5M',
+          data: [],
+          type: 'line',
+          smooth: true,
+          showSymbol: false,
+          areaStyle: { type: 'default' }
+        },
+        {
+          name: '1M',
           data: [],
           type: 'line',
           smooth: true,
@@ -424,16 +488,13 @@ export default {
       this.refreshTimer = null
     },
     nodesInfo() {
-      query({ 'query': 'pg_exporter_last_scrape_duration_seconds', time: parseInt((new Date()).valueOf() / 1000) - 3000 }).then(res => {
-        console.log(res.data)
-        this.dbSelecteds = res.data.result.map(item => {
-          return item.metric
-        })
-        this.dbSelectCondition = this.dbSelecteds[0].instance
+      instances({}).then(res => {
+        this.dbSelectCondition = res.data.postgresql
+        this.nodeSelectCondition = res.data.node
       })
     },
     reloadRequest() {
-      if (!this.dbSelectCondition) {
+      if (!this.nodeSelectCondition || !this.dbSelectCondition) {
         return
       }
 
@@ -455,16 +516,61 @@ export default {
         this.osStatus[4].value = res ? res.value[1] : 'No Data'
       })
 
-      this.queryRangeRequest(`avg(rate(process_cpu_seconds_total{release="", instance="${this.dbSelectCondition}"}[${this.queryStep}]) * 1000)`).then(res => {
-        this.averageCPUUsageChartOption.series[0].data = res
+      this.queryRequest(`count(node_cpu_seconds_total{origin_prometheus=~"",job=~"node", mode='system', instance=~"${this.nodeSelectCondition}"})`).then(res => {
+        this.nodeStatus[0].value = res.value[1]
+      })
+      this.queryRequest(`node_memory_MemTotal_bytes{origin_prometheus=~"",job=~"node", instance=~"${this.nodeSelectCondition}"} - 0`).then(res => {
+        this.nodeStatus[1].value = bytesToSize(res.value[1]) || ''
       })
 
-      this.queryRangeRequest(`avg(rate(process_resident_memory_bytes{release="", instance="${this.dbSelectCondition}"}[${this.queryStep}]))`).then(res => {
-        this.averageMemoryUsageChartOption.series[0].data = res
+      this.queryRequest(`(1 - avg(rate(node_cpu_seconds_total{origin_prometheus=~"",job=~"node",mode="idle", instance=~"${this.nodeSelectCondition}"}[${this.queryStep}]))) * 100`).then(res => {
+        this.nodeStatus[2].value = stringToPercent(res.value[1])
+      })
+      this.queryRequest(`(1 - (node_memory_MemAvailable_bytes{origin_prometheus=~"",job=~"node"} / (node_memory_MemTotal_bytes{origin_prometheus=~"",job=~"node", instance=~"${this.nodeSelectCondition}"})))* 100`).then(res => {
+        this.nodeStatus[3].value = stringToPercent(res.value[1])
+      })
+      this.queryRequest(`max((node_filesystem_size_bytes{origin_prometheus=~"",job=~"node",instance=~"${this.nodeSelectCondition}",fstype=~"ext.?|xfs"}-node_filesystem_free_bytes{origin_prometheus=~"",job=~"node",instance=~"${this.nodeSelectCondition}",fstype=~"ext.?|xfs"}) *100/(node_filesystem_avail_bytes {origin_prometheus=~"",job=~"node",instance=~"${this.nodeSelectCondition}",fstype=~"ext.?|xfs"}+(node_filesystem_size_bytes{origin_prometheus=~"",job=~"node",instance=~"${this.nodeSelectCondition}",fstype=~"ext.?|xfs"}-node_filesystem_free_bytes{origin_prometheus=~"",job=~"node",instance=~"${this.nodeSelectCondition}",fstype=~"ext.?|xfs"})))by(instance)`).then(res => {
+        this.nodeStatus[4].value = stringToPercent(res.value[1])
       })
 
-      this.queryRangeRequest(`avg(rate(process_virtual_memory_bytes{release="", instance="${this.dbSelectCondition}"}[${this.queryStep}]))`).then(res => {
-        this.averageMemoryUsageChartOption.series[1].data = res
+      this.queryRequest(`node_sockstat_TCP_tw{origin_prometheus=~"",job=~"node",instance=~"${this.nodeSelectCondition}"} - 0`).then(res => {
+        this.nodeStatus[5].value = res.value[1]
+      })
+      this.queryRequest(`max(rate(node_disk_read_bytes_total{origin_prometheus=~"",job=~"node",instance=~"${this.nodeSelectCondition}"}[${this.queryStep}])) by (instance)`).then(res => {
+        this.nodeStatus[6].value = bytesToSizeSecondsRate(res.value[1])
+      })
+
+      this.queryRangeRequest(`(1 - avg(rate(node_cpu_seconds_total{instance=~"${this.nodeSelectCondition}",mode="idle"}[${this.queryStep}])) by (instance))*100`).then(res => {
+        this.cpuUsageRateChartOption.series[0].data = res
+      })
+      this.queryRangeRequest(`avg(rate(node_cpu_seconds_total{instance=~"${this.nodeSelectCondition}",mode="user"}[${this.queryStep}])) by (instance) *100`).then(res => {
+        this.cpuUsageRateChartOption.series[1].data = res
+      })
+      this.queryRangeRequest(`avg(rate(node_cpu_seconds_total{instance=~"${this.nodeSelectCondition}",mode="system"}[${this.queryStep}])) by (instance) *100`).then(res => {
+        this.cpuUsageRateChartOption.series[2].data = res
+      })
+      this.queryRangeRequest(`avg(rate(node_cpu_seconds_total{instance=~"${this.nodeSelectCondition}",mode="iowait"}[${this.queryStep}])) by (instance) *100`).then(res => {
+        this.cpuUsageRateChartOption.series[3].data = res
+      })
+
+      this.queryRangeRequest(`node_memory_MemTotal_bytes{instance=~"${this.nodeSelectCondition}"}`).then(res => {
+        this.memoryChartOption.series[0].data = res
+      })
+      this.queryRangeRequest(`node_memory_MemTotal_bytes{instance=~"${this.nodeSelectCondition}"} - node_memory_MemAvailable_bytes{instance=~"${this.queryStep}"}`).then(res => {
+        this.memoryChartOption.series[2].data = res
+      })
+      this.queryRangeRequest(`node_memory_MemAvailable_bytes{instance=~"${this.nodeSelectCondition}"}`).then(res => {
+        this.memoryChartOption.series[1].data = res
+      })
+
+      this.queryRangeRequest(`node_load15{instance=~"${this.nodeSelectCondition}"}`).then(res => {
+        this.avgLoadChartOption.series[0].data = res
+      })
+      this.queryRangeRequest(`node_load5{instance=~"${this.nodeSelectCondition}"}`).then(res => {
+        this.avgLoadChartOption.series[1].data = res
+      })
+      this.queryRangeRequest(`node_load1{instance=~"${this.nodeSelectCondition}"}`).then(res => {
+        this.avgLoadChartOption.series[2].data = res
       })
 
       this.queryRangeRequest(`process_open_fds{release="", instance="${this.dbSelectCondition}"}`).then(res => {
@@ -624,14 +730,15 @@ export default {
   grid-gap: 10px; /* grid-column-gap 和 grid-row-gap的简写 */
   grid-auto-flow: row;
   margin: 0 20px;
-  .nineGrid {
-    background-color: #FFFFFF;
-    height: 300px;
-    border-radius: 20px;
-    box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.03);
-    border: none;
-    pointer-events: none;
-  }
+}
+
+.nineGrid {
+  background-color: #FFFFFF;
+  height: 300px;
+  border-radius: 20px;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.03);
+  border: none;
+  pointer-events: none;
 }
 
 .lineChart {
