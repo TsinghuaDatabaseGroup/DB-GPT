@@ -207,8 +207,7 @@ sh run_demo.sh
 
 > Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python installed.
 
-After successfully launching the local server, you can visit [http://127.0.0.1:7860/](http://127.0.0.1:7860/) to trigger the diagnosis procedure (click the *Start Autoplay* button).
-
+After successfully launching the local server, you can visit [http://127.0.0.1:9228/](http://127.0.0.1:9228/) to trigger the diagnosis procedure .
 
 ### Preparation (optional)
 
