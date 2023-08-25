@@ -104,7 +104,7 @@
 <script>
 
 import { query, query_range } from '@/api/prometheus'
-import { bytesToSize, bytesToSizeSecondsRate, formatSeconds, stringFoFixed2, stringToPercent } from '@/utils'
+import { bytesToSize, bytesToSizeSecondsRate, stringFoFixed2, stringToPercent } from '@/utils'
 import lineChart from '@/components/echarts/vue-chart'
 import { lineChartOption } from '@/utils/echart-ori-options'
 import moment from 'moment'
@@ -122,8 +122,8 @@ export default {
   },
   data() {
     return {
-      nodeSelectCondition: undefined,
-      dbSelectCondition: undefined,
+      nodeSelectCondition: '',
+      dbSelectCondition: '',
       timeSelecteds: [
         { label: '10s', value: '10s' },
         { label: '30s', value: '30s' },
@@ -556,11 +556,11 @@ export default {
       this.queryRangeRequest(`node_memory_MemTotal_bytes{instance=~"${this.nodeSelectCondition}"}`).then(res => {
         this.memoryChartOption.series[0].data = res
       })
-      this.queryRangeRequest(`node_memory_MemTotal_bytes{instance=~"${this.nodeSelectCondition}"} - node_memory_MemAvailable_bytes{instance=~"${this.queryStep}"}`).then(res => {
-        this.memoryChartOption.series[2].data = res
-      })
       this.queryRangeRequest(`node_memory_MemAvailable_bytes{instance=~"${this.nodeSelectCondition}"}`).then(res => {
         this.memoryChartOption.series[1].data = res
+      })
+      this.queryRangeRequest(`node_memory_MemTotal_bytes{instance=~"${this.nodeSelectCondition}"} - node_memory_MemAvailable_bytes{instance=~"${this.nodeSelectCondition}"}`).then(res => {
+        this.memoryChartOption.series[2].data = res
       })
 
       this.queryRangeRequest(`node_load15{instance=~"${this.nodeSelectCondition}"}`).then(res => {
