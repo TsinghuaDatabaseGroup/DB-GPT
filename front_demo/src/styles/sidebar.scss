@@ -167,26 +167,6 @@
     min-width: $sideBarWidth !important;
   }
 
-  // mobile responsive
-  .mobile {
-    .main-container {
-      margin-left: 0px;
-    }
-
-    .sidebar-container {
-      transition: transform .28s;
-      width: $sideBarWidth !important;
-    }
-
-    &.hideSidebar {
-      .sidebar-container {
-        pointer-events: none;
-        transition-duration: 0.3s;
-        transform: translate3d(-$sideBarWidth, 0, 0);
-      }
-    }
-  }
-
   .withoutAnimation {
 
     .main-container,

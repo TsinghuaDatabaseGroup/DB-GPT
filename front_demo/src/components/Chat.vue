@@ -17,7 +17,7 @@
               <span style="font-size: 14px">{{ item.content.diagnose }}</span>
             </div>
             <div
-              v-if="item.content.solution && item.content.solution.length > 0"
+              v-if="isNotEmpty(item.content.solution)"
               class="content c-flex-column"
               style="background: rgba(103, 194, 58, 0.03); color: #ffffff"
             >
@@ -28,7 +28,7 @@
                 </span>
               </span>
             </div>
-            <div v-if="item.content.knowledge" class="content c-flex-column" style="background: RGBA(230, 162, 60, 0.03)">
+            <div v-if="item.content.knowledge && item.content.knowledge.trim()" class="content c-flex-column" style="background: RGBA(230, 162, 60, 0.03)">
               <span class="c-flex-column" style="color: RGBA(230, 162, 60, 0.8); padding: 5px 0;">
                 <span style="color: RGBA(230, 162, 60, 1)">Matched Knowledge：</span>
                 <span>{{ item.content.knowledge || '' }}</span>
@@ -117,6 +117,9 @@ export default {
   methods: {
     parseTime(value) {
       return parseTime(value, '{m}-{d}')
+    },
+    isNotEmpty(arr) {
+      return arr && arr.length > 0 && arr.some(element => element.trim() !== '')
     },
     // 初始化滚动
     initScrollBar() {
