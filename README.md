@@ -1,5 +1,5 @@
 <div align= "center">
-    <h1> <img src="imgs/dbagent.png" width="40px"> LLM As Database Administrator</h1>
+    <h1> <img src="imgs/dbagent.png" width="80px"> LLM As Database Administrator</h1>
 </div>
 
 <p align="center">
@@ -17,6 +17,12 @@
 <img src="imgs/dbagent.png" width="400px">
 </div>
 <br> -->
+
+<br>
+<div align="center">
+<img src="imgs/frontendv2.png" width="800px">
+</div>
+<br>
 
 
 🧗 Database administrators (DBAs) play a crucial role in managing, maintaining and optimizing a database system to ensure data availability, performance, and reliability. However, it is hard and tedious for DBAs to manage a large number of database instances. Thus, we propose *DBAgent*, a LLM-based database administrator that can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
@@ -62,16 +68,6 @@
 **A demo of using DBAgent**
 
 https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
-
-
-**New Version of Frontend Demo**
-
-
-<br>
-<div align="center">
-<img src="imgs/frontendv2.png" width="800px">
-</div>
-<br>
 
 
 <span id="-quickstart"></span>
