@@ -195,7 +195,14 @@ python main.py --task db_diag
 We also provide a local website demo for this environment. You can launch it with
 
 ```shell
-python main_demo.py --task db_diag
+# cd website
+cd front_demo
+# install dependencies, the step need nodejs, ^16.13.1 is recommended
+npm install
+# back to root directory
+cd ..
+# launch the local server and open the website
+sh run_demo.sh
 ```
 
 After successfully launching the local server, you can visit [http://127.0.0.1:7860/](http://127.0.0.1:7860/) to trigger the diagnosis procedure (click the *Start Autoplay* button).

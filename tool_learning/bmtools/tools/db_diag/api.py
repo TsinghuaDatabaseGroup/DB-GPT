@@ -184,8 +184,18 @@ def build_db_diag_tool(config) -> Tool:
 
     @tool.get("/obtain_start_and_end_time_of_anomaly")
     def obtain_start_and_end_time_of_anomaly():
-        
-        return {"start_time": 1692588540, "end_time": 1692588630}
+
+        # 读取tool_learning/bmtools/diag_time.txt文件，获取最后一行异常时间段
+        with open(str(os.getcwd()) + "/bmtools/diag_time.txt", 'r') as f:
+            last_line = f.readlines()[-1].replace("\n", "")
+            print("-----------last_line: ", last_line)
+            diag_start_time = last_line.split('-')[0]
+            diag_end_time = last_line.split('-')[1]
+        print("diag_start_time: ", diag_start_time)
+        print("diag_end_time: ", diag_end_time)
+        if not diag_start_time or not diag_end_time:
+            raise Exception("No start and end time of anomaly!")
+        return {"start_time": diag_start_time, "end_time": diag_end_time}
 
         '''
         If the anomaly period is recorded on the server side, you can use the following code to obtain the start and end time of the anomaly.q
