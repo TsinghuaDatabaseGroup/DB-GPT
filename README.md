@@ -194,12 +194,6 @@ python host_local_tools.py
 
 ### Diagnosis & Optimization
 
-#### Command-line Interface
-
-```shell
-python main.py --task db_diag
-```
-
 <span id="-frontend"></span>
 
 #### Website Interface
@@ -220,6 +214,14 @@ sh run_demo.sh
 > Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python installed.
 
 After successfully launching the local server, you can visit [http://127.0.0.1:9228/](http://127.0.0.1:9228/) to trigger the diagnosis procedure .
+
+
+#### Command-line Interface
+
+```shell
+python main.py --task db_diag
+```
+
 
 ### Preparation (optional)
 
@@ -287,7 +289,8 @@ cd prompt_template_scripts/query_rewrite
 Remove redundant content in llm responses.
 
 ```python 
-python ./response_formalize_scripts/combine_similar_answer.py # test 
+cd response_formalize_scripts
+python combine_similar_answer.py # test 
 ```
 
 
@@ -424,7 +427,6 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 ## Todo
 
-- [ ] Change to vue frontend
 - [ ] More powerful anomaly trigger
 - [ ] Project cleaning
 - [ ] (framework update) Integrate components as a whole 
