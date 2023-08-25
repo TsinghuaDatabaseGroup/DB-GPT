@@ -459,10 +459,11 @@ Note: include the important slow queries in the output.
         process, overhead = True, True
         script_path = os.path.abspath(__file__)
         script_dir = os.path.dirname(script_path)
-        script_dir = os.path.dirname(script_dir)
-        config = get_conf(script_dir + '/my_config.ini', 'postgresql')
         schema_file = script_dir + f"/optimization_tools/index_selection/selection_data/data_info/schema_job.json"
         workload_file = script_dir + f"/optimization_tools/index_selection/selection_data/data_info/job_templates.sql"
+
+        script_dir = os.path.dirname(script_dir)
+        config = get_conf(script_dir + '/my_config.ini', 'postgresql')
 
         tables, columns = selec_com.get_columns_from_schema(schema_file)
 

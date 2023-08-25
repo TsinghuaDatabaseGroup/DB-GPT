@@ -27,6 +27,8 @@
 ## What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
+- [x] **[2023/8/25]** Support vue-based frontend. More flexible and beautiful! <a href="#-frontend">🔗</a>
+
 - [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗](tool_learning/bmtools/tools/db_diag/api.py)
 
 - [x] **[2023/8/16]** Support multi-level optimization functions <a href="#-tools">🔗</a>
@@ -35,7 +37,7 @@
 
     * *LLM As DBA.* [[paper]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[slides]](materials/slides)
 
-    * *DB-GPT: Large Language Model Meets Database.* [[paper]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
+    <!-- * *DB-GPT: Large Language Model Meets Database.* [[paper]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf) -->
 
 > *DBAgent* is evolving with new features 👫👫<br/> 
 > Don't forget to star ⭐ and watch 👀 to stay up to date :)
@@ -190,6 +192,8 @@ python host_local_tools.py
 python main.py --task db_diag
 ```
 
+<span id="-frontend"></span>
+
 #### Website Interface
 
 We also provide a local website demo for this environment. You can launch it with
@@ -205,8 +209,9 @@ cd ..
 sh run_demo.sh
 ```
 
-After successfully launching the local server, you can visit [http://127.0.0.1:9228/](http://127.0.0.1:9228/) to trigger the diagnosis procedure .
+> Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python installed.
 
+After successfully launching the local server, you can visit [http://127.0.0.1:9228/](http://127.0.0.1:9228/) to trigger the diagnosis procedure .
 
 ### Preparation (optional)
 

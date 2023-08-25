@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 
-# 切换到前端目录并启动开发服务器
+# swithc to the frontend dir, and start dev server
 cd front_demo && npm run dev &
 
-# 启动Flask APP
-python3 app.py
+# set up Flask APP
+python app.py
 
 
