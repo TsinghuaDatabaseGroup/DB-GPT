@@ -27,6 +27,8 @@
 ## What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
+- [x] **[2023/8/25]** Support vue-based frontend. More flexible and beautiful! <a href="#-frontend">🔗</a>
+
 - [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗](tool_learning/bmtools/tools/db_diag/api.py)
 
 - [x] **[2023/8/16]** Support multi-level optimization functions <a href="#-tools">🔗</a>
@@ -189,6 +191,8 @@ python host_local_tools.py
 ```shell
 python main.py --task db_diag
 ```
+
+<span id="-frontend"></span>
 
 #### Website Interface
 
