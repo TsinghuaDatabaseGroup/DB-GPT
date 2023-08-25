@@ -6,7 +6,7 @@
       <el-form-item :label="$t('instanceTip') + ':'">
         <el-select
           v-model="dbSelectCondition"
-          style="min-width: 120px"
+          style="width: 160px"
           clearable
           filterable
           placeholder=""
@@ -20,45 +20,28 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="$t('queryTimeTip') + ':'">
-        <el-date-picker
-          v-model="timeRange"
-          type="datetimerange"
-          :picker-options="pickerOptions"
-          range-separator="-"
-          format="yyyy-MM-dd HH:mm:ss"
-          value-format="timestamp"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :clearable="false"
-          :editable="false"
-          @change="timeRangeOnChange"
-        />
-      </el-form-item>
-
-      <!--      <el-form-item label="查询间隔:">-->
-      <!--        <el-select-->
-      <!--          v-model="timeSelectCondition"-->
-      <!--          style="min-width: 80px"-->
-      <!--          clearable-->
-      <!--          filterable-->
-      <!--          placeholder="请选择"-->
-      <!--          @change="reloadRefreshTimer"-->
-      <!--        >-->
-      <!--          <el-option-->
-      <!--            v-for="item in timeSelecteds"-->
-      <!--            :key="item.value"-->
-      <!--            :label="item.label"-->
-      <!--            :value="item.value"-->
-      <!--          />-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
-
       <el-form-item :label="$t('refreshTip') + ':'">
         <el-switch
           v-model="autoRefresh"
           active-color="#13ce66"
           inactive-color="#ff4949"
+        />
+      </el-form-item>
+
+      <el-form-item :label="$t('queryTimeTip') + ':'">
+        <el-date-picker
+          v-model="timeRange"
+          style="width: 340px"
+          type="datetimerange"
+          :picker-options="pickerOptions"
+          range-separator="-"
+          format="yyyy-MM-dd HH:mm:ss"
+          value-format="timestamp"
+          :start-placeholder="$t('timeStartTip')"
+          :end-placeholder="$t('timeEndTip')"
+          :clearable="false"
+          :disabled="autoRefresh"
+          @change="timeRangeOnChange"
         />
       </el-form-item>
 
@@ -144,17 +127,8 @@ export default {
         { label: '1m', value: '1m' },
         { label: '5m', value: '5m' }
       ],
-      timeSelectedToMs: {
-        '10s': 10000,
-        '30s': 30000,
-        '1m': 60000,
-        '5m': 300000
-      },
-      pageSize: 8,
-      pageIndex: 1,
-      totalItems: 0,
       refreshTimer: undefined,
-      timeSelectCondition: '1m',
+      refreshTimestamp: 3000,
       queryStep: '1m',
       pickerOptions: [],
       timeRange: [],
@@ -168,7 +142,7 @@ export default {
         { label: 'MAX Connections', value: '' }
       ],
       loading: false,
-      autoRefresh: false,
+      autoRefresh: true,
       averageCPUUsageChartOption: JSON.parse(JSON.stringify(lineChartOption)),
       averageMemoryUsageChartOption: JSON.parse(JSON.stringify(lineChartOption)),
       openFileDescriptorsChartOption: JSON.parse(JSON.stringify(lineChartOption)),
@@ -182,8 +156,17 @@ export default {
     dbSelectCondition(value) {
       this.reloadRequest()
     },
-    timeSelectCondition(value) {
-      this.reloadRequest()
+    autoRefresh: {
+      handler(value) {
+        console.log('======:', value)
+        if (value) {
+          this.reloadRefreshTimer()
+        } else {
+          this.clearRefreshTimer()
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted() {
@@ -432,11 +415,9 @@ export default {
     reloadRefreshTimer() {
       this.clearRefreshTimer()
       this.refreshTimer = setInterval(() => {
-        if (this.autoRefresh) {
-          this.timeRange = [moment().add(-1, 'h').format('x'), moment().format('x')]
-          this.reloadRequest()
-        }
-      }, this.timeSelectedToMs[this.timeSelectCondition])
+        this.timeRange = [moment().add(-1, 'h').format('x'), moment().format('x')]
+        this.reloadRequest()
+      }, this.refreshTimestamp)
     },
     clearRefreshTimer() {
       clearInterval(this.refreshTimer)

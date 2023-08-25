@@ -1,7 +1,7 @@
 <template>
   <div class="c-flex-row c-justify-content-between" style="height: 100vh;">
-    <PgsqlDashboard style="width: 65%; height: calc(100% - 40px); margin: 20px 0" />
-    <div class="c-flex-column" style="width: 35%; height: 100%; background: RGBA(242, 246, 255, 1.00); padding: 20px;">
+    <PgsqlDashboard style="width: 70%; height: calc(100% - 40px); margin: 20px 0" />
+    <div class="c-flex-column" style="width: 30%; height: 100%; background: RGBA(242, 246, 255, 1.00); padding: 20px;">
       <div class="c-shaow-card">
         <div class="c-flex-column" style="padding: 20px;">
           <span style="color: #666666">{{ $t('timeRangeTip') }}：</span>
