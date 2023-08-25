@@ -20,7 +20,7 @@
 
 <br>
 <div align="center">
-<img src="imgs/frontendv2.png" width="800px">
+<img src="imgs/frontendv3.png" width="800px">
 </div>
 <br>
 
