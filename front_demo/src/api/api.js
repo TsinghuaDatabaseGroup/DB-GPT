@@ -1,5 +1,9 @@
 import { post } from '@/api/request'
 
+export async function instances(args) {
+  return await post('config/instances', args)
+}
+
 export async function run(args) {
   return await post('db_diag/run', args)
 }
