@@ -6,5 +6,5 @@ export default {
   refreshTip: 'Auto Refresh',
   queryTimeTip: 'Query Time',
   instanceTip: 'Instance',
-  timeRangeSelectTip: 'Please select the time when the exception occurs'
+  timeRangeSelectTip: 'Select the time period when an anomaly occurs'
 }

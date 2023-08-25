@@ -161,7 +161,7 @@ export default {
       alarmHistoaryRecentlyData: [],
       alarmHistoaryRecentlyAllData: [],
       osStatus: [
-        { label: 'Version', value: '' },
+        { label: 'Postgres Version', value: '' },
         { label: 'Current Fetch Data', value: '' },
         { label: 'Current Insert Data', value: '' },
         { label: 'Current Update Data', value: '' },
@@ -457,7 +457,7 @@ export default {
       }
 
       this.queryRequest(`pg_static{release="", instance=~"${this.dbSelectCondition}"}`).then(res => {
-        this.osStatus[0].value = res.metric?.short_version || 'No Data'
+        this.osStatus[0].value = (res.metric?.short_version || 'No Data')
       })
       this.queryRequest(`SUM(pg_stat_database_tup_fetched{instance=~"${this.dbSelectCondition}"})`).then(res => {
         this.osStatus[1].value = res ? bytesToSize(res.value[1]) : 'No Data'

@@ -40,7 +40,7 @@
 import PgsqlDashboard from '@/components/PgsqlDashboard'
 import Chat from '@/components/Chat'
 import { nextStep, run } from '@/api/api'
-const MESSAGEKEY = 'chat_messages'
+// const MESSAGEKEY = 'chat_messages'
 
 export default {
   components: { PgsqlDashboard, Chat },
@@ -54,8 +54,7 @@ export default {
   },
   watch: {},
   mounted() {
-    this.messages = JSON.parse(localStorage.getItem(MESSAGEKEY) || '[]')
-    this.addLoadingMessage()
+    // this.messages = JSON.parse(localStorage.getItem(MESSAGEKEY) || '[]')
   },
   beforeDestroy() {},
   methods: {
@@ -74,12 +73,13 @@ export default {
         this.$message.warning(this.$t('timeRangeSelectTip'))
         return
       }
+      this.messages = []
       this.addLoadingMessage()
       run({ start_at: parseInt(this.timeRange[0] / 1000), end_at: parseInt(this.timeRange[0] / 1000) }).then(res => {
         if (res.data) {
           this.removeLoadingMessage()
           this.messages.push(res.data)
-          localStorage.setItem(MESSAGEKEY, JSON.stringify(this.messages))
+          // localStorage.setItem(MESSAGEKEY, JSON.stringify(this.messages))
           this.runNextStep()
         }
       }).catch(() => {
@@ -87,15 +87,12 @@ export default {
       })
     },
     runNextStep() {
-      this.messages.push({
-        loading: true
-      })
       this.addLoadingMessage()
       nextStep({}).then(res => {
         if (res.data) {
           this.removeLoadingMessage()
           this.messages.push(res.data)
-          localStorage.setItem(MESSAGEKEY, JSON.stringify(this.messages))
+          // localStorage.setItem(MESSAGEKEY, JSON.stringify(this.messages))
           this.runNextStep()
         }
       }).catch(() => {

@@ -15,7 +15,6 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/lib/codemirror'
 
 Vue.use(codemirror)
-import VueI18n from 'vue-i18n'
 
 import App from './App'
 import store from './store'
