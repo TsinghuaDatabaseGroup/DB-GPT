@@ -132,6 +132,12 @@ set OPENAI_API_KEY="your_api_key_here"
 export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
 ```
 
+- Test your openai key
+```bash
+cd others
+python openai_test.py
+```
+
 ### Anomaly Generation & Detection
 
 Within the *anomaly_scripts* directory, we offer scripts that could incur typical anomalies, e.g., 
@@ -211,9 +217,9 @@ cd ..
 sh run_demo.sh
 ```
 
-> Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python installed.
+> Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python are installed.
 
-After successfully launching the local server, you can visit [http://127.0.0.1:9228/](http://127.0.0.1:9228/) to trigger the diagnosis procedure .
+After successfully launching the local server, visit [http://127.0.0.1:9228/](http://127.0.0.1:9228/) to trigger the diagnosis procedure.
 
 
 #### Command-line Interface
