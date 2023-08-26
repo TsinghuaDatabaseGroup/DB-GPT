@@ -74,7 +74,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 ## QuickStart
 
-> Current version is developed from agentverse and bmtools, to which we previously contributed.
+> The current version is developed from agentverse and bmtools, to which we are still contributing.
 
 <br>
 <div align="center">
@@ -209,7 +209,7 @@ We also provide a local website demo for this environment. You can launch it wit
 ```shell
 # cd website
 cd front_demo
-# install dependencies, the step need nodejs, ^16.13.1 is recommended
+# install dependencies, the step needs nodejs, ^16.13.1 is recommended
 npm install
 # back to root directory
 cd ..
@@ -417,7 +417,7 @@ Switch the shell to *git bash* or use *git bash* to execute the '.sh' script.
 <details><summary><b>🤨 "No module named 'xxx'" on windows system.</b></summary>
 This error is caused by issues with the Python runtime environment path. You need to perform the following steps:
 
-Step1: Check Environment Variables.
+Step 1: Check Environment Variables.
 
 <div align="center">
 <img src="imgs/faq2.png" width="800px">
@@ -425,7 +425,7 @@ Step1: Check Environment Variables.
 
 You must configure the "Scripts" in the environment variables.
 
-Step2: Check IDE Settings.
+Step 2: Check IDE Settings.
 
 For VS Code, download the Python extension for code. For PyCharm, specify the Python version for the current project.
 </details>
@@ -433,15 +433,18 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 ## Todo
 
-- [ ] More powerful anomaly trigger
+- [ ] Support more anomalies
+- [ ] Add more communication mechanisms
+- [ ] Automate role description
 - [ ] Project cleaning
-- [ ] (framework update) Integrate components as a whole 
-- [ ] Public generated anomaly training data
-- [ ] Fine-tune open-source Model
+- [ ] Public-generated anomaly training data
+- [ ] Fine-tune localized private model
+
+> The above items are **urgent**, which we will fix within two weeks.
+
+- [ ] Integrate preparation components in the demo website.
 - [ ] Support other databases like *MySQL*
 - [ ] Collect more knowledge and store in vector db (./knowledge_vector_db)
-
-> The listed items are **urgent**, which we will fix within this month.
 
 <span id="-community"></span>
 
