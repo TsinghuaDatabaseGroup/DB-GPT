@@ -6,6 +6,8 @@ import pdb
 from bmtools.tools.db_diag.utils.db_parser import get_conf
 from bmtools.tools.db_diag.utils.database import DBArgs, Database
 
+from utils.core import read_yaml
+
 if __name__ == '__main__':
 
     # load db settings
@@ -14,9 +16,10 @@ if __name__ == '__main__':
     script_dir = os.path.dirname(script_dir)
     script_dir = os.path.dirname(script_dir)
     script_dir = os.path.dirname(script_dir)
-    
-    config = get_conf(script_dir + '/my_config.ini', 'postgresql')
-    dbargs = DBArgs("postgresql", config=config)  # todo assign 
+
+    postgresql_conf = read_yaml('POSTGRESQL', 'config/tool_config.yaml')
+
+    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign
     dbargs.dbname = "tpch"
 
     # send request to database
