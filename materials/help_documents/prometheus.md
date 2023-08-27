@@ -238,7 +238,7 @@ Installation
 Set database connection
 ```
 [root@iZ2ze0ree1kf7ccu4p1vcyZ ~]# vim /usr/local/greenplum_exporter/etc/greenplum.conf
-GPDB_DATA_SOURCE_URL=postgres://gpadmin:DBMINDdbmind2020@8.131.229.55:54432/postgres?sslmode=disable
+GPDB_DATA_SOURCE_URL=postgres://user:password@ip:54432/postgres?sslmode=disable
 ```
 
 Run service
