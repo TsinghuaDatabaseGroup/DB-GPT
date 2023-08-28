@@ -1,8 +1,12 @@
 import requests
 import json
 
+from utils.core import read_yaml
+
+
 def prometheus(url, params):
-    res = requests.get(url='http://8.131.229.55:9090/' + url, params=params)
+    conf = read_yaml('PROMETHEUS', 'config/tool_config.yaml')
+    res = requests.get(url=conf.get('api_url') + url, params=params)
     print(json.dumps(res.json()))
 
 if __name__ == '__main__':

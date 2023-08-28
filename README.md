@@ -35,7 +35,7 @@
 
 - [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗</a>
 
-- [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗](tool_learning/bmtools/tools/db_diag/api.py)
+- [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗](bmtools/tools/db_diag/api.py)
 
 - [x] **[2023/8/16]** Support multi-level optimization functions <a href="#-tools">🔗</a>
 
@@ -86,7 +86,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 - PostgreSQL v12 or higher
 
-    Add database settings into [config.ini](tool_learning/bmtools/tools/config.ini) and rename into *my_config.ini*:
+    Add database settings into [config.ini](bmtools/tools/config.ini) and rename into *my_config.ini*:
 
     ```bash
     [postgresql]
@@ -235,7 +235,7 @@ python main.py --task db_diag
 
 - Extract knowledge from both code (./knowledge_json/knowledge_from_code) and documents (./knowledge_json/knowledge_from_document).
 
-    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](./tool_learning/bmtools/tools/db_diag/root_causes_dbmind.jsonl).
+    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](bmtools/tools/db_diag/root_causes_dbmind.jsonl).
 
 
 <span id="-tools"></span>
@@ -246,13 +246,13 @@ python main.py --task db_diag
 
     | Module                  | Functions |
     |-------------------------|-----------|
-    | [index_selection](./tool_learning/bmtools/tools/db_diag/optimization_tools/index_selection) (equipped)          | *heuristic* algorithm  |
-    | [query_rewrite](./tool_learning/bmtools/tools/db_diag/optimization_tools/query_rewrite) (equipped)           | *45* rules  |
-    | [physical_hint](./tool_learning/bmtools/tools/db_diag/optimization_tools/physical_operator_hint) (equipped)           | *15* parameters  |
+    | [index_selection](bmtools/tools/db_diag/optimization_tools/index_selection) (equipped)          | *heuristic* algorithm  |
+    | [query_rewrite](bmtools/tools/db_diag/optimization_tools/query_rewrite) (equipped)           | *45* rules  |
+    | [physical_hint](bmtools/tools/db_diag/optimization_tools/physical_operator_hint) (equipped)           | *15* parameters  |
 
-    For functions within [[query_rewrite](./tool_learning/bmtools/tools/db_diag/optimization_tools/query_rewrite), [physical_hint](./tool_learning/bmtools/tools/db_diag/optimization_tools/physical_operator_hint)], you can use *api_test.py* script to verify the effectiveness. 
+    For functions within [[query_rewrite](bmtools/tools/db_diag/optimization_tools/query_rewrite), [physical_hint](bmtools/tools/db_diag/optimization_tools/physical_operator_hint)], you can use *api_test.py* script to verify the effectiveness. 
 
-    If the function actually works, append it to [api.py](./tool_learning/bmtools/tools/db_diag/api.py).
+    If the function actually works, append it to [api.py](bmtools/tools/db_diag/api.py).
 
 <span id="-tot"></span>
 
