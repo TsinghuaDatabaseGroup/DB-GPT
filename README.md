@@ -129,6 +129,7 @@ set OPENAI_API_KEY="your_api_key_here"
 
 - If accessing openai service via vpn, execute this command:
 ```bash
+# macos
 export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
 ```
 
