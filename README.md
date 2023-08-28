@@ -137,6 +137,8 @@ Step 3: Add database/anomaly/prometheus settings into [tool_config_example.yaml]
       node_exporter_instance: 172.27.xx.xx:9100
     ```
 
+> BENCHSERVER is not a necessity. You only need to configure it for the *obtain_start_and_end_time_of_anomaly* function within [api.py](bmtools/tools/db_diag/api.py).
+
 - If accessing openai service via vpn, execute this command:
 ```bash
 # macos
