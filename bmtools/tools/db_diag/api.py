@@ -15,6 +15,7 @@ import requests
 import numpy as np
 import openai
 import paramiko
+import pdb
 
 from utils.core import read_yaml
 
@@ -154,6 +155,7 @@ def get_index_result(algo, work_list, connector, columns,
 
 
 def build_db_diag_tool(config) -> Tool:
+    
     tool = Tool(
         "Database Diagnosis",
         "Diagnose the bottlenecks of a database based on relevant metrics",
@@ -165,45 +167,31 @@ def build_db_diag_tool(config) -> Tool:
 
     #URL_CURRENT_WEATHER= "http://api.weatherapi.com/v1/current.json"
     #URL_FORECAST_WEATHER = "http://api.weatherapi.com/v1/forecast.json"
+
     node_exporter_instance = promethest_conf.get('node_exporter_instance')
+    postgresql_exporter_instance = promethest_conf.get('postgresql_exporter_instance')
+
     prometheus_metrics = {
-        "cpu_usage": "(avg(irate(node_cpu_seconds_total{instance=~\"{}\",mode=\"user\"}[1m]))) * 100".format(node_exporter_instance),
+        "cpu_usage": f"(avg(irate(node_cpu_seconds_total{{instance=~\"{node_exporter_instance}\",mode=\"user\"}}[1m]))) * 100",
         "cpu_metrics": [
-            "node_scrape_collector_duration_seconds{instance=\"{}\"}",
-            "node_procs_running{instance=\"{}\"}",
-            "node_procs_blocked{instance=\"{}\"}",
-            "node_entropy_available_bits{instance=\"{}\"}",
-            "node_load1{instance=\"{}\"}",
-            "node_load5{instance=\"{}\"}",
-            "node_load15{instance=\"{}\"}".format(
-                node_exporter_instance,
-                node_exporter_instance,
-                node_exporter_instance,
-                node_exporter_instance,
-                node_exporter_instance,
-                node_exporter_instance,
-                node_exporter_instance)],
-        "memory_usage": "node_memory_MemTotal_bytes{instance=~\"{}\"} - (node_memory_Cached_bytes{instance=~\"{}\"} + node_memory_Buffers_bytes{instance=~\"{}\"} + node_memory_MemFree_bytes{instance=~\"{}\"})".format(
-            node_exporter_instance,
-            node_exporter_instance,
-            node_exporter_instance,
-            node_exporter_instance),
+            f"node_scrape_collector_duration_seconds{{instance=\"{node_exporter_instance}\"}}",
+            f"node_procs_running{{instance=\"{node_exporter_instance}\"}}",
+            f"node_procs_blocked{{instance=\"{node_exporter_instance}\"}}",
+            f"node_entropy_available_bits{{instance=\"{node_exporter_instance}\"}}",
+            f"node_load1{{instance=\"{node_exporter_instance}\"}}",
+            f"node_load5{{instance=\"{node_exporter_instance}\"}}",
+            f"node_load15{{instance=\"{node_exporter_instance}\"}}"],
+        "memory_usage": f"node_memory_MemTotal_bytes{{instance=~\"{node_exporter_instance}\"}} - (node_memory_Cached_bytes{{instance=~\"{node_exporter_instance}\"}} + node_memory_Buffers_bytes{{instance=~\"{node_exporter_instance}\"}} + node_memory_MemFree_bytes{{instance=~\"{node_exporter_instance}\"}})",
         "memory_metrics": [
-            "irate(node_disk_write_time_seconds_total{instance=~\"{}\"}[1m])",
-            "node_memory_Inactive_anon_bytes{instance=\"{}\"}",
-            "node_memory_MemFree_bytes{instance=\"{}\"}",
-            "node_memory_Dirty_bytes{instance=\"{}\"}",
-            "pg_stat_activity_count{instance=~\"{}\", state=\"active\"} !=0".format(
-                node_exporter_instance,
-                node_exporter_instance,
-                node_exporter_instance,
-                node_exporter_instance,
-                node_exporter_instance)],
+            f"irate(node_disk_write_time_seconds_total{{instance=~\"{node_exporter_instance}\"}}[1m])",
+            f"node_memory_Inactive_anon_bytes{{instance=\"{node_exporter_instance}\"}}",
+            f"node_memory_MemFree_bytes{{instance=\"{node_exporter_instance}\"}}",
+            f"node_memory_Dirty_bytes{{instance=\"{node_exporter_instance}\"}}",
+            f"pg_stat_activity_count{{instance=~\"{postgresql_exporter_instance}\", state=\"active\"}} !=0"],
         "network_metrics": [
-            "node_sockstat_TCP_tw{instance=\"{}\"}",
-            "node_sockstat_TCP_orphan{instance=\"{}\"}".format(
-                node_exporter_instance,
-                node_exporter_instance)]}
+            f"node_sockstat_TCP_tw{{instance=\"{node_exporter_instance}\"}}",
+            f"node_sockstat_TCP_orphan{{instance=\"{node_exporter_instance}\"}}"]
+            }
 
     executor_url = "http://8.131.229.55:5114/rewrite/single_rule"
 

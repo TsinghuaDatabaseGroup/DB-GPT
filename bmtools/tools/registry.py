@@ -1,5 +1,6 @@
 from .tool import Tool
 from typing import Dict, Callable, Any, List
+import pdb
 
 ToolBuilder = Callable[[Any], Tool]
 FuncToolBuilder = Callable[[], ToolBuilder]
@@ -26,11 +27,13 @@ tools_registry = ToolsRegistry()
 
 def register(tool_name):
     def decorator(tool : FuncToolBuilder):
+
         tools_registry.register(tool_name, tool)
         return tool
     return decorator
 
 def build_tool(tool_name : str, config : Any) -> Tool:
+    
     print(f"will build {tool_name}")
     return tools_registry.build(tool_name, config)
 

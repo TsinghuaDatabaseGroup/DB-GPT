@@ -73,6 +73,7 @@ class ToolServer:
             description="Tools for bigmodels",
         )
         self.loaded_tools = dict()
+        
         self.retriever = Retriever()
         _bind_tool_server(self)
     
