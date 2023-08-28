@@ -3,7 +3,6 @@ import { Message } from 'element-ui'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: 'http://8.131.229.55:9090', // url = base url + request url
   timeout: 12000 // request timeout
 })
 
@@ -42,36 +41,23 @@ service.interceptors.response.use(
   }
 )
 
-export function get(url, params) {
+export function get(baseUrl, url, params) {
   return service({
+    baseURL: baseUrl,
     url: url,
     method: 'get',
     params: params
   })
 }
 
-export function post(url, data, config = {}) {
-  return service({
-    url: url,
-    method: 'post',
-    data: data,
-    timeout: config.timeout,
-    config: config
-  })
+export async function query(baseUrl, params) {
+  return await get(baseUrl, 'api/v1/query', params)
 }
 
-export async function query(params) {
-  return await get('api/v1/query', params)
+export async function query_range(baseUrl, params) {
+  return await get(baseUrl, 'api/v1/query_range', params)
 }
 
-export async function query_range(params) {
-  return await get('api/v1/query_range', params)
-}
-
-export async function series(params) {
-  return await get('api/v1/series', params)
-}
-
-export async function label_datname_values(params) {
-  return await get('label/datname/values', params)
+export async function series(baseUrl, params) {
+  return await get(baseUrl, 'api/v1/series', params)
 }

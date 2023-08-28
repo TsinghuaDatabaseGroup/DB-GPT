@@ -12,7 +12,10 @@
             <img v-if="item.sender === 'Memory Agent'" src="@/assets/mem_robot.png" class="face">
           </template>
           <div v-if="!item.loading" class="c-flex-column">
-            <span style="font-size: 12px; color: #666666; margin-bottom: 5px">{{ item.sender }}</span>
+            <span style="font-size: 12px; color: #333333; margin-bottom: 5px">
+              {{ item.sender }}
+              <span style="margin-left: 5px; color: #666666">{{ item.time }}</span>
+            </span>
             <div class="content c-flex-column">
               <span style="font-size: 14px">{{ item.content.diagnose }}</span>
             </div>
