@@ -124,6 +124,7 @@ export default {
     return {
       nodeSelectCondition: '',
       dbSelectCondition: '',
+      prometheusApiUrl: '',
       timeSelecteds: [
         { label: '10s', value: '10s' },
         { label: '30s', value: '30s' },
@@ -489,12 +490,13 @@ export default {
     },
     nodesInfo() {
       instances({}).then(res => {
+        this.prometheusApiUrl = res.data.url
         this.dbSelectCondition = res.data.postgresql
         this.nodeSelectCondition = res.data.node
       })
     },
     reloadRequest() {
-      if (!this.nodeSelectCondition || !this.dbSelectCondition) {
+      if (!this.nodeSelectCondition || !this.dbSelectCondition || !this.prometheusApiUrl) {
         return
       }
 
@@ -611,7 +613,7 @@ export default {
     },
     queryRequest(queryUrl) {
       return new Promise((resolve, reject) => {
-        query({ query: queryUrl }).then(res => {
+        query(this.prometheusApiUrl, { query: queryUrl }).then(res => {
           const data = res.data
           if (data && data.result && data.result.length > 0 && data.result[0].value) {
             resolve(data.result[0])
@@ -623,7 +625,7 @@ export default {
     },
     queryRangeRequest(queryUrl, original = false) {
       return new Promise((resolve, reject) => {
-        query_range({
+        query_range(this.prometheusApiUrl, {
           query: queryUrl,
           start: this.timeRange[0] ? this.timeRange[0] / 1000 : (new Date()).valueOf() / 1000 - 3600 * 24,
           end: this.timeRange[1] ? this.timeRange[1] / 1000 : (new Date()).valueOf() / 1000,

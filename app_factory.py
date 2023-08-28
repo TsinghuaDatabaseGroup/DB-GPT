@@ -27,10 +27,8 @@ def create_app(config_name, config_path=None):
     if not config_path:
         pwd = os.getcwd()
         config_path = os.path.join(pwd, 'config/app_config.yaml')
-        print('========:', config_path)
     if not config_name:
         config_name = 'PRODUCTION'
-    print('========:', config_path)
 
     # 读取配置文件
     conf = read_yaml(config_name, config_path)

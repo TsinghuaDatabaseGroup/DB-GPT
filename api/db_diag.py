@@ -28,7 +28,7 @@ def run():
         res.update(code=ResponseCode.InvalidParameter)
         return res.data
     # 将start_at和end_at写入文件
-    with open("tool_learning/bmtools/diag_time.txt", "a") as f:
+    with open("bmtools/diag_time.txt", "a") as f:
         f.write(str(start_at) + "-" + str(end_at) + "\n")
     agentverse.reset()
     results = agentverse.next()
