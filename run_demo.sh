@@ -5,5 +5,3 @@ cd front_demo && npm run dev &
 
 # set up Flask APP
 python app.py
-
-
