@@ -4,7 +4,8 @@ import yaml
 import os
 from flask import Flask, Blueprint
 from flask_cors import CORS
-from utils.core import JSONEncoder, read_yaml
+from api.utils.json_core import JSONEncoder
+from utils.core import read_yaml
 from api.router import router
 
 
