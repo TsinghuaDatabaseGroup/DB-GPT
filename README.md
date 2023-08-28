@@ -86,17 +86,6 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 - PostgreSQL v12 or higher
 
-    Add database settings into [config.ini](bmtools/tools/config.ini) and rename into *my_config.ini*:
-
-    ```bash
-    [postgresql]
-    host = xxx.xxx.xxx.xxx
-    port = 5432
-    user = xxx
-    password = xxx
-    dbname = postgres
-    ```
-
     > Additionally, install extensions like *[pg_stat_statements](https://pganalyze.com/docs/install/01_enabling_pg_stat_statements)* (track slow queries), *[pg_hint_plan](https://pg-hint-plan.readthedocs.io/en/latest/installation.html)* (optimize physical operators), and *[hypopg](https://github.com/HypoPG/hypopg)* (create hypothetical Indexes).
 
 - Prometheus ~~and Grafana ([tutorial](https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/))~~
@@ -107,13 +96,13 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 ### Package Installation
 
-Step1: Install python packages.
+Step 1: Install python packages.
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Step2: Configure environment variables.
+Step 2: Configure environment variables.
 
 - Export your OpenAI API key
 ```bash
@@ -126,6 +115,27 @@ export OPENAI_API_KEY="your_api_key_here"
 set OPENAI_API_KEY="your_api_key_here"
 ```
 
+Step 3: Add database/anomaly/prometheus settings into [tool_config_example.yaml](config/tool_config_example.yaml) and rename into *tool_config.yaml*:
+
+    ```bash
+    POSTGRESQL:
+      host: 182.92.xxx.x
+      port: 5432
+      user: xxxx
+      password: xxxxx
+      dbname: postgres
+
+    BENCHSERVER:
+      server_address: 8.131.xxx.xx
+      username: root
+      password: xxxxx
+      remote_directory: /root/benchmark
+
+    PROMETHEUS:
+      api_url: http://8.131.xxx.xx:9090/
+      postgresql_exporter_instance: 172.27.xx.xx:9187
+      node_exporter_instance: 172.27.xx.xx:9100
+    ```
 
 - If accessing openai service via vpn, execute this command:
 ```bash
@@ -184,18 +194,14 @@ Within the *anomaly_scripts* directory, we offer scripts that could incur typica
 <br>
 </details>
 
+
 ### Set Up Tool Service
 
 Start bmtools service (kept alive for <a href="#-diagnosis">*diagnosis*</a> and <a href="#-tot">*tree of thought*</a>).
 
 ```bash
-cd tool_learning
 python host_local_tools.py
 ```
-
-<span id="-diagnosis"></span>
-
-
 
 <span id="-diagnosis"></span>
 
@@ -210,7 +216,7 @@ We also provide a local website demo for this environment. You can launch it wit
 ```shell
 # cd website
 cd front_demo
-# install dependencies, the step needs nodejs, ^16.13.1 is recommended
+# install dependencies for the first run (nodejs, ^16.13.1 is recommended)
 npm install
 # back to root directory
 cd ..
@@ -260,7 +266,7 @@ python main.py --task db_diag
 - Tool Usage Algorithm (*tree of thought*)
 
     ```bash
-    cd tool_learning/tree_of_thought
+    cd tree_of_thought
     python test_database.py
     ```
 
