@@ -19,6 +19,7 @@ def instances():
     res = ResMsg()
     conf = read_yaml('PROMETHEUS', 'config/tool_config.yaml')
     res.update(data={
+        "url": conf.get('api_url'),
         "node": conf.get('node_exporter_instance'),
         "postgresql": conf.get('postgresql_exporter_instance'),
     })

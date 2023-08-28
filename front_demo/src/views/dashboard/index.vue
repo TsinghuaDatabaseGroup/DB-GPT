@@ -41,6 +41,7 @@ import PgsqlDashboard from '@/components/PgsqlDashboard'
 import Chat from '@/components/Chat'
 import { nextStep, run } from '@/api/api'
 // const MESSAGEKEY = 'chat_messages'
+import moment from 'moment'
 
 export default {
   components: { PgsqlDashboard, Chat },
@@ -78,6 +79,8 @@ export default {
       run({ start_at: parseInt(this.timeRange[0] / 1000), end_at: parseInt(this.timeRange[0] / 1000) }).then(res => {
         if (res.data) {
           this.removeLoadingMessage()
+          var message = res.data
+          message['time'] = moment().format('YYYY-MM-DD HH:mm:ss')
           this.messages.push(res.data)
           // localStorage.setItem(MESSAGEKEY, JSON.stringify(this.messages))
           this.runNextStep()
