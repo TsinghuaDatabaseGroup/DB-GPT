@@ -1,7 +1,6 @@
 import logging
-
 from flask import Blueprint, request
-
+from datetime import datetime
 from agentverse import AgentVerse
 from api.utils.code import ResponseCode
 from api.utils.response import ResMsg
@@ -12,6 +11,43 @@ bp = Blueprint("db_diag", __name__, url_prefix='/db_diag')
 logger = logging.getLogger(__name__)
 
 agentverse = AgentVerse.from_task('db_diag')
+from utils.core import read_yaml, openai_completion_create
+
+
+@route(bp, '/robot_intro', methods=["POST"])
+def robot_intro():
+    """
+    return robot introduce
+    :return:
+    """
+    res = ResMsg()
+
+    prompts_conf = read_yaml('prompts', 'agentverse/tasks/db_diag/config.yaml')
+
+    try:
+        prompts = [prompts_conf.get('chief_dba_format_prompt'), prompts_conf.get('cpu_agent_format_prompt'), prompts_conf.get('mem_agent_format_prompt')]
+        senders = ['Chief DBA', 'CPU Agent', 'Memory Agent']
+        resluts = []
+        for i in range(len(prompts)):
+            prompt = prompts[i]
+            sender = senders[i]
+            format_prompt = f"分析后面的prompt，然后使用第一人称简单的介绍一下自己，控制在100个字以内，使用英文回复。：{prompt}"
+            message = [
+                {"role": "user", "content": format_prompt}
+            ]
+            openai_resp = openai_completion_create(message)
+            content = openai_resp.get('choices', [])[0].get('message').get('content')
+            result = {"content": content, "sender": sender, "type": "robot_intro", "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+            resluts.append(result)
+        res.update(data=resluts)
+        return res.data
+
+    except Exception as error:
+        logger.error(error)
+        res.update(code=ResponseCode.Fail)
+        return res.data
+
+
 
 @route(bp, '/run', methods=["POST"])
 def run():
@@ -36,7 +72,7 @@ def run():
     # 判断是否是数组，如果是数组，且长度大于1，取第一个值
     if isinstance(results, list) and len(results) > 0:
         result = results[0]
-        result = {"content": result.content, "sender": result.sender}
+        result = {"content": result.content, "sender": result.sender, "type": "message", "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
     res.update(data=result)
     return res.data
 
@@ -53,7 +89,7 @@ def next_step():
     # 判断是否是数组，如果是数组，且长度大于1，取第一个值
     if isinstance(results, list) and len(results) > 0:
         result = results[0]
-        result = {"content": result.content, "sender": result.sender}
+        result = {"content": result.content, "sender": result.sender, "type": "message", "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
     res.update(data=result)
     return res.data
 
@@ -71,7 +107,7 @@ def submit():
     # 判断是否是数组，如果是数组，且长度大于1，取第一个值
     if isinstance(results, list) and len(results) > 0:
         result = results[0]
-        result = {"content": result.content, "sender": result.sender}
+        result = {"content": result.content, "sender": result.sender, "type": "message", "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
     res.update(data=result)
     return res.data
 

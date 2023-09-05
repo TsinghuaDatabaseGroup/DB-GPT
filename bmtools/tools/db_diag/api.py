@@ -202,15 +202,8 @@ def build_db_diag_tool(config) -> Tool:
     # load db settings
     script_path = os.path.abspath(__file__)
     script_dir = os.path.dirname(script_path)
-    script_dir = os.path.dirname(script_dir)
     dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
     db = Database(dbargs, timeout=-1)
-
-
-    monitoring_metrics = []
-    with open(str(os.getcwd()) + "/bmtools/tools/db_diag/database_monitoring_metrics", 'r') as f:
-        monitoring_metrics = f.read()
-    monitoring_metrics = eval(monitoring_metrics)
 
     @tool.get("/obtain_start_and_end_time_of_anomaly")
     def obtain_start_and_end_time_of_anomaly():
