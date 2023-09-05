@@ -34,7 +34,7 @@
 ## What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [x] **[2023/9/05]** A unique framework is finished! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀</a>
+- [x] **[2023/9/05]** A unique framework is finished! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀</a> (will be merged into the master branch soon)
 
 - [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗</a>
 
