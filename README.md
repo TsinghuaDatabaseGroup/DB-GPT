@@ -7,6 +7,7 @@
   <a href="#-features">Features</a> •
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-cases">Cases</a> •
+  <a href="#-customize">Customization</a> •  
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-contributors">Contributors</a>
@@ -33,6 +34,8 @@
 ## What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
+- [x] **[2023/9/05]** A unique framework is finished! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀</a>
+
 - [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗</a>
 
 - [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗](bmtools/tools/db_diag/api.py)
@@ -43,7 +46,7 @@
 
     * *LLM As DBA.* [[paper]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[slides]](materials/slides)
 
-    <!-- * *DB-GPT: Large Language Model Meets Database.* [[paper]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf) -->
+    * *DB-GPT: Large Language Model Meets Database.* [[paper]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
 
 > *D-Bot* is evolving with new features 👫👫<br/> 
 > Don't forget to star ⭐ and watch 👀 to stay up to date :)
@@ -74,7 +77,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 ## QuickStart
 
-> The current version is developed from agentverse and bmtools, to which we are still contributing.
+> The current version is developed from agentverse, to which we are still contributing.
 
 <br>
 <div align="center">
@@ -82,7 +85,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 </div>
 <br>
 
-### Prerequisites
+### 1. Prerequisites
 
 - PostgreSQL v12 or higher
 
@@ -94,7 +97,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
     > Grafana is no longer a necessity with our vue-based frontend.
 
-### Package Installation
+### 2. Package Installation
 
 Step 1: Install python packages.
 
@@ -151,7 +154,40 @@ cd others
 python openai_test.py
 ```
 
-### Anomaly Generation & Detection
+<span id="-diagnosis"></span>
+
+### 3. Diagnosis & Optimization
+
+<span id="-frontend"></span>
+
+#### Website Interface
+
+We also provide a local website demo for this environment. You can launch it with
+
+```shell
+# cd website
+cd front_demo
+# install dependencies for the first run (nodejs, ^16.13.1 is recommended)
+npm install
+# back to root directory
+cd ..
+# launch the local server and open the website
+sh run_demo.sh
+```
+
+> Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python are installed.
+
+After successfully launching the local server, visit [http://127.0.0.1:9228/](http://127.0.0.1:9228/) to trigger the diagnosis procedure.
+
+
+#### Command-line Interface
+
+```shell
+python main.py
+```
+
+
+## Supported Anomalies
 
 Within the *anomaly_scripts* directory, we offer scripts that could incur typical anomalies, e.g., 
 
@@ -196,49 +232,9 @@ Within the *anomaly_scripts* directory, we offer scripts that could incur typica
 <br>
 </details>
 
+<span id="-customize"></span>
 
-### Set Up Tool Service
-
-Start bmtools service (kept alive for <a href="#-diagnosis">*diagnosis*</a> and <a href="#-tot">*tree of thought*</a>).
-
-```bash
-python host_local_tools.py
-```
-
-<span id="-diagnosis"></span>
-
-### Diagnosis & Optimization
-
-<span id="-frontend"></span>
-
-#### Website Interface
-
-We also provide a local website demo for this environment. You can launch it with
-
-```shell
-# cd website
-cd front_demo
-# install dependencies for the first run (nodejs, ^16.13.1 is recommended)
-npm install
-# back to root directory
-cd ..
-# launch the local server and open the website
-sh run_demo.sh
-```
-
-> Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python are installed.
-
-After successfully launching the local server, visit [http://127.0.0.1:9228/](http://127.0.0.1:9228/) to trigger the diagnosis procedure.
-
-
-#### Command-line Interface
-
-```shell
-python main.py --task db_diag
-```
-
-
-### Preparation (optional)
+## Customize Your Knowledgebase And Tools
 
 #### 1. Knowledge Preparation
 
@@ -275,7 +271,7 @@ python main.py --task db_diag
     > History messages may take up many tokens, and so carefully decide the *turn number*.
 
 
-### Prompt Template Generation (optional)
+<!-- ## Prompt Template Generation (optional)
 
 Derive *high-quality prompt templates* from a small number of collected samples (splitting into training and evaluation sets), e.g.,
 
@@ -291,11 +287,11 @@ cd prompt_template_scripts/index_tuning
 ```bash
 cd prompt_template_scripts/query_rewrite
 ./run.sh
-```
+``` -->
 
 <span id="-solid_response"></span>
 
-### Robust Responses Mechanisms
+## Robust Responses Mechanisms
 
 <!-- #### 100% Accurate Tool Calling -->
 
@@ -442,15 +438,12 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 ## Todo
 
+- [ ] ~~Project cleaning~~
 - [ ] Support more anomalies
 - [ ] Add more communication mechanisms
 - [ ] Automate role description
-- [ ] Project cleaning
 - [ ] Public-generated anomaly training data
 - [ ] Fine-tune localized private model
-
-> The above items are **urgent**, which we will fix within two weeks.
-
 - [ ] Integrate preparation components in the demo website.
 - [ ] Support other databases like *MySQL*
 - [ ] Collect more knowledge and store in vector db (./knowledge_vector_db)
@@ -470,8 +463,6 @@ https://github.com/OpenBMB/AgentVerse
 
 https://github.com/OpenBMB/BMTools
 
-https://github.com/OpenBMB/ToolBench
-
 <span id="-citation"></span>
 
 ## Citation
@@ -484,6 +475,15 @@ Feel free to cite us if you like this project.
       eprint={2308.05481},
       archivePrefix={arXiv},
       primaryClass={cs.DB}
+}
+```
+
+```bibtex
+@misc{zhou2023dbgpt,
+      title={DB-GPT: Large Language Model Meets Database}, 
+      author={Xuanhe Zhou, Zhaoyan Sun, Guoliang Li},
+      year={2023},
+      archivePrefix={Data Science and Engineering},
 }
 ```
 
