@@ -37,9 +37,9 @@
 
 - [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗 link</a>
 
-- [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗](multiagents/tools)
+- [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗 link](multiagents/tools)
 
-- [x] **[2023/8/16]** Support multi-level optimization functions <a href="#-tools">🔗</a>
+- [x] **[2023/8/16]** Support multi-level optimization functions <a href="#-tools">🔗 link</a>
 
 - [x] **[2023/8/10]** Our vision papers are released (continuously update) 
 
@@ -248,7 +248,7 @@ Within the *anomaly_scripts* directory, we offer scripts that could incur typica
 
     | Module                  | Functions |
     |-------------------------|-----------|
-    | [index_selection](multiagents/tools/index_selection) (equipped)          | *heuristic* algorithm  |
+    | [index_selection](multiagents/tools/index_advisor) (equipped)          | *heuristic* algorithm  |
     | [query_rewrite](multiagents/tools/query_advisor) (equipped)           | *45* rules  |
     | [physical_hint](multiagents/tools/query_advisor) (equipped)           | *15* parameters  |
 
