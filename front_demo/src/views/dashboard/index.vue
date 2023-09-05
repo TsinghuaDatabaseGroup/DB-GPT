@@ -56,7 +56,7 @@ export default {
   watch: {},
   mounted() {
     // this.messages = JSON.parse(localStorage.getItem(MESSAGEKEY) || '[]')
-    this.getRobotIntro()
+    // this.getRobotIntro()
   },
   beforeDestroy() {},
   methods: {

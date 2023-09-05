@@ -1,9 +1,5 @@
-from agentverse.agentverse import AgentVerse
-from argparse import ArgumentParser
+from multiagents.multiagents import MultiAgents
 
-parser = ArgumentParser()
-parser.add_argument("--task", type=str, default="db_diag")
+multi_agents = MultiAgents.from_task("agent_conf")
 
-args = parser.parse_args()
-agentverse = AgentVerse.from_task(args.task)
-agentverse.run()
+multi_agents.run()
