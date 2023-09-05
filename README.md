@@ -1,6 +1,9 @@
-<div align= "center">
-    <h1> <img src="imgs/dbagent.png" width="100px"> LLM As Database Administrator</h1>
-</div>
+<img align='right' src='imgs/dbagent.png' width='135px'>
+
+#  LLM As Database Administrator
+
+🧗 *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
+
 
 <p align="center">
   <a href="#-news">News</a> •
@@ -20,13 +23,10 @@
 <br> -->
 
 <br>
-<div align="center">
-<img src="imgs/frontendv3.png" width="800px">
-</div>
+    <div align="center">
+    <img src="imgs/frontendv3.png" width="800px">
+    </div>
 <br>
-
-
-🧗 Database administrators (DBAs) play a crucial role in managing, maintaining and optimizing a database system to ensure data availability, performance, and reliability. However, it is hard and tedious for DBAs to manage a large number of database instances. Thus, we propose *D-Bot*, a LLM-based database administrator that can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
 
 
 <span id="-news"></span>
@@ -34,11 +34,11 @@
 ## What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [x] **[2023/9/05]** A unique framework is finished! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀</a> (will be merged into the master branch soon)
+- [x] **[2023/9/05]** A unique framework is available! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀 link</a>
 
-- [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗</a>
+- [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗 link</a>
 
-- [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗](bmtools/tools/db_diag/api.py)
+- [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗](multiagents/tools)
 
 - [x] **[2023/8/16]** Support multi-level optimization functions <a href="#-tools">🔗</a>
 
@@ -76,8 +76,6 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 <span id="-quickstart"></span>
 
 ## QuickStart
-
-> The current version is developed from agentverse, to which we are still contributing.
 
 <br>
 <div align="center">
@@ -140,7 +138,7 @@ Step 3: Add database/anomaly/prometheus settings into [tool_config_example.yaml]
       node_exporter_instance: 172.27.xx.xx:9100
     ```
 
-> BENCHSERVER is not a necessity. You only need to configure it for the *obtain_start_and_end_time_of_anomaly* function within [api.py](bmtools/tools/db_diag/api.py).
+> You can ignore the settings of BENCHSERVER, which is not used in this version.
 
 - If accessing openai service via vpn, execute this command:
 ```bash
@@ -240,7 +238,7 @@ Within the *anomaly_scripts* directory, we offer scripts that could incur typica
 
 - Extract knowledge from both code (./knowledge_json/knowledge_from_code) and documents (./knowledge_json/knowledge_from_document).
 
-    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](bmtools/tools/db_diag/root_causes_dbmind.jsonl).
+    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](multiagents/knowledge/root_causes_dbmind.jsonl).
 
 
 <span id="-tools"></span>
@@ -251,13 +249,13 @@ Within the *anomaly_scripts* directory, we offer scripts that could incur typica
 
     | Module                  | Functions |
     |-------------------------|-----------|
-    | [index_selection](bmtools/tools/db_diag/optimization_tools/index_selection) (equipped)          | *heuristic* algorithm  |
-    | [query_rewrite](bmtools/tools/db_diag/optimization_tools/query_rewrite) (equipped)           | *45* rules  |
-    | [physical_hint](bmtools/tools/db_diag/optimization_tools/physical_operator_hint) (equipped)           | *15* parameters  |
+    | [index_selection](multiagents/tools/index_selection) (equipped)          | *heuristic* algorithm  |
+    | [query_rewrite](multiagents/tools/query_advisor) (equipped)           | *45* rules  |
+    | [physical_hint](multiagents/tools/query_advisor) (equipped)           | *15* parameters  |
 
-    For functions within [[query_rewrite](bmtools/tools/db_diag/optimization_tools/query_rewrite), [physical_hint](bmtools/tools/db_diag/optimization_tools/physical_operator_hint)], you can use *api_test.py* script to verify the effectiveness. 
+    For functions within [[query_rewrite](multiagents/tools/query_advisor), [physical_hint](multiagents/tools/query_advisor)], you can use *api_test.py* script to verify the effectiveness. 
 
-    If the function actually works, append it to [api.py](bmtools/tools/db_diag/api.py).
+    If the function actually works, append it to the *api.py* of corresponding module.
 
 <span id="-tot"></span>
 
@@ -441,7 +439,6 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 - [ ] ~~Project cleaning~~
 - [ ] Support more anomalies
 - [ ] Add more communication mechanisms
-- [ ] Automate role description
 - [ ] Public-generated anomaly training data
 - [ ] Fine-tune localized private model
 - [ ] Integrate preparation components in the demo website.
