@@ -1,0 +1,23 @@
+POSTGRESQL:
+  host: 182.92.xxx.x
+  port: 5432
+  user: xxxx
+  password: xxxxx
+  dbname: postgres
+
+MYSQL:
+  host: 166.111.xxx.xx
+  port: 3306
+  user: root
+  password: xxxxxx
+
+BENCHSERVER:
+  server_address: 8.131.xxx.xx
+  username: root
+  password: xxxxx
+  remote_directory: /root/benchmark
+
+PROMETHEUS:
+  api_url: http://8.131.xxx.xx:9090/
+  postgresql_exporter_instance: 172.27.xx.xx:9187
+  node_exporter_instance: 172.27.xx.xx:9100
