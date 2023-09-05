@@ -16,27 +16,34 @@
               {{ item.sender }}
               <span style="margin-left: 5px; color: #666666">{{ item.time }}</span>
             </span>
-            <div class="content c-flex-column">
-              <span style="font-size: 14px">{{ item.content.diagnose }}</span>
-            </div>
-            <div
-              v-if="isNotEmpty(item.content.solution)"
-              class="content c-flex-column"
-              style="background: rgba(103, 194, 58, 0.03); color: #ffffff"
-            >
-              <span class="c-flex-column" style="color: RGBA(43, 127, 1, 0.8); margin: 10px 0">
-                <span style="color: RGBA(43, 127, 1, 1.00)">Matched Solution：</span>
-                <span v-for="(solu, soluIndex) in item.content.solution" :key="soluIndex">
-                  {{ solu }}
+            <template v-if="item.type === 'message'">
+              <div class="content c-flex-column">
+                <span style="font-size: 14px">{{ item.content.diagnose }}</span>
+              </div>
+              <div
+                v-if="isNotEmpty(item.content.solution)"
+                class="content c-flex-column"
+                style="background: rgba(103, 194, 58, 0.03); color: #ffffff"
+              >
+                <span class="c-flex-column" style="color: RGBA(43, 127, 1, 0.8); margin: 10px 0">
+                  <span style="color: RGBA(43, 127, 1, 1.00)">Matched Solution：</span>
+                  <span v-for="(solu, soluIndex) in item.content.solution" :key="soluIndex">
+                    {{ solu }}
+                  </span>
                 </span>
-              </span>
-            </div>
-            <div v-if="item.content.knowledge && item.content.knowledge.trim()" class="content c-flex-column" style="background: RGBA(230, 162, 60, 0.03)">
-              <span class="c-flex-column" style="color: RGBA(230, 162, 60, 0.8); padding: 5px 0;">
-                <span style="color: RGBA(230, 162, 60, 1)">Matched Knowledge：</span>
-                <span>{{ item.content.knowledge || '' }}</span>
-              </span>
-            </div>
+              </div>
+              <div v-if="item.content.knowledge && item.content.knowledge.trim()" class="content c-flex-column" style="background: RGBA(230, 162, 60, 0.03)">
+                <span class="c-flex-column" style="color: RGBA(230, 162, 60, 0.8); padding: 5px 0;">
+                  <span style="color: RGBA(230, 162, 60, 1)">Matched Knowledge：</span>
+                  <span>{{ item.content.knowledge || '' }}</span>
+                </span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="content c-flex-column">
+                <span style="font-size: 14px">{{ item.content }}</span>
+              </div>
+            </template>
           </div>
           <div v-else>
             <div class="content c-flex-row c-justify-content-left" style="padding: 10px 40px 10px 20px">

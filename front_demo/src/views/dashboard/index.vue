@@ -39,9 +39,8 @@
 
 import PgsqlDashboard from '@/components/PgsqlDashboard'
 import Chat from '@/components/Chat'
-import { nextStep, run } from '@/api/api'
+import { nextStep, run, robotIntro } from '@/api/api'
 // const MESSAGEKEY = 'chat_messages'
-import moment from 'moment'
 
 export default {
   components: { PgsqlDashboard, Chat },
@@ -50,12 +49,14 @@ export default {
     return {
       timeRange: [],
       pickerOptions: [],
-      messages: []
+      messages: [],
+      introMessage: []
     }
   },
   watch: {},
   mounted() {
     // this.messages = JSON.parse(localStorage.getItem(MESSAGEKEY) || '[]')
+    // this.getRobotIntro()
   },
   beforeDestroy() {},
   methods: {
@@ -69,18 +70,26 @@ export default {
         return !item.loading
       })
     },
+    getRobotIntro() {
+      this.addLoadingMessage()
+      robotIntro({}).then(res => {
+        this.introMessage = res.data
+        this.messages = this.messages.concat(this.introMessage)
+      }).finally(() => {
+        this.removeLoadingMessage()
+      })
+    },
     onChatConfirm() {
       if (this.timeRange.length === 0) {
         this.$message.warning(this.$t('timeRangeSelectTip'))
         return
       }
       this.messages = []
+      this.messages = this.messages.concat(this.introMessage)
       this.addLoadingMessage()
       run({ start_at: parseInt(this.timeRange[0] / 1000), end_at: parseInt(this.timeRange[0] / 1000) }).then(res => {
         if (res.data) {
           this.removeLoadingMessage()
-          var message = res.data
-          message['time'] = moment().format('YYYY-MM-DD HH:mm:ss')
           this.messages.push(res.data)
           // localStorage.setItem(MESSAGEKEY, JSON.stringify(this.messages))
           this.runNextStep()
