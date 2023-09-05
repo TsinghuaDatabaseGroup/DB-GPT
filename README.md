@@ -1,16 +1,13 @@
-<img align='right' src='imgs/dbagent.png' width='135px'>
-
-#  LLM As Database Administrator
-
-🧗 *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
-
+<div align= "center">
+    <h1> <img src="imgs/dbagent.png" width="100px"> LLM As Database Administrator</h1>
+</div>
 
 <p align="center">
   <a href="#-news">News</a> •
   <a href="#-features">Features</a> •
   <a href="#-quickstart">QuickStart</a> •
+  <a href="#-customize">Customization</a> •    
   <a href="#-cases">Cases</a> •
-  <a href="#-customize">Customization</a> •  
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-contributors">Contributors</a>
@@ -27,6 +24,8 @@
     <img src="imgs/frontendv3.png" width="800px">
     </div>
 <br>
+
+🧗 *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
 
 
 <span id="-news"></span>
