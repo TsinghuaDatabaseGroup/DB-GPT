@@ -1,3 +1,0 @@
-In joins of fact and dimension tables, a star transformation can avoid a full scan of a fact table.
-
-The star transformation improves performance by fetching only relevant fact rows that join to the constraint dimension rows. In some cases, queries have restrictive filters on other columns of the dimension tables. The combination of filters can dramatically reduce the data set that the database processes from the fact table.

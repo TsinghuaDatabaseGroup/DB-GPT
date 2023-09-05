@@ -1,9 +1,10 @@
-from agentverse.agentverse import AgentVerse
-from argparse import ArgumentParser
 
-parser = ArgumentParser()
-parser.add_argument("--task", type=str, default="db_diag")
+from multiagents.multiagents import MultiAgents
 
-args = parser.parse_args()
-agentverse = AgentVerse.from_task(args.task)
-agentverse.run()
+import pdb
+
+# refer to the agentverse project (https://github.com/OpenBMB/AgentVerse)
+
+multi_agents = MultiAgents.from_task("agent_conf")
+
+multi_agents.run()

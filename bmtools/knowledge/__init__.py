@@ -1,1 +1,0 @@
-from .knowledge_extraction import KnowledgeExtraction
