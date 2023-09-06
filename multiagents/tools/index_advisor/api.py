@@ -1,22 +1,8 @@
-import warnings
-import sys
-import json
 import os
-import requests
-import numpy as np
-import openai
-import paramiko
-import pdb
-
 from multiagents.tools.index_advisor.index_selection.selection_utils.postgres_dbms import PostgresDatabaseConnector
-from multiagents.tools.index_advisor.index_selection.selection_utils.workload import Workload
 from multiagents.tools.index_advisor.index_selection.selection_utils import selec_com
-from multiagents.tools.index_advisor.configs import INDEX_SELECTION_ALGORITHMS, get_index_result
-
-from multiagents.utils.database import DBArgs, Database
-from multiagents.utils.core import read_yaml
-
-from multiagents.tools.metrics import prometheus_metrics, benchserver_conf, postgresql_conf
+from multiagents.tools.index_advisor.configs import get_index_result
+from multiagents.tools.metrics import postgresql_conf
 
 def optimize_index_selection(start_time: int, end_time: int):
     """optimize_index_selection(start_time : int, end_time : int) returns the recommended index by running the algorithm 'Extend'.

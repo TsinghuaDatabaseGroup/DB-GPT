@@ -1,9 +1,9 @@
 cpu_usage:
-  - query: (avg(irate(node_cpu_seconds_total{{instance=~\"$instance\",mode=\"user\"}}[1m]))) * 100
-    instance_from: node
+  query: (avg(irate(node_cpu_seconds_total{{instance=~\"$instance\",mode=\"user\"}}[1m]))) * 100
+  instance_from: node
 memory_usage:
-  - query: node_memory_MemTotal_bytes{{instance=~\"$instance\"}} - (node_memory_Cached_bytes{{instance=~\"$instance\"}} + node_memory_Buffers_bytes{{instance=~\"$instance\"}} + node_memory_MemFree_bytes{{instance=~\"$instance\"}})
-    instance_from: node
+  query: node_memory_MemTotal_bytes{{instance=~\"$instance\"}} - (node_memory_Cached_bytes{{instance=~\"$instance\"}} + node_memory_Buffers_bytes{{instance=~\"$instance\"}} + node_memory_MemFree_bytes{{instance=~\"$instance\"}})
+  instance_from: node
 cpu_metrics:
   - query: node_scrape_collector_duration_seconds{{instance=\"$instance\"}}
     instance_from: node
@@ -82,17 +82,17 @@ network_metrics:
   - query: irate(node_network_receive_bytes_total{instance=~'$instance',device=~'$nic'}[5m])*8
     instance_from: node
   - query: irate(node_network_transmit_bytes_total{instance=~'$instance',device=~'$nic'}[5m])*8
-      instance_from: node
+    instance_from: node
   - query: node_sockstat_TCP_tw{instance=~'$instance'}
-      instance_from: node
+    instance_from: node
   - query: irate(node_netstat_Tcp_ActiveOpens{instance=~'$instance'}[1m])
-      instance_from: node
+    instance_from: node
   - query: irate(node_netstat_Tcp_PassiveOpens{instance=~'$instance'}[1m])
-      instance_from: node
+    instance_from: node
   - query: node_sockstat_TCP_alloc{instance=~'$instance'}
-      instance_from: node
+    instance_from: node
   - query: node_sockstat_TCP_inuse{instance=~'$instance'}
-      instance_from: node
+    instance_from: node
 io_metrics:
   - query: SUM(pg_stat_database_tup_fetched{instance=~\"$instance\"})
     instance_from: postgresql
@@ -123,22 +123,22 @@ io_metrics:
   - query: 1-(node_filesystem_free_bytes{instance=~'$instance',fstype=~\"ext4|xfs\"} / node_filesystem_size_bytes{instance=~'$instance',fstype=~\"ext4|xfs\"})
     instance_from: node
   - query: irate(node_disk_reads_completed_total{instance=~\"$instance\"}[1m])
-      instance_from: node
+    instance_from: node
   - query: irate(node_disk_writes_completed_total{instance=~\"$instance\"}[1m])
-      instance_from: node
+    instance_from: node
   - query: node_disk_io_now{instance=~\"$instance\"}
-      instance_from: node
+    instance_from: node
   - query: irate(node_disk_read_bytes_total{instance=~\"$instance\"}[1m])
-      instance_from: node
+    instance_from: node
   - query: irate(node_disk_written_bytes_total{instance=~\"$instance\"}[1m])
-      instance_from: node
+    instance_from: node
   - query: irate(node_disk_io_time_seconds_total{instance=~\"$instance\"}[1m])
-      instance_from: node
+    instance_from: node
   - query: irate(node_disk_io_time_weighted_seconds_total{instance=~\"$instance\"}[1m])
-      instance_from: node
+    instance_from: node
   - query: irate(node_disk_read_time_seconds_total{instance=~\"$instance\"}[1m])
-      instance_from: node
+    instance_from: node
   - query: irate(node_disk_write_time_seconds_total{instance=~\"$instance\"}[1m])
-      instance_from: node
+    instance_from: node
   - query: irate(node_disk_io_time_seconds_total{instance=~\"$instance\"}[1m])
-      instance_from: node
+    instance_from: node
