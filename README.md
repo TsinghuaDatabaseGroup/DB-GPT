@@ -76,11 +76,27 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 ## QuickStart
 
-<br>
+<!-- <br>
 <div align="center">
 <img src="imgs/workflow.png" width="800px">
 </div>
-<br>
+<br> -->
+
+
+### Folder Structure
+
+    .
+    ├── multiagents
+    │   ├── agent_conf                        # Settings of each agent
+    │   ├── agents                            # Implementation of different agent types 
+    │   ├── environments                      # E.g., chat orders / chat update / terminal conditions
+    │   ├── knowledge                         # Diagnosis experience from documents
+    │   ├── llms                              # Supported models
+    │   ├── memory                            # The content and summary of chat history
+    │   ├── response_formalize_scripts        # Useless content removal of model response
+    │   ├── tools                             # External monitoring/optimization tools for models
+    │   └── utils                             # Other functions (e.g., database/json/yaml operations)
+
 
 ### 1. Prerequisites
 
