@@ -6,6 +6,7 @@
   <a href="#-news">News</a> •
   <a href="#-features">Features</a> •
   <a href="#-quickstart">QuickStart</a> •
+  <a href="#-customize">Customization</a> •    
   <a href="#-cases">Cases</a> •
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
@@ -19,13 +20,12 @@
 <br> -->
 
 <br>
-<div align="center">
-<img src="imgs/frontendv3.png" width="800px">
-</div>
+    <div align="center">
+    <img src="imgs/frontendv3.png" width="800px">
+    </div>
 <br>
 
-
-🧗 Database administrators (DBAs) play a crucial role in managing, maintaining and optimizing a database system to ensure data availability, performance, and reliability. However, it is hard and tedious for DBAs to manage a large number of database instances. Thus, we propose *D-Bot*, a LLM-based database administrator that can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
+🧗 *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
 
 
 <span id="-news"></span>
@@ -33,17 +33,19 @@
 ## What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗</a>
+- [x] **[2023/9/05]** A unique framework is available! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀 link</a>
 
-- [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗](bmtools/tools/db_diag/api.py)
+- [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗 link</a>
 
-- [x] **[2023/8/16]** Support multi-level optimization functions <a href="#-tools">🔗</a>
+- [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗 link](multiagents/tools)
+
+- [x] **[2023/8/16]** Support multi-level optimization functions <a href="#-tools">🔗 link</a>
 
 - [x] **[2023/8/10]** Our vision papers are released (continuously update) 
 
     * *LLM As DBA.* [[paper]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[slides]](materials/slides)
 
-    <!-- * *DB-GPT: Large Language Model Meets Database.* [[paper]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf) -->
+    * *DB-GPT: Large Language Model Meets Database.* [[paper]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
 
 > *D-Bot* is evolving with new features 👫👫<br/> 
 > Don't forget to star ⭐ and watch 👀 to stay up to date :)
@@ -74,15 +76,29 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 ## QuickStart
 
-> The current version is developed from agentverse and bmtools, to which we are still contributing.
-
-<br>
+<!-- <br>
 <div align="center">
 <img src="imgs/workflow.png" width="800px">
 </div>
-<br>
+<br> -->
 
-### Prerequisites
+
+### Folder Structure
+
+    .
+    ├── multiagents
+    │   ├── agent_conf                        # Settings of each agent
+    │   ├── agents                            # Implementation of different agent types 
+    │   ├── environments                      # E.g., chat orders / chat update / terminal conditions
+    │   ├── knowledge                         # Diagnosis experience from documents
+    │   ├── llms                              # Supported models
+    │   ├── memory                            # The content and summary of chat history
+    │   ├── response_formalize_scripts        # Useless content removal of model response
+    │   ├── tools                             # External monitoring/optimization tools for models
+    │   └── utils                             # Other functions (e.g., database/json/yaml operations)
+
+
+### 1. Prerequisites
 
 - PostgreSQL v12 or higher
 
@@ -94,7 +110,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
     > Grafana is no longer a necessity with our vue-based frontend.
 
-### Package Installation
+### 2. Package Installation
 
 Step 1: Install python packages.
 
@@ -137,7 +153,7 @@ Step 3: Add database/anomaly/prometheus settings into [tool_config_example.yaml]
       node_exporter_instance: 172.27.xx.xx:9100
     ```
 
-> BENCHSERVER is not a necessity. You only need to configure it for the *obtain_start_and_end_time_of_anomaly* function within [api.py](bmtools/tools/db_diag/api.py).
+> You can ignore the settings of BENCHSERVER, which is not used in this version.
 
 - If accessing openai service via vpn, execute this command:
 ```bash
@@ -151,7 +167,40 @@ cd others
 python openai_test.py
 ```
 
-### Anomaly Generation & Detection
+<span id="-diagnosis"></span>
+
+### 3. Diagnosis & Optimization
+
+<span id="-frontend"></span>
+
+#### Website Interface
+
+We also provide a local website demo for this environment. You can launch it with
+
+```shell
+# cd website
+cd front_demo
+# install dependencies for the first run (nodejs, ^16.13.1 is recommended)
+npm install
+# back to root directory
+cd ..
+# launch the local server and open the website
+sh run_demo.sh
+```
+
+> Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python are installed.
+
+After successfully launching the local server, visit [http://127.0.0.1:9228/](http://127.0.0.1:9228/) to trigger the diagnosis procedure.
+
+
+#### Command-line Interface
+
+```shell
+python main.py
+```
+
+
+## Supported Anomalies
 
 Within the *anomaly_scripts* directory, we offer scripts that could incur typical anomalies, e.g., 
 
@@ -196,55 +245,15 @@ Within the *anomaly_scripts* directory, we offer scripts that could incur typica
 <br>
 </details>
 
+<span id="-customize"></span>
 
-### Set Up Tool Service
-
-Start bmtools service (kept alive for <a href="#-diagnosis">*diagnosis*</a> and <a href="#-tot">*tree of thought*</a>).
-
-```bash
-python host_local_tools.py
-```
-
-<span id="-diagnosis"></span>
-
-### Diagnosis & Optimization
-
-<span id="-frontend"></span>
-
-#### Website Interface
-
-We also provide a local website demo for this environment. You can launch it with
-
-```shell
-# cd website
-cd front_demo
-# install dependencies for the first run (nodejs, ^16.13.1 is recommended)
-npm install
-# back to root directory
-cd ..
-# launch the local server and open the website
-sh run_demo.sh
-```
-
-> Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python are installed.
-
-After successfully launching the local server, visit [http://127.0.0.1:9228/](http://127.0.0.1:9228/) to trigger the diagnosis procedure.
-
-
-#### Command-line Interface
-
-```shell
-python main.py --task db_diag
-```
-
-
-### Preparation (optional)
+## Customize Your Knowledgebase And Tools
 
 #### 1. Knowledge Preparation
 
 - Extract knowledge from both code (./knowledge_json/knowledge_from_code) and documents (./knowledge_json/knowledge_from_document).
 
-    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](bmtools/tools/db_diag/root_causes_dbmind.jsonl).
+    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](multiagents/knowledge/root_causes_dbmind.jsonl).
 
 
 <span id="-tools"></span>
@@ -255,13 +264,13 @@ python main.py --task db_diag
 
     | Module                  | Functions |
     |-------------------------|-----------|
-    | [index_selection](bmtools/tools/db_diag/optimization_tools/index_selection) (equipped)          | *heuristic* algorithm  |
-    | [query_rewrite](bmtools/tools/db_diag/optimization_tools/query_rewrite) (equipped)           | *45* rules  |
-    | [physical_hint](bmtools/tools/db_diag/optimization_tools/physical_operator_hint) (equipped)           | *15* parameters  |
+    | [index_selection](multiagents/tools/index_advisor) (equipped)          | *heuristic* algorithm  |
+    | [query_rewrite](multiagents/tools/query_advisor) (equipped)           | *45* rules  |
+    | [physical_hint](multiagents/tools/query_advisor) (equipped)           | *15* parameters  |
 
-    For functions within [[query_rewrite](bmtools/tools/db_diag/optimization_tools/query_rewrite), [physical_hint](bmtools/tools/db_diag/optimization_tools/physical_operator_hint)], you can use *api_test.py* script to verify the effectiveness. 
+    For functions within [[query_rewrite](multiagents/tools/query_advisor), [physical_hint](multiagents/tools/query_advisor)], you can use *api_test.py* script to verify the effectiveness. 
 
-    If the function actually works, append it to [api.py](bmtools/tools/db_diag/api.py).
+    If the function actually works, append it to the *api.py* of corresponding module.
 
 <span id="-tot"></span>
 
@@ -275,7 +284,7 @@ python main.py --task db_diag
     > History messages may take up many tokens, and so carefully decide the *turn number*.
 
 
-### Prompt Template Generation (optional)
+<!-- ## Prompt Template Generation (optional)
 
 Derive *high-quality prompt templates* from a small number of collected samples (splitting into training and evaluation sets), e.g.,
 
@@ -291,11 +300,11 @@ cd prompt_template_scripts/index_tuning
 ```bash
 cd prompt_template_scripts/query_rewrite
 ./run.sh
-```
+``` -->
 
 <span id="-solid_response"></span>
 
-### Robust Responses Mechanisms
+## Robust Responses Mechanisms
 
 <!-- #### 100% Accurate Tool Calling -->
 
@@ -442,15 +451,11 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 ## Todo
 
+- [ ] ~~Project cleaning~~
 - [ ] Support more anomalies
 - [ ] Add more communication mechanisms
-- [ ] Automate role description
-- [ ] Project cleaning
 - [ ] Public-generated anomaly training data
 - [ ] Fine-tune localized private model
-
-> The above items are **urgent**, which we will fix within two weeks.
-
 - [ ] Integrate preparation components in the demo website.
 - [ ] Support other databases like *MySQL*
 - [ ] Collect more knowledge and store in vector db (./knowledge_vector_db)
@@ -470,8 +475,6 @@ https://github.com/OpenBMB/AgentVerse
 
 https://github.com/OpenBMB/BMTools
 
-https://github.com/OpenBMB/ToolBench
-
 <span id="-citation"></span>
 
 ## Citation
@@ -484,6 +487,15 @@ Feel free to cite us if you like this project.
       eprint={2308.05481},
       archivePrefix={arXiv},
       primaryClass={cs.DB}
+}
+```
+
+```bibtex
+@misc{zhou2023dbgpt,
+      title={DB-GPT: Large Language Model Meets Database}, 
+      author={Xuanhe Zhou, Zhaoyan Sun, Guoliang Li},
+      year={2023},
+      archivePrefix={Data Science and Engineering},
 }
 ```
 
