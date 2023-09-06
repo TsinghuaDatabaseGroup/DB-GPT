@@ -4,6 +4,7 @@ from typing import List, NamedTuple, Optional, Union
 from langchain.tools import BaseTool
 from pydantic import Field
 import json
+import time
 
 from multiagents.memory import BaseMemory, ChatHistoryMemory
 from multiagents.message import Message
@@ -84,6 +85,7 @@ class ToolAgent(BaseAgent):
 
             for i in range(self.max_retry):
                 try:
+                    time.sleep(1)
                     response = await self.llm.agenerate_response(prompt)
                     parsed_response = self.output_parser.parse(response)
                     if isinstance(parsed_response, AgentAction):

@@ -52,7 +52,7 @@ class OpenAICompletionArgs(OpenAIChatArgs):
 class OpenAICompletion(BaseCompletionModel):
     args: OpenAICompletionArgs = Field(default_factory=OpenAICompletionArgs)
 
-    def __init__(self, max_retry: int = 3, **kwargs):
+    def __init__(self, max_retry: int = 100, **kwargs):
         args = OpenAICompletionArgs()
         args = args.dict()
         for k, v in args.items():
@@ -85,7 +85,7 @@ class OpenAICompletion(BaseCompletionModel):
 class OpenAIChat(BaseChatModel):
     args: OpenAIChatArgs = Field(default_factory=OpenAIChatArgs)
 
-    def __init__(self, max_retry: int = 3, **kwargs):
+    def __init__(self, max_retry: int = 100, **kwargs):
         args = OpenAIChatArgs()
         args = args.dict()
 

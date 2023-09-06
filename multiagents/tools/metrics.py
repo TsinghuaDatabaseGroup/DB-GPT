@@ -2,6 +2,7 @@ from multiagents.utils.core import read_yaml, read_prometheus_metrics_yaml
 import warnings
 from multiagents.tools.metric_monitor.anomaly_detection import prometheus
 import numpy as np
+import pdb
 
 promethest_conf = read_yaml('PROMETHEUS', 'config/tool_config.yaml')
 benchserver_conf = read_yaml('BENCHSERVER', 'config/tool_config.yaml')
@@ -11,7 +12,6 @@ node_exporter_instance = promethest_conf.get('node_exporter_instance')
 postgresql_exporter_instance = promethest_conf.get('postgresql_exporter_instance')
 
 prometheus_metrics = read_prometheus_metrics_yaml(config_path='config/prometheus_metrics.yaml', node_exporter_instance=node_exporter_instance, postgresql_exporter_instance=postgresql_exporter_instance)
-
 
 def obtain_values_of_metrics(start_time, end_time, metrics):
 

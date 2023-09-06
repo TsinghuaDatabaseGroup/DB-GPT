@@ -4,6 +4,7 @@ from multiagents.utils.database import DBArgs, Database
 from multiagents.tools.metric_monitor.anomaly_detection import prometheus
 from multiagents.tools.metric_monitor.anomaly_detection import detect_anomalies
 from multiagents.tools.metrics import prometheus_metrics, postgresql_conf, obtain_values_of_metrics
+import pdb
 
 '''
 
@@ -117,7 +118,9 @@ def whether_is_abnormal_metric(
                                 'end': end_time,
                                 'step': '3'})
 
-    if metric_values["data"]["result"] != []:
+    if "data" not in metric_values:
+        raise Exception("The metric name could be wrong!")
+    if "result" in metric_values["data"] and metric_values["data"]["result"] != []:
         metric_values = metric_values["data"]["result"][0]["values"]
     else:
         raise Exception("No metric values found for the given time range")
@@ -149,6 +152,8 @@ def match_diagnose_knowledge(
         metric_prefix = "memory"
 
     metrics_list = prometheus_metrics[f"{metric_prefix}_metrics"]
+
+    pdb.set_trace()
 
     detailed_metrics = obtain_values_of_metrics(
         start_time, end_time, metrics_list)

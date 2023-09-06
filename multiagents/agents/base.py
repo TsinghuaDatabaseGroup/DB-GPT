@@ -17,7 +17,7 @@ class BaseAgent(BaseModel):
     prompt_template: str
     role_description: str = Field(default="")
     memory: BaseMemory = Field(default_factory=ChatHistoryMemory)
-    max_retry: int = Field(default=3)
+    max_retry: int = Field(default=100)
     receiver: Set[str] = Field(default=set({"all"}))
     async_mode: bool = Field(default=True)
 
