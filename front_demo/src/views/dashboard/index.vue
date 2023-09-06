@@ -1,34 +1,41 @@
 <template>
   <div class="c-flex-row c-justify-content-between" style="height: 100vh;">
-    <PgsqlDashboard style="width: 70%; height: calc(100% - 40px); margin: 20px 0" />
-    <div class="c-flex-column" style="width: 30%; height: 100%; background: RGBA(242, 246, 255, 1.00); padding: 20px;">
+    <PgsqlDashboard style="width: calc(100% - 410px); height: calc(100% - 40px); margin: 20px 0"/>
+    <div class="c-flex-column" style="width: 410px; height: 100%; background: RGBA(242, 246, 255, 1.00); padding: 20px;">
       <div class="c-shaow-card">
-        <div class="c-flex-column" style="padding: 20px;">
-          <span style="color: #666666">{{ $t('timeRangeTip') }}：</span>
+        <div class="c-flex-column" style="padding: 20px; width: 360px;">
           <div class="c-flex-row c-align-items-center" style="margin-top: 10px">
-            <el-date-picker
-              v-model="timeRange"
-              style="width: calc(100% - 50px);"
-              type="datetimerange"
-              :picker-options="pickerOptions"
-              range-separator="-"
-              format="yyyy-MM-dd HH:mm:ss"
-              value-format="timestamp"
-              :start-placeholder="$t('timeStartTip')"
-              :end-placeholder="$t('timeEndTip')"
-              :clearable="false"
-              :editable="false"
-            />
+            <span style="color: #666666">{{ $t('timeRangeTip') }}：</span>
             <div
               class="u-text-center"
-              style="background: #682FF9; border-radius: 20px; padding: 10px; color: #FFFFFF; flex-shrink: 0; margin-left: 10px; cursor: pointer"
+              style="background: #682FF9; border-radius: 20px; padding: 6px 20px; color: #FFFFFF; flex-shrink: 0; margin-left: 10px; cursor: pointer"
               @click="onChatConfirm()"
             >
               {{ $t('analysisButton') }}
             </div>
           </div>
+          <div class="c-flex-row c-align-items-center" style="margin-top: 10px">
+            <el-date-picker
+              v-model="timeSelected"
+              style="width: 190px; flex-shrink: 0"
+              type="datetime"
+              format="yyyy-MM-dd HH:mm:ss"
+              value-format="timestamp"
+              :placeholder="$t('timeTip')"
+              :clearable="false"
+              :editable="false"
+            />
+            <el-select style="width: 140px; margin-left: 5px; flex-shrink: 0" v-model="timeStep" placeholder="请选择">
+              <el-option
+                v-for="item in timeStepOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
         </div>
-        <Chat :messages="messages" />
+        <Chat :messages="messages"/>
       </div>
 
     </div>
@@ -47,8 +54,15 @@ export default {
   filters: {},
   data() {
     return {
-      timeRange: [],
-      pickerOptions: [],
+      timeSelected: Date.now(),
+      timeStep: 30,
+      timeStepOptions: [
+        { label: '± 30 Seconds', value: 30 },
+        { label: '± 1 Minutes', value: 60 },
+        { label: '± 2 Minutes', value: 120 },
+        { label: '± 3 Minutes', value: 180 },
+        { label: '± 5 Minutes', value: 300 }
+      ],
       messages: [],
       introMessage: []
     }
@@ -58,7 +72,8 @@ export default {
     // this.messages = JSON.parse(localStorage.getItem(MESSAGEKEY) || '[]')
     // this.getRobotIntro()
   },
-  beforeDestroy() {},
+  beforeDestroy() {
+  },
   methods: {
     addLoadingMessage() {
       this.messages.push({
@@ -80,14 +95,14 @@ export default {
       })
     },
     onChatConfirm() {
-      if (this.timeRange.length === 0) {
+      if (!this.timeSelected) {
         this.$message.warning(this.$t('timeRangeSelectTip'))
         return
       }
       this.messages = []
       this.messages = this.messages.concat(this.introMessage)
       this.addLoadingMessage()
-      run({ start_at: parseInt(this.timeRange[0] / 1000), end_at: parseInt(this.timeRange[0] / 1000) }).then(res => {
+      run({ start_at: parseInt(this.timeSelected - this.timeStep*1000), end_at: parseInt(this.timeSelected + this.timeStep*1000) }).then(res => {
         if (res.data) {
           this.removeLoadingMessage()
           this.messages.push(res.data)
@@ -118,9 +133,14 @@ export default {
 <style>
 .container >>> .el-collapse-item__header {
   background: #f9f9f9;
+  width: 100vw;
 }
+
 .el-input__inner {
   border-radius: 20px;
+}
+.el-input--suffix .el-input__inner {
+  padding-right: 10px;
 }
 </style>
 
