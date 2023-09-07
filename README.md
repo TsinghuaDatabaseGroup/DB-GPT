@@ -62,7 +62,7 @@
 
 <br>
 <div align="center">
-<img src="imgs/overview.png" width="800px">
+<img src="imgs/dbgpt-overview.png" width="400px">
 </div>
 <br>
 
@@ -180,8 +180,10 @@ We also provide a local website demo for this environment. You can launch it wit
 ```shell
 # cd website
 cd front_demo
+rm -rf node_modules/
+rm -r package-lock.json
 # install dependencies for the first run (nodejs, ^16.13.1 is recommended)
-npm install
+npm install  --legacy-peer-deps
 # back to root directory
 cd ..
 # launch the local server and open the website
