@@ -13,6 +13,11 @@
   <a href="#-contributors">Contributors</a>
 </p>
 
+<p align="center">
+    【English | <a href="README-Chinese.md">Chinese</a>】
+</p>
+
+
 <!-- <br>
 <div align="center">
 <img src="imgs/dbagent.png" width="400px">
