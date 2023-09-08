@@ -30,7 +30,7 @@
 
 ## Features
 
-### DBA Team
+### DBA Team (D-Bot)
 
 - **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
 
@@ -251,7 +251,7 @@ Within the *anomaly_scripts* directory, we offer scripts that could incur typica
 
 <span id="-customize"></span>
 
-## Customize Your Knowledgebase And Tools
+## Customize Your KnowledgeBase And Tools
 
 #### 1. Knowledge Preparation
 

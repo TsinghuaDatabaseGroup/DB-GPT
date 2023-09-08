@@ -102,7 +102,7 @@ export default {
       this.messages = []
       this.messages = this.messages.concat(this.introMessage)
       this.addLoadingMessage()
-      run({ start_at: parseInt(this.timeSelected - this.timeStep*1000), end_at: parseInt(this.timeSelected + this.timeStep*1000) }).then(res => {
+      run({ start_at: parseInt(this.timeSelected/1000 - this.timeStep), end_at: parseInt(this.timeSelected/1000 + this.timeStep)}).then(res => {
         if (res.data) {
           this.removeLoadingMessage()
           this.messages.push(res.data)

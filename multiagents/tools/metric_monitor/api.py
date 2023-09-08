@@ -148,12 +148,15 @@ def match_diagnose_knowledge(
 
     if "cpu" in metric_name:
         metric_prefix = "cpu"
+    elif "io" in metric_name:
+        metric_prefix = "io"
+    elif "network" in metric_name:
+        metric_prefix = "network"
     else:
         metric_prefix = "memory"
 
-    metrics_list = prometheus_metrics[f"{metric_prefix}_metrics"]
 
-    pdb.set_trace()
+    metrics_list = prometheus_metrics[f"{metric_prefix}_metrics"]
 
     detailed_metrics = obtain_values_of_metrics(
         start_time, end_time, metrics_list)

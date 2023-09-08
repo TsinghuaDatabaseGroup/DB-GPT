@@ -5,6 +5,7 @@ from api.utils.code import ResponseCode
 from api.utils.response import ResMsg
 from api.utils.util import route
 from multiagents.multiagents import MultiAgents
+import pdb
 
 multi_agents = MultiAgents.from_task("agent_conf")
 
@@ -60,6 +61,7 @@ def run():
     obj = request.get_json(force=True)
     start_at = obj.get("start_at")
     end_at = obj.get("end_at")
+
     # 未获取到参数或参数不存在
     if not obj or not start_at or not start_at:
         res.update(code=ResponseCode.InvalidParameter)
