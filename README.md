@@ -17,24 +17,21 @@
     【English | <a href="README-Chinese.md">Chinese</a>】
 </p>
 
-
-<!-- <br>
-<div align="center">
-<img src="imgs/dbagent.png" width="400px">
-</div>
-<br> -->
-
-<br>
-    <div align="center">
-    <img src="imgs/frontendv3.png" width="800px">
-    </div>
-<br>
-
 🧗 *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
+
+<br>
+<div align="center">
+<img src="imgs/dbgpt-overview.png" width="800px">
+</div>
+<br>
+
 
 <span id="-features"></span>
 
 ## Features
+
+### DBA Team
+
 - **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
 
 - **Practical Tool Utilization**: D-Bot can utilize both monitoring and optimization tools to improve the maintenance capability (with *tool learning* and *tree of thought*).
@@ -42,10 +39,12 @@
 - **In-depth Reasoning**: Compared with vanilla LLMs, D-Bot will achieve competitive reasoning capability to analyze root causes (with *multi-llm communications*).
 
 <br>
-<div align="center">
-<img src="imgs/dbgpt-overview.png" width="800px">
-</div>
+    <div align="center">
+    <img src="imgs/frontendv3.png" width="800px">
+    </div>
 <br>
+
+
 
 
 <span id="-news"></span>

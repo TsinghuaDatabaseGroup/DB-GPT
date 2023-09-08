@@ -1,5 +1,5 @@
 <div align= "center">
-    <h1> <img src="imgs/dbagent.png" width="100px"> 基于大模型辅助人类DBA</h1>
+    <h1> <img src="imgs/dbagent.png" width="100px"> 大模型辅助人类DBA</h1>
 </div>
 
 <p align="center">
