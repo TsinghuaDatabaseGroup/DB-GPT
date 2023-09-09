@@ -1,11 +1,9 @@
 # Byte-compiled / optimized / DLL files
-bmtools/bmtools/tools/database/my_config.ini
-bmtools/bmtools/tools/db_diag/my_config.ini
 tree_of_thought/LLM/my_openai_0613.py
 __pycache__/
 *.py[cod]
 *$py.class
-bmtools/tools/my_config.ini
+monitoring_scripts/prometheus/core.py
 
 # C extensions
 *.so
