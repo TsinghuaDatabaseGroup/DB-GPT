@@ -10,6 +10,8 @@
             <img v-if="item.sender === 'Chief DBA'" src="@/assets/dba_robot.png" class="face">
             <img v-if="item.sender === 'CPU Agent'" src="@/assets/cpu_robot.png" class="face">
             <img v-if="item.sender === 'Memory Agent'" src="@/assets/mem_robot.png" class="face">
+            <img v-if="item.sender === 'IO Agent'" src="@/assets/io_robot.png" class="face">
+            <img v-if="item.sender === 'Network Agent'" src="@/assets/network_robot.png" class="face">
           </template>
           <div v-if="!item.loading" class="c-flex-column">
             <span style="font-size: 12px; color: #333333; margin-bottom: 5px">
