@@ -216,7 +216,7 @@ Within the *anomaly_trigger* directory, we aim to offer scripts that could incur
 |                      | FETCH_LARGE_DATA    | Long execution time for large data fetching           |
 |                      | MISSING_INDEXES     | Missing indexes causing performance issues            |
 |                      | REDUNDANT_INDEX     | Unnecessary and redundant indexes in tables           |
-|                      | vacuum              |       Unused space caused by data modifications       |
+|                      | VACUUM              |       Unused space caused by data modifications       |
 |                      | POOR_JOIN_PERFORMANCE | Poor performance of Join operators                  |
 |                      | CORRELATED_SUBQUERY | Non-promotable subqueries in SQL                      |
 |                      | LACK_STATISTIC_INFO | Outdated statistical info affecting execution plan    |
