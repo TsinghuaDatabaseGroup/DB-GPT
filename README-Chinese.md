@@ -216,7 +216,7 @@ python main.py
 
 ## 支持的异常
 
-在 anomaly_scripts 目录中，我们提供了可能引起典型异常的脚本，例如，
+在 anomaly_trigger 目录中，我们提供了可能引起典型异常的脚本，例如，
 
 (1) ./run_benchmark_tpcc.sh 或 ./run_db_exception.sh
 
