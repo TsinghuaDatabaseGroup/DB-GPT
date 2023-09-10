@@ -3,8 +3,8 @@
 </div>
 
 <p align="center">
-  <a href="#-news">News</a> •
   <a href="#-features">Features</a> •
+  <a href="#-news">News</a> •
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-customize">Customization</a> •    
   <a href="#-cases">Cases</a> •
@@ -26,6 +26,21 @@
 <br>
 
 🧗 *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
+
+<span id="-features"></span>
+
+## Features
+- **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
+
+- **Practical Tool Utilization**: D-Bot can utilize both monitoring and optimization tools to improve the maintenance capability (with *tool learning* and *tree of thought*).
+
+- **In-depth Reasoning**: Compared with vanilla LLMs, D-Bot will achieve competitive reasoning capability to analyze root causes (with *multi-llm communications*).
+
+<br>
+<div align="center">
+<img src="imgs/dbgpt-overview.png" width="800px">
+</div>
+<br>
 
 
 <span id="-news"></span>
@@ -49,23 +64,6 @@
 
 > *D-Bot* is evolving with new features 👫👫<br/> 
 > Don't forget to star ⭐ and watch 👀 to stay up to date :)
-
-
-<span id="-features"></span>
-
-## Features
-- **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
-
-- **Practical Tool Utilization**: D-Bot can utilize both monitoring and optimization tools to improve the maintenance capability (with *tool learning* and *tree of thought*).
-
-- **In-depth Reasoning**: Compared with vanilla LLMs, D-Bot will achieve competitive reasoning capability to analyze root causes (with *multi-llm communications*).
-
-<br>
-<div align="center">
-<img src="imgs/dbgpt-overview.png" width="400px">
-</div>
-<br>
-
 
 **A demo of using D-Bot**
 
