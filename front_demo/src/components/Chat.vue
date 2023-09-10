@@ -190,11 +190,11 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
-  padding-bottom: 60px;
+  padding-bottom: 20px;
   width: calc(100% - 20px);
   padding-left: 10px;
   padding-right: 10px;
-  height: calc(100vh - 140px);
+  height: 100%;
 
   .item-space {
     height: 15px;

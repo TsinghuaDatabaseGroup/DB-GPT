@@ -5,5 +5,6 @@ export default {
   refreshTip: '自动刷新',
   queryTimeTip: '查询时间',
   instanceTip: '实例',
+  historyTitle: '历史记录',
   timeRangeSelectTip: '请选择异常发生时间'
 }

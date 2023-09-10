@@ -2,7 +2,7 @@ import datetime
 import decimal
 import os
 import uuid
-
+import json
 import openai
 import yaml
 from flask.json import JSONEncoder as BaseJSONEncoder
@@ -70,8 +70,12 @@ def save_chat_history(chat_data, analyse_at):
     if not os.path.exists(CHAT_HISTORY_FILE):
         json_data = {}
     else:
-        with open(CHAT_HISTORY_FILE, 'r') as file:
-            json_data = json.load(file)
+        try:
+            with open(CHAT_HISTORY_FILE, 'r') as file:
+                json_data = json.load(file)
+        except Exception as e:
+            print(e)
+            json_data = {}
     chat_list = json_data.get(analyse_at, [])
     chat_list.append(chat_data)
     json_data[analyse_at] = chat_list

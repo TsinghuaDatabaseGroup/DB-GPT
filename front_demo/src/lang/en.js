@@ -5,5 +5,6 @@ export default {
   refreshTip: 'Auto Refresh',
   queryTimeTip: 'Query Time',
   instanceTip: 'Instance',
+  historyTitle: 'Historical Record',
   timeRangeSelectTip: 'Select the time period when an anomaly occurs'
 }
