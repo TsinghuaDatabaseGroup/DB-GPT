@@ -7,7 +7,7 @@
   <a href="#-news">News</a> •
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-customize">Customization</a> •    
-  <a href="#-cases">Anomalies</a> •
+  <a href="#-cases">Cases</a> •
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-contributors">Contributors</a>
@@ -50,7 +50,7 @@
 ## What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [x] **[2023/9/09]** Add typical anomalies without relying benchmark plugins <a href="#-anomalies">🚀 link</a>
+- [x] **[2023/9/09]** Add typical anomalies <a href="#-anomalies">🚀 link</a>
 
 - [x] **[2023/9/05]** A unique framework is available! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀 link</a>
 
@@ -206,7 +206,7 @@ python main.py
 
 <span id="-anomalies"></span>
 
-#### Supported Anomalies
+#### 4. Supported Anomalies
 
 Within the *anomaly_trigger* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
 
@@ -227,7 +227,6 @@ Within the *anomaly_trigger* directory, we aim to offer scripts that could incur
 |                      | WORKLOAD_CONTENTION | Workload concentration affecting SQL execution        |
 | Configuration Issues | SMALL_MEMORY_ALLOCATION    | Tool small allocated memory space              |
 |                      | IO_SATURATION     | Reach the max I/O capacity or  throughput               |
-
 
 
 <!-- (1) ./run_benchmark_tpcc.sh or ./run_db_exception.sh
@@ -373,7 +372,7 @@ Add the recommended indexes: ['movie_info#movie_id', 'movie_companies#movie_id',
 
 <span id="-cases"></span>
 
-## Anomalies
+## Cases
 
 <details><summary><b>MISSING_INDEXES → INDEX_SELECTION</b></summary>
 
