@@ -7,34 +7,17 @@
   <a href="#-news">News</a> •
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-customize">Customization</a> •    
-  <a href="#-cases">Cases</a> •
+  <a href="#-cases">Anomalies</a> •
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-contributors">Contributors</a>
 </p>
 
-<!-- <br>
-<div align="center">
-<img src="imgs/dbagent.png" width="400px">
-</div>
-<br> -->
-
-<br>
-    <div align="center">
-    <img src="imgs/frontendv3.png" width="800px">
-    </div>
-<br>
+<p align="center">
+    【English | <a href="README-Chinese.md">中文</a>】
+</p>
 
 🧗 *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
-
-<span id="-features"></span>
-
-## Features
-- **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
-
-- **Practical Tool Utilization**: D-Bot can utilize both monitoring and optimization tools to improve the maintenance capability (with *tool learning* and *tree of thought*).
-
-- **In-depth Reasoning**: Compared with vanilla LLMs, D-Bot will achieve competitive reasoning capability to analyze root causes (with *multi-llm communications*).
 
 <br>
 <div align="center">
@@ -43,10 +26,31 @@
 <br>
 
 
+<span id="-features"></span>
+
+## Features
+
+### DBA Team (D-Bot)
+
+- **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
+
+- **Practical Tool Utilization**: D-Bot can utilize both monitoring and optimization tools to improve the maintenance capability (with *tool learning* and *tree of thought*).
+
+- **In-depth Reasoning**: Compared with vanilla LLMs, D-Bot will achieve competitive reasoning capability to analyze root causes (with *multi-llm communications*).
+
+<br>
+    <div align="center">
+    <img src="imgs/frontendv3.png" width="800px">
+    </div>
+<br>
+
+
 <span id="-news"></span>
 
 ## What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
+
+- [x] **[2023/9/09]** Add typical anomalies without relying benchmark plugins <a href="#-anomalies">🚀 link</a>
 
 - [x] **[2023/9/05]** A unique framework is available! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀 link</a>
 
@@ -69,7 +73,6 @@
 
 https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
 
-
 <span id="-quickstart"></span>
 
 ## QuickStart
@@ -80,8 +83,9 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 </div>
 <br> -->
 
+### D-Bot
 
-### Folder Structure
+#### Folder Structure
 
     .
     ├── multiagents
@@ -96,7 +100,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     │   └── utils                             # Other functions (e.g., database/json/yaml operations)
 
 
-### 1. Prerequisites
+#### 1. Prerequisites
 
 - PostgreSQL v12 or higher
 
@@ -108,7 +112,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
     > Grafana is no longer a necessity with our vue-based frontend.
 
-### 2. Package Installation
+#### 2. Package Installation
 
 Step 1: Install python packages.
 
@@ -167,11 +171,11 @@ python openai_test.py
 
 <span id="-diagnosis"></span>
 
-### 3. Diagnosis & Optimization
+#### 3. Diagnosis & Optimization
 
 <span id="-frontend"></span>
 
-#### Website Interface
+##### Website Interface
 
 We also provide a local website demo for this environment. You can launch it with
 
@@ -193,18 +197,40 @@ sh run_demo.sh
 After successfully launching the local server, visit [http://127.0.0.1:9228/](http://127.0.0.1:9228/) to trigger the diagnosis procedure.
 
 
-#### Command-line Interface
+##### Command-line Interface
 
 ```shell
 python main.py
 ```
 
 
-## Supported Anomalies
+<span id="-anomalies"></span>
 
-Within the *anomaly_scripts* directory, we offer scripts that could incur typical anomalies, e.g., 
+#### Supported Anomalies
 
-(1) ./run_benchmark_tpcc.sh or ./run_db_exception.sh
+Within the *anomaly_trigger* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
+
+| Type                 | Root Cause          | Description                                           |
+|----------------------|---------------------|-------------------------------------------------------|
+| Query Issues         | INSERT_LARGE_DATA   | Long execution time for large data insertions         |
+|                      | FETCH_LARGE_DATA    | Long execution time for large data fetching           |
+|                      | MISSING_INDEXES     | Missing indexes causing performance issues            |
+|                      | REDUNDANT_INDEX     | Unnecessary and redundant indexes in tables           |
+|                      | VACUUM              |       Unused space caused by data modifications       |
+|                      | POOR_JOIN_PERFORMANCE | Poor performance of Join operators                  |
+|                      | CORRELATED_SUBQUERY | Non-promotable subqueries in SQL                      |
+|                      | LACK_STATISTIC_INFO | Outdated statistical info affecting execution plan    |
+| Concurrency Issues   | FETCH_LARGE_DATA    | Fetching of large data volumes                        |
+|                      | LOCK_CONTENTION     | Lock contention issues                                |
+|                      | CPU_CONTENTION      | Severe external CPU resource contention               |
+|                      | IO_CONTENTION       | IO resource contention affecting SQL performance      |
+|                      | WORKLOAD_CONTENTION | Workload concentration affecting SQL execution        |
+| Configuration Issues | SMALL_MEMORY_ALLOCATION    | Tool small allocated memory space              |
+|                      | IO_SATURATION     | Reach the max I/O capacity or  throughput               |
+
+
+
+<!-- (1) ./run_benchmark_tpcc.sh or ./run_db_exception.sh
 
     Example Anomalies: INSERT_LARGE_DATA, IO_CONTENTION
 
@@ -243,11 +269,11 @@ Within the *anomaly_scripts* directory, we offer scripts that could incur typica
 <img src="imgs/subquery.png" width="800px">
 </div>
 <br>
-</details>
+</details> -->
 
 <span id="-customize"></span>
 
-## Customize Your Knowledgebase And Tools
+## Customize Your KnowledgeBase And Tools
 
 #### 1. Knowledge Preparation
 
@@ -347,7 +373,7 @@ Add the recommended indexes: ['movie_info#movie_id', 'movie_companies#movie_id',
 
 <span id="-cases"></span>
 
-## Cases
+## Anomalies
 
 <details><summary><b>MISSING_INDEXES → INDEX_SELECTION</b></summary>
 

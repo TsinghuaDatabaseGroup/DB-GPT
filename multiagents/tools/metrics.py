@@ -3,6 +3,8 @@ import warnings
 from multiagents.tools.metric_monitor.anomaly_detection import prometheus
 import numpy as np
 import pdb
+from termcolor import colored
+
 
 promethest_conf = read_yaml('PROMETHEUS', 'config/tool_config.yaml')
 benchserver_conf = read_yaml('BENCHSERVER', 'config/tool_config.yaml')
@@ -30,14 +32,15 @@ def obtain_values_of_metrics(start_time, end_time, metrics):
                                     'step': '3'})
         if metric_values["data"]["result"] != []:
             metric_values = metric_values["data"]["result"][0]["values"]
+
+            # compute the average value of the metric
+            max_value = np.max(np.array([float(value)
+                            for _, value in metric_values]))
+
+            required_values[metric] = max_value
         else:
-            raise Exception("No metric values found for the given time range")
-
-        # compute the average value of the metric
-        max_value = np.max(np.array([float(value)
-                           for _, value in metric_values]))
-
-        required_values[metric] = max_value
+            #raise Exception("No metric values found for the given time range")
+            print(colored(f"No metric values found for {start_time}-{end_time} of {metric}", "red"))
 
     return required_values
 

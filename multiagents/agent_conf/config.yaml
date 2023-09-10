@@ -86,7 +86,7 @@ prompts:
     Next you must diagnose root causes by using the tools, and must use the following format (any other choice is not allowed):
     Thought: No matter cpu usage is abnormal or normal, I must to diagnose the cause of the anomaly using the metrics, queries and knowledge gained from match_diagnose_knowledge.
     Action: match_diagnose_knowledge
-    Action Input: {"start_time": 1684646375, "end_time": 1684646378, "metric_name": "cpu""}
+    Action Input: {"start_time": 1684646375, "end_time": 1684646378, "metric_name": "cpu"}
 
     Besides, if you find that the indexes are missing, you need to call the optimize_index_selection API to obtain the recommended indexes.
     Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
@@ -132,7 +132,7 @@ prompts:
     Next you must diagnose root causes by using the tools, and use the following format:
     Thought: No matter memory usage is abnormal or normal, I must diagnose the cause of the anomaly with the metrics, queries and knowledge gained from match_diagnose_knowledge.
     Action: match_diagnose_knowledge
-    Action Input: {"start_time": 1684646375, "end_time": 1684646378, "metric_name": "memory""}
+    Action Input: {"start_time": 1684646375, "end_time": 1684646378, "metric_name": "memory"}
 
     After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to the chief DBA, and use the following format:
     Thought: I now know the root cause of the anomaly, and i need to report it to the chief DBA  
@@ -149,6 +149,79 @@ prompts:
 
     Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
     Based on the above history, what will you, ${agent_name}, do next?
+
+  io_agent_format_prompt: &io_agent_format_prompt |-
+    You are in a company whose databases meet anomalies and you follow the chief DBA's instructions to diagnose the root causes. ${role_description}
+
+    # Rules and Format Instructions for Response
+
+    - During diagnosis, you have access to the following tools:
+    ${tools}
+
+    ===============
+
+    - You can respond as follows to use tool:
+    Thought: (your thought)
+    Action: (an action name, it can be one of [match_diagnose_knowledge, Speak], pay attention to the capitalization)
+    Action Input: (argument for the action)
+
+    You can first determine abnormal I/O metrics by using the tools, and use the following format:
+    Thought: I must diagnose the cause of the anomaly with the I/O metrics, queries and knowledge gained from match_diagnose_knowledge.
+    Action: match_diagnose_knowledge
+    Action Input: {"start_time": 1684646375, "end_time": 1684646378, "metric_name": "io"}
+
+    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to the chief DBA, and use the following format:
+    Thought: I now know the root cause of the anomaly, and i need to report it to the chief DBA  
+    Action: Speak
+    Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
+
+    ===============
+
+    Here is the conversation history
+    ${chat_history}
+
+    Here is the execution log of tools
+    ${tool_observation}
+
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
+    Based on the above history, what will you, ${agent_name}, do next?
+
+  network_agent_format_prompt: &network_agent_format_prompt |-
+    You are in a company whose databases meet anomalies and you follow the chief DBA's instructions to diagnose the root causes. ${role_description}
+
+    # Rules and Format Instructions for Response
+
+    - During diagnosis, you have access to the following tools:
+    ${tools}
+
+    ===============
+
+    - You can respond as follows to use tool:
+    Thought: (your thought)
+    Action: (an action name, it can be one of [match_diagnose_knowledge, Speak], pay attention to the capitalization)
+    Action Input: (argument for the action)
+
+    You can first determine abnormal network metrics by using the tools, and use the following format:
+    Thought: I must diagnose the cause of the anomaly with the network metrics, queries and knowledge gained from match_diagnose_knowledge.
+    Action: match_diagnose_knowledge
+    Action Input: {"start_time": 1684646375, "end_time": 1684646378, "metric_name": "network"}
+
+    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to the chief DBA, and use the following format:
+    Thought: I now know the root cause of the anomaly, and i need to report it to the chief DBA  
+    Action: Speak
+    Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
+
+    ===============
+
+    Here is the conversation history
+    ${chat_history}
+
+    Here is the execution log of tools
+    ${tool_observation}
+
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
+    Based on the above history, what will you, ${agent_name}, do next?
+
 
   summary_prompt: &summary_prompt |
     Progressively summarize the lines of a record that you uses tools, which contains inputs for certain tools and the results returned by these tools. Based on the current summary, you need to summarize from the record the goals that the you intended to solve with each call to the tool, add it onto the previous summary, and eventually return a new summary.
@@ -276,6 +349,50 @@ agents:
     name: Memory Agent
     role_description: You are a memory agent that can use the db_diag tool to check memory usage (whether_is_abnormal_metric) and analyze the root causes of high memory usage the metrics, queries and knowledge gained from (match_diagnose_knowledge).
     prompt_template: *mem_agent_format_prompt
+    memory:
+      memory_type: chat_history
+    tool_memory:
+      memory_type: chat_history
+      llm:
+        llm_type: gpt-4
+        model: gpt-4
+        temperature: 0.7
+      prompt_template: *summary_prompt
+      recursive: true
+    llm:
+      llm_type: gpt-4
+      model: gpt-4
+      temperature: 0.7
+      max_tokens: 1024
+    tools: *optimization_tools
+    verbose: true
+  -
+    agent_type: tool
+    name: IO Agent
+    role_description: You are a IO agent that can analyze the root causes of high I/O bandwidth usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection).
+    prompt_template: *io_agent_format_prompt
+    memory:
+      memory_type: chat_history
+    tool_memory:
+      memory_type: chat_history
+      llm:
+        llm_type: gpt-4
+        model: gpt-4
+        temperature: 0.7
+      prompt_template: *summary_prompt
+      recursive: true
+    llm:
+      llm_type: gpt-4
+      model: gpt-4
+      temperature: 0.7
+      max_tokens: 1024
+    tools: *optimization_tools
+    verbose: true
+  -
+    agent_type: tool
+    name: Network Agent
+    role_description: You are a network agent that can analyze the root causes of slow network using the metrics and knowledge gained from (match_diagnose_knowledge), and give solving advice.
+    prompt_template: *network_agent_format_prompt
     memory:
       memory_type: chat_history
     tool_memory:

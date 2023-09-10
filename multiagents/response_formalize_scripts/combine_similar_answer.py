@@ -3,6 +3,8 @@ import os
 import numpy as np
 import re
 from scipy import spatial  # for calculating vector similarities for search
+import pdb
+import time
 
 model = "text-embedding-ada-002"
 api_key = os.environ.get("OPENAI_API_KEY")
@@ -26,13 +28,27 @@ def combine_similar_answers(text, output_format='str'):
     # compute text embedding (1536 dimen) for each sentence
     sentences = []
     for sentence in tmp_sentences:
+        
         sentence = sentence.strip()
+        
         if sentence != '':
-            response = requests.post('https://api.openai.com/v1/embeddings', json={"input": sentence, "model": model},
-                                    headers=headers)
-            embedding = response.json()["data"][0]["embedding"]
-            
-            sentences.append({"text": sentence, "embedding": embedding})
+            is_embedded = False
+            k = 0
+            while not is_embedded and k < 10:
+                try:
+                    response = requests.post('https://api.openai.com/v1/embeddings', json={"input": sentence, "model": model},
+                                            headers=headers)
+                    if "data" in response.json():                        
+                        embedding = response.json()["data"][0]["embedding"]
+                        is_embedded = True
+                    else:
+                        time.sleep(0.01)
+                        k += 1
+                except:
+                    time.sleep(0.01)
+                    pass
+            if is_embedded == True:
+                sentences.append({"text": sentence, "embedding": embedding})
 
     # Compare sentences
     combined_sentences = []

@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from typing import Union
 import json
+import pdb
 
 # from langchain.schema import AgentAction, AgentFinish
 from multiagents.utils.utils import AgentAction, AgentFinish
@@ -38,7 +39,7 @@ class DBDiag(OutputParser):
         print(cleaned_output)
 
         if action in ["Speak"]:
-
+            
             action_input = re.sub(r"\n+", "\n", action_input)
             #action_input = action_input.split("\n")
             if action_input[0] == '(':
