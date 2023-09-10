@@ -13,7 +13,7 @@ bp = Blueprint("db_diag", __name__, url_prefix='/db_diag')
 
 logger = logging.getLogger(__name__)
 
-from utils.core import read_yaml, openai_completion_create
+from utils.core import read_yaml, openai_completion_create, save_chat_history, get_chat_history
 
 
 @route(bp, '/robot_intro', methods=["POST"])
@@ -50,7 +50,6 @@ def robot_intro():
         return res.data
 
 
-
 @route(bp, '/run', methods=["POST"])
 def run():
     """
@@ -59,11 +58,12 @@ def run():
     """
     res = ResMsg()
     obj = request.get_json(force=True)
+    analyse_at = obj.get("analyse_at")
     start_at = obj.get("start_at")
     end_at = obj.get("end_at")
 
     # 未获取到参数或参数不存在
-    if not obj or not start_at or not start_at:
+    if not obj or not start_at or not start_at or not analyse_at:
         res.update(code=ResponseCode.InvalidParameter)
         return res.data
     # 将start_at和end_at写入文件
@@ -76,6 +76,7 @@ def run():
     if isinstance(results, list) and len(results) > 0:
         result = results[0]
         result = {"content": result.content, "sender": result.sender, "type": "message", "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+        save_chat_history(result, analyse_at)
     res.update(data=result)
     return res.data
 
@@ -87,14 +88,22 @@ def next_step():
     :return:
     """
     res = ResMsg()
+    obj = request.get_json(force=True)
+    analyse_at = obj.get("analyse_at")
+    # 未获取到参数或参数不存在
+    if not obj or not analyse_at:
+        res.update(code=ResponseCode.InvalidParameter)
+        return res.data
     results = multi_agents.next()
     result = {}
     # 判断是否是数组，如果是数组，且长度大于1，取第一个值
     if isinstance(results, list) and len(results) > 0:
         result = results[0]
         result = {"content": result.content, "sender": result.sender, "type": "message", "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+        save_chat_history(result, analyse_at)
     res.update(data=result)
     return res.data
+
 
 @route(bp, '/submit', methods=["POST"])
 def submit():
@@ -112,6 +121,17 @@ def submit():
         result = results[0]
         result = {"content": result.content, "sender": result.sender, "type": "message", "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
     res.update(data=result)
+    return res.data
+
+
+@route(bp, '/chat_history', methods=["POST"])
+def chat_history():
+    """
+    return chat_history
+    :return:
+    """
+    res = ResMsg()
+    res.update(data=get_chat_history())
     return res.data
 
 

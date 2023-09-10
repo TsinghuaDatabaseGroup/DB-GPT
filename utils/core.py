@@ -7,6 +7,8 @@ import openai
 import yaml
 from flask.json import JSONEncoder as BaseJSONEncoder
 
+CHAT_HISTORY_FILE = "chat_history.json"
+
 
 class JSONEncoder(BaseJSONEncoder):
 
@@ -61,3 +63,27 @@ def openai_completion_create(messages):
         messages=messages,
     )
     return response
+
+
+# 将聊天记录保存到chat_history文件中
+def save_chat_history(chat_data, analyse_at):
+    if not os.path.exists(CHAT_HISTORY_FILE):
+        json_data = {}
+    else:
+        with open(CHAT_HISTORY_FILE, 'r') as file:
+            json_data = json.load(file)
+    chat_list = json_data.get(analyse_at, [])
+    chat_list.append(chat_data)
+    json_data[analyse_at] = chat_list
+    with open(CHAT_HISTORY_FILE, 'w') as file:
+        json.dump(json_data, file, indent=2)
+
+
+# 获取聊天记录
+def get_chat_history():
+    if not os.path.exists(CHAT_HISTORY_FILE):
+        json_data = {}
+    else:
+        with open(CHAT_HISTORY_FILE, 'r') as file:
+            json_data = json.load(file)
+    return json_data
