@@ -1,20 +1,14 @@
 <template>
   <div class="c-flex-row c-justify-content-between" style="height: 100vh;">
     <PgsqlDashboard style="width: calc(100% - 410px); height: calc(100% - 40px); margin: 20px 0"/>
-    <div class="c-flex-column" style="width: 410px; height: 100%; background: RGBA(242, 246, 255, 1.00); padding: 20px;">
+    <div class="c-flex-column" style="width: 430px; height: 100%; background: RGBA(242, 246, 255, 1.00); padding: 20px;">
       <div class="c-shaow-card">
-        <div class="c-flex-column" style="padding: 20px; width: 360px;">
-          <div class="c-flex-row c-align-items-center" style="margin-top: 10px">
+        <div class="c-flex-column" style="padding: 20px; width: 380px;">
+          <div class="c-flex-row c-align-items-center c-justify-content-between">
             <span style="color: #666666">{{ $t('timeRangeTip') }}：</span>
-            <div
-              class="u-text-center"
-              style="background: #682FF9; border-radius: 20px; padding: 6px 20px; color: #FFFFFF; flex-shrink: 0; margin-left: 10px; cursor: pointer"
-              @click="onChatConfirm()"
-            >
-              {{ $t('analysisButton') }}
-            </div>
+            <i class="el-icon-time" style="font-size: 22px; color: #999999;cursor: pointer" @click="onHistoryClick"/>
           </div>
-          <div class="c-flex-row c-align-items-center" style="margin-top: 10px">
+          <div class="c-flex-row c-align-items-center c-justify-content-between" style="margin-top: 10px">
             <el-date-picker
               v-model="timeSelected"
               style="width: 190px; flex-shrink: 0"
@@ -25,20 +19,43 @@
               :clearable="false"
               :editable="false"
             />
-            <el-select style="width: 140px; margin-left: 5px; flex-shrink: 0" v-model="timeStep" placeholder="请选择">
+            <el-select v-model="timeStep" style="width: 140px; margin-left: 5px; flex-shrink: 0" placeholder="请选择">
               <el-option
                 v-for="item in timeStepOptions"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value">
-              </el-option>
+                :value="item.value"
+              />
             </el-select>
           </div>
+          <div class="c-flex-row c-justify-content-right c-align-items-center">
+            <div
+              class="u-text-center"
+              style="background: #682FF9; border-radius: 20px; padding: 6px 20px;
+               color: #FFFFFF; flex-shrink: 0; cursor: pointer; width: 100%; margin-top: 10px; text-align: center"
+              @click="onChatConfirm()"
+            >
+              {{ $t('analysisButton') }}
+            </div>
+          </div>
         </div>
-        <Chat :messages="messages"/>
+        <Chat style="height: calc(100vh - 190px)" :messages="messages"/>
       </div>
 
     </div>
+
+    <el-drawer
+      :title="$t('historyTitle')"
+      :visible.sync="historyDrawer"
+      direction="rtl"
+      v-loading="historyLoading"
+    >
+      <el-collapse v-model="activeName" accordion @change="onCollapseClick">
+        <el-collapse-item v-for="(item, index) in historyMessages" :key="index" :title="item.title" :name="index+1">
+          <Chat :messages="item.value"/>
+        </el-collapse-item>
+      </el-collapse>
+    </el-drawer>
   </div>
 </template>
 
@@ -46,7 +63,8 @@
 
 import PgsqlDashboard from '@/components/PgsqlDashboard'
 import Chat from '@/components/Chat'
-import { nextStep, run, robotIntro } from '@/api/api'
+import { nextStep, run, robotIntro, history } from '@/api/api'
+import moment from 'moment'
 // const MESSAGEKEY = 'chat_messages'
 
 export default {
@@ -64,7 +82,12 @@ export default {
         { label: '± 5 Minutes', value: 300 }
       ],
       messages: [],
-      introMessage: []
+      introMessage: [],
+      historyMessages: [],
+      historyLoading: false,
+      historyDrawer: false,
+      activeName: '1',
+      analyseAt: undefined
     }
   },
   watch: {},
@@ -85,14 +108,39 @@ export default {
         return !item.loading
       })
     },
+    onHistoryClick() {
+      this.historyDrawer = !this.historyDrawer
+      this.historyMessages = []
+      this.historyLoading = true
+      history().then(res => {
+        const data = res.data
+        for (const dataKey in data) {
+          console.log(dataKey)
+          this.historyMessages.push({
+            title: dataKey,
+            value: data[dataKey]
+          })
+        }
+      }).finally(() => {
+        this.historyLoading = false
+      })
+    },
     getRobotIntro() {
-      this.addLoadingMessage()
       robotIntro({}).then(res => {
         this.introMessage = res.data
-        this.messages = this.messages.concat(this.introMessage)
       }).finally(() => {
-        this.removeLoadingMessage()
       })
+    },
+    onCollapseClick() {},
+    formatAnalyseAt() {
+      var analyseAt = moment(this.timeSelected).format('YYYY-MM-DD HH:mm:ss')
+      for (var i = 0; i < this.timeStepOptions.length; i++) {
+        if (this.timeStepOptions[i].value === this.timeStep) {
+          analyseAt += (' ' + this.timeStepOptions[i].label)
+          break
+        }
+      }
+      return analyseAt
     },
     onChatConfirm() {
       if (!this.timeSelected) {
@@ -102,7 +150,13 @@ export default {
       this.messages = []
       this.messages = this.messages.concat(this.introMessage)
       this.addLoadingMessage()
-      run({ start_at: parseInt(this.timeSelected/1000 - this.timeStep), end_at: parseInt(this.timeSelected/1000 + this.timeStep)}).then(res => {
+
+      this.analyseAt = this.formatAnalyseAt()
+      run({
+        start_at: parseInt(this.timeSelected / 1000 - this.timeStep),
+        end_at: parseInt(this.timeSelected / 1000 + this.timeStep),
+        analyse_at: this.analyseAt
+      }).then(res => {
         if (res.data) {
           this.removeLoadingMessage()
           this.messages.push(res.data)
@@ -115,7 +169,7 @@ export default {
     },
     runNextStep() {
       this.addLoadingMessage()
-      nextStep({}).then(res => {
+      nextStep({ analyse_at: this.analyseAt }).then(res => {
         if (res.data) {
           this.removeLoadingMessage()
           this.messages.push(res.data)
@@ -139,9 +193,37 @@ export default {
 .el-input__inner {
   border-radius: 20px;
 }
+
 .el-input--suffix .el-input__inner {
   padding-right: 10px;
 }
+
+.el-collapse-item__content {
+  padding-bottom: 0;
+}
+
+.el-drawer__header {
+  margin-bottom: 10px !important;
+  border: none;
+}
+
+.el-drawer {
+  border-radius: 12px;
+  padding: 0 20px;
+}
+
+.el-collapse-item__header {
+  border-bottom: none;
+}
+
+.el-collapse-item__wrap {
+  border-bottom: none;
+}
+
+.el-collapse {
+  border: none;
+}
+
 </style>
 
 <style lang="scss" scoped>

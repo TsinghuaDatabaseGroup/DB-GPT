@@ -11,7 +11,7 @@
             <img v-if="item.sender === 'CPU Agent'" src="@/assets/cpu_robot.png" class="face">
             <img v-if="item.sender === 'Memory Agent'" src="@/assets/mem_robot.png" class="face">
             <img v-if="item.sender === 'IO Agent'" src="@/assets/io_robot.png" class="face">
-            <img v-if="item.sender === 'Network Agent'" src="@/assets/network_robot.png" class="face">
+            <img v-if="item.sender === 'Network Agent'" src="@/assets/net_robot.png" class="face">
           </template>
           <div v-if="!item.loading" class="c-flex-column">
             <span style="font-size: 12px; color: #333333; margin-bottom: 5px">
@@ -190,11 +190,11 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
-  padding-bottom: 60px;
+  padding-bottom: 20px;
   width: calc(100% - 20px);
   padding-left: 10px;
   padding-right: 10px;
-  height: calc(100vh - 140px);
+  height: 100%;
 
   .item-space {
     height: 15px;
