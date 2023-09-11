@@ -50,7 +50,7 @@
 ## What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [x] **[2023/9/10]** Add diagnosis logs and replay button [🔗 link](multiagents/tools)
+- [x] **[2023/9/10]** Add diagnosis logs and replay button [🔗 link](logs/info.log)
 
 - [x] **[2023/9/09]** Add typical anomalies <a href="#-anomalies">🔗 link</a>
 
