@@ -6,7 +6,7 @@
   <a href="#-features">Features</a> •
   <a href="#-news">News</a> •
   <a href="#-quickstart">QuickStart</a> •
-  <a href="#-customize">Customization</a> •    
+  <a href="#-customize">Customization</a> • 
   <a href="#-cases">Cases</a> •
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
@@ -50,7 +50,9 @@
 ## What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [x] **[2023/9/09]** Add typical anomalies <a href="#-anomalies">🚀 link</a>
+- [x] **[2023/9/10]** Add diagnosis logs and replay button [🔗 link](multiagents/tools)
+
+- [x] **[2023/9/09]** Add typical anomalies <a href="#-anomalies">🔗 link</a>
 
 - [x] **[2023/9/05]** A unique framework is available! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀 link</a>
 
