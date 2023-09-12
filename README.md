@@ -222,8 +222,7 @@ Within the *anomaly_trigger* directory, we aim to offer scripts that could incur
 |                      | POOR_JOIN_PERFORMANCE | Poor performance of Join operators                  |
 |                      | CORRELATED_SUBQUERY | Non-promotable subqueries in SQL                      |
 |                      | LACK_STATISTIC_INFO | Outdated statistical info affecting execution plan    |
-| Concurrency Issues   | FETCH_LARGE_DATA    | Fetching of large data volumes                        |
-|                      | LOCK_CONTENTION     | Lock contention issues                                |
+| Concurrency Issues   | LOCK_CONTENTION     | Lock contention issues                                |
 |                      | CPU_CONTENTION      | Severe external CPU resource contention               |
 |                      | IO_CONTENTION       | IO resource contention affecting SQL performance      |
 |                      | WORKLOAD_CONTENTION | Workload concentration affecting SQL execution        |
