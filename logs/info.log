@@ -1,3 +1,4 @@
+
 [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:8022
 [33mPress CTRL+C to quit[0m
@@ -1184,3 +1185,58 @@ message='OpenAI API response' path=https://api.openai.com/v1/chat/completions pr
 127.0.0.1 - - [11/Sep/2023 08:24:14] "POST /config/instances HTTP/1.1" 200 -
 127.0.0.1 - - [11/Sep/2023 09:02:50] "POST /db_diag/chat_history HTTP/1.1" 200 -
 127.0.0.1 - - [11/Sep/2023 09:03:13] "POST /db_diag/chat_history HTTP/1.1" 200 -
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8022
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 119-546-386
+127.0.0.1 - - [11/Sep/2023 09:19:33] "OPTIONS /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [11/Sep/2023 09:19:33] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [11/Sep/2023 09:19:33] "POST /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [11/Sep/2023 10:30:18] "OPTIONS /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [11/Sep/2023 10:30:18] "POST /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [11/Sep/2023 10:31:21] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [11/Sep/2023 10:31:52] "POST /db_diag/chat_history HTTP/1.1" 200 -
+ * Detected change in '/Users/xuanhe/Documents/our-paper/instructdb/DB-GPT/DB-GPT/anomaly_trigger/benchmark_job.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 119-546-386
+ * Detected change in '/Users/xuanhe/Documents/our-paper/instructdb/DB-GPT/DB-GPT/host_local_tools.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 119-546-386
+ * Detected change in '/Users/xuanhe/Documents/our-paper/instructdb/DB-GPT/DB-GPT/multiagents/agents/tool_agent.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 119-546-386
+ * Detected change in '/Users/xuanhe/Documents/our-paper/instructdb/DB-GPT/DB-GPT/multiagents/agents/tool_agent.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 119-546-386
+ * Detected change in '/Users/xuanhe/Documents/our-paper/instructdb/DB-GPT/DB-GPT/multiagents/agents/tool_agent.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 119-546-386
+ * Detected change in '/Users/xuanhe/Documents/our-paper/instructdb/DB-GPT/DB-GPT/multiagents/agents/tool_agent.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 119-546-386
+ * Detected change in '/Users/xuanhe/Documents/our-paper/instructdb/DB-GPT/DB-GPT/multiagents/agents/tool_agent.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 119-546-386
+ * Detected change in '/Users/xuanhe/Documents/our-paper/instructdb/DB-GPT/DB-GPT/multiagents/agents/tool_agent.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 119-546-386
+ * Detected change in '/Users/xuanhe/Documents/our-paper/instructdb/DB-GPT/DB-GPT/utils/db_parser.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 119-546-386
+ * Detected change in '/Users/xuanhe/Documents/our-paper/instructdb/DB-GPT/DB-GPT/multiagents/utils/utils.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 119-546-386
+ * Detected change in '/Users/xuanhe/Documents/our-paper/instructdb/DB-GPT/DB-GPT/multiagents/agents/tool_agent.py', reloading
+ * Restarting with stat
