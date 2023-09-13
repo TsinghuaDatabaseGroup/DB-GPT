@@ -76,34 +76,6 @@
 https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
 
 
-<span id="-anomalies"></span>
-
-## 🎩 Anomalies
-
-Within the *anomaly_trigger* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
-
-| Root Cause          | Description                                           | Case                 |
-|---------------------|-------------------------------------------------------|----------------------|
-| ![](https://img.shields.io/badge/-INSERT_LARGE_DATA-Informational)    | Long execution time for large data insertions         |                      |
-| ![](https://img.shields.io/badge/-FETCH_LARGE_DATA-Informational)    | Long execution time for large data fetching           |                      |
-| ![](https://img.shields.io/badge/-MISSING_INDEXES-Informational)     | Missing indexes causing performance issues            |                      |
-| ![](https://img.shields.io/badge/-REDUNDANT_INDEX-Informational)      | Unnecessary and redundant indexes in tables           |                      |
-| ![](https://img.shields.io/badge/-VACUUM-Informational)              |       Unused space caused by data modifications       |                      |
-| ![](https://img.shields.io/badge/-POOR_JOIN_PERFORMANCE-Informational) | Poor performance of Join operators                  |                      |
-| ![](https://img.shields.io/badge/-CORRELATED_SUBQUERY-Informational) | Non-promotable subqueries in SQL                      |                      |
-| ![](https://img.shields.io/badge/-LACK_STATISTIC_INFO-Informational) | Outdated statistical info affecting execution plan    |                      |
-| ![](https://img.shields.io/badge/-LOCK_CONTENTION-informational)     | Lock contention issues                                |                      |
-| ![](https://img.shields.io/badge/-CPU_CONTENTION-informational)      | Severe external CPU resource contention               |                      |
-| ![](https://img.shields.io/badge/-IO_CONTENTION-informational)       | IO resource contention affecting SQL performance      |                      |
-| ![](https://img.shields.io/badge/-INSERT_CONTENTION-informational) | High-concurrency inserts affecting SQL execution        |   [🔗 link](case_analysis/concurrent_inserts.txt)     |
-| ![](https://img.shields.io/badge/-COMMIT_CONTENTION-informational) | High-concurrency commits affecting SQL execution        |   [🔗 link](case_analysis/concurrent_commits.txt)     |
-| ![](https://img.shields.io/badge/-WORKLOAD_CONTENTION-informational) | Workload concentration affecting SQL execution        |   [🔗 link](case_analysis/workload_contention.txt)     |
-| ![](https://img.shields.io/badge/-SMALL_MEMORY_ALLOC-red)    | Tool small allocated memory space              |                      |
-| ![](https://img.shields.io/badge/-IO_SATURATION-red)     | Reach the max I/O capacity or  throughput               |                      |
-
-
-
-
 <span id="-quickstart"></span>
 
 ## 🕹 QuickStart
@@ -275,6 +247,32 @@ python main.py
 <br>
 </details> -->
 
+
+<span id="-anomalies"></span>
+
+## 🎩 Anomalies
+
+Within the *anomaly_trigger* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
+
+| Root Cause          | Description                                           | Case                 |
+|---------------------|-------------------------------------------------------|----------------------|
+| ![](https://img.shields.io/badge/-INSERT_LARGE_DATA-Informational)    | Long execution time for large data insertions         |                      |
+| ![](https://img.shields.io/badge/-FETCH_LARGE_DATA-Informational)    | Long execution time for large data fetching           |                      |
+| ![](https://img.shields.io/badge/-MISSING_INDEXES-Informational)     | Missing indexes causing performance issues            |                      |
+| ![](https://img.shields.io/badge/-REDUNDANT_INDEX-Informational)      | Unnecessary and redundant indexes in tables           |                      |
+| ![](https://img.shields.io/badge/-VACUUM-Informational)              |       Unused space caused by data modifications       |                      |
+| ![](https://img.shields.io/badge/-POOR_JOIN_PERFORMANCE-Informational) | Poor performance of Join operators                  |                      |
+| ![](https://img.shields.io/badge/-CORRELATED_SUBQUERY-Informational) | Non-promotable subqueries in SQL                      |                      |
+| ![](https://img.shields.io/badge/-LACK_STATISTIC_INFO-Informational) | Outdated statistical info affecting execution plan    |                      |
+| ![](https://img.shields.io/badge/-LOCK_CONTENTION-informational)     | Lock contention issues                                |                      |
+| ![](https://img.shields.io/badge/-CPU_CONTENTION-informational)      | Severe external CPU resource contention               |                      |
+| ![](https://img.shields.io/badge/-IO_CONTENTION-informational)       | IO resource contention affecting SQL performance      |                      |
+| ![](https://img.shields.io/badge/-INSERT_CONTENTION-informational) | High-concurrency inserts affecting SQL execution        |   [🔗 link](case_analysis/concurrent_inserts.txt)     |
+| ![](https://img.shields.io/badge/-COMMIT_CONTENTION-informational) | High-concurrency commits affecting SQL execution        |   [🔗 link](case_analysis/concurrent_commits.txt)     |
+| ![](https://img.shields.io/badge/-WORKLOAD_CONTENTION-informational) | Workload concentration affecting SQL execution        |   [🔗 link](case_analysis/workload_contention.txt)     |
+| ![](https://img.shields.io/badge/-SMALL_MEMORY_ALLOC-red)    | Tool small allocated memory space              |                      |
+| ![](https://img.shields.io/badge/-IO_SATURATION-red)     | Reach the max I/O capacity or  throughput               |                      |
+
 <span id="-customize"></span>
 
 ## 📎 Customize Your KnowledgeBase And Tools
@@ -331,48 +329,6 @@ cd prompt_template_scripts/index_tuning
 cd prompt_template_scripts/query_rewrite
 ./run.sh
 ``` -->
-
-<span id="-solid_response"></span>
-
-## Robust Responses Mechanisms
-
-<!-- #### 100% Accurate Tool Calling -->
-
-#### Refined diagnostics
-
-Remove redundant content in llm responses.
-
-```python 
-cd response_formalize_scripts
-python combine_similar_answer.py # test 
-```
-
-
-<details><summary><b>Before Cleaning</b></summary>
-
-```vim
-[Chief DBA]: The identified root causes of the anomaly are high CPU usage due to the high number of running processes and high load averages, slow queries, and high memory usage due to complex queries, insufficient memory allocation, and the possibility of disk spill.
-Optimize the slow queries by analyzing their execution plans, identifying any missing indexes, and tuning the queries accordingly
-Polisih the slow queries by checking their execution plans, identifying any missing indexes, and tuning the queries accordingly
-Monitor and manage the number of running processes on the node, ensuring that it remains within acceptable limits
-Investigate and address any system or infrastructure issues that may be contributing to the high load averages
-Consider scaling up or adding more resources to the system if the current CPU usage is consistently high and impacting performance
-Add the recommended indexes: ['movie_info#movie_id', 'movie_companies#movie_id', 'keyword#keyword', 'aka_name#person_id'] to reduce cost
-Further investigate and optimize the slow queries for better memory utilization
-Monitor and adjust the memory allocation parameters like 'work_mem' and 'shared_buffers' to optimize memory usage
-Analyze the query plans and consider adjustments to parameters like 'work_mem' and 'shared_buffers' to help reduce or eliminate disk spilling
-```
-</details>
-
-<details><summary><b>After Cleaning</b></summary>
-
-```vim
-[Chief DBA]: The identified root causes of the anomaly are high CPU usage due to the high number of running processes and high load averages, slow queries, and high memory usage due to complex queries, insufficient memory allocation, and the possibility of disk spill.
-Polisih the slow queries by checking their execution plans, identifying any missing indexes, and tuning the queries accordingly.
-Monitor and manage the number of running processes on the node, ensuring that it remains within acceptable limits.
-Add the recommended indexes: ['movie_info#movie_id', 'movie_companies#movie_id', 'keyword#keyword', 'aka_name#person_id'] to reduce cost.
-```
-</details>
 
 
 <span id="-FAQ"></span>
