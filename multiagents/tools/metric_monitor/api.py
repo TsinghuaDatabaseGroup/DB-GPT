@@ -3,7 +3,7 @@ from multiagents.knowledge.knowledge_extraction import KnowledgeExtraction
 from multiagents.utils.database import DBArgs, Database
 from multiagents.tools.metric_monitor.anomaly_detection import prometheus
 from multiagents.tools.metric_monitor.anomaly_detection import detect_anomalies
-from multiagents.tools.metrics import prometheus_metrics, postgresql_conf, obtain_values_of_metrics
+from multiagents.tools.metrics import prometheus_metrics, postgresql_conf, obtain_values_of_metrics, processed_values
 import pdb
 
 '''
@@ -155,17 +155,23 @@ def match_diagnose_knowledge(
     else:
         metric_prefix = "memory"
 
-
     metrics_list = prometheus_metrics[f"{metric_prefix}_metrics"]
 
     detailed_metrics = obtain_values_of_metrics(
         start_time, end_time, metrics_list)
+    
+    # identify the abnormal metrics
+    detailed_abnormal_metrics = {}
+
+    for metric_name, metric_values in detailed_metrics.items():
+        if detect_anomalies(np.array(metric_values)):
+            detailed_abnormal_metrics[metric_name] = processed_values(metric_values)
 
     if metric_prefix == "network":
         
         return """The {} relevant metric values from Prometheus are: 
         {}""".format(metric_prefix,
-            detailed_metrics)
+            detailed_abnormal_metrics)
 
     slow_queries = db.obtain_historical_slow_queries()
 
@@ -173,9 +179,9 @@ def match_diagnose_knowledge(
     for i, query in enumerate(slow_queries):
         slow_query_state += str(i + 1) + '. ' + str(query) + "\n"
 
-    docs_str = knowledge_matcher.match(detailed_metrics)
+    docs_str = knowledge_matcher.match(detailed_abnormal_metrics)
 
-    knowledge_str=  """The {} relevant metric values from Prometheus are: 
+    knowledge_str=  """The {} metric values are: 
     {} 
     
     The slow queries are:
@@ -183,7 +189,7 @@ def match_diagnose_knowledge(
 
     The matched knowledge is:
     {}""".format(metric_prefix,
-        detailed_metrics,
+        detailed_abnormal_metrics,
         slow_query_state,
         docs_str)
 

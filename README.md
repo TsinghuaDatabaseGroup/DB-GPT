@@ -212,22 +212,24 @@ python main.py
 
 Within the *anomaly_trigger* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
 
-| Type                 | Root Cause          | Description                                           |
-|----------------------|---------------------|-------------------------------------------------------|
-| Query Issues         | INSERT_LARGE_DATA   | Long execution time for large data insertions         |
-|                      | FETCH_LARGE_DATA    | Long execution time for large data fetching           |
-|                      | MISSING_INDEXES     | Missing indexes causing performance issues            |
-|                      | REDUNDANT_INDEX     | Unnecessary and redundant indexes in tables           |
-|                      | VACUUM              |       Unused space caused by data modifications       |
-|                      | POOR_JOIN_PERFORMANCE | Poor performance of Join operators                  |
-|                      | CORRELATED_SUBQUERY | Non-promotable subqueries in SQL                      |
-|                      | LACK_STATISTIC_INFO | Outdated statistical info affecting execution plan    |
-| Concurrency Issues   | LOCK_CONTENTION     | Lock contention issues                                |
-|                      | CPU_CONTENTION      | Severe external CPU resource contention               |
-|                      | IO_CONTENTION       | IO resource contention affecting SQL performance      |
-|                      | WORKLOAD_CONTENTION | Workload concentration affecting SQL execution        |
-| Configuration Issues | SMALL_MEMORY_ALLOCATION    | Tool small allocated memory space              |
-|                      | IO_SATURATION     | Reach the max I/O capacity or  throughput               |
+| Root Cause          | Description                                           | Case                 |
+|---------------------|-------------------------------------------------------|----------------------|
+| ![](https://img.shields.io/badge/-query-Informational) INSERT_LARGE_DATA    | Long execution time for large data insertions         |                      |
+| ![](https://img.shields.io/badge/-query-Informational) FETCH_LARGE_DATA    | Long execution time for large data fetching           |                      |
+| ![](https://img.shields.io/badge/-query-Informational) MISSING_INDEXES     | Missing indexes causing performance issues            |                      |
+| ![](https://img.shields.io/badge/-query-Informational) REDUNDANT_INDEX     | Unnecessary and redundant indexes in tables           |                      |
+| ![](https://img.shields.io/badge/-query-Informational) VACUUM              |       Unused space caused by data modifications       |                      |
+| ![](https://img.shields.io/badge/-query-Informational) POOR_JOIN_PERFORMANCE | Poor performance of Join operators                  |                      |
+| ![](https://img.shields.io/badge/-query-Informational) CORRELATED_SUBQUERY | Non-promotable subqueries in SQL                      |                      |
+| ![](https://img.shields.io/badge/-query-Informational) LACK_STATISTIC_INFO | Outdated statistical info affecting execution plan    |                      |
+| ![](https://img.shields.io/badge/-tp-informational) LOCK_CONTENTION     | Lock contention issues                                |                      |
+| ![](https://img.shields.io/badge/-tp-informational) CPU_CONTENTION      | Severe external CPU resource contention               |                      |
+| ![](https://img.shields.io/badge/-tp-informational) IO_CONTENTION       | IO resource contention affecting SQL performance      |                      |
+| ![](https://img.shields.io/badge/-tp-informational) INSERT_CONTENTION | High-concurrency inserts affecting SQL execution        |   [🔗 link](case_analysis/concurrent_inserts.txt)     |
+| ![](https://img.shields.io/badge/-tp-informational) COMMIT_CONTENTION | High-concurrency commits affecting SQL execution        |   [🔗 link](case_analysis/concurrent_commits.txt)     |
+| ![](https://img.shields.io/badge/-tp-informational) WORKLOAD_CONTENTION | Workload concentration affecting SQL execution        |   [🔗 link](case_analysis/workload_contention.txt)     |
+| ![](https://img.shields.io/badge/-env-red) SMALL_MEMORY_ALLOCATION    | Tool small allocated memory space              |                      |
+| ![](https://img.shields.io/badge/-env-red) IO_SATURATION     | Reach the max I/O capacity or  throughput               |                      |
 
 
 <!-- (1) ./run_benchmark_tpcc.sh or ./run_db_exception.sh
