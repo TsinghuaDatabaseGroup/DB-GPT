@@ -6,8 +6,8 @@
   <a href="#-features">Features</a> •
   <a href="#-news">News</a> •
   <a href="#-quickstart">QuickStart</a> •
+  <a href="#-anomalies">Cases</a> •  
   <a href="#-customize">Customization</a> • 
-  <a href="#-cases">Cases</a> •
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-contributors">Contributors</a>
@@ -214,22 +214,22 @@ Within the *anomaly_trigger* directory, we aim to offer scripts that could incur
 
 | Root Cause          | Description                                           | Case                 |
 |---------------------|-------------------------------------------------------|----------------------|
-| ![](https://img.shields.io/badge/-query-Informational) INSERT_LARGE_DATA    | Long execution time for large data insertions         |                      |
-| ![](https://img.shields.io/badge/-query-Informational) FETCH_LARGE_DATA    | Long execution time for large data fetching           |                      |
-| ![](https://img.shields.io/badge/-query-Informational) MISSING_INDEXES     | Missing indexes causing performance issues            |                      |
-| ![](https://img.shields.io/badge/-query-Informational) REDUNDANT_INDEX     | Unnecessary and redundant indexes in tables           |                      |
-| ![](https://img.shields.io/badge/-query-Informational) VACUUM              |       Unused space caused by data modifications       |                      |
-| ![](https://img.shields.io/badge/-query-Informational) POOR_JOIN_PERFORMANCE | Poor performance of Join operators                  |                      |
-| ![](https://img.shields.io/badge/-query-Informational) CORRELATED_SUBQUERY | Non-promotable subqueries in SQL                      |                      |
-| ![](https://img.shields.io/badge/-query-Informational) LACK_STATISTIC_INFO | Outdated statistical info affecting execution plan    |                      |
-| ![](https://img.shields.io/badge/-tp-informational) LOCK_CONTENTION     | Lock contention issues                                |                      |
-| ![](https://img.shields.io/badge/-tp-informational) CPU_CONTENTION      | Severe external CPU resource contention               |                      |
-| ![](https://img.shields.io/badge/-tp-informational) IO_CONTENTION       | IO resource contention affecting SQL performance      |                      |
-| ![](https://img.shields.io/badge/-tp-informational) INSERT_CONTENTION | High-concurrency inserts affecting SQL execution        |   [🔗 link](case_analysis/concurrent_inserts.txt)     |
-| ![](https://img.shields.io/badge/-tp-informational) COMMIT_CONTENTION | High-concurrency commits affecting SQL execution        |   [🔗 link](case_analysis/concurrent_commits.txt)     |
-| ![](https://img.shields.io/badge/-tp-informational) WORKLOAD_CONTENTION | Workload concentration affecting SQL execution        |   [🔗 link](case_analysis/workload_contention.txt)     |
-| ![](https://img.shields.io/badge/-env-red) SMALL_MEMORY_ALLOCATION    | Tool small allocated memory space              |                      |
-| ![](https://img.shields.io/badge/-env-red) IO_SATURATION     | Reach the max I/O capacity or  throughput               |                      |
+| ![](https://img.shields.io/badge/-INSERT_LARGE_DATA-Informational)    | Long execution time for large data insertions         |                      |
+| ![](https://img.shields.io/badge/-FETCH_LARGE_DATA-Informational)    | Long execution time for large data fetching           |                      |
+| ![](https://img.shields.io/badge/-MISSING_INDEXES-Informational)     | Missing indexes causing performance issues            |                      |
+| ![](https://img.shields.io/badge/-REDUNDANT_INDEX-Informational)      | Unnecessary and redundant indexes in tables           |                      |
+| ![](https://img.shields.io/badge/-VACUUM-Informational)              |       Unused space caused by data modifications       |                      |
+| ![](https://img.shields.io/badge/-POOR_JOIN_PERFORMANCE-Informational) | Poor performance of Join operators                  |                      |
+| ![](https://img.shields.io/badge/-CORRELATED_SUBQUERY-Informational) | Non-promotable subqueries in SQL                      |                      |
+| ![](https://img.shields.io/badge/-LACK_STATISTIC_INFO-Informational) | Outdated statistical info affecting execution plan    |                      |
+| ![](https://img.shields.io/badge/-LOCK_CONTENTION-informational)     | Lock contention issues                                |                      |
+| ![](https://img.shields.io/badge/-CPU_CONTENTION-informational)      | Severe external CPU resource contention               |                      |
+| ![](https://img.shields.io/badge/-IO_CONTENTION-informational)       | IO resource contention affecting SQL performance      |                      |
+| ![](https://img.shields.io/badge/-INSERT_CONTENTION-informational) | High-concurrency inserts affecting SQL execution        |   [🔗 link](case_analysis/concurrent_inserts.txt)     |
+| ![](https://img.shields.io/badge/-COMMIT_CONTENTION-informational) | High-concurrency commits affecting SQL execution        |   [🔗 link](case_analysis/concurrent_commits.txt)     |
+| ![](https://img.shields.io/badge/-WORKLOAD_CONTENTION-informational) | Workload concentration affecting SQL execution        |   [🔗 link](case_analysis/workload_contention.txt)     |
+| ![](https://img.shields.io/badge/-SMALL_MEMORY_ALLOC-red)    | Tool small allocated memory space              |                      |
+| ![](https://img.shields.io/badge/-IO_SATURATION-red)     | Reach the max I/O capacity or  throughput               |                      |
 
 
 <!-- (1) ./run_benchmark_tpcc.sh or ./run_db_exception.sh
