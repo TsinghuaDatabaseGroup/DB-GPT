@@ -50,7 +50,7 @@
 ## What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [x] **[2023/9/10]** Add diagnosis logs and replay button [🔗 link](logs/info.log)
+- [x] **[2023/9/10]** Add diagnosis logs [🔗 link](logs/diag_training_data.txt) and replay button in the frontend [⏱ link](logs/info.log)
 
 - [x] **[2023/9/09]** Add typical anomalies <a href="#-anomalies">🔗 link</a>
 
@@ -478,13 +478,13 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 ## Todo
 
 - [ ] ~~Project cleaning~~
-- [ ] Support more anomalies
+- [ ] ~~Support more anomalies~~
 - [ ] Add more communication mechanisms
-- [ ] Public-generated anomaly training data
-- [ ] Fine-tune localized private model
-- [ ] Integrate preparation components in the demo website.
-- [ ] Support other databases like *MySQL*
-- [ ] Collect more knowledge and store in vector db (./knowledge_vector_db)
+- [ ] Support more knowledge sources
+- [ ] Support localized private models (e.g., llama/vicuna/luca)
+- [ ] Release training datasets
+- [ ] Support other databases (e.g., mysql/redis)
+
 
 <span id="-community"></span>
 

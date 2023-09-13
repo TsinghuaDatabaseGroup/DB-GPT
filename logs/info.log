@@ -355,4 +355,17 @@ Memory Agent: {'diagnose': 'The anomaly might be due to a disk spill during the 
 127.0.0.1 - - [11/Sep/2023 08:23:08] "POST /db_diag/next_step HTTP/1.1" 200 -
 127.0.0.1 - - [11/Sep/2023 08:23:08] "OPTIONS /db_diag/next_step HTTP/1.1" 200 -
 message='OpenAI API response' path=https://api.openai.com/v1/chat/completions processing_ms=9287 request_id=d1d76c599834b6f4954ef54e989bb404 response_code=200
-IO Agent: {'diagnose': 'The anomaly could be due to high usage of disk groups and a high rate of disk writes.', 'solution': [], 'knowledge': ''}
+IO Agent: {'diagnose': 'The anomaly could be due to high usage of disk groups and a high rate of disk writes.', 'solution': [], 'knowledge': ''}[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8022
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 119-546-386
+127.0.0.1 - - [13/Sep/2023 11:05:19] "OPTIONS /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [13/Sep/2023 11:05:20] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [13/Sep/2023 11:05:27] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [13/Sep/2023 11:05:37] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [13/Sep/2023 11:05:39] "OPTIONS /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [13/Sep/2023 11:05:39] "POST /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [13/Sep/2023 11:05:42] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [13/Sep/2023 11:05:46] "POST /db_diag/chat_history HTTP/1.1" 200 -
