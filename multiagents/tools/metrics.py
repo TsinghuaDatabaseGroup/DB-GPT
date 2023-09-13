@@ -37,7 +37,7 @@ def obtain_values_of_metrics(start_time, end_time, metrics):
             max_value = np.max(np.array([float(value)
                             for _, value in metric_values]))
 
-            required_values[metric] = max_value
+            required_values[metric.split('{')[0]] = max_value
         else:
             #raise Exception("No metric values found for the given time range")
             print(colored(f"No metric values found for {start_time}-{end_time} of {metric}", "red"))

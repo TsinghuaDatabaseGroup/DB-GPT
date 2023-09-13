@@ -137,7 +137,7 @@ class ToolAgent(BaseAgent):
                 output = output.replace('"', '\\"')
 
                 f.write(f"{{\"input\": \"{prompt}\", \"output\": \"{output}\"}}\n")
-                pdb.set_trace()
+                # pdb.set_trace()
 
         self._update_tool_memory(tool_observation)
         

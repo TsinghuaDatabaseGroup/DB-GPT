@@ -50,7 +50,7 @@ prompts:
 
     - When no one speaks in the last round of the dialogue ([Silence] appears in the end of history), you should summarize all the mentioned root causes and optimization solutions point by point.
 
-    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! And do not easily give root causes if there is no clear evidence or responses from other agents.
     Based on the above history, what will you, ${agent_name}, do next?
 
 
@@ -147,7 +147,7 @@ prompts:
     Here is the execution log of tools
     ${tool_observation}
 
-    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! And do not easily give root causes if there is no clear evidence.
     Based on the above history, what will you, ${agent_name}, do next?
 
   io_agent_format_prompt: &io_agent_format_prompt |-
@@ -183,7 +183,7 @@ prompts:
     Here is the execution log of tools
     ${tool_observation}
 
-    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! And do not easily give root causes if there is no clear evidence.
     Based on the above history, what will you, ${agent_name}, do next?
 
   network_agent_format_prompt: &network_agent_format_prompt |-
@@ -219,7 +219,7 @@ prompts:
     Here is the execution log of tools
     ${tool_observation}
 
-    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! And do not easily give root causes if there is no clear evidence.
     Based on the above history, what will you, ${agent_name}, do next?
 
 

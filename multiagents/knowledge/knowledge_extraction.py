@@ -1,5 +1,6 @@
 import sys
 import os
+import pdb
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 three_up_path = os.path.abspath(os.path.join(script_dir, '..', '..', '..'))
@@ -44,15 +45,16 @@ class KnowledgeExtraction():
 
         # file_path = "/bmtools/tools/db_diag/root_causes_dbmind.jsonl"
         with open(str(os.getcwd()) + file_path, 'r') as f:
-            data = json.load(f)
-            self.corpus = [example["desc"] for example in data]
-            self.matched_attr = [example[self.names["matched_attr"]] for example in data]
+            self.data = json.load(f)
+            self.corpus = [example["desc"] for example in self.data]
+            self.matched_attr = [example[self.names["matched_attr"]] for example in self.data]
         self.stop_words = set(stopwords.words('english'))
 
         self.preprocessed_corpus = []
-        for c in self.corpus:
-            word_tokens = word_tokenize(c)
-            self.preprocessed_corpus.append([self.wnl.lemmatize(w,pos='n') for w in word_tokens if not w in self.stop_words]) # remove useless words and standardize words
+        for example in self.data:
+            
+            word_tokens = [w.lower() for w in word_tokenize(example["metrics"]) if w != '-']
+            self.preprocessed_corpus.append([self.wnl.lemmatize(w,pos='n') for w in word_tokens if not w in self.stop_words]) # remove useless words and standardize words #slow
 
         return self.corpus, self.preprocessed_corpus, self.matched_attr, self.stop_words
 
@@ -66,6 +68,7 @@ class KnowledgeExtraction():
         metrics_str = list(set(metrics_str))
 
         best_index = self.keyword_matching_func(self.topk, metrics_str, self.preprocessed_corpus)
+
         best_docs = [self.corpus[b] for b in best_index]
         best_names = [self.matched_attr[b] for b in best_index]
         docs_str = ""
