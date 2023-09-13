@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Any, Dict, List
 from pydantic import BaseModel
+import pdb
 
 if TYPE_CHECKING:
     from agents.base import BaseAgent
@@ -42,4 +43,4 @@ class BaseEnvironment(BaseModel):
 
     def is_done(self) -> bool:
         """Check if the environment is done"""
-        return self.cnt_turn >= self.max_turns
+        return self.cnt_turn >= self.max_turns # and the last turn is charged by Chief DBA

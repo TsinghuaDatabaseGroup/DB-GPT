@@ -16,12 +16,6 @@ prompts:
     Action: (an action name, it can be one of [obtain_start_and_end_time_of_anomaly, Speak], pay attention to the capitalization)
     Action Input: (argument for the action)
 
-    - You can give optimization solutions as follows to use tool:
-    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
-    Action: optimize_index_selection
-    Action Input: {"start_time":"xxxx","end_time":"xxxx"}
-
-
     First, you need to call the tool api to get the start and end time of an anomaly
     Thought: First, I need to obtain the start and end time of the anomaly by calling the tool api
     Action: obtain_start_and_end_time_of_anomaly
@@ -280,7 +274,7 @@ name: Company 3 DBAs with Tools
 
 environment:
   env_type: basic
-  max_turns: 10
+  max_turns: 15
   rule:
     order:
       type: sequential
@@ -299,11 +293,11 @@ agents:
     name: Chief DBA
     role_description: |-
       You are a Chief DBA with much database diagnosis experience. Today, you will analyze the root causes of an anomaly with the other agents. Here is the outline of the procedure:
-      1. The anomaly started at 1691571630 and ended at 1691571720.
-      2. Chat and ask how to diangose the root causes of the anomaly with the CPU agent and Memory Agent.
-      3. Call tool apis to get the detailed solutions of the root causes (optimize_index_selection). 
-      4. Summarize the root causes and their detailed solutions and tell the results to the CPU agent and Memory Agent.
-      Your answer need to be concise and accurate.
+      1. Use tool api (obtain_start_and_end_time_of_anomaly) to get the start and end time of the anomaly.
+      2. Chat and ask how to diangose the root causes of the anomaly with other agents.
+      3. Summarize the root causes and detailed solutions spoken by other agents.
+
+      Your answer needs to be concise and accurate.
     prompt_template: *chief_dba_format_prompt
     memory:
       memory_type: chat_history
@@ -325,7 +319,7 @@ agents:
   -
     agent_type: tool
     name: CPU Agent
-    role_description: You are a CPU agent that can use the db_diag tool to check CPU usage (whether_is_abnormal_metric), analyze the root causes of high CPU usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (optimize_index_selection).
+    role_description: You are a CPU agent that can use the tool apis to check CPU usage (whether_is_abnormal_metric), analyze the root causes of high CPU usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection, enable_or_disable_nestloop_operator).
     prompt_template: *cpu_agent_format_prompt
     memory:
       memory_type: chat_history
@@ -347,7 +341,7 @@ agents:
   -
     agent_type: tool
     name: Memory Agent
-    role_description: You are a memory agent that can use the db_diag tool to check memory usage (whether_is_abnormal_metric) and analyze the root causes of high memory usage the metrics, queries and knowledge gained from (match_diagnose_knowledge).
+    role_description: You are a memory agent that can use the db_diag tool to check memory usage (whether_is_abnormal_metric) and analyze the root causes of high memory usage the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions by calling relevant apis.
     prompt_template: *mem_agent_format_prompt
     memory:
       memory_type: chat_history
@@ -369,7 +363,7 @@ agents:
   -
     agent_type: tool
     name: IO Agent
-    role_description: You are a IO agent that can analyze the root causes of high I/O bandwidth usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection).
+    role_description: You are a IO agent that can analyze the root causes of high I/O bandwidth usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection), and give optimization solutions by calling relevant apis.
     prompt_template: *io_agent_format_prompt
     memory:
       memory_type: chat_history

@@ -161,6 +161,12 @@ def match_diagnose_knowledge(
     detailed_metrics = obtain_values_of_metrics(
         start_time, end_time, metrics_list)
 
+    if metric_prefix == "network":
+        
+        return """The {} relevant metric values from Prometheus are: 
+        {}""".format(metric_prefix,
+            detailed_metrics)
+
     slow_queries = db.obtain_historical_slow_queries()
 
     slow_query_state = ""

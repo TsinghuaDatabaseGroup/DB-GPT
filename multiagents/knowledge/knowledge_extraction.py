@@ -6,7 +6,6 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 three_up_path = os.path.abspath(os.path.join(script_dir, '..', '..', '..'))
 sys.path.append(three_up_path)
 
-
 import json
 import os
 import requests
