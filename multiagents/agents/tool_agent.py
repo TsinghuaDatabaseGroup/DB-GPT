@@ -5,6 +5,8 @@ from langchain.tools import BaseTool
 from pydantic import Field
 import json
 import time
+import os
+import yaml
 
 from multiagents.memory import BaseMemory, ChatHistoryMemory
 from multiagents.message import Message
@@ -14,6 +16,20 @@ import pdb
 from . import agent_registry
 from .base import BaseAgent
 
+
+task_path = os.path.dirname(__file__)
+task_path = os.path.dirname(task_path)
+task_path = os.path.dirname(task_path)
+
+config_path = os.path.join(task_path, "config/logging.yaml")
+if not os.path.exists(config_path):
+    raise ValueError(
+        "You should include the logging.yaml file"
+    )
+
+log_config = yaml.safe_load(open(config_path))
+log_name = log_config['handlers']['training_data_handler']['filename']
+log_path = os.path.join(task_path, f"logs/{log_name}")
 
 class ToolNotExistError(BaseException):
 
@@ -87,6 +103,7 @@ class ToolAgent(BaseAgent):
                 try:
                     time.sleep(1)
                     response = await self.llm.agenerate_response(prompt)
+                    
                     parsed_response = self.output_parser.parse(response)
                     if isinstance(parsed_response, AgentAction):
                         # If the response is an action, call the tool
@@ -94,7 +111,7 @@ class ToolAgent(BaseAgent):
                         
                         parameters = json.loads(parsed_response.tool_input)
                         observation = self.tools.call_function(parsed_response.tool, **parameters)
-                        # pdb.set_trace()
+                        
                         tool_observation.append(
                             parsed_response.log.strip()
                             + f"\nObservation: {str(observation).strip()}"
@@ -109,6 +126,18 @@ class ToolAgent(BaseAgent):
 
         if parsed_response is None:
             logging.error(f"{self.name} failed to generate valid response.")
+        else:
+            # open file in log_path and append the response content
+            with open(log_path, "a") as f:
+
+                prompt = prompt.replace('\n', '\\n')
+                prompt = prompt.replace('"', '\\"')
+
+                output = response.content.replace('\n', '\\n')
+                output = output.replace('"', '\\"')
+
+                f.write(f"{{\"input\": \"{prompt}\", \"output\": \"{output}\"}}\n")
+                pdb.set_trace()
 
         self._update_tool_memory(tool_observation)
         
@@ -119,7 +148,7 @@ class ToolAgent(BaseAgent):
             sender=self.name,
             receiver=self.get_receiver(),
         )
-        # pdb.set_trace()
+        
 
         return message
 
@@ -139,7 +168,6 @@ class ToolAgent(BaseAgent):
             # If no tool is called this turn, do nothing
             return
 
-        # pdb.set_trace()
         messages = [
             Message(content={"diagnose": observation, "solution": [], "knowledge": ""}) for observation in tool_observation[1:]
         ]
@@ -180,7 +208,7 @@ class ToolAgent(BaseAgent):
         return Template(self.prompt_template).safe_substitute(input_arguments)
 
     def add_message_to_memory(self, messages: List[Message]) -> None:
-        # pdb.set_trace()
+        
         self.memory.add_message(messages)
 
     def reset(self) -> None:
