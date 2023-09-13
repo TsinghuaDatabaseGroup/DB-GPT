@@ -14,3 +14,4 @@ class AgentFinish(NamedTuple):
 
     return_values: dict
     log: str
+

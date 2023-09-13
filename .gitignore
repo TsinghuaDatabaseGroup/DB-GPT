@@ -9,6 +9,7 @@ monitoring_scripts/prometheus/core.py
 *.so
 .DS_Store
 .vscode/settings.json
+.idea
 
 # Distribution / packaging
 .Python

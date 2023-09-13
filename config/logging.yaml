@@ -30,6 +30,9 @@ handlers:
       maxBytes: 10485760 # 10MB
       backupCount: 20
       encoding: utf8
+  training_data_handler:
+      filename: diag_training_data.txt
+
 # 启用handler
 root:
   level: INFO
