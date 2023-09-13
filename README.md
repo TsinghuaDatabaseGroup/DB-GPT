@@ -28,7 +28,7 @@
 
 <span id="-features"></span>
 
-## Features
+## ✨ Features
 
 ### DBA Team (D-Bot)
 
@@ -47,7 +47,7 @@
 
 <span id="-news"></span>
 
-## What's New
+## 📰 What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
 - [x] **[2023/9/10]** Add diagnosis logs [🔗 link](logs/diag_training_data.txt) and replay button in the frontend [⏱ link](logs/info.log)
@@ -75,9 +75,38 @@
 
 https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
 
+
+<span id="-anomalies"></span>
+
+## 🎩 Anomalies
+
+Within the *anomaly_trigger* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
+
+| Root Cause          | Description                                           | Case                 |
+|---------------------|-------------------------------------------------------|----------------------|
+| ![](https://img.shields.io/badge/-INSERT_LARGE_DATA-Informational)    | Long execution time for large data insertions         |                      |
+| ![](https://img.shields.io/badge/-FETCH_LARGE_DATA-Informational)    | Long execution time for large data fetching           |                      |
+| ![](https://img.shields.io/badge/-MISSING_INDEXES-Informational)     | Missing indexes causing performance issues            |                      |
+| ![](https://img.shields.io/badge/-REDUNDANT_INDEX-Informational)      | Unnecessary and redundant indexes in tables           |                      |
+| ![](https://img.shields.io/badge/-VACUUM-Informational)              |       Unused space caused by data modifications       |                      |
+| ![](https://img.shields.io/badge/-POOR_JOIN_PERFORMANCE-Informational) | Poor performance of Join operators                  |                      |
+| ![](https://img.shields.io/badge/-CORRELATED_SUBQUERY-Informational) | Non-promotable subqueries in SQL                      |                      |
+| ![](https://img.shields.io/badge/-LACK_STATISTIC_INFO-Informational) | Outdated statistical info affecting execution plan    |                      |
+| ![](https://img.shields.io/badge/-LOCK_CONTENTION-informational)     | Lock contention issues                                |                      |
+| ![](https://img.shields.io/badge/-CPU_CONTENTION-informational)      | Severe external CPU resource contention               |                      |
+| ![](https://img.shields.io/badge/-IO_CONTENTION-informational)       | IO resource contention affecting SQL performance      |                      |
+| ![](https://img.shields.io/badge/-INSERT_CONTENTION-informational) | High-concurrency inserts affecting SQL execution        |   [🔗 link](case_analysis/concurrent_inserts.txt)     |
+| ![](https://img.shields.io/badge/-COMMIT_CONTENTION-informational) | High-concurrency commits affecting SQL execution        |   [🔗 link](case_analysis/concurrent_commits.txt)     |
+| ![](https://img.shields.io/badge/-WORKLOAD_CONTENTION-informational) | Workload concentration affecting SQL execution        |   [🔗 link](case_analysis/workload_contention.txt)     |
+| ![](https://img.shields.io/badge/-SMALL_MEMORY_ALLOC-red)    | Tool small allocated memory space              |                      |
+| ![](https://img.shields.io/badge/-IO_SATURATION-red)     | Reach the max I/O capacity or  throughput               |                      |
+
+
+
+
 <span id="-quickstart"></span>
 
-## QuickStart
+## 🕹 QuickStart
 
 <!-- <br>
 <div align="center">
@@ -205,33 +234,6 @@ After successfully launching the local server, visit [http://127.0.0.1:9228/](ht
 python main.py
 ```
 
-
-<span id="-anomalies"></span>
-
-#### 4. Supported Anomalies
-
-Within the *anomaly_trigger* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
-
-| Root Cause          | Description                                           | Case                 |
-|---------------------|-------------------------------------------------------|----------------------|
-| ![](https://img.shields.io/badge/-INSERT_LARGE_DATA-Informational)    | Long execution time for large data insertions         |                      |
-| ![](https://img.shields.io/badge/-FETCH_LARGE_DATA-Informational)    | Long execution time for large data fetching           |                      |
-| ![](https://img.shields.io/badge/-MISSING_INDEXES-Informational)     | Missing indexes causing performance issues            |                      |
-| ![](https://img.shields.io/badge/-REDUNDANT_INDEX-Informational)      | Unnecessary and redundant indexes in tables           |                      |
-| ![](https://img.shields.io/badge/-VACUUM-Informational)              |       Unused space caused by data modifications       |                      |
-| ![](https://img.shields.io/badge/-POOR_JOIN_PERFORMANCE-Informational) | Poor performance of Join operators                  |                      |
-| ![](https://img.shields.io/badge/-CORRELATED_SUBQUERY-Informational) | Non-promotable subqueries in SQL                      |                      |
-| ![](https://img.shields.io/badge/-LACK_STATISTIC_INFO-Informational) | Outdated statistical info affecting execution plan    |                      |
-| ![](https://img.shields.io/badge/-LOCK_CONTENTION-informational)     | Lock contention issues                                |                      |
-| ![](https://img.shields.io/badge/-CPU_CONTENTION-informational)      | Severe external CPU resource contention               |                      |
-| ![](https://img.shields.io/badge/-IO_CONTENTION-informational)       | IO resource contention affecting SQL performance      |                      |
-| ![](https://img.shields.io/badge/-INSERT_CONTENTION-informational) | High-concurrency inserts affecting SQL execution        |   [🔗 link](case_analysis/concurrent_inserts.txt)     |
-| ![](https://img.shields.io/badge/-COMMIT_CONTENTION-informational) | High-concurrency commits affecting SQL execution        |   [🔗 link](case_analysis/concurrent_commits.txt)     |
-| ![](https://img.shields.io/badge/-WORKLOAD_CONTENTION-informational) | Workload concentration affecting SQL execution        |   [🔗 link](case_analysis/workload_contention.txt)     |
-| ![](https://img.shields.io/badge/-SMALL_MEMORY_ALLOC-red)    | Tool small allocated memory space              |                      |
-| ![](https://img.shields.io/badge/-IO_SATURATION-red)     | Reach the max I/O capacity or  throughput               |                      |
-
-
 <!-- (1) ./run_benchmark_tpcc.sh or ./run_db_exception.sh
 
     Example Anomalies: INSERT_LARGE_DATA, IO_CONTENTION
@@ -275,7 +277,7 @@ Within the *anomaly_trigger* directory, we aim to offer scripts that could incur
 
 <span id="-customize"></span>
 
-## Customize Your KnowledgeBase And Tools
+## 📎 Customize Your KnowledgeBase And Tools
 
 #### 1. Knowledge Preparation
 
@@ -373,88 +375,9 @@ Add the recommended indexes: ['movie_info#movie_id', 'movie_companies#movie_id',
 </details>
 
 
-<span id="-cases"></span>
-
-## Cases
-
-<details><summary><b>MISSING_INDEXES → INDEX_SELECTION</b></summary>
-
-<br>
-<div align="center">
-<img src="imgs/index_selection.png" width="800px">
-</div>
-<br>
-
-Note *optimize_index_selection* takes minutes to explore beneficial index combinations.
-
-```vim
-[Chief DBA]: The anomaly started at 1691897340 and ended at 1691897430.
-
-[CPU Agent]: The anomaly is caused by high CPU usage due to the high number of running processes and the relatively high load averages, especially in the past 1 minute. In addition, slow queries also contribute to the high CPU usage.
-1. Optimize the slow queries by analyzing their execution plans, identifying any missing indexes, and tuning the queries accordingly.
-2. Monitor and manage the number of running processes on the node, ensuring that it remains within acceptable limits.
-3. Investigate and address any system or infrastructure issues that may be contributing to the high load averages.
-4. Consider scaling up or adding more resources to the system if the current CPU usage is consistently high and impacting performance.
-5. Add the recommended indexes: ['movie_info#movie_id', 'movie_companies#movie_id', 'keyword#keyword', 'aka_name#person_id'] to reduce cost from 46856716.92000003 to 31393898.919999983.
-----------------------------
-(matched knowledge) The high CPU usage may be due to the high number of running processes and the relatively high load averages. Slow queries can also contribute to the high CPU usage. The missing_index function checks for the presence of a required index using a workload-index-recommend interface.
-
-[Memory Agent]: The potential causes of high memory usage could be complex queries, insufficient memory allocation, and possibility of disk spill. The slow queries mentioned involve complex operations such as filtering, grouping, and joining multiple tables, which can consume a significant amount of memory, especially if they involve large data sets. The abnormal memory metric values suggest that the available memory might be insufficient to handle the workload. Adjusting parameters like 'work_mem' and 'shared_buffers' might help alleviate memory issues. The complexity and size of the slow queries could potentially lead to disk spill during execution, which can significantly impact performance.
-1. Further investigate and optimize the slow queries mentioned above for better memory utilization.
-2. Monitor and adjust the memory allocation parameters like 'work_mem' and 'shared_buffers' to optimize memory usage.
-3. Analyze the query plans and consider adjustments to parameters like 'work_mem' and 'shared_buffers' to help reduce or eliminate disk spilling.
-----------------------------
-(matched knowledge) Disk spill is a function that checks whether there is a possibility of disk spill during the execution of SQL. If the plan parse information is not available, it checks whether the sort spill count or hash spill count exceeds the sort rate threshold. If the plan parse information is available, it calculates the total cost of the plan and checks whether the cost rate of the sort or hash operators exceeds the cost rate threshold. If abnormal operator details are found and the sort or hash spill count is greater than 0, it indicates that the SORT/HASH operation may spill to disk. The suggestion is to analyze whether the business needs to adjust parameters like work_mem and shared_buffers. If disk spill is detected, it is a root cause, otherwise it is not a root cause.
-
-[Chief DBA]: The identified root causes of the anomaly are high CPU usage due to the high number of running processes and high load averages, slow queries, and high memory usage due to complex queries, insufficient memory allocation, and the possibility of disk spill.
-----------------------------
-(solution) 1. Monitor and manage the number of running processes on the node, ensuring that it remains within acceptable limits.
-2. Add the recommended indexes: ['movie_info#movie_id', 'movie_companies#movie_id', 'keyword#keyword', 'aka_name#person_id'] to reduce cost.
-3. Analyze the query plans and consider adjustments to parameters like 'work_mem' and 'shared_buffers' to help reduce or eliminate disk spilling.
-4. Investigate and address any system or infrastructure issues that may be contributing to the high load averages.
-```
-
-</details>
-
-
-<details><summary><b>INSUFFICIENT_MEMORY_ALLOCATION</b></summary>
-<br>
-<div align="center">
-<img src="imgs/memory.png" width="800px">
-</div>
-<br>
-
-```vim
-[Chief DBA]: The anomaly started at 1691897340 and ended at 1691897430.
-
-[CPU Agent]: Based on the CPU relevant metric values, the root cause of high CPU usage could be a high load value, too many active processes, blocked processes, high CPU scrape collector duration, and low entropy.
-I suggest reviewing system logs and identifying any recent changes or updates. We should also analyze other relevant metrics such as memory usage, disk I/O, network traffic, and check for any abnormal behavior from specific processes or applications.
-----------------------------
-(matched knowledge) missing_index: This function checks for the presence of a required index using a workload-index-recommend interface. If the recommended index information is available, it indicates that a required index is missing and provides a suggestion for the recommended index. If the information is not available, it is not a root cause for the issue.
-
-[Memory Agent]: The root cause of the high memory usage could be disk spill and insufficient memory allocation.
-I suggest analyzing the actual resource usage during query execution, performing a thorough analysis of the query plans, and evaluating the system configuration settings related to memory allocation, such as 'work_mem' and 'shared_buffers.' More information about the sort spill count or hash spill count and the threshold values is needed to confirm if disk spill is the root cause. If the free memory is consistently low and close to the total memory capacity, consider increasing the memory allocation for the system.
-----------------------------
-(matched knowledge) disk_spill: This function checks whether there is a possibility of disk spill during the execution of SQL. If the plan parse information is not available, it checks whether the sort spill count or hash spill count exceeds the sort rate threshold. If the plan parse information is available, it calculates the total cost of the plan and checks whether the cost rate of the sort or hash operators exceeds the cost rate threshold. If abnormal operator details are found and the sort or hash spill count is greater than 0, it indicates that the SORT/HASH operation may spill.
-
-[Chief DBA]: The identified root causes of the anomaly are high CPU usage due to high load value, too many active processes, blocked processes, high CPU scrape collector duration, and low entropy. The high memory usage could be due to disk spill and insufficient memory allocation.
-----------------------------
-(solution) To resolve the high CPU usage, we should review system logs and identify any recent changes or updates. We should also analyze other relevant metrics such as memory usage, disk I/O, network traffic, and check for any abnormal behavior from specific processes or applications.
-To mitigate the high memory usage, we should analyze the actual resource usage during query execution, perform a thorough analysis of the query plans, and evaluate the system configuration settings related to memory allocation, such as 'work_mem' and 'shared_buffers.' More information about the sort spill count or hash spill count and the threshold values is needed to confirm if disk spill is the root cause. If the free memory is consistently low and close to the total memory capacity, consider increasing the memory allocation for the system.
-```
-
-</details>
-
-
-<details><summary><b>POOR_JOIN_PERFORMANCE</b></summary>
-
-https://github.com/TsinghuaDatabaseGroup/DB-GPT/assets/17394639/5a9a91bf-fc1f-415e-8a59-ec8ab5a705df
-
-</details>
-
 <span id="-FAQ"></span>
 
-## FAQ
+## 💁 FAQ
 
 <details><summary><b>🤨 The '.sh' script command cannot be executed on windows system.</b></summary>
 Switch the shell to *git bash* or use *git bash* to execute the '.sh' script.
@@ -477,7 +400,7 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 </details>
 
 
-## Todo
+## ⏱ Todo
 
 - [ ] ~~Project cleaning~~
 - [ ] ~~Support more anomalies~~
@@ -490,7 +413,7 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 <span id="-community"></span>
 
-## Community
+## 👫 Community
 
 - [Tsinghua University](https://www.tsinghua.edu.cn/en/)
 - [ModelBest](https://modelbest.cn/)
@@ -530,7 +453,7 @@ Feel free to cite us if you like this project.
 
 <span id="-contributors"></span>
 
-## Contributors
+## 📧 Contributors
 
 <!-- Copy-paste in your Readme.md file -->
 
