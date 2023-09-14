@@ -32,7 +32,7 @@
 
 ## ✨ Features
 
-### DBA Team (D-Bot)
+### System Diagnosis (D-Bot)
 
 - **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
 
@@ -45,6 +45,10 @@
     <img src="imgs/frontendv3.png" width="800px">
     </div>
 <br>
+
+**A demo of using D-Bot**
+
+https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
 
 
 <span id="-news"></span>
@@ -70,12 +74,9 @@
 
     * *DB-GPT: Large Language Model Meets Database.* [[paper]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
 
-> *D-Bot* is evolving with new features 👫👫<br/> 
+> This project is evolving with new features 👫👫<br/> 
 > Don't forget to star ⭐ and watch 👀 to stay up to date :)
 
-**A demo of using D-Bot**
-
-https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
 
 
 <span id="-quickstart"></span>

@@ -38,7 +38,7 @@
 
 ## 特点
 
-系统诊断（*D-Bot*）
+### 系统诊断（*D-Bot*）
 
 - **有根据的诊断**：D-Bot可以利用相关的数据库知识（使用*document2experience*）提供有根据的诊断。
 
@@ -52,6 +52,9 @@
     </div>
 <br>
 
+**演示如何使用D-Bot**
+
+https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
 
 
 <span id="-news"></span>
@@ -77,16 +80,10 @@
 
     * *DB-GPT: 大型语言模型遇上数据库.* [[论文]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
 
-> *D-Bot* 正在不断发展 👫👫<br/> 
+> 这个项目正在不断引入新特性 👫👫<br/> 
 > 不要忘记点赞 ⭐ 并关注 👀 以保持最新信息 :)
 
 
-**演示如何使用D-Bot**
-
-https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
-
-
-<span id="-quickstart"></span>
 
 <span id="-quickstart"></span>
 
@@ -98,8 +95,9 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 </div>
 <br> -->
 
+### 系统诊断（*D-Bot*）
 
-### 文件夹结构
+#### 文件夹结构
 
     .
     ├── multiagents
@@ -115,7 +113,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 
 
-### 1. 先决条件
+#### 1. 先决条件
 
 - PostgreSQL v12或更高版本
 
@@ -128,7 +126,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     > 使用我们基于vue的前端，Grafana不再是必需的。
 
 
-### 2. 包安装
+#### 2. 包安装
 
 步骤1：安装Python包。
 
@@ -190,11 +188,11 @@ python openai_test.py
 
 <span id="-diagnosis"></span>
 
-### 3. 诊断和优化
+#### 3. 诊断和优化
 
 <span id="-frontend"></span>
 
-#### 网站界面
+##### 网站界面
 
 我们还为此环境提供了本地网站演示。您可以使用以下命令启动它：
 
@@ -216,7 +214,7 @@ sh run_demo.sh
 成功启动本地服务器后，访问 http://127.0.0.1:9228/ 触发诊断过程。
 
 
-#### 命令行界面
+##### 命令行界面
 
 
 ```shell
