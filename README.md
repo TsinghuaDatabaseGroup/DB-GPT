@@ -17,7 +17,7 @@
     【English | <a href="README-Chinese.md">中文</a>】
 </p>
 
-🧗 We aim to provide a collection of practical and user-friendly database tools, built around LLMs. This includes query optimization (*online demo*), system diagnosis (*D-Bot*), and anomaly simulator (*attacker*)
+🧗 We aim to provide a collection of useful, user-friendly, and advanced database tools. These tools are built around LLMs, including **query optimization** (*online demo*), **system diagnosis** (*D-Bot*), and **anomaly simulation** (*attacker*)
 
 <!-- *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases. -->
 
