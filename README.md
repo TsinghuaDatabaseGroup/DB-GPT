@@ -17,7 +17,9 @@
     【English | <a href="README-Chinese.md">中文</a>】
 </p>
 
-🧗 *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases.
+🧗 We aim to provide a collection of practical and user-friendly database tools, built around LLMs. This includes query optimization (*online demo*), system diagnosis (*D-Bot*), and anomaly simulator (*attacker*)
+
+<!-- *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases. -->
 
 <br>
 <div align="center">
@@ -360,6 +362,7 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 - [ ] ~~Project cleaning~~
 - [ ] ~~Support more anomalies~~
+- [ ] Strictly constrain the llm outputs (excessive irrelevant information) based on the matched knowledge 
 - [ ] Add more communication mechanisms
 - [ ] Support more knowledge sources
 - [ ] Support localized private models (e.g., llama/vicuna/luca)

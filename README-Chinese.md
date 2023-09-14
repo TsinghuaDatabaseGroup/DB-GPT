@@ -6,12 +6,13 @@
   <a href="#-features">特点</a> •
   <a href="#-news">最新动态</a> •
   <a href="#-quickstart">快速开始</a> •
+  <a href="#-anomalies">案例分析</a> •    
   <a href="#-customize">自定义知识和工具</a> •    
-  <a href="#-cases">使用案例</a> •
   <a href="#-FAQ">常见问题</a> •  
   <a href="#-community">社区</a> •  
   <a href="#-contributors">贡献者</a>
 </p>
+
 
 <p align="center">
     【<a href="README.md">English</a> | 中文</a>】
@@ -24,22 +25,7 @@
 </div>
 <br> -->
 
-<br>
-    <div align="center">
-    <img src="imgs/frontendv3.png" width="800px">
-    </div>
-<br>
-
-🧗 *D-Bot*，一款基于LLM的数据库管理员，可以从文本来源中获取数据库维护经验，并为目标数据库提供**合理**、**有根据**、**及时**的诊断和优化建议。
-
-<span id="-features"></span>
-
-## 特点
-- **有根据的诊断**：D-Bot可以利用相关的数据库知识（使用*document2experience*）提供有根据的诊断。
-
-- **实用工具使用**：D-Bot可以利用监控和优化工具来提高维护能力（使用*tool learning*和*tree of thought*）。
-
-- **深度推理**：与普通的LLM相比，D-Bot将实现竞争性的推理能力，以分析根本原因（使用*multi-llm通信*）。
+🧗 我们的目标是提供一套实用、有一定门槛、且易于使用的数据库管理工具。该套工具以LLMs为基础构建，包括 查询优化（*在线演示*）、系统诊断（*D-Bot*）、异常模拟（*attacker*）
 
 <br>
 <div align="center">
@@ -48,10 +34,34 @@
 <br>
 
 
+<span id="-features"></span>
+
+## 特点
+
+系统诊断（*D-Bot*）
+
+- **有根据的诊断**：D-Bot可以利用相关的数据库知识（使用*document2experience*）提供有根据的诊断。
+
+- **实用工具使用**：D-Bot可以利用监控和优化工具来提高维护能力（使用*tool learning*和*tree of thought*）。
+
+- **深度推理**：与普通的LLM相比，D-Bot将实现竞争性的推理能力，以分析根本原因（使用*multi-llm通信*）。
+
+<br>
+    <div align="center">
+    <img src="imgs/frontendv3.png" width="800px">
+    </div>
+<br>
+
+
+
 <span id="-news"></span>
 
 ## 最新动态
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
+
+- [x] **[2023/9/10]** 添加诊断日志 [🔗 link](logs/diag_training_data.txt) 和前端的回放按钮 [⏱ link](logs/info.log)
+
+- [x] **[2023/9/09]** 添加典型异常 <a href="#-anomalies">🔗 link</a>
 
 - [x] **[2023/9/05]** 统一的诊断框架已经可用！只需一个命令即可开始诊断+工具服务，体验5倍的速度提升！！ <a href="#-diagnosis">🚀 链接</a>
 
@@ -214,51 +224,33 @@ python main.py
 ```
 
 
-## 支持的异常
+<span id="-anomalies"></span>
 
-在 anomaly_trigger 目录中，我们提供了可能引起典型异常的脚本，例如，
+## 🎩 异常案例
 
-(1) ./run_benchmark_tpcc.sh 或 ./run_db_exception.sh
-
-    示例异常：INSERT_LARGE_DATA、IO_CONTENTION
+在anomaly_trigger目录中，我们旨在提供可能导致典型异常的脚本，例如，
 
 
-<details><summary><b>监控仪表盘</b></summary>
-<br>
-<div align="center">
-<img src="imgs/insert.png" width="800px">
-</div>
-<br>
-</details>
-  
----
+| 根因          | 描述                                           | 案例                 |
+|---------------------|-------------------------------------------------------|----------------------|
+| ![](https://img.shields.io/badge/-INSERT_LARGE_DATA-Informational)    | 大量数据插入的长时间执行 insertions         |                      |
+| ![](https://img.shields.io/badge/-FETCH_LARGE_DATA-Informational)    | 大量数据获取的长时间执行 fetching           |                      |
+| ![](https://img.shields.io/badge/-MISSING_INDEXES-Informational)     | 缺少索引导致性能问题	            |   [🔗 link](case_analysis/missing_indexes.txt)     |
+| ![](https://img.shields.io/badge/-REDUNDANT_INDEX-Informational)      | 表中不必要和多余的索引	           |                      |
+| ![](https://img.shields.io/badge/-VACUUM-Informational)              |  数据修改导致未使用的空间	       |                      |
+| ![](https://img.shields.io/badge/-POOR_JOIN_PERFORMANCE-Informational) | Join操作的性能差	                  |                      |
+| ![](https://img.shields.io/badge/-CORRELATED_SUBQUERY-Informational) | SQL中难以优化的子查询	                      |                      |
+| ![](https://img.shields.io/badge/-LACK_STATISTIC_INFO-Informational) | 过时的统计信息影响执行计划质量    |                      |
+| ![](https://img.shields.io/badge/-LOCK_CONTENTION-informational)     | 锁竞争问题                                |                      |
+| ![](https://img.shields.io/badge/-CPU_CONTENTION-informational)      | 严重的外部CPU资源争用	               |                      |
+| ![](https://img.shields.io/badge/-IO_CONTENTION-informational)       | 影响SQL性能的IO资源争用	      |                      |
+| ![](https://img.shields.io/badge/-INSERT_CONTENTION-informational) | 影响SQL执行的高并发插入	        |   [🔗 link](case_analysis/concurrent_inserts.txt)     |
+| ![](https://img.shields.io/badge/-COMMIT_CONTENTION-informational) | 影响SQL执行的高并发提交	        |   [🔗 link](case_analysis/concurrent_commits.txt)     |
+| ![](https://img.shields.io/badge/-WORKLOAD_CONTENTION-informational) | 影响SQL执行的工作负载集中	        |   [🔗 link](case_analysis/workload_contention.txt)     |
+| ![](https://img.shields.io/badge/-SMALL_MEMORY_ALLOC-red)    | 分配的内存空间太小	（shared_buffer）              |                      |
+| ![](https://img.shields.io/badge/-IO_SATURATION-red)     | 达到最大I/O容量或吞吐量	               |                      |
 
-(2) ./run_benchmark_job.sh
 
-    示例异常: POOR_JOIN_PERFORMANCE, CPU_CONTENTION
-
-
-<details><summary><b>监控仪表盘</b></summary>
-<br>
-<div align="center">
-<img src="imgs/join.png" width="800px">
-</div>
-<br>
-</details>
-
----
-
-(3) ./run_benchmark_tpch.sh
-
-    示例异常: FETCH_LARGE_DATA (lineitem with 28GB); CORRELATED_SUBQUERY
-
-<details><summary><b>监控仪表盘</b></summary>
-<br>
-<div align="center">
-<img src="imgs/subquery.png" width="800px">
-</div>
-<br>
-</details>
 
 <span id="-customize"></span>
 
@@ -280,8 +272,6 @@ python main.py
 
 
 - 工具API（用于优化）
-
-
 
     | 模块                  | 功能 |
     |-------------------------|-----------|
@@ -321,125 +311,6 @@ cd prompt_template_scripts/index_tuning
 cd prompt_template_scripts/query_rewrite
 ./run.sh
 ``` -->
-
-<span id="-solid_response"></span>
-
-## 健壮的响应机制
-
-<!-- #### 100% Accurate Tool Calling -->
-
-#### 精细诊断
-删除llm响应中的冗余内容。
-
-
-```python 
-cd response_formalize_scripts
-python combine_similar_answer.py # test 
-```
-
-
-<details><summary><b>Before Cleaning</b></summary>
-
-```vim
-[Chief DBA]: 异常的识别根本原因是由于正在运行的进程数量较多和负载平均值较高，导致CPU使用率高，慢查询以及复杂查询导致了内存使用率高，内存分配不足以及磁盘溢出的可能性。
-通过分析其执行计划，识别任何缺失的索引，并相应地调整查询来优化慢查询
-通过检查其执行计划，识别任何缺失的索引，并相应地调整查询来优化慢查询
-监视和管理节点上运行的进程数量，确保保持在可接受的限制内
-调查和解决可能导致高负载平均值的系统或基础架构问题
-如果当前的CPU使用率持续高且影响性能，则考虑扩展或添加更多资源到系统中
-添加推荐的索引：['movie_info#movie_id'，'movie_companies#movie_id'，'keyword#keyword'，'aka_name#person_id']以降低成本
-进一步研究并优化慢查询以获得更好的内存利用率
-监视和调整内存分配参数，例如'work_mem'和'shared_buffers'，以优化内存使用
-分析查询计划并考虑调整诸如'work_mem'和'shared_buffers'之类的参数，以帮助减少或消除磁盘溢出
-```
-</details>
-
-<details><summary><b>After Cleaning</b></summary>
-
-```vim
-[Chief DBA]: 异常的识别根本原因是由于正在运行的进程数量较多和负载平均值较高，导致CPU使用率高，慢查询以及复杂查询导致了内存使用率高，内存分配不足以及磁盘溢出的可能性。
-通过检查其执行计划，识别任何缺失的索引，并相应地调整查询来优化慢查询。
-监视和管理节点上运行的进程数量，确保保持在可接受的限制内。
-添加推荐的索引：['movie_info#movie_id'，'movie_companies#movie_id'，'keyword#keyword'，'aka_name#person_id']以降低成本。
-```
-</details>
-
-
-<span id="-cases"></span>
-
-## 案例
-
-<details><summary><b>MISSING_INDEXES → INDEX_SELECTION</b></summary>
-
-<br>
-<div align="center">
-<img src="imgs/index_selection.png" width="800px">
-</div>
-<br>
-
-注意 optimize_index_selection 需要几分钟来探索有益的索引组合。
-
-
-```vim
-[Chief DBA]: 异常始于1691897340，结束于1691897430。
-
-[CPU Agent]: 高CPU使用率的根本原因可能是高负载值、活动进程过多、阻塞进程、高CPU抓取收集器持续时间和熵值过低。
-建议查看系统日志，识别任何最近的更改或更新。我们还应该分析其他相关指标，如内存使用率、磁盘I/O、网络流量，并检查特定进程或应用程序的任何异常行为。
-----------------------------
-(匹配的知识) 高CPU使用率可能是由于正在运行的进程数量较多和负载平均值较高。慢查询也可能导致高CPU使用率。missing_index函数使用工作负载-索引-推荐接口检查所需索引的存在。
-
-[Memory Agent]: 高内存使用率的潜在原因可能是磁盘溢出和内存分配不足。
-建议分析查询执行期间的实际资源使用情况，彻底分析查询计划，并评估与内存分配相关的系统配置设置，如'work_mem'和'shared_buffers'。需要更多关于排序溢出计数或哈希溢出计数以及阈值值的信息，以确认是否磁盘溢出是根本原因。如果可用内存持续较低且接近总内存容量，则考虑增加系统的内存分配。
-----------------------------
-(匹配的知识) disk_spill: 这个函数检查在SQL执行期间是否有可能发生磁盘溢出。如果计划解析信息不可用，则检查排序溢出计数或哈希溢出计数是否超过排序率阈值。如果计划解析信息可用，则计算计划的总成本，并检查排序或哈希操作符的成本率是否超过成本率阈值。如果发现异常操作符详细信息，并且排序或哈希溢出计数大于0，则表明SORT/HASH操作可能会溢出到磁盘上。
-
-[Chief DBA]: 异常的识别根本原因是由于正在运行的进程数量较多和负载平均值较高，导致CPU使用率高，慢查询以及复杂查询导致了内存使用率高，内存分配不足以及磁盘溢出的可能性。
-----------------------------
-(解决方案) 1. 监视和管理节点上运行的进程数量，确保保持在可接受的限制内。
-2. 添加推荐的索引：['movie_info#movie_id'，'movie_companies#movie_id'，'keyword#keyword'，'aka_name#person_id']以降低成本。
-3. 分析查询计划并考虑调整诸如'work_mem'和'shared_buffers'之类的参数，以帮助减少或消除磁盘溢出。
-4. 调查并解决可能导致高负载平均值的系统或基础架构问题。
-```
-
-</details>
-
-
-<details><summary><b>INSUFFICIENT_MEMORY_ALLOCATION</b></summary>
-<br>
-<div align="center">
-<img src="imgs/memory.png" width="800px">
-</div>
-<br>
-
-```vim
-[Chief DBA]: 异常始于1691897340，结束于1691897430。
-
-[CPU Agent]: 基于与CPU相关的度量值，高CPU使用率的根本原因可能是高负载值、活动进程过多、阻塞进程、高CPU抓取收集器持续时间和熵值过低。
-建议查看系统日志，识别任何最近的更改或更新。我们还应该分析其他相关指标，如内存使用率、磁盘I/O、网络流量，并检查特定进程或应用程序的任何异常行为。
-----------------------------
-(匹配的知识) 高CPU使用率可能是由于正在运行的进程数量较多和负载平均值较高。慢查询也可能导致高CPU使用率。
-
-[Memory Agent]: 基于与内存相关的度量值，高内存使用率的潜在原因可能是磁盘溢出和内存分配不足。
-建议分析查询执行期间的实际资源使用情况，彻底分析查询计划，并评估与内存分配相关的系统配置设置，如'work_mem'和'shared_buffers'。需要更多关于排序溢出计数或哈希溢出计数以及阈值值的信息，以确认是否磁盘溢出是根本原因。如果可用内存持续较低且接近总内存容量，则考虑增加系统的内存分配。
-----------------------------
-(匹配的知识) disk_spill: 这个函数检查在SQL执行期间是否有可能发生磁盘溢出。如果计划解析信息不可用，则检查排序溢出计数或哈希溢出计数是否超过排序率阈值。如果计划解析信息可用，则计算计划的总成本，并检查排序或哈希操作符的成本率是否超过成本率阈值。如果发现异常操作符详细信息，并且排序或哈希溢出计数大于0，则表明SORT/HASH操作可能会溢出到磁盘上。
-
-[Chief DBA]: 异常的根本原因是高CPU使用率和高内存使用率。高CPU使用率可能是由于正在运行的进程数量较多和负载平均值较高。慢查询也可能导致高CPU使用率。高内存使用率可能是由于磁盘溢出和内存分配不足。
-----------------------------
-(解决方案) 1. 监视和管理节点上运行的进程数量，确保保持在可接受的限制内。
-2. 分析查询执行期间的实际资源使用情况，彻底分析查询计划，并评估与内存分配相关的系统配置设置，如'work_mem'和'shared_buffers'。
-3. 添加推荐的索引：['movie_info#movie_id'，'movie_companies#movie_id'，'keyword#keyword'，'aka_name#person_id']以降低成本。
-4. 调查并解决可能导致高负载平均值的系统或基础架构问题。
-```
-
-</details>
-
-
-<details><summary><b>POOR_JOIN_PERFORMANCE</b></summary>
-
-https://github.com/TsinghuaDatabaseGroup/DB-GPT/assets/17394639/5a9a91bf-fc1f-415e-8a59-ec8ab5a705df
-
-</details>
 
 <span id="-FAQ"></span>
 
