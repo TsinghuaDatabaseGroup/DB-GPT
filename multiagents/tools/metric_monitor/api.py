@@ -150,10 +150,10 @@ def match_diagnose_knowledge(
         metric_prefix = "cpu"
     elif "io" in metric_name:
         metric_prefix = "io"
-    elif "network" in metric_name:
-        metric_prefix = "network"
-    else:
+    elif "mem" in metric_name:
         metric_prefix = "memory"
+    else:
+        metric_prefix = "network"
 
     metrics_list = prometheus_metrics[f"{metric_prefix}_metrics"]
 
