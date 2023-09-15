@@ -10,30 +10,6 @@
                 "budget_MB": 500,
                 "max_index_width": 2
             },
-            "single_parameters": {
-                "budget_MB": [500],
-                "max_index_width": 1
-            },
-            "width_1gb_parameters": {
-                "budget_MB": 500,
-                "max_index_width": [1, 2, 3, 4]
-            },
-            "params_1gb_parameters": {
-                "budget_MB": [100, 300, 500, 700, 900, 1100, 1300, 1500],
-                "max_index_width": 2
-            },
-            "params_10gb_parameters": {
-                "budget_MB": [500, 1000, 2000, 3000, 5000, 7000, 9000, 11000, 13000, 15000],
-                "max_index_width": 2
-            },
-            "1gb_parameters": {
-                "budget_MB": [500],
-                "max_index_width": 2
-            },
-            "10gb_parameters": {
-                "budget_MB": [500],
-                "max_index_width": 2
-            },
             "number_of_actual_runs": 0,
             "timeout": 180
         }

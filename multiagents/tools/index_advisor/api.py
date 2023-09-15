@@ -2,7 +2,8 @@ import os
 from multiagents.tools.index_advisor.index_selection.selection_utils.postgres_dbms import PostgresDatabaseConnector
 from multiagents.tools.index_advisor.index_selection.selection_utils import selec_com
 from multiagents.tools.index_advisor.configs import get_index_result
-from multiagents.tools.metrics import postgresql_conf
+from multiagents.tools.metrics import postgresql_conf, advisor, query_log_path
+
 
 def optimize_index_selection(start_time: int, end_time: int):
     """optimize_index_selection(start_time : int, end_time : int) returns the recommended index by running the algorithm 'Extend'.
@@ -20,39 +21,27 @@ def optimize_index_selection(start_time: int, end_time: int):
         Result: Command optimize_index_selection returned: "A#col2; B#col2,col3"
     """
 
-    algo = "extend"
-    dbname = "imdbload"
-    sel_params = "parameters"
-    process, overhead = True, True
-    script_path = os.path.abspath(__file__)
-    script_dir = os.path.dirname(script_path)
-    schema_file = script_dir + \
-        f"/index_selection/selection_data/data_info/schema_job.json"
-    workload_file = script_dir + \
-        f"/index_selection/selection_data/data_info/job_templates.sql"
-
-    script_dir = os.path.dirname(script_dir)
-    tables, columns = selec_com.get_columns_from_schema(schema_file)
-
-    # load db settings
-    db_config = {}
-    script_path = os.path.abspath(__file__)
-    script_dir = os.path.dirname(script_path)
-    script_dir = os.path.dirname(script_dir)
-
-    db_config["postgresql"] = postgresql_conf
-    db_config["postgresql"]["dbname"] = dbname
+    # 1. load db settings
+    db_config = {"postgresql": postgresql_conf}
     connector = PostgresDatabaseConnector(db_config, autocommit=True)
 
-    workload = []
+    tables, columns = selec_com.get_columns_from_db(connector)
+
+    # 2. prepare the workload
+    script_path = os.path.abspath(__file__)
+    script_dir = os.path.dirname(script_path)
+    # todo: change to `query_log_path` that stores the workload.
+    workload_file = script_dir + \
+                    f"/index_selection/selection_data/data_info/job_templates.sql"
+
+    workload = list()
     with open(workload_file, "r") as rf:
         for line in rf.readlines():
             workload.append(line.strip())
 
-    indexes, total_no_cost, total_ind_cost = get_index_result(
-        algo, workload, connector, columns, sel_params=sel_params, process=process, overhead=overhead)
+    indexes, total_no_cost, total_ind_cost = get_index_result(advisor, workload, connector, columns)
 
-    if indexes == []:
+    if len(indexes) == 0:
         return "No beneficial single-column indexes can be found!"
 
     return f"The recommended indexes are: {indexes}, which reduces cost from {total_no_cost} to {total_ind_cost}."

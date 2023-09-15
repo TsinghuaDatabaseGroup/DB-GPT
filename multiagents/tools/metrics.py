@@ -5,7 +5,6 @@ import numpy as np
 import pdb
 from termcolor import colored
 
-
 promethest_conf = read_yaml('PROMETHEUS', 'config/tool_config.yaml')
 benchserver_conf = read_yaml('BENCHSERVER', 'config/tool_config.yaml')
 postgresql_conf = read_yaml('POSTGRESQL', 'config/tool_config.yaml')
@@ -14,6 +13,11 @@ node_exporter_instance = promethest_conf.get('node_exporter_instance')
 postgresql_exporter_instance = promethest_conf.get('postgresql_exporter_instance')
 
 prometheus_metrics = read_prometheus_metrics_yaml(config_path='config/prometheus_metrics.yaml', node_exporter_instance=node_exporter_instance, postgresql_exporter_instance=postgresql_exporter_instance)
+
+# configuration of the index advisor
+advisor = "db2advis"  # option: extend, db2advis (fast)
+query_log_path = "The path stores the workload, which serves as the input to the index advisor"
+
 
 def obtain_values_of_metrics(start_time, end_time, metrics):
 

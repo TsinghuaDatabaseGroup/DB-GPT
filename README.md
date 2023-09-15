@@ -32,7 +32,7 @@
 
 ## ✨ Features
 
-### System Diagnosis (D-Bot)
+### D-Bot (System Diagnosis)
 
 - **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
 
@@ -62,11 +62,9 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 - [x] **[2023/9/05]** A unique framework is available! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀 link</a>
 
-- [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗 link</a>
+<!-- - [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗 link</a> -->
 
-- [x] **[2023/8/22]** Support tool retrieval for 60+ APIs [🔗 link](multiagents/tools)
-
-- [x] **[2023/8/16]** Support multi-level optimization functions <a href="#-tools">🔗 link</a>
+- [x] **[2023/8/22]** Support multi-level tools with 60+ APIs [🔗 link](multiagents/tools)
 
 - [x] **[2023/8/10]** Our vision papers are released (continuously update) 
 

@@ -21,7 +21,6 @@ def get_index_result(algo, work_list, connector, columns,
     with open(exp_conf_file, "r") as rf:
         exp_config = json.load(rf)
 
-    data = list()
     config = selec_com.find_parameter_list(exp_config["algorithms"][0],
                                            params=sel_params)[0]
 
@@ -32,8 +31,7 @@ def get_index_result(algo, work_list, connector, columns,
     algorithm = INDEX_SELECTION_ALGORITHMS[algo](
         connector, config["parameters"], process)
 
-    indexes = algorithm.calculate_best_indexes(
-        workload, overhead=overhead)
+    indexes = algorithm.calculate_best_indexes(workload, overhead=overhead)
 
     indexes = indexes[0]
 
