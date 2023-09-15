@@ -23,7 +23,7 @@
 
 <br>
 <div align="center">
-<img src="imgs/dbgpt-overview.png" width="800px">
+<img src="imgs/dbgpt-v2.png" width="800px">
 </div>
 <br>
 
