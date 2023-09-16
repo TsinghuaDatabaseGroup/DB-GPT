@@ -362,6 +362,7 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 - [ ] ~~Project cleaning~~
 - [ ] ~~Support more anomalies~~
 - [ ] Strictly constrain the llm outputs (excessive irrelevant information) based on the matched knowledge 
+- [ ] Query log option (potential to take up disk space and we need to consider it carefully)
 - [ ] Add more communication mechanisms
 - [ ] Support more knowledge sources
 - [ ] Support localized private models (e.g., llama/vicuna/luca)
