@@ -5,6 +5,7 @@ import logging
 import os
 from enum import IntEnum
 import time
+import pdb
 
 def extract_node_types(json_tree):
     node_types = []
@@ -318,13 +319,14 @@ class Database():
         try:
             #success, res = self.execute_sql('explain (FORMAT JSON, analyze) ' + sql)
             #command = "SELECT query, calls, total_time FROM pg_stat_statements ORDER BY total_time DESC LIMIT 2;"
-            command = f"SELECT s.query, s.calls, s.total_time FROM pg_stat_statements s JOIN pg_database d ON s.dbid = d.oid where d.datname={self.args.dbname} ORDER BY s.total_time DESC LIMIT 5;"
+            pdb.set_trace()
+            command = f"SELECT s.query, s.calls, s.total_time, d.datname FROM pg_stat_statements s JOIN pg_database d ON s.dbid = d.oid ORDER BY s.total_time DESC LIMIT 5;"
             success, res = self.execute_sql(command)
             if success == 1:
                 slow_queries = []
                 for sql_stat in res:
-                    print("===== loged slow query: ", sql_stat[0],sql_stat[1],sql_stat[2])
-                    slow_queries.append({"sql": sql_stat[0], "calls": sql_stat[1], "total_time": sql_stat[2]})
+                    print("===== loged slow query: ", sql_stat[0],sql_stat[1],sql_stat[2],sql_stat[3])
+                    slow_queries.append({"sql": sql_stat[0], "calls": sql_stat[1], "total_time": sql_stat[2], "dbname": sql_stat[3]})
 
                 return slow_queries
             else:

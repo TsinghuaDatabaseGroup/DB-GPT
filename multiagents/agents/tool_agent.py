@@ -50,6 +50,7 @@ class ToolAgent(BaseAgent):
     tools: APICaller = Field(default_factory=APICaller)
     tool_memory: BaseMemory = Field(default_factory=ChatHistoryMemory)
     verbose: bool = Field(default=False)
+    name: str = Field(default="Chief DBA")
 
     def step(self, env_description: str = "") -> Message:
         parsed_response = None
@@ -137,8 +138,9 @@ class ToolAgent(BaseAgent):
                 output = response.content.replace('\n', '\\n')
                 output = output.replace('"', '\\"')
 
-                f.write(f"{{\"input\": \"{prompt}\", \"output\": \"{output}\"}}\n")
-                # pdb.set_trace()
+                pdb.set_trace()
+                f.write(f"{{\"role\": \"{self.name}\", \"input\": \"{prompt}\", \"output\": \"{output}\"}}\n")
+                
 
         self._update_tool_memory(tool_observation)
         
@@ -198,7 +200,7 @@ class ToolAgent(BaseAgent):
         tool_names = ", ".join([tool for tool in self.tools.functions])
         input_arguments = {
             "agent_name": self.name,
-            "env_description": env_description,
+            "env_description": env_description,                                 
             "role_description": self.role_description,
             "chat_history": self.memory.to_string(add_sender_prefix=True),
             "tools": tools,
