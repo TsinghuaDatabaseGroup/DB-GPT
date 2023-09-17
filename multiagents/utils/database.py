@@ -319,8 +319,8 @@ class Database():
         try:
             #success, res = self.execute_sql('explain (FORMAT JSON, analyze) ' + sql)
             #command = "SELECT query, calls, total_time FROM pg_stat_statements ORDER BY total_time DESC LIMIT 2;"
-            pdb.set_trace()
-            command = f"SELECT s.query, s.calls, s.total_time, d.datname FROM pg_stat_statements s JOIN pg_database d ON s.dbid = d.oid ORDER BY s.total_time DESC LIMIT 5;"
+            
+            command = "SELECT s.query, s.calls, s.total_time, d.datname FROM pg_stat_statements s JOIN pg_database d ON s.dbid = d.oid ORDER BY s.total_time DESC LIMIT 5;"
             success, res = self.execute_sql(command)
             if success == 1:
                 slow_queries = []

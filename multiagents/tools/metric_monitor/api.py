@@ -177,20 +177,26 @@ def match_diagnose_knowledge(
 
     slow_query_state = ""
     for i, query in enumerate(slow_queries):
-        slow_query_state += str(i + 1) + '. ' + str(query) + "\n"
+        # slow_query_state += str(i + 1) + '. ' + str(query) + "\n"
+        query["total_time"] = "{:.2f}".format(query["total_time"])
+        query["sql"] = query["sql"].replace("\n", " ")
+        query["sql"] = query["sql"].replace("\t", " ")
 
+        slow_query_state += '\t' + str(i + 1) + '. ' + f'the query comes from {query["dbname"]} database, is used for {query["calls"]} times, takes {query["total_time"]} seconds, and its statement is "{query["sql"]}"' + "\n"
+    
     docs_str = knowledge_matcher.match(detailed_abnormal_metrics)
 
     knowledge_str=  """The {} metric values are: 
     {} 
     
-    The slow queries are:
-    {}
+The slow queries are:
+{}
 
-    The matched knowledge is:
+The matched knowledge is:
     {}""".format(metric_prefix,
         detailed_abnormal_metrics,
         slow_query_state,
         docs_str)
+
 
     return knowledge_str

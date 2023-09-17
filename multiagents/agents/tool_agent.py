@@ -138,7 +138,6 @@ class ToolAgent(BaseAgent):
                 output = response.content.replace('\n', '\\n')
                 output = output.replace('"', '\\"')
 
-                pdb.set_trace()
                 f.write(f"{{\"role\": \"{self.name}\", \"input\": \"{prompt}\", \"output\": \"{output}\"}}\n")
                 
 
