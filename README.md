@@ -275,7 +275,7 @@ Within the *anomaly_trigger* directory, we aim to offer scripts that could incur
 | ![](https://img.shields.io/badge/-IO_SATURATION-red)     | Reach the max I/O capacity or  throughput               |                      |
 
 
-Anomaly Simulation Commands:
+<!-- Anomaly Simulation Commands:
 
 ```bash
 cd anomaly_trigger/
@@ -287,7 +287,7 @@ python main.py --anomaly REDUNDANT_INDEX      --threads 100 --ncolumn 80 --colsi
 python main.py --anomaly INSERT_LARGE_DATA,IO_CONTENTION
 python main.py --anomaly FETCH_LARGE_DATA,CORRELATED_SUBQUERY
 python main.py --anomaly POOR_JOIN_PERFORMANCE,CPU_CONTENTION
-```
+``` -->
 
 
 <span id="-customize"></span>
