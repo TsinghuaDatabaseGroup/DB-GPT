@@ -274,6 +274,22 @@ Within the *anomaly_trigger* directory, we aim to offer scripts that could incur
 | ![](https://img.shields.io/badge/-SMALL_MEMORY_ALLOC-red)    | Tool small allocated memory space              |                      |
 | ![](https://img.shields.io/badge/-IO_SATURATION-red)     | Reach the max I/O capacity or  throughput               |                      |
 
+
+Anomaly Simulation Commands:
+
+```bash
+cd anomaly_trigger/
+python main.py --anomaly INSERT_LARGE_DATA    --threads 100
+python main.py --anomaly MISSING_INDEXES      --threads 100 --ncolumn 20 --colsize 100 --nrow 2000000
+python main.py --anomaly VACUUM               --threads 100 --ncolumn 20 --colsize 100 --nrow 2000000
+python main.py --anomaly LOCK_CONTENTION      --threads 100 --ncolumn 80 --colsize 80 --nrow 400
+python main.py --anomaly REDUNDANT_INDEX      --threads 100 --ncolumn 80 --colsize 80 --nrow 400000 --duration 100
+python main.py --anomaly INSERT_LARGE_DATA,IO_CONTENTION
+python main.py --anomaly FETCH_LARGE_DATA,CORRELATED_SUBQUERY
+python main.py --anomaly POOR_JOIN_PERFORMANCE,CPU_CONTENTION
+```
+
+
 <span id="-customize"></span>
 
 ## 📎 Customize Your KnowledgeBase And Tools
