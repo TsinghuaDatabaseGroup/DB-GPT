@@ -306,7 +306,7 @@ class Database():
 
         return result
     
-    def obtain_historical_slow_queries(self):
+    def obtain_historical_queries_statistics(self):
         try:
             #success, res = self.execute_sql('explain (FORMAT JSON, analyze) ' + sql)
             #command = "SELECT query, calls, total_time FROM pg_stat_statements ORDER BY total_time DESC LIMIT 2;"
@@ -320,10 +320,10 @@ class Database():
 
                 return slow_queries
             else:
-                logging.error('obtain_historical_slow_queries Fails!')
+                logging.error('obtain_historical_queries_statistics Fails!')
                 return 0
         except Exception as error:
-            logging.error('obtain_historical_slow_queries Exception', error)
+            logging.error('obtain_historical_queries_statistics Exception', error)
             return 0        
 
     def drop_simulated_index(self, oid):

@@ -19,6 +19,8 @@
 
 🧗 We aim to provide a collection of useful, user-friendly, and advanced database tools. These tools are built around LLMs, including **query optimization** (*SQLIama*), **system diagnosis** (*D-Bot*), and **anomaly simulation** (*attacker*)
 
+
+
 <!-- *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases. -->
 
 <br>
@@ -110,6 +112,14 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
     > Additionally, install extensions like *[pg_stat_statements](https://pganalyze.com/docs/install/01_enabling_pg_stat_statements)* (track slow queries), *[pg_hint_plan](https://pg-hint-plan.readthedocs.io/en/latest/installation.html)* (optimize physical operators), and *[hypopg](https://github.com/HypoPG/hypopg)* (create hypothetical Indexes).
 
+- Enable slow query log in PostgreSQL (Refer to [link](https://ubiq.co/database-blog/how-to-enable-slow-query-log-in-postgresql/))
+
+    > (1) For *"systemctl restart postgresql"*, the service name can be different (e.g., postgresql-12.service); 
+    
+    > (2) Use absolute log path name like *"log_directory = '/var/lib/pgsql/12/data/log'"*; 
+    
+    > (3) Set *"log_line_prefix = '%m [%p] [%d]'"* in postgresql.conf (to record the database names of different queries).
+
 - Prometheus ~~and Grafana ([tutorial](https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/))~~
 
     Check [prometheus.md](materials/help_documents/prometheus.md) for detailed installation guides.
@@ -147,16 +157,22 @@ Step 3: Add database/anomaly/prometheus settings into [tool_config_example.yaml]
       password: xxxxx
       dbname: postgres
 
-    BENCHSERVER:
-      server_address: 8.131.xxx.xx
+    DATABASESERVER:
+      server_address: 182.92.xxx.x
       username: root
       password: xxxxx
-      remote_directory: /root/benchmark
+      remote_directory: /var/lib/pgsql/12/data/log
 
     PROMETHEUS:
       api_url: http://8.131.xxx.xx:9090/
       postgresql_exporter_instance: 172.27.xx.xx:9187
       node_exporter_instance: 172.27.xx.xx:9100
+
+    BENCHSERVER:
+      server_address: 8.131.xxx.xx
+      username: root
+      password: xxxxx
+      remote_directory: /root/benchmark
     ```
 
 > You can ignore the settings of BENCHSERVER, which is not used in this version.

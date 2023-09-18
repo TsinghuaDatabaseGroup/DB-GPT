@@ -1,13 +1,20 @@
 from multiagents.utils.core import read_yaml, read_prometheus_metrics_yaml
+from multiagents.utils.server import obtain_slow_queries, obtain_anomaly_time
 import warnings
 from multiagents.tools.metric_monitor.anomaly_detection import prometheus
 import numpy as np
 import pdb
 from termcolor import colored
+from multiagents.utils.database import DBArgs, Database
+from multiagents.knowledge.knowledge_extraction import KnowledgeExtraction
+
+
+diag_start_time, diag_end_time = obtain_anomaly_time()
 
 promethest_conf = read_yaml('PROMETHEUS', 'config/tool_config.yaml')
 benchserver_conf = read_yaml('BENCHSERVER', 'config/tool_config.yaml')
 postgresql_conf = read_yaml('POSTGRESQL', 'config/tool_config.yaml')
+database_server_conf = read_yaml('DATABASESERVER', 'config/tool_config.yaml')
 
 node_exporter_instance = promethest_conf.get('node_exporter_instance')
 postgresql_exporter_instance = promethest_conf.get('postgresql_exporter_instance')
@@ -17,6 +24,19 @@ prometheus_metrics = read_prometheus_metrics_yaml(config_path='config/prometheus
 # configuration of the index advisor
 advisor = "db2advis"  # option: extend, db2advis (fast)
 query_log_path = "The path stores the workload, which serves as the input to the index advisor"
+
+# [workload statistics] read from pg_stat_statements 
+dbargs = DBArgs("postgresql", config=postgresql_conf)
+db = Database(dbargs, timeout=-1)
+workload_statistics = db.obtain_historical_queries_statistics()
+
+# [slow queries] read from query logs
+# /var/lib/pgsql/12/data/pg_log/postgresql-Mon.log
+slow_queries = obtain_slow_queries(database_server_conf)
+
+# [diagnosis knowledge]
+knowledge_matcher = KnowledgeExtraction(
+    "/multiagents/knowledge/root_causes_dbmind.jsonl")
 
 
 def obtain_values_of_metrics(start_time, end_time, metrics):

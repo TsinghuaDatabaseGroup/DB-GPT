@@ -5,19 +5,19 @@ POSTGRESQL:
   password: xxxxx
   dbname: postgres
 
-MYSQL:
-  host: 166.111.xxx.xx
-  port: 3306
-  user: root
-  password: xxxxxx
+DATABASESERVER:
+  server_address: 182.92.xxx.x
+  username: root
+  password: xxxxx
+  remote_directory: /var/lib/pgsql/12/data/log
+
+PROMETHEUS:
+  api_url: http://8.131.xxx.xx:9090/
+  postgresql_exporter_instance: 172.27.xx.xx:9187
+  node_exporter_instance: 172.27.xx.xx:9100
 
 BENCHSERVER:
   server_address: 8.131.xxx.xx
   username: root
   password: xxxxx
   remote_directory: /root/benchmark
-
-PROMETHEUS:
-  api_url: http://8.131.xxx.xx:9090/
-  postgresql_exporter_instance: 172.27.xx.xx:9187
-  node_exporter_instance: 172.27.xx.xx:9100
