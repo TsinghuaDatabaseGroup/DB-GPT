@@ -60,19 +60,23 @@ def obtain_slow_queries(server_config):
                         sql_start_time = words[0] + ' ' + words[1]
                         
                         # convert the string type timestamp into value in seconds
-                        timestamp = datetime.strptime(sql_start_time, '%Y-%m-%d %H:%M:%S.%f')
-                        sql_start_time = (timestamp - datetime(1970, 1, 1)).total_seconds()
+                        try:
+                            timestamp = datetime.strptime(sql_start_time, '%Y-%m-%d %H:%M:%S.%f')
+                            sql_start_time = (timestamp - datetime(1970, 1, 1)).total_seconds()
 
-                        if (diag_start_time <= sql_start_time and sql_start_time <= diag_end_time):
-                            for i, word in enumerate(words):
-                                if word == "duration:":
-                                    # reserve two digits
-                                    execution_seconds = round(float(words[i + 1])/1000, 2)
-                                    if "select" in sql:
-                                        sql = sql.strip().replace("\n", "").replace("\t", "")
-                                        dbname = re.findall(r'\[([^]]+)\]', words[4])[0]
-                                        slow_sqls.append({"sql": sql, "dbname": dbname, "execution_time": str(execution_seconds)+'s'})
-                                    break
+                            if (diag_start_time <= sql_start_time and sql_start_time <= diag_end_time):
+                                for i, word in enumerate(words):
+                                    if word == "duration:":
+                                        # reserve two digits
+                                        execution_seconds = round(float(words[i + 1])/1000, 2)
+                                        if "select" in sql:
+                                            sql = sql.strip().replace("\n", "").replace("\t", "")
+                                            dbname = re.findall(r'\[([^]]+)\]', words[4])[0]
+                                            slow_sqls.append({"sql": sql, "dbname": dbname, "execution_time": str(execution_seconds)+'s'})
+                                        break
+                        except ValueError as e:
+                            #print(f"ValueError: {e}")
+                            pass
 
             except UnicodeDecodeError as e:
                 #print(f"UnicodeDecodeError: {e}")
