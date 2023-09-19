@@ -20,7 +20,6 @@
 🧗 We aim to provide a collection of useful, user-friendly, and advanced database tools. These tools are built around LLMs, including **query optimization** (*SQLIama*), **system diagnosis** (*D-Bot*), and **anomaly simulation** (*attacker*)
 
 
-
 <!-- *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases. -->
 
 <br>
@@ -111,6 +110,8 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 - PostgreSQL v12 or higher
 
     > Additionally, install extensions like *[pg_stat_statements](https://pganalyze.com/docs/install/01_enabling_pg_stat_statements)* (track slow queries), *[pg_hint_plan](https://pg-hint-plan.readthedocs.io/en/latest/installation.html)* (optimize physical operators), and *[hypopg](https://github.com/HypoPG/hypopg)* (create hypothetical Indexes).
+
+    > Note *pg_stat_statements* continuosly accumulate query statistics over time. So you need to clear the statistics from time to time: 1) To discard all the statistics, execute *"SELECT pg_stat_statements_reset();"*; 2) To discard the statistics of specific query, execute *"SELECT pg_stat_statements_reset(userid, dbid, queryid);"*.
 
 - Enable slow query log in PostgreSQL (Refer to [link](https://ubiq.co/database-blog/how-to-enable-slow-query-log-in-postgresql/))
 
