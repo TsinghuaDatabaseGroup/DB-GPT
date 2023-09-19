@@ -326,7 +326,8 @@ class Database():
                 slow_queries = []
                 for sql_stat in res:
                     print("===== loged slow query: ", sql_stat[0],sql_stat[1],sql_stat[2],sql_stat[3])
-                    slow_queries.append({"sql": sql_stat[0], "calls": sql_stat[1], "total_time": sql_stat[2], "dbname": sql_stat[3]})
+                    if not "postgres" in sql_stat[3]:
+                        slow_queries.append({"sql": sql_stat[0], "calls": sql_stat[1], "total_time": sql_stat[2], "dbname": sql_stat[3]})
 
                 return slow_queries
             else:
