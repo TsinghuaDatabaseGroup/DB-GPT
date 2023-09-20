@@ -8,7 +8,6 @@ from termcolor import colored
 from multiagents.utils.database import DBArgs, Database
 from multiagents.knowledge.knowledge_extraction import KnowledgeExtraction
 
-
 diag_start_time, diag_end_time = obtain_anomaly_time()
 
 promethest_conf = read_yaml('PROMETHEUS', 'config/tool_config.yaml')
@@ -23,7 +22,6 @@ prometheus_metrics = read_prometheus_metrics_yaml(config_path='config/prometheus
 
 # configuration of the index advisor
 advisor = "db2advis"  # option: extend, db2advis (fast)
-query_log_path = "The path stores the workload, which serves as the input to the index advisor"
 
 # [workload statistics] read from pg_stat_statements 
 dbargs = DBArgs("postgresql", config=postgresql_conf)

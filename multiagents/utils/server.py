@@ -57,6 +57,10 @@ def obtain_slow_queries(server_config):
                         sql = words[-1].strip().lower()
 
                         words = words[0].split(' ')
+
+                        if len(words) < 2:
+                            continue
+
                         sql_start_time = words[0] + ' ' + words[1]
                         
                         # convert the string type timestamp into value in seconds

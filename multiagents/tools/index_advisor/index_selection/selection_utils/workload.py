@@ -17,9 +17,10 @@ class Workload:
 
 
 class Column:
-    def __init__(self, name):
+    def __init__(self, name, sampled_values=None):
         self.name = name.lower()
         self.table = None
+        self.sampled_values = sampled_values
 
     def __lt__(self, other):
         return self.name < other.name

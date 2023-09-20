@@ -9,7 +9,8 @@
             "parameters": {
                 "max_index_width": 2,
                 "budget_MB": 500,
-                "try_variations_seconds": 0
+                "try_variations_seconds": 0,
+                "max_indexes": 10
             },
             "number_of_actual_runs": 0,
             "timeout": 180
