@@ -224,6 +224,13 @@ After successfully launching the local server, visit [http://127.0.0.1:9228/](ht
 python main.py
 ```
 
+## AlertManager
+
+We support AlertManager for Prometheus. You can find more information about how to configure alertmanager here: [alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/).
+
+- We provide AlertManager-related configuration files, including alertmanager.yml, node_rules.yml, and pgsql_rules.yml. The path is in the config folder [🔗 link](./config/) in the root directory, which you can deploy to your Prometheus server to retrieve the associated exceptions.
+- We also provide webhook server that supports getting alerts. The path is a webhook folder in the root directory that you can deploy to your server to get and store Prometheus's alerts. The diagnostic model periodically grabs Alert information from this server. This file is obtained using SSh. You need to configure your server information in the tool_config.yaml [🔗 link](./config/tool_config_example.yaml) in the config folder.
+
 <!-- (1) ./run_benchmark_tpcc.sh or ./run_db_exception.sh
 
     Example Anomalies: INSERT_LARGE_DATA, IO_CONTENTION

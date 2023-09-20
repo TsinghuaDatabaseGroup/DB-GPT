@@ -16,21 +16,6 @@ import pdb
 from . import agent_registry
 from .base import BaseAgent
 
-
-task_path = os.path.dirname(__file__)
-task_path = os.path.dirname(task_path)
-task_path = os.path.dirname(task_path)
-
-config_path = os.path.join(task_path, "config/logging.yaml")
-if not os.path.exists(config_path):
-    raise ValueError(
-        "You should include the logging.yaml file"
-    )
-
-log_config = yaml.safe_load(open(config_path))
-log_name = log_config['handlers']['training_data_handler']['filename']
-log_path = os.path.join(task_path, f"logs/{log_name}")
-
 class ToolNotExistError(BaseException):
 
     """Exception raised when parsing output from a command fails."""
@@ -130,7 +115,7 @@ class ToolAgent(BaseAgent):
             logging.error(f"{self.name} failed to generate valid response.")
         else:
             # open file in log_path and append the response content
-            with open(log_path, "a") as f:
+            with open('logs/diag_training_data.txt', "a") as f:
 
                 prompt = prompt.replace('\n', '\\n')
                 prompt = prompt.replace('"', '\\"')
