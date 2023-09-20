@@ -1,3 +1,12 @@
+#This file contains code that utilizes the Vonng pigsty project.
+#
+#Original source: https://github.com/Vonng/pigsty
+#
+#We sincerely thank the developers of the Vonng pigsty for their hard work and contribution to the open source community.
+#Their code has been instrumental in enhancing our project.
+#
+#Pigsty is licensed under AGPL-3.0 license. Please refer to its license file for more details.
+
 #==============================================================#
 # File      :   pgsql.yml
 # Ctime     :   2020-04-22

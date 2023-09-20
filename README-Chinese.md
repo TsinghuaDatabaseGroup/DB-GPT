@@ -229,6 +229,7 @@ python main.py
 
 - 我们提供了AlertManager相关的配置文件，包含alertmanager.yml、node_rules.yml、pgsql_rules.yml。路径为根目录下的config [🔗 link](./config/) 文件夹内，您可以将其部署到您的Prometheus服务器中，用来获取相关的异常。
 - 我们还提供了支持获取Alert的webhook server。路径为根目录下的webhook文件夹，您可以将它部署到您的服务器中，用来获取并存储Prometheus的Alert。诊断模型会从该服务器中定时抓取Alert信息，该文件获取方式为SSh，您需要在config文件夹下的tool_config.yaml [🔗 link](./config/tool_config_example.yaml) 中配置您的服务器信息。 
+- [node_rules.yml](./config/node_rules.yml) and [pgsql_rules.yml](./config/pgsql_rules.yml) 是引用 https://github.com/Vonng/pigsty 这个开源项目中的代码，他们的监控做的非常棒，感谢他们的付出。
 
 ## 🎩 异常案例
 
