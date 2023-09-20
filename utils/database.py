@@ -5,6 +5,8 @@ import logging
 import os
 from enum import IntEnum
 import time
+import random
+from multiprocessing.pool import *
 
 def extract_node_types(json_tree):
     node_types = []
@@ -33,6 +35,14 @@ AGGREGATE_CONSTRAINTS = {
     DataType.VALUE.TIME: ['count', 'max', 'min']
 }
 
+def check_index_exist(cursor, index_name):
+        try:
+            cursor.execute(f"SELECT indexname FROM pg_indexes WHERE indexname = '{index_name}';")
+            result = cursor.fetchone()
+            return result is not None
+        except psycopg2.Error as e:
+            print(f"Error checking index: {e}")
+            return False
 def transfer_field_type(database_type, server):
     data_type = list()
     if server == 'mysql':
@@ -76,11 +86,12 @@ class Database():
         self.args = args
         self.conn = self.resetConn(timeout)
 
+
         # self.schema = self.compute_table_schema()
 
     def resetConn(self, timeout=-1):
         if self.args.dbtype == 'mysql':
-            conn = pymysql.connect(
+                conn = pymysql.connect(
                 host=self.args.host,
                 user=self.args.user,
                 passwd=self.args.password,
@@ -99,6 +110,7 @@ class Database():
                                             port=self.args.port,
                                             options='-c statement_timeout={}s'.format(timeout))
             else:
+                
                 conn = psycopg2.connect(database=self.args.dbname,
                                             user=self.args.user,
                                             password=self.args.password,
@@ -331,3 +343,82 @@ class Database():
         result = self.execute_sql(statement)
 
         assert result[0] is True, f"Could not drop simulated index with oid = {oid}."
+
+    def execute_sqls(self,sql):
+        self.conn =self.resetConn(timeout=-1)
+        cur = self.conn.cursor()
+        cur.execute(sql)
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+
+    def execute_sql_duration(self, duration, sql, max_id=0, commit_interval=500):
+        self.conn = self.resetConn(timeout=-1)
+        cursor = self.conn.cursor()
+        start = time.time()
+        cnt = 0
+        if duration > 0:
+            while (time.time() - start) < duration:
+                if max_id > 0:
+                    id = random.randint(1, max_id - 1)
+                    cursor.execute(sql + str(id) + ';')
+                else:
+                    cursor.execute(sql)
+                cnt += 1
+                if cnt % commit_interval == 0:
+                    self.conn.commit()
+        else:
+            print("error, the duration should be larger than 0")
+        self.conn.commit()
+        cursor.close()
+        self.conn.close()
+        return cnt
+
+    def concurrent_execute_sql(self, threads, duration, sql, max_id=0, commit_interval=500):
+        pool = ThreadPool(threads)
+        results = [pool.apply_async(self.execute_sql_duration, (duration, sql, max_id, commit_interval)) for _ in range(threads)]
+        pool.close()
+        pool.join()
+        return results
+    
+
+        
+    def build_index(self, table_name, idx_num):
+        self.conn = self.resetConn(timeout=-1)
+        cursor = self.conn.cursor()
+    
+        for i in range(0, idx_num):
+            the_sql = 'CREATE INDEX index_' + table_name + '_' + str(i) + ' ON ' + table_name + '(name' + str(i) + ');'
+            print(the_sql)
+            cursor.execute(the_sql)
+
+        # 检查索引是否创建成功
+            #if check_index_exist(cursor, 'index_' + table_name + '_' + str(i)):
+                #print(f'Index index_{table_name}_{i} created successfully.')
+            #else:
+                #print(f'Failed to create index index_{table_name}_{i}.')
+    
+        self.conn.commit()
+        self.conn.close()
+        return
+
+
+    
+    def drop_index(self,table_name):
+        self.conn = self.resetConn(timeout=-1)
+        cursor = self.conn.cursor()
+        cursor.execute("select indexname from pg_indexes where tablename='"+table_name+"';")
+        idxs = cursor.fetchall()
+        for idx in idxs:
+            the_sql = 'DROP INDEX ' + idx[0] + ';'
+            cursor.execute(the_sql)
+            print(the_sql)
+        self.conn.commit()
+        self.conn.close()
+        return
+
+
+
+
+
+
