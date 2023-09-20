@@ -20,6 +20,8 @@ def obtain_anomaly_time():
 
 # def obtain_slow_queries(server_config, start_time, end_time):
 def obtain_slow_queries(server_config):
+    # TODO 暂时不读取文件内容
+    return []
 
     # Create SSH client
     ssh = paramiko.SSHClient()
@@ -52,7 +54,10 @@ def obtain_slow_queries(server_config):
                     # if the line contains the required time range
                     if "[]LOG:" not in line and "[postgres]" not in line:
                         
-                        words = line.split('statement: ')                        
+                        words = line.split('statement: ')
+
+                        if len(words) < 2:
+                            continue
 
                         sql = words[-1].strip().lower()
 
