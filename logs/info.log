@@ -369,3 +369,24 @@ IO Agent: {'diagnose': 'The anomaly could be due to high usage of disk groups an
 127.0.0.1 - - [13/Sep/2023 11:05:39] "POST /config/instances HTTP/1.1" 200 -
 127.0.0.1 - - [13/Sep/2023 11:05:42] "POST /db_diag/chat_history HTTP/1.1" 200 -
 127.0.0.1 - - [13/Sep/2023 11:05:46] "POST /db_diag/chat_history HTTP/1.1" 200 -
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8022
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
+127.0.0.1 - - [19/Sep/2023 18:13:49] "[31m[1mPOST /alert/alert HTTP/1.1[0m" 400 -
+127.0.0.1 - - [19/Sep/2023 18:14:26] "[31m[1mPOST /alert/alert HTTP/1.1[0m" 400 -
+127.0.0.1 - - [19/Sep/2023 18:14:58] "POST /alert/alert HTTP/1.1" 200 -
+ * Detected change in '/Users/Four/JobProjects/Tsinghua/bg_demo/venv/bin/activate_this.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
+ * Detected change in '/Users/Four/JobProjects/Tsinghua/bg_demo/utils/core.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
+ * Detected change in '/Users/Four/JobProjects/Tsinghua/bg_demo/api/utils/util.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368

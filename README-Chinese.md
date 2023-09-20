@@ -224,6 +224,12 @@ python main.py
 
 <span id="-anomalies"></span>
 
+## AlertManager
+我们支持Prometheus的AlertManager。您可以在此处找到有关如何配置AlertManager的更多信息：[alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/)。
+
+- 我们提供了AlertManager相关的配置文件，包含alertmanager.yml、node_rules.yml、pgsql_rules.yml。路径为根目录下的config [🔗 link](./config/) 文件夹内，您可以将其部署到您的Prometheus服务器中，用来获取相关的异常。
+- 我们还提供了支持获取Alert的webhook server。路径为根目录下的webhook文件夹，您可以将它部署到您的服务器中，用来获取并存储Prometheus的Alert。诊断模型会从该服务器中定时抓取Alert信息，该文件获取方式为SSh，您需要在config文件夹下的tool_config.yaml [🔗 link](./config/tool_config_example.yaml) 中配置您的服务器信息。 
+
 ## 🎩 异常案例
 
 在anomaly_trigger目录中，我们旨在提供可能导致典型异常的脚本，例如，

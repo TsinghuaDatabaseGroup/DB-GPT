@@ -1,0 +1,13 @@
+zh_CN: &zh
+  0: "成功"
+  -1: "失败"
+  40001: "资源不存在"
+  40002: "参数无效"
+
+en:
+  <<: *zh
+  # 英文编码
+  0: "success"
+  -1: "fail"
+  40001: "No resources found"
+  40002: "Invalid argument"

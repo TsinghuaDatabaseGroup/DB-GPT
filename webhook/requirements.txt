@@ -1,0 +1,3 @@
+pyyaml
+flask_cors
+flask
