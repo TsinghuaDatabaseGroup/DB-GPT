@@ -49,8 +49,8 @@ class DatabaseConnector:
         self.exec_only(statement)
 
     def _prepare_query(self, query):
-        if "create view" in query.text:
-            for query_statement in query.text.split(";"):
+        if "create view" in query:
+            for query_statement in query.split(";"):
                 if "create view" in query_statement:
                     try:
                         self.exec_only(query_statement)
@@ -61,7 +61,7 @@ class DatabaseConnector:
                     return query_statement
                     # queries.append(query_statement)
         else:
-            return query.text
+            return query
 
     def simulate_index(self, index):
         self.simulated_indexes += 1

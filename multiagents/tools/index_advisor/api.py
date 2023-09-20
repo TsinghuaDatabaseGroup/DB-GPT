@@ -2,8 +2,9 @@ import os
 from multiagents.tools.index_advisor.index_selection.selection_utils.postgres_dbms import PostgresDatabaseConnector
 from multiagents.tools.index_advisor.index_selection.selection_utils import selec_com
 from multiagents.tools.index_advisor.configs import get_index_result
-from multiagents.tools.metrics import postgresql_conf, advisor, query_log_path
-
+from multiagents.tools.metrics import postgresql_conf, advisor
+from multiagents.tools.metrics import workload_statistics
+import pdb
 
 def optimize_index_selection(start_time: int, end_time: int):
     """optimize_index_selection(start_time : int, end_time : int) returns the recommended index by running the algorithm 'Extend'.
@@ -20,28 +21,43 @@ def optimize_index_selection(start_time: int, end_time: int):
                     "args": {"workload": "SELECT A.col1 from A join B where A.col2 = B.col2 and B.col3 > 2 group by A.col1"}}
         Result: Command optimize_index_selection returned: "A#col2; B#col2,col3"
     """
+    # 1. Split the workloads by database names
+    databases = {}
+    for query_template in workload_statistics:
+        database_name = query_template["dbname"]
 
-    # 1. load db settings
-    db_config = {"postgresql": postgresql_conf}
-    connector = PostgresDatabaseConnector(db_config, autocommit=True)
+        if database_name not in databases:
+            databases[database_name] = []
+        
+        databases[database_name].append({"sql": query_template["sql"], "frequency": query_template["calls"]})
 
-    tables, columns = selec_com.get_columns_from_db(connector)
+    index_advice = f"Recommended indexes: \n"
 
-    # 2. prepare the workload
-    script_path = os.path.abspath(__file__)
-    script_dir = os.path.dirname(script_path)
-    # todo: change to `query_log_path` that stores the workload.
-    workload_file = script_dir + \
-                    f"/index_selection/selection_data/data_info/job_templates.sql"
+    for dbname in databases:
+        
+        # 2. load db settings
+        db_config = {"postgresql": postgresql_conf}
+        db_config["postgresql"]["dbname"] =  dbname
+        connector = PostgresDatabaseConnector(db_config, autocommit=True)
 
-    workload = list()
-    with open(workload_file, "r") as rf:
-        for line in rf.readlines():
-            workload.append(line.strip())
+        tables, columns = selec_com.get_columns_from_db(connector) # todo sample data for each column
 
-    indexes, total_no_cost, total_ind_cost = get_index_result(advisor, workload, connector, columns)
+        # 3. read the workload queries
+        workload = databases[dbname] # list of dict
 
-    if len(indexes) == 0:
-        return "No beneficial single-column indexes can be found!"
+        # script_path = os.path.abspath(__file__)
+        # script_dir = os.path.dirname(script_path)
+        # # read from the logged queries recorded by the match_diagnose_knowledge function
+        # workload_file = script_dir + \
+        #                 f"/index_selection/selection_data/data_info/job_templates.sql"
+        # workload = list()
+        # with open(workload_file, "r") as rf:
+        #     for line in rf.readlines():
+        #         workload.append(line.strip())
 
-    return f"The recommended indexes are: {indexes}, which reduces cost from {total_no_cost} to {total_ind_cost}."
+        indexes, total_no_cost, total_ind_cost = get_index_result(advisor, workload, connector, columns)
+
+        if len(indexes) != 0:
+            index_advice += f"\t For {dbname}, the recommended indexes are: {indexes}, which reduces cost from {total_no_cost} to {total_ind_cost}.\n"
+
+    return index_advice

@@ -2,6 +2,8 @@ import logging
 import re
 import psycopg2
 from .database_connector import DatabaseConnector
+import time
+import pdb
 
 
 class PostgresDatabaseConnector(DatabaseConnector):
@@ -61,7 +63,16 @@ class PostgresDatabaseConnector(DatabaseConnector):
         self.exec_only(f"SELECT setseed({value})")
 
     def enable_simulation(self):
-        self.exec_only("create extension hypopg")
+        self.exec_only("""DO $$ 
+BEGIN 
+  IF NOT EXISTS (
+     SELECT 
+     FROM pg_extension 
+     WHERE extname = 'hypopg') 
+  THEN 
+     CREATE EXTENSION hypopg; 
+  END IF; 
+END $$;""")
         self.commit()
 
     def database_names(self):
@@ -233,6 +244,7 @@ class PostgresDatabaseConnector(DatabaseConnector):
 
     def drop_hypo_indexes(self):
         logging.info("Dropping hypo indexes")
+
         stmt = "SELECT * FROM hypopg_reset();"
         self.exec_only(stmt)
 
@@ -279,7 +291,7 @@ class PostgresDatabaseConnector(DatabaseConnector):
         :param query:
         :return:
         """
-        for query_statement in query.text.split(";"):
+        for query_statement in query.split(";"):
             if "drop view" in query_statement:
                 self.exec_only(query_statement)
                 self.commit()
@@ -344,3 +356,18 @@ class PostgresDatabaseConnector(DatabaseConnector):
             cols.append(row[0])
 
         return cols
+
+
+    def get_sampled_values(self, column, table, sample_size=1):
+
+        sql = f"select {column} from {table} limit ({sample_size})"
+
+        rows = self.exec_fetch(sql, one=False)
+
+        sampled_values = []
+        for row in rows:
+            # if row is of string type, add quotes
+            if isinstance(row[0], str):
+                sampled_values.append(f"\'{row[0]}\'")
+
+        return sampled_values

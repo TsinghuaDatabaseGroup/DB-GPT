@@ -7,17 +7,18 @@ import pdb
 from multiagents.tools.metrics import slow_queries, workload_statistics
 from multiagents.tools.metrics import knowledge_matcher
 
-
+from multiagents.tools.index_advisor.api import optimize_index_selection
 
 def obtain_start_and_end_time_of_anomaly(input: str = 'json dict string'):
     
     return {"start_time": diag_start_time, "end_time": diag_end_time}
 
+
 def whether_is_abnormal_metric(
         start_time: int,
         end_time: int,
         metric_name: str = "cpu_usage"):
-    
+        
     metric_values = prometheus('api/v1/query_range',
                                 {'query': prometheus_metrics[metric_name],
                                 'start': start_time,

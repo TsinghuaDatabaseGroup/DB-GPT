@@ -1,6 +1,7 @@
 import logging
 import random
 import time
+import pdb
 
 from ..selection_utils.candidate_generation import candidates_per_query, syntactically_relevant_indexes
 from .selection_algorithm import DEFAULT_PARAMETER_VALUES, SelectionAlgorithm
@@ -9,6 +10,7 @@ from ..selection_utils.selec_com import get_utilized_indexes, mb_to_b
 DEFAULT_PARAMETERS = {
     "budget_MB": DEFAULT_PARAMETER_VALUES["budget_MB"],
     "max_index_width": DEFAULT_PARAMETER_VALUES["max_index_width"],
+    "max_indexes": DEFAULT_PARAMETER_VALUES["max_indexes"],
     "try_variations_seconds": 10,
     "try_variations_max_removals": 4,
 }
@@ -28,7 +30,7 @@ class DB2AdvisAlgorithm(SelectionAlgorithm):
         self.try_variations_max_removals = self.parameters["try_variations_max_removals"]
 
         self.max_indexes = self.parameters["max_indexes"]
-        self.constraint = self.parameters["constraint"]
+        self.constraint = "storage"
 
     def _calculate_best_indexes(self, workload):
         """
@@ -53,7 +55,7 @@ class DB2AdvisAlgorithm(SelectionAlgorithm):
         utilized_indexes, query_details = get_utilized_indexes(
             workload, candidates, self.cost_evaluation, True
         )
-
+        
         index_benefits = self._calculate_index_benefits(utilized_indexes, query_details)
         index_benefits_subsumed = self._combine_subsumed(index_benefits)
 
