@@ -279,9 +279,9 @@ We support AlertManager for Prometheus. You can find more information about how 
 - [node_rules.yml](./config/node_rules.yml) and [pgsql_rules.yml](./config/pgsql_rules.yml) is a reference https://github.com/Vonng/pigsty code in this open source project, their monitoring do very well, thank them for their effort.
 
 
-### Anomalies
+### Anomaly Simulation
 
-Within the *anomaly_trigger* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
+Within the *[anomaly_trigger](./anomaly_trigger)* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
 
 | Root Cause          | Description                                           | Case                 |
 |---------------------|-------------------------------------------------------|----------------------|
