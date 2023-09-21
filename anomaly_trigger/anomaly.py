@@ -8,7 +8,6 @@ import datetime
 import yaml
 import time
 from multiprocessing.pool import *
-import update 
 
 def init():
     #add the config
@@ -219,16 +218,3 @@ def lock(table_name, ncolumns, colsize, duration, nrows):
             conn.commit()
         conn.commit()
         conn.close()
-
-
-    
-
-
-
-
-
-
-
-
-
-
