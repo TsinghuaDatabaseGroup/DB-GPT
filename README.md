@@ -6,7 +6,7 @@
   <a href="#-features">Features</a> •
   <a href="#-news">News</a> •
   <a href="#-quickstart">QuickStart</a> •
-  <a href="#-anomalies">Cases</a> •  
+  <a href="#-anomalies">Alerts And Anomalies</a> •  
   <a href="#-customize">Customization</a> • 
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
@@ -224,14 +224,6 @@ After successfully launching the local server, visit [http://127.0.0.1:9228/](ht
 python main.py
 ```
 
-## AlertManager
-
-We support AlertManager for Prometheus. You can find more information about how to configure alertmanager here: [alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/).
-
-- We provide AlertManager-related configuration files, including [alertmanager.yml](./config/alertmanager.yml), [node_rules.yml](./config/node_rules.yml), and [pgsql_rules.yml](./config/pgsql_rules.yml). The path is in the [config folder](./config/) in the root directory, which you can deploy to your Prometheus server to retrieve the associated exceptions.
-- We also provide webhook server that supports getting alerts. The path is a webhook folder in the root directory that you can deploy to your server to get and store Prometheus's alerts. The diagnostic model periodically grabs Alert information from this server. This file is obtained using SSh. You need to configure your server information in the [tool_config.yaml](./config/tool_config_example.yaml) in the config folder.
-- [node_rules.yml](./config/node_rules.yml) and [pgsql_rules.yml](./config/pgsql_rules.yml) is a reference https://github.com/Vonng/pigsty code in this open source project, their monitoring do very well, thank them for their effort.
-
 <!-- (1) ./run_benchmark_tpcc.sh or ./run_db_exception.sh
 
     Example Anomalies: INSERT_LARGE_DATA, IO_CONTENTION
@@ -276,7 +268,18 @@ We support AlertManager for Prometheus. You can find more information about how 
 
 <span id="-anomalies"></span>
 
-## 🎩 Anomalies
+## 🎩 Alerts And Anomalies
+
+### Alert Manager
+
+We support AlertManager for Prometheus. You can find more information about how to configure alertmanager here: [alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/).
+
+- We provide AlertManager-related configuration files, including [alertmanager.yml](./config/alertmanager.yml), [node_rules.yml](./config/node_rules.yml), and [pgsql_rules.yml](./config/pgsql_rules.yml). The path is in the [config folder](./config/) in the root directory, which you can deploy to your Prometheus server to retrieve the associated exceptions.
+- We also provide webhook server that supports getting alerts. The path is a webhook folder in the root directory that you can deploy to your server to get and store Prometheus's alerts. The diagnostic model periodically grabs Alert information from this server. This file is obtained using SSh. You need to configure your server information in the [tool_config.yaml](./config/tool_config_example.yaml) in the config folder.
+- [node_rules.yml](./config/node_rules.yml) and [pgsql_rules.yml](./config/pgsql_rules.yml) is a reference https://github.com/Vonng/pigsty code in this open source project, their monitoring do very well, thank them for their effort.
+
+
+### Anomalies
 
 Within the *anomaly_trigger* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
 
@@ -424,7 +427,10 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 https://github.com/OpenBMB/AgentVerse
 
+https://github.com/Vonng/pigsty
+
 https://github.com/OpenBMB/BMTools
+
 
 <span id="-citation"></span>
 
