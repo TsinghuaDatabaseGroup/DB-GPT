@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="#-features">Features</a> •
-  <a href="#-news">News</a> •
+  <a href="#-news">Updates</a> •
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-anomalies">Alerts And Anomalies</a> •  
   <a href="#-customize">Customization</a> • 
@@ -57,20 +57,33 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 <span id="-news"></span>
 
-## 📰 What's New
+## 📰 Updates
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [x] **[2023/9/20]** Add typical alerts and anomalies <a href="#-anomalies">🔗 link</a>
+- Upgrade the LLM-based diagnosis mechanism: 
 
-- [x] **[2023/9/10]** Add diagnosis logs [🔗 link](logs/diag_training_data.txt) and replay button in the frontend [⏱ link](logs/info.log)
+    * [] *Task Dispatching -> Concurrent Diagnosis -> RoundTable Discussion -> Report Generation (downloadable)*
 
-- [x] **[2023/9/05]** A unique framework is available! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀 link</a>
+- [x] Add typical anomalies and alerts (Pigsty) <a href="#-anomalies">🔗 link</a>
+
+<!-- - [x] **[2023/9/10]** Add diagnosis logs [🔗 link](logs/diag_training_data.txt) and replay button in the frontend [⏱ link](logs/info.log) -->
+
+- [x] An end-to-end framework is available! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀 link</a>
 
 <!-- - [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗 link</a> -->
 
-- [x] **[2023/8/22]** Support multi-level tools with 60+ APIs [🔗 link](multiagents/tools)
+- Support monitoring and optimization tools in multiple levels [🔗 link](multiagents/tools)
 
-- [x] **[2023/8/10]** Our vision papers are released (continuously update) 
+    * [x] Monitoring metrics (Prometheus)
+    * [x] Diagnosis knowledge retrieval (dbmind)
+    * [x] Logical query transformations (Calcite)
+    * [x] Index optimization algorithms (for postgresql)
+    * [x] Physical operator hints (for postgresql)
+    * [] Backup and Point-in-time Recovery (Pigsty)
+
+
+
+- [x] Our vision papers are released (continuously update) 
 
     * *LLM As DBA.* [[paper]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[slides]](materials/slides)
 
@@ -406,15 +419,15 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 ## ⏱ Todo
 
-- [ ] ~~Project cleaning~~
-- [ ] ~~Support more anomalies~~
-- [ ] Strictly constrain the llm outputs (excessive irrelevant information) based on the matched knowledge 
-- [ ] Query log option (potential to take up disk space and we need to consider it carefully)
-- [ ] Add more communication mechanisms
-- [ ] Support more knowledge sources
-- [ ] Support localized private models (e.g., llama/vicuna/luca)
-- [ ] Release training datasets
-- [ ] Support other databases (e.g., mysql/redis)
+- ~~Project cleaning~~
+- ~~Support more anomalies~~
+- Strictly constrain the llm outputs (excessive irrelevant information) based on the matched knowledge 
+- Query log option (potential to take up disk space and we need to consider it carefully)
+- Add more communication mechanisms
+- Support more knowledge sources
+- Support localized private models (e.g., llama/vicuna/luca)
+- Release training datasets
+- Support other databases (e.g., mysql/redis)
 
 
 <span id="-community"></span>
