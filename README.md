@@ -17,8 +17,11 @@
     【English | <a href="README-Chinese.md">中文</a>】
 </p>
 
-🧗 We aim to provide a collection of useful, user-friendly, and advanced database tools. These tools are built around LLMs, including **query optimization** (*SQLIama*), **system diagnosis** (*D-Bot*), and **anomaly simulation** (*attacker*)
+🦾 Our mission is to build your personal database administrator (D-Bot). D-Bot is good at *reading documents, using various tools, and strictly following your orders!!* 🧑‍💻
 
+>Besides, to extend the database maintenance capability, we are also finetuning LLMs to support advanced *query optimiziation* and *anomaly simulation* (comming soon).
+
+<!-- collection of useful, user-friendly, and advanced database tools. These tools are built around LLMs, including **system diagnosis** (*D-Bot*), **query optimization** (coming soon), and **anomaly simulation** (coming soon) -->
 
 <!-- *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases. -->
 
@@ -33,7 +36,7 @@
 
 ## ✨ Features
 
-### D-Bot (System Diagnosis)
+### D-Bot - Your Personal DBA
 
 - **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
 
@@ -57,9 +60,9 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 ## 📰 What's New
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [x] **[2023/9/10]** Add diagnosis logs [🔗 link](logs/diag_training_data.txt) and replay button in the frontend [⏱ link](logs/info.log)
+- [x] **[2023/9/20]** Add typical alerts and anomalies <a href="#-anomalies">🔗 link</a>
 
-- [x] **[2023/9/09]** Add typical anomalies <a href="#-anomalies">🔗 link</a>
+- [x] **[2023/9/10]** Add diagnosis logs [🔗 link](logs/diag_training_data.txt) and replay button in the frontend [⏱ link](logs/info.log)
 
 - [x] **[2023/9/05]** A unique framework is available! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀 link</a>
 
@@ -270,7 +273,7 @@ python main.py
 
 ## 🎩 Alerts And Anomalies
 
-### Alert Manager
+### Alert Management
 
 We support AlertManager for Prometheus. You can find more information about how to configure alertmanager here: [alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/).
 
