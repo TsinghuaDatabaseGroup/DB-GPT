@@ -60,9 +60,9 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 ## 📰 Updates
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- Upgrade the LLM-based diagnosis mechanism: 
+- [ ] Upgrade the LLM-based diagnosis mechanism: 
 
-    * [] *Task Dispatching -> Concurrent Diagnosis -> RoundTable Discussion -> Report Generation (downloadable)*
+    * [ ] *Task Dispatching -> Concurrent Diagnosis -> RoundTable Discussion -> Report Generation (downloadable)*
 
 - [x] Add typical anomalies and alerts (Pigsty) <a href="#-anomalies">🔗 link</a>
 
@@ -72,14 +72,14 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 <!-- - [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗 link</a> -->
 
-- Support monitoring and optimization tools in multiple levels [🔗 link](multiagents/tools)
+- [ ] Support monitoring and optimization tools in multiple levels [🔗 link](multiagents/tools)
 
     * [x] Monitoring metrics (Prometheus)
     * [x] Diagnosis knowledge retrieval (dbmind)
     * [x] Logical query transformations (Calcite)
     * [x] Index optimization algorithms (for postgresql)
     * [x] Physical operator hints (for postgresql)
-    * [] Backup and Point-in-time Recovery (Pigsty)
+    * [ ] Backup and Point-in-time Recovery (Pigsty)
 
 
 
