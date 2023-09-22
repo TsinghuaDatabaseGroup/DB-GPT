@@ -17,7 +17,7 @@
     【English | <a href="README-Chinese.md">中文</a>】
 </p>
 
-🦾 Our mission is to build your personal database administrator (D-Bot). D-Bot is good at *reading documents, using various tools, and strictly following your orders!!* 🧑‍💻
+🦾 Our mission is to build your personal database administrator (D-Bot). D-Bot is good at *reading documents, using various tools, writing analysis reports, and strictly following your orders!!* 🧑‍💻
 
 >Besides, to extend the database maintenance capability, we are also finetuning LLMs to support advanced *query optimiziation* and *anomaly simulation* (comming soon).
 
@@ -77,8 +77,8 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     * [x] Monitoring metrics (Prometheus)
     * [x] Diagnosis knowledge retrieval (dbmind)
     * [x] Logical query transformations (Calcite)
-    * [x] Index optimization algorithms (for postgresql)
-    * [x] Physical operator hints (for postgresql)
+    * [x] Index optimization algorithms (for PostgreSQL)
+    * [x] Physical operator hints (for PostgreSQL)
     * [ ] Backup and Point-in-time Recovery (Pigsty)
 
 
