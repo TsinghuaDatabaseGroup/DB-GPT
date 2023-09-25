@@ -6,9 +6,7 @@ class my_tree:
     def __init__(self):
         self.root = tree_node()
         self.now_deal_node = self.root
-
-
-
+    
     def get_former_trice(self,start_node,target_node,valid_types=["Thought","Action","Action Input","Observation"]):
         '''
         获取从start_node节点到target_node节点的所有操作，包含target_node自己和start_node
