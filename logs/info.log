@@ -390,3 +390,28 @@ IO Agent: {'diagnose': 'The anomaly could be due to high usage of disk groups an
  * Restarting with stat
  * Debugger is active!
  * Debugger PIN: 127-258-368
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8022
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
+127.0.0.1 - - [21/Sep/2023 15:41:43] "OPTIONS /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [21/Sep/2023 15:41:43] "POST /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [21/Sep/2023 17:22:26] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [21/Sep/2023 17:54:16] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [21/Sep/2023 20:58:10] "OPTIONS /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [21/Sep/2023 20:58:10] "POST /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2023 09:09:52] "OPTIONS /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2023 09:09:52] "POST /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2023 10:15:01] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2023 10:17:00] "OPTIONS /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2023 10:17:00] "POST /config/instances HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2023 10:18:11] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2023 10:48:58] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [24/Sep/2023 11:38:06] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [24/Sep/2023 12:04:24] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [24/Sep/2023 12:04:55] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [24/Sep/2023 12:04:57] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [24/Sep/2023 12:07:59] "POST /db_diag/chat_history HTTP/1.1" 200 -
+127.0.0.1 - - [24/Sep/2023 12:09:35] "POST /db_diag/chat_history HTTP/1.1" 200 -

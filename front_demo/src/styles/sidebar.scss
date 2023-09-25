@@ -1,7 +1,6 @@
 #app {
 
   .main-container {
-    min-height: 100%;
     transition: margin-left .28s;
     position: relative;
     flex-shrink: 0;
@@ -106,10 +105,6 @@
   .hideSidebar {
     .sidebar-container {
       width: 54px !important;
-    }
-
-    .main-container {
-      margin-left: 60px;
     }
 
     .submenu-title-noDropdown {

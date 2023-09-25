@@ -1,5 +1,5 @@
 <template>
-  <div class="c-flex-column c-relative" style="width: 100%; height: 100%; margin-left: 5px">
+  <div class="c-flex-column c-relative" style="width: 100%; height: 100%;">
     <div id="scroll-container" class="scroll-container c-relative">
       <div v-for="(item, index) in messages" :key="index">
         <div :class="[item.isSelf === 1 ? 'text-item c-flex-row right' : 'text-item c-flex-row left']">
@@ -7,11 +7,11 @@
             <img src="@/assets/avatar-user.png" class="face">
           </template>
           <template v-else>
-            <img v-if="item.sender === 'Chief DBA'" src="@/assets/dba_robot.png" class="face">
-            <img v-if="item.sender === 'CPU Agent'" src="@/assets/cpu_robot.png" class="face">
-            <img v-if="item.sender === 'Memory Agent'" src="@/assets/mem_robot.png" class="face">
-            <img v-if="item.sender === 'IO Agent'" src="@/assets/io_robot.png" class="face">
-            <img v-if="item.sender === 'Network Agent'" src="@/assets/net_robot.png" class="face">
+            <img v-if="item.sender === 'Chief DBA'" src="@/assets/dba_robot.webp" class="face">
+            <img v-if="item.sender === 'CPU Agent'" src="@/assets/cpu_robot.webp" class="face">
+            <img v-if="item.sender === 'Memory Agent'" src="@/assets/mem_robot.webp" class="face">
+            <img v-if="item.sender === 'IO Agent'" src="@/assets/io_robot.webp" class="face">
+            <img v-if="item.sender === 'Network Agent'" src="@/assets/net_robot.webp" class="face">
           </template>
           <div v-if="!item.loading" class="c-flex-column">
             <span style="font-size: 12px; color: #333333; margin-bottom: 5px">
@@ -223,7 +223,7 @@ export default {
     .face {
       width: 40px;
       height: 40px;
-      border-radius: 5px;
+      border-radius: 40px;
     }
 
     .content {
@@ -236,7 +236,6 @@ export default {
       background-color: #ffffff;
       word-break: break-all;
       word-wrap: break-word;
-      max-width: calc(100% - 55px);
       position: relative;
     }
 

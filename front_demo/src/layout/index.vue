@@ -1,12 +1,10 @@
 <template>
   <div :class="classObj" class="app-wrapper">
-    <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
     <sidebar class="sidebar-container" />
-    <div class="main-container">
-      <!--      <div :class="{'fixed-header':fixedHeader}">-->
-      <!--        <navbar />-->
-      <!--      </div>-->
-      <app-main />
+    <div
+      class="main-container"
+      style="width: calc(100vw - 65px); margin-left: 65px; padding: 20px 0; height: 100%; overflow: hidden;">
+      <app-main style="width: 100%" />
     </div>
   </div>
 </template>
@@ -56,8 +54,8 @@ export default {
   .app-wrapper {
     @include clearfix;
     position: relative;
-    height: 100%;
-    width: 100%;
+    height: 100vh;
+    width: 100vw;
     background: RGBA(247, 250, 255, 1.00);
     &.mobile.openSidebar{
       position: fixed;
