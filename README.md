@@ -121,6 +121,8 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     │   └── utils                             # Other functions (e.g., database/json/yaml operations)
 
 
+<span id="-prerequisites"></span>
+
 #### 1. Prerequisites
 
 - PostgreSQL v12 or higher
@@ -184,15 +186,11 @@ Step 3: Add database/anomaly/prometheus settings into [tool_config_example.yaml]
       api_url: http://8.131.xxx.xx:9090/
       postgresql_exporter_instance: 172.27.xx.xx:9187
       node_exporter_instance: 172.27.xx.xx:9100
-
-    BENCHSERVER:
-      server_address: 8.131.xxx.xx
-      username: root
-      password: xxxxx
-      remote_directory: /root/benchmark
     ```
 
-> You can ignore the settings of BENCHSERVER, which is not used in this version.
+> *remote_directory* in the DATABASESERVER setting indicates where the slow query log file is located at (<a href="#-prerequisites">link</a>).
+
+
 
 - If accessing openai service via vpn, execute this command:
 ```bash
