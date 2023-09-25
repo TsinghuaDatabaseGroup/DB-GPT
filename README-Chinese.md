@@ -25,7 +25,9 @@
 </div>
 <br> -->
 
-🧗 我们的目标是提供一套实用、有一定门槛、且易于使用的数据库管理工具。该套工具以LLMs为基础构建，包括 **查询优化**（*在线演示*）、**系统诊断**（*D-Bot*）、**异常模拟**（*attacker*）
+🦾 我们的使命是为您构建私人的数字DBA员工（D-Bot）。D-Bot擅长*阅读文档、使用各种工具，书写分析报告，并严格遵循您的命令!!* 🧑‍💻
+
+> 此外，为了扩展D-Bot的数据库维护能力，我们还在对本地大模型（LLMs）进行微调，以支持高级查询优化和异常模拟等功能（即将推出）。
 
 <br>
 <div align="center">
@@ -38,7 +40,7 @@
 
 ## 特点
 
-### 系统诊断（*D-Bot*）
+### D-Bot - 您的私人数字DBA员工
 
 - **有根据的诊断**：D-Bot可以利用相关的数据库知识（使用*document2experience*）提供有根据的诊断。
 
@@ -62,23 +64,30 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 ## 最新动态
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [x] **[2023/9/10]** 添加诊断日志 [🔗 link](logs/diag_training_data.txt) 和前端的回放按钮 [⏱ link](logs/info.log)
+- [ ] 升级基于大模型的诊断机制： 
 
-- [x] **[2023/9/09]** 添加典型异常 <a href="#-anomalies">🔗 link</a>
+    * [ ] *任务派发 -> 多模型并发诊断 -> 多模型圆桌讨论 -> 报告生成 (可下载)*
 
-- [x] **[2023/9/05]** 统一的诊断框架已经可用！只需一个命令即可开始诊断+工具服务，体验5倍的速度提升！！ <a href="#-diagnosis">🚀 链接</a>
 
-- [x] **[2023/8/25]** 支持基于vue的网站界面。更加灵活和美观！ <a href="#-frontend">🔗 链接</a>
+- [x] 添加典型异常和告警 (Pigsty) <a href="#-anomalies">🔗 link</a>
 
-- [x] **[2023/8/22]** 支持60多个API的工具检索 [🔗 链接](multiagents/tools)
 
-- [x] **[2023/8/16]** 支持多级优化功能 <a href="#-tools">🔗 链接</a>
+- [x] 统一的诊断框架已经可用！只需一个命令即可开始诊断+工具服务，体验5倍的速度提升！！ <a href="#-diagnosis">🚀 链接</a>
 
-- [x] **[2023/8/10]** 我们的愿景论文已发布（持续更新）
+- [ ] 支持多个维度的监控和优化工具 [🔗 link](multiagents/tools)
 
-    * *LLM作为数据库管理员.* [[论文]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[推特]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[幻灯片]](materials/slides)
+    * [x] 监控指标 (Prometheus)
+    * [x] 诊断知识检索 (dbmind)
+    * [x] 逻辑查询重写 (Calcite)
+    * [x] 索引推荐 (面向PostgreSQL)
+    * [x] 物理算子优化 (面向PostgreSQL)
+    * [ ] 备份恢复 (Pigsty)
 
-    * *DB-GPT: 大型语言模型遇上数据库.* [[论文]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
+- [x] 我们的愿景论文已发布（持续更新）
+
+    * *LLM作为数据库管理员.* [[论文]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[推特]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[PPT]](materials/slides)
+
+    * *DB-GPT: 大语言模型遇见数据库.* [[论文]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
 
 > 这个项目正在不断引入新特性 👫👫<br/> 
 > 不要忘记点赞 ⭐ 并关注 👀 以保持最新信息 :)
@@ -119,6 +128,16 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
     > 此外，安装扩展如 *[pg_stat_statements](https://pganalyze.com/docs/install/01_enabling_pg_stat_statements)*（跟踪慢查询）、*[pg_hint_plan](https://pg-hint-plan.readthedocs.io/en/latest/installation.html)*（优化物理运算符）和 *[hypopg](https://github.com/HypoPG/hypopg)*（创建假设索引）。
 
+    > *pg_stat_statements*视图会不断累积不同查询模板的使用信息. 因此， 你需要定期对该视图进行清理： 1) 如果要删除所有历史统计信息, 执行 *"SELECT pg_stat_statements_reset();"*; 2) 如果要删除特定SQL的统计信息, 执行 *"SELECT pg_stat_statements_reset(userid, dbid, queryid);"*.
+
+- 在 PostgreSQL 中启用慢查询日志（参考[link](https://ubiq.co/database-blog/how-to-enable-slow-query-log-in-postgresql/)）
+
+    > (1) 对于 *"systemctl restart postgresql"*，服务名称可能会有所不同（例如，postgresql-12.service）;
+
+    > (2) 使用绝对日志路径名称，如 *"log_directory = '/var/lib/pgsql/12/data/log'"*;
+
+    > (3) 在 postgresql.conf 中设置*"log_line_prefix = '%m [%p] [%d]'"*（以记录不同查询的数据库名称）。
+
 - Prometheus ~~和Grafana（[教程](https://grafana.com/docs/grafana/latest/get-started/get-started-grafana-prometheus/)）~~
 
     查看 [prometheus.md](materials/help_documents/prometheus.md) 以获取详细的安装指南。
@@ -158,16 +177,22 @@ set OPENAI_API_KEY="your_api_key_here"
       password: xxxxx
       dbname: postgres
 
-    BENCHSERVER:
-      server_address: 8.131.xxx.xx
+    DATABASESERVER:
+      server_address: 182.92.xxx.x
       username: root
       password: xxxxx
-      remote_directory: /root/benchmark
+      remote_directory: /var/lib/pgsql/12/data/log
 
     PROMETHEUS:
       api_url: http://8.131.xxx.xx:9090/
       postgresql_exporter_instance: 172.27.xx.xx:9187
       node_exporter_instance: 172.27.xx.xx:9100
+
+    BENCHSERVER:
+      server_address: 8.131.xxx.xx
+      username: root
+      password: xxxxx
+      remote_directory: /root/benchmark
     ```
 
 > 您可以忽略BENCHSERVER的设置，在此版本中未使用。
@@ -224,14 +249,17 @@ python main.py
 
 <span id="-anomalies"></span>
 
-## AlertManager
+## 🎩 支持的告警和典型异常
+
+### 告警管理器
+
 我们支持Prometheus的AlertManager。您可以在此处找到有关如何配置AlertManager的更多信息：[alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/)。
 
 - 我们提供了AlertManager相关的配置文件，包含alertmanager.yml、node_rules.yml、pgsql_rules.yml。路径为根目录下的config [🔗 link](./config/) 文件夹内，您可以将其部署到您的Prometheus服务器中，用来获取相关的异常。
 - 我们还提供了支持获取Alert的webhook server。路径为根目录下的webhook文件夹，您可以将它部署到您的服务器中，用来获取并存储Prometheus的Alert。诊断模型会从该服务器中定时抓取Alert信息，该文件获取方式为SSh，您需要在config文件夹下的tool_config.yaml [🔗 link](./config/tool_config_example.yaml) 中配置您的服务器信息。 
 - [node_rules.yml](./config/node_rules.yml) and [pgsql_rules.yml](./config/pgsql_rules.yml) 是引用 https://github.com/Vonng/pigsty 这个开源项目中的代码，他们的监控做的非常棒，感谢他们的付出。
 
-## 🎩 异常案例
+### 异常模拟器
 
 在anomaly_trigger目录中，我们旨在提供可能导致典型异常的脚本，例如，
 
@@ -341,14 +369,14 @@ cd prompt_template_scripts/query_rewrite
 
 ## 待办事项
 
-- [ ] ~~项目清理~~
-- [ ] 支持更多异常
-- [ ] 添加更多通信机制
-- [ ] 公开生成的异常训练数据
-- [ ] 微调本地化私有模型
-- [ ] 在演示网站中集成准备组件
-- [ ] 支持其他数据库，如 MySQL
-- [ ] 收集更多知识并存储在矢量数据库中（./knowledge_vector_db）
+- ~~项目清理~~
+- ~~支持更多异常~~
+- 添加更多通信机制
+- 公开生成的异常训练数据
+- 微调本地化私有模型
+- 在演示网站中集成准备组件
+- 支持其他数据库，如 MySQL
+- 收集更多知识并存储在矢量数据库中（./knowledge_vector_db）
 
 <span id="-community"></span>
 
@@ -363,6 +391,8 @@ cd prompt_template_scripts/query_rewrite
 ## 相关项目
 
 https://github.com/OpenBMB/AgentVerse
+
+https://github.com/Vonng/pigsty
 
 https://github.com/OpenBMB/BMTools
 

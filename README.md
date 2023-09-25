@@ -4,9 +4,9 @@
 
 <p align="center">
   <a href="#-features">Features</a> •
-  <a href="#-news">News</a> •
+  <a href="#-news">Updates</a> •
   <a href="#-quickstart">QuickStart</a> •
-  <a href="#-anomalies">Cases</a> •  
+  <a href="#-anomalies">Alerts And Anomalies</a> •  
   <a href="#-customize">Customization</a> • 
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
@@ -17,8 +17,11 @@
     【English | <a href="README-Chinese.md">中文</a>】
 </p>
 
-🧗 We aim to provide a collection of useful, user-friendly, and advanced database tools. These tools are built around LLMs, including **query optimization** (*SQLIama*), **system diagnosis** (*D-Bot*), and **anomaly simulation** (*attacker*)
+🦾 Our mission is to build your personal database administrator (D-Bot). D-Bot is good at *reading documents, using various tools, writing analysis reports, and strictly following your orders!!* 🧑‍💻
 
+>Besides, to extend the database maintenance capability, we are also finetuning LLMs to support advanced *query optimiziation* and *anomaly simulation* (comming soon).
+
+<!-- collection of useful, user-friendly, and advanced database tools. These tools are built around LLMs, including **system diagnosis** (*D-Bot*), **query optimization** (coming soon), and **anomaly simulation** (coming soon) -->
 
 <!-- *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases. -->
 
@@ -33,7 +36,7 @@
 
 ## ✨ Features
 
-### D-Bot (System Diagnosis)
+### D-Bot - Your Personal DBA
 
 - **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
 
@@ -54,20 +57,33 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 <span id="-news"></span>
 
-## 📰 What's New
+## 📰 Updates
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [x] **[2023/9/10]** Add diagnosis logs [🔗 link](logs/diag_training_data.txt) and replay button in the frontend [⏱ link](logs/info.log)
+- [ ] Upgrade the LLM-based diagnosis mechanism: 
 
-- [x] **[2023/9/09]** Add typical anomalies <a href="#-anomalies">🔗 link</a>
+    * [ ] *Task Dispatching -> Concurrent Diagnosis -> RoundTable Discussion -> Report Generation (downloadable)*
 
-- [x] **[2023/9/05]** A unique framework is available! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀 link</a>
+- [x] Add typical anomalies and alerts (Pigsty) <a href="#-anomalies">🔗 link</a>
+
+<!-- - [x] **[2023/9/10]** Add diagnosis logs [🔗 link](logs/diag_training_data.txt) and replay button in the frontend [⏱ link](logs/info.log) -->
+
+- [x] An end-to-end framework is available! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀 link</a>
 
 <!-- - [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗 link</a> -->
 
-- [x] **[2023/8/22]** Support multi-level tools with 60+ APIs [🔗 link](multiagents/tools)
+- [ ] Support monitoring and optimization tools in multiple levels [🔗 link](multiagents/tools)
 
-- [x] **[2023/8/10]** Our vision papers are released (continuously update) 
+    * [x] Monitoring metrics (Prometheus)
+    * [x] Diagnosis knowledge retrieval (dbmind)
+    * [x] Logical query transformations (Calcite)
+    * [x] Index optimization algorithms (for PostgreSQL)
+    * [x] Physical operator hints (for PostgreSQL)
+    * [ ] Backup and Point-in-time Recovery (Pigsty)
+
+
+
+- [x] Our vision papers are released (continuously update) 
 
     * *LLM As DBA.* [[paper]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[slides]](materials/slides)
 
@@ -224,14 +240,6 @@ After successfully launching the local server, visit [http://127.0.0.1:9228/](ht
 python main.py
 ```
 
-## AlertManager
-
-We support AlertManager for Prometheus. You can find more information about how to configure alertmanager here: [alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/).
-
-- We provide AlertManager-related configuration files, including [alertmanager.yml](./config/alertmanager.yml), [node_rules.yml](./config/node_rules.yml), and [pgsql_rules.yml](./config/pgsql_rules.yml). The path is in the [config folder](./config/) in the root directory, which you can deploy to your Prometheus server to retrieve the associated exceptions.
-- We also provide webhook server that supports getting alerts. The path is a webhook folder in the root directory that you can deploy to your server to get and store Prometheus's alerts. The diagnostic model periodically grabs Alert information from this server. This file is obtained using SSh. You need to configure your server information in the [tool_config.yaml](./config/tool_config_example.yaml) in the config folder.
-- [node_rules.yml](./config/node_rules.yml) and [pgsql_rules.yml](./config/pgsql_rules.yml) is a reference https://github.com/Vonng/pigsty code in this open source project, their monitoring do very well, thank them for their effort.
-
 <!-- (1) ./run_benchmark_tpcc.sh or ./run_db_exception.sh
 
     Example Anomalies: INSERT_LARGE_DATA, IO_CONTENTION
@@ -276,9 +284,20 @@ We support AlertManager for Prometheus. You can find more information about how 
 
 <span id="-anomalies"></span>
 
-## 🎩 Anomalies
+## 🎩 Alerts And Anomalies
 
-Within the *anomaly_trigger* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
+### Alert Management
+
+We support AlertManager for Prometheus. You can find more information about how to configure alertmanager here: [alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/).
+
+- We provide AlertManager-related configuration files, including [alertmanager.yml](./config/alertmanager.yml), [node_rules.yml](./config/node_rules.yml), and [pgsql_rules.yml](./config/pgsql_rules.yml). The path is in the [config folder](./config/) in the root directory, which you can deploy to your Prometheus server to retrieve the associated exceptions.
+- We also provide webhook server that supports getting alerts. The path is a webhook folder in the root directory that you can deploy to your server to get and store Prometheus's alerts. The diagnostic model periodically grabs Alert information from this server. This file is obtained using SSh. You need to configure your server information in the [tool_config.yaml](./config/tool_config_example.yaml) in the config folder.
+- [node_rules.yml](./config/node_rules.yml) and [pgsql_rules.yml](./config/pgsql_rules.yml) is a reference https://github.com/Vonng/pigsty code in this open source project, their monitoring do very well, thank them for their effort.
+
+
+### Anomaly Simulation
+
+Within the *[anomaly_trigger](./anomaly_trigger)* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
 
 | Root Cause          | Description                                           | Case                 |
 |---------------------|-------------------------------------------------------|----------------------|
@@ -400,15 +419,15 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 ## ⏱ Todo
 
-- [ ] ~~Project cleaning~~
-- [ ] ~~Support more anomalies~~
-- [ ] Strictly constrain the llm outputs (excessive irrelevant information) based on the matched knowledge 
-- [ ] Query log option (potential to take up disk space and we need to consider it carefully)
-- [ ] Add more communication mechanisms
-- [ ] Support more knowledge sources
-- [ ] Support localized private models (e.g., llama/vicuna/luca)
-- [ ] Release training datasets
-- [ ] Support other databases (e.g., mysql/redis)
+- ~~Project cleaning~~
+- ~~Support more anomalies~~
+- Strictly constrain the llm outputs (excessive irrelevant information) based on the matched knowledge 
+- Query log option (potential to take up disk space and we need to consider it carefully)
+- Add more communication mechanisms
+- Support more knowledge sources
+- Support localized private models (e.g., llama/vicuna/luca)
+- Release training datasets
+- Support other databases (e.g., mysql/redis)
 
 
 <span id="-community"></span>
@@ -424,7 +443,10 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 https://github.com/OpenBMB/AgentVerse
 
+https://github.com/Vonng/pigsty
+
 https://github.com/OpenBMB/BMTools
+
 
 <span id="-citation"></span>
 
