@@ -38,6 +38,7 @@
       :title="$t('reviewDrawerTitle')"
       :visible.sync="reviewDrawer"
       size="95vw"
+      destroy-on-close
       direction="rtl"
     >
       <div class="c-relative c-flex-column" style="overflow: hidden; height: 100%">
@@ -104,6 +105,7 @@
       :title="$t('reportDrawerTitle')"
       :visible.sync="reportDrawer"
       size="95vw"
+      destroy-on-close
       direction="rtl"
     >
       <div class="c-relative c-flex-column" style="overflow: hidden; height: 100%">
