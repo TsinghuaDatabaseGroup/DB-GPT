@@ -21,6 +21,8 @@
 
 >Besides, to extend the database maintenance capability, we are also finetuning LLMs to support advanced *query optimiziation* and *anomaly simulation* (comming soon).
 
+*[Click to check 29 typical anomalies together with expert analysis!](./anomaly_trigger/29种性能异常与根因分析.pdf) (supported by the DBMind team)*
+
 <!-- collection of useful, user-friendly, and advanced database tools. These tools are built around LLMs, including **system diagnosis** (*D-Bot*), **query optimization** (coming soon), and **anomaly simulation** (coming soon) -->
 
 <!-- *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases. -->
@@ -121,15 +123,19 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     │   └── utils                             # Other functions (e.g., database/json/yaml operations)
 
 
+<span id="-prerequisites"></span>
+
 #### 1. Prerequisites
 
 - PostgreSQL v12 or higher
+
+    > Make sure your database supports remote connection ([link](https://support.cpanel.net/hc/en-us/articles/4419265023383-How-to-enable-remote-PostgreSQL-access))
 
     > Additionally, install extensions like *[pg_stat_statements](https://pganalyze.com/docs/install/01_enabling_pg_stat_statements)* (track frequent queries), *[pg_hint_plan](https://pg-hint-plan.readthedocs.io/en/latest/installation.html)* (optimize physical operators), and *[hypopg](https://github.com/HypoPG/hypopg)* (create hypothetical Indexes).
 
     > Note *pg_stat_statements* continuosly accumulate query statistics over time. So you need to clear the statistics from time to time: 1) To discard all the statistics, execute *"SELECT pg_stat_statements_reset();"*; 2) To discard the statistics of specific query, execute *"SELECT pg_stat_statements_reset(userid, dbid, queryid);"*.
 
-- Enable slow query log in PostgreSQL (Refer to [link](https://ubiq.co/database-blog/how-to-enable-slow-query-log-in-postgresql/))
+- Enable slow query log in PostgreSQL ([link](https://ubiq.co/database-blog/how-to-enable-slow-query-log-in-postgresql/))
 
     > (1) For *"systemctl restart postgresql"*, the service name can be different (e.g., postgresql-12.service); 
     
@@ -184,15 +190,11 @@ Step 3: Add database/anomaly/prometheus settings into [tool_config_example.yaml]
       api_url: http://8.131.xxx.xx:9090/
       postgresql_exporter_instance: 172.27.xx.xx:9187
       node_exporter_instance: 172.27.xx.xx:9100
-
-    BENCHSERVER:
-      server_address: 8.131.xxx.xx
-      username: root
-      password: xxxxx
-      remote_directory: /root/benchmark
     ```
 
-> You can ignore the settings of BENCHSERVER, which is not used in this version.
+> *remote_directory* in the DATABASESERVER setting indicates where the slow query log file is located at (<a href="#-prerequisites">link</a>).
+
+
 
 - If accessing openai service via vpn, execute this command:
 ```bash
