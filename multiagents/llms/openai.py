@@ -84,10 +84,16 @@ class OpenAICompletion(BaseCompletionModel):
 @llm_registry.register("gpt-4")
 class OpenAIChat(BaseChatModel):
     args: OpenAIChatArgs = Field(default_factory=OpenAIChatArgs)
+    conversation_history: dict = []
+    TRY_TIME: int = 50
 
     def __init__(self, max_retry: int = 100, **kwargs):
+        super().__init__(**kwargs)  # Call the constructor of the base class
         args = OpenAIChatArgs()
         args = args.dict()
+
+        self.conversation_history = []
+        self.TRY_TIME = 50
 
         for k, v in args.items():
             args[k] = kwargs.pop(k, v)
@@ -97,6 +103,31 @@ class OpenAIChat(BaseChatModel):
 
     def _construct_messages(self, prompt: str):
         return [{"role": "user", "content": prompt}]
+
+    def change_messages(self,messages):
+        self.conversation_history = messages
+
+    def parse(self) -> LLMResult:
+        #messages = self._construct_messages(prompt) # TODO add history messages
+        messages = self.conversation_history
+
+        for _ in range(self.TRY_TIME):
+
+            try:
+                response = openai.ChatCompletion.create(
+                    messages=messages, **self.args.dict()
+                )
+                return response["choices"][0]["message"]
+            
+            except (OpenAIError, KeyboardInterrupt) as error:
+                print(f"Parsing Exception: {repr(e)}. Try again.")
+                if response is not None:
+                    print(f"LLM return: {response}")
+                
+                continue
+
+        return {"role": "assistant", "content": "OpenAI service is unavailable. Please try again."}
+
 
     def generate_response(self, prompt: str) -> LLMResult:
         messages = self._construct_messages(prompt)

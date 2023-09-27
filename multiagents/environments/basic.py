@@ -8,8 +8,8 @@ from multiagents.message import Message
 
 from . import env_registry as EnvironmentRegistry
 from .base import BaseEnvironment
-
 import pdb
+
 
 @EnvironmentRegistry.register("basic")
 class BasicEnvironment(BaseEnvironment):

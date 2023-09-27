@@ -18,9 +18,14 @@ from multiagents.response_formalize_scripts.combine_similar_answer import combin
 
 @output_parser_registry.register("agent_conf")
 class DBDiag(OutputParser):
-    def parse(self, output: LLMResult) -> Union[AgentAction, AgentFinish]:
+    def parse(self, output) -> Union[AgentAction, AgentFinish]:
         # pdb.set_trace()
-        text = output.content
+        # if output is str
+        if isinstance(output, str):
+            text = output
+        else:
+            text = output.content
+        
         cleaned_output = text.strip()
         cleaned_output = re.sub(r"\n+", "\n", cleaned_output)
         cleaned_output = cleaned_output.split("\n")

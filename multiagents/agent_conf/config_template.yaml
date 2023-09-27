@@ -1,24 +1,4 @@
-max_turn: &max_turn 3
-
 prompts:
-  role_assigner_prompt: &role_assigner_prompt |-
-    # Role Description
-    You are the leader of a group of diagnosis experts. Currently, the database in your company may meet problems. The alert is:
-    ${alert_info}
-    
-    Now you need to select experts with diverse identity to correctly analyze the root causes of the given alert. The names of available experts are:
-    ${task_description}
-    
-    Which experts will you recruit to generate an accurate solution? Note you can only select one to three experts!!!
-    
-    # Response Format Guidance
-    You should respond with a list of expert names. For example:
-    1. CPU
-    2. Memory
-    ...
-    
-    Only respond with the names of selected experts (separated by spaces). Do not include your reason.
-
   chief_dba_format_prompt: &chief_dba_format_prompt |-
     You are in a company whose databases meet anomalies and it depends on you to collaborate with other agents to diagnose the root causes. ${role_description}
     
@@ -293,8 +273,8 @@ optimization_tools: &optimization_tools
 name: Company 3 DBAs with Tools
 
 environment:
-  env_type: dba
-  max_turns: *max_turn
+  env_type: basic
+  max_turns: 15
   rule:
     order:
       type: sequential
@@ -309,22 +289,8 @@ environment:
 
 agents:
   - 
-    agent_type: role_assigner
-    name: role assigner
-    prompt_template: *role_assigner_prompt
-    memory:
-      memory_type: chat_history
-    llm:
-      llm_type: gpt-3.5-turbo
-      model: "gpt-3.5-turbo"
-      temperature: 0
-      max_tokens: 256
-    output_parser:
-      type: role_assigner
-
-  - 
-    agent_type: solver
-    name: Chief
+    agent_type: tool
+    name: Chief DBA
     role_description: |-
       You are a Chief DBA with much database diagnosis experience. Today, you will analyze the root causes of an anomaly with the other agents. Here is the outline of the procedure:
       1. Use tool api (obtain_start_and_end_time_of_anomaly) to get the start and end time of the anomaly.
@@ -351,8 +317,8 @@ agents:
     tools: *monitor_tools
     verbose: true
   -
-    agent_type: solver
-    name: CPU
+    agent_type: tool
+    name: CPU Agent
     role_description: You are a CPU agent that can use the tool apis to check CPU usage (whether_is_abnormal_metric), analyze the root causes of high CPU usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection, enable_or_disable_nestloop_operator).
     prompt_template: *cpu_agent_format_prompt
     memory:
@@ -373,8 +339,8 @@ agents:
     tools: *optimization_tools
     verbose: true
   -
-    agent_type: solver
-    name: Memory
+    agent_type: tool
+    name: Memory Agent
     role_description: You are a memory agent that can use the db_diag tool to check memory usage (whether_is_abnormal_metric) and analyze the root causes of high memory usage the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions by calling relevant apis.
     prompt_template: *mem_agent_format_prompt
     memory:
@@ -395,8 +361,8 @@ agents:
     tools: *optimization_tools
     verbose: true
   -
-    agent_type: solver
-    name: IO
+    agent_type: tool
+    name: IO Agent
     role_description: You are a IO agent that can analyze the root causes of high I/O bandwidth usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection), and give optimization solutions by calling relevant apis.
     prompt_template: *io_agent_format_prompt
     memory:
@@ -417,8 +383,8 @@ agents:
     tools: *optimization_tools
     verbose: true
   -
-    agent_type: solver
-    name: Network
+    agent_type: tool
+    name: Network Agent
     role_description: You are a network agent that can analyze the root causes of slow network using the metrics and knowledge gained from (match_diagnose_knowledge), and give solving advice.
     prompt_template: *network_agent_format_prompt
     memory:

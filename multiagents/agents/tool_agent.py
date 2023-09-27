@@ -85,7 +85,7 @@ class ToolAgent(BaseAgent):
 
         while True:
             prompt = self._fill_prompt_template(env_description, tool_observation)
-
+            
             for i in range(self.max_retry):
                 try:
                     time.sleep(1)

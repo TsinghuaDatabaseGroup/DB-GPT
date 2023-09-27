@@ -4,9 +4,9 @@ from typing import List
 
 from multiagents.agents.conversation_agent import BaseAgent
 from multiagents.environments.base import BaseEnvironment
+from multiagents.environments import DBAEnvironment
 from multiagents.initialization import load_agent, load_environment, prepare_task_config
-
-import pdb
+from multiagents.utils.utils import AGENT_TYPES
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
@@ -26,15 +26,23 @@ class MultiAgents:
         task_config = prepare_task_config(task)
 
         # Build the agents
-        agents = []
-        for agent_configs in task_config["agents"]:
-            agent = load_agent(agent_configs)
-            agents.append(agent)
+        agents = {}
+        for agent_config in task_config["agents"]:
+            agent_type = AGENT_TYPES(agent_config["agent_type"])
+
+            if agent_type not in agents:
+                agents[agent_type] = [load_agent(agent_config)]
+            else:
+                agents[agent_type].append(load_agent(agent_config))
         
         # Build the environment
         env_config = task_config["environment"]
         env_config["agents"] = agents
-        environment = load_environment(env_config)
+
+        # settings (default is '')
+        env_config["task_description"] = task_config.get("task_description", "")
+
+        environment: DBAEnvironment = load_environment(env_config)
         
         return cls(agents, environment)
 

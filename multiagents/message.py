@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Tuple, Set
+from typing import List, Tuple, Set, Union, Any
 
 # from langchain.schema import AgentAction, ChatMessage
 from multiagents.utils.utils import AgentAction
@@ -9,3 +9,23 @@ class Message(BaseModel):
     sender: str = Field(default="")
     receiver: Set[str] = Field(default=set({"all"}))
     tool_response: List[Tuple[AgentAction, str]] = Field(default=[])
+
+class SolverMessage(Message):
+    pass
+
+
+class CriticMessage(Message):
+    is_agree: bool
+
+
+class ExecutorMessage(Message):
+    pass
+
+
+class EvaluatorMessage(Message):
+    score: Union[bool, List[bool], int, List[int]]
+    advice: str = Field(default="")
+
+
+class RoleAssignerMessage(Message):
+    pass
