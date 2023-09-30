@@ -10,14 +10,25 @@ if TYPE_CHECKING:
     from multiagents.message import RoleAssignerMessage
     from multiagents.agents import CriticAgent, RoleAssignerAgent
 
+def get_alert_info():
+    # read the alert info from file
+    with open("latest_alert_info.txt", "r") as f:
+        alert_info = f.read()
+        alert_info = alert_info.replace("\'", '\"')
+        alert_info = alert_info.replace("'", '"')
+        
+    return alert_info
 
 @role_assigner_registry.register("role_description")
 class DescriptionAssigner(BaseRoleAssigner):
+    class Config:
+        arbitrary_types_allowed = True
+
     """
     Generates descriptions for each agent.
     """
 
-    cnt_agents: int = 0
+    alert_info: str = get_alert_info()
 
     def step(
         self,
@@ -29,23 +40,12 @@ class DescriptionAssigner(BaseRoleAssigner):
         **kwargs,
     ) -> List[CriticAgent]:
 
-
         selected_group_members = []
 
         # task_description is the list of the names of group_members
         expert_names = [member.name for member in group_members]
 
-
-        # read the alert info from file
-        with open("latest_alert_info.txt", "r") as f:
-            alert_info = f.read()
-            alert_info = alert_info.replace("\'", '\"')
-            alert_info = alert_info.replace("'", '"')
-            
-            # todo: link relevant alerts to the agents
-            alert_str = alert_info
-
-        roles = role_assigner.step(advice, expert_names, alert_str)
+        roles = role_assigner.step(advice, expert_names, self.alert_info)
 
         for role in roles:
             role = role.lower()

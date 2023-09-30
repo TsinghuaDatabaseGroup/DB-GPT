@@ -1,8 +1,12 @@
 import asyncio
 import logging
+import re
 from typing import Any, Dict, List, Tuple, Union
 from enum import Enum
 from colorama import Fore
+import json
+from dateutil import parser, tz
+from datetime import datetime, timedelta
 
 from multiagents.utils.utils import AGENT_TYPES
 from multiagents.agents.conversation_agent import BaseAgent
@@ -22,6 +26,27 @@ from multiagents.environments.role_assigner import (
 from . import env_registry as EnvironmentRegistry
 # from .base import BaseEnvironment
 from pydantic import BaseModel
+
+
+def extract_alert_time(alert_dict):
+
+    # Extract the startsAt and endsAt values
+    
+    alert_dict = re.sub(r'"groupKey": ".*?",', '', alert_dict)
+    alert_dict = json.loads(alert_dict)
+    
+    starts_at = parser.parse(alert_dict['alerts'][0]['startsAt'])
+    ends_at = parser.parse(alert_dict['alerts'][0]['endsAt'])
+
+    if ends_at.year == 1:
+        ends_at = starts_at + timedelta(minutes=2)
+
+    # Convert the start and end times to seconds since the Unix epoch
+    epoch = datetime(1970, 1, 1, tzinfo=tz.tzutc())  # set timezone to UTC
+    starts_at_seconds = (starts_at - epoch).total_seconds()
+    ends_at_seconds = (ends_at - epoch).total_seconds()
+
+    return str(int(starts_at_seconds)), str(int(ends_at_seconds))
 
 
 @EnvironmentRegistry.register("dba")
@@ -92,7 +117,13 @@ class DBAEnvironment(BaseModel):
         # ================== EXPERT RECRUITMENT ==================
         agents = self.role_assign(advice)
         # description = "\n".join([agent.role_description for agent in agents])
+        start_time, end_time = extract_alert_time(self.role_assigner.alert_info)
 
+        # assign start_time, end_time to each agent
+        for agent in agents:
+            agent.start_time = start_time
+            agent.end_time = end_time
+        
         # ================== EXPERT DIAGNOSIS ==================
         # count on these agents to diagnose for the alert
         
@@ -116,6 +147,7 @@ class DBAEnvironment(BaseModel):
             group_members=self.agents[AGENT_TYPES.SOLVER],
             advice=advice,
         )
+        
         return agents
 
     async def decision_making(

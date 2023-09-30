@@ -20,7 +20,7 @@ from multiagents.agents import agent_registry
 from multiagents.agents.base import BaseAgent
 from multiagents.utils.utils import AgentCriticism
 from multiagents.tools.api_retrieval import APICaller
-from multiagents.reasoning_algorithms import UCT_vote_function
+from multiagents.reasoning_algorithms import UCT_vote_function, node_to_chain
 from multiagents.utils.utils import AgentAction, AgentFinish
 from multiagents.reasoning_algorithms import base_env
 
@@ -107,7 +107,13 @@ class wrap_tasksolving_env(base_env):
 
         self.restart()
 
-    def check_success(self):
+    def check_success(self, message):
+
+        if "\"solution\"" in message['content'].lower():
+            self.status = 1
+        else:
+            self.status = 0
+
         return self.status
 
     def to_json(self):
@@ -117,13 +123,12 @@ class wrap_tasksolving_env(base_env):
         self.status = 0
 
     def get_score(self):
+
         return 0.0
 
 
     def step(self, parsed_response=""):
-        
-        import pdb; pdb.set_trace()
-    
+            
         if parsed_response.tool == "Final Answer" or "finish" in parsed_response.tool.lower():
             self.status = 1
             return "", 1
@@ -155,6 +160,8 @@ class SolverAgent(BaseAgent):
     verbose: bool = Field(default=False)
     name: str = Field(default="Chief DBA")
     max_history: int = 3
+    start_time: str = ""
+    end_time: str = ""
 
     def step(
         self, former_solution: str, advice: str, task_description: str = "", **kwargs
@@ -178,10 +185,13 @@ class SolverAgent(BaseAgent):
 
         # Step1: configure attirbutes in the tasksolving environment
         tasksolving_env = wrap_tasksolving_env(task_description, self.tools, self.tool_memory)
+        
+        chain = UCT_vote_function(agent_name=self.name, prompt_template=self.prompt_template, llm=self.llm,env=tasksolving_env, output_parser=self.output_parser, start_time=self.start_time, end_time=self.end_time, agent=self)
 
-        chain = UCT_vote_function(agent_name=self.name, prompt_template=self.prompt_template, llm=self.llm,env=tasksolving_env, output_parser=self.output_parser)
+        result_node = chain.start(simulation_count=3,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=10)
 
-        result = chain.start(simulation_count=3,epsilon_new_node=0.3,choice_count=3,vote_candidates=2,vote_count=1,single_chain_max_step=40)
+        # result_node.messages
+        # result_node.description
 
         # print(colored(f"start analysis ({self.name})", "green")) # role 
         # for i in range(self.max_retry):
@@ -238,8 +248,7 @@ class SolverAgent(BaseAgent):
         pass
 
     def _fill_prompt_template(
-        self, env_description: str = "", tool_observation: List[str] = []
-    ) -> str:
+        self, env_description: str = "", tool_observation: List[str] = []) -> str:
         
         """Fill the placeholders in the prompt template
 
@@ -259,15 +268,28 @@ class SolverAgent(BaseAgent):
         tools = "\n".join([f"> {tool}: {self.tools.functions[tool]['desc']}" for tool in self.tools.functions])
         tools = tools.replace("{{", "{").replace("}}", "}")
         tool_names = ", ".join([tool for tool in self.tools.functions])
-        input_arguments = {
-            "agent_name": self.name,
-            "env_description": env_description,                                 
-            "role_description": self.role_description,
-            "chat_history": self.memory.to_string(add_sender_prefix=True),
-            "tools": tools,
-            "tool_names": tool_names,
-            "tool_observation": "\n".join(tool_observation),
-        }
+        if self.start_time != "":
+            input_arguments = {
+                "start_time": self.start_time,
+                "end_time": self.end_time,
+                "agent_name": self.name,
+                "env_description": env_description,                                 
+                "role_description": self.role_description,
+                "chat_history": self.memory.to_string(add_sender_prefix=True),
+                "tools": tools,
+                "tool_names": tool_names,
+                "tool_observation": "\n".join(tool_observation),
+            }
+        else:
+            input_arguments = {
+                "agent_name": self.name,
+                "env_description": env_description,                                 
+                "role_description": self.role_description,
+                "chat_history": self.memory.to_string(add_sender_prefix=True),
+                "tools": tools,
+                "tool_names": tool_names,
+                "tool_observation": "\n".join(tool_observation),
+            }
 
         return Template(self.prompt_template).safe_substitute(input_arguments)
 
@@ -278,4 +300,3 @@ class SolverAgent(BaseAgent):
         """Reset the agent"""
         self.memory.reset()
         # TODO: reset receiver
-                                                                                                          

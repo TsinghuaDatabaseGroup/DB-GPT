@@ -14,7 +14,9 @@ class APICaller:
             func = self.functions[func_name]["func"]
             return func(*args, **kwargs)
         else:
-            raise ValueError(f"Function '{func_name}' not registered.")
+            print(f"Function '{func_name}' not registered.")
+
+            return None
 
 def register_functions_from_module(module, caller):
     members = inspect.getmembers(module, inspect.isfunction)

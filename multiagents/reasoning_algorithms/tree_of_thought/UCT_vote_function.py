@@ -7,15 +7,53 @@ from typing import List, NamedTuple, Optional, Union
 from termcolor import colored
 from string import Template
 from multiagents.utils.utils import AgentAction, AgentFinish
+from multiagents.memory import BaseMemory, ChatHistoryMemory
 import numpy as np
 import re
 import json
-
+from pydantic import BaseModel, Field
 from pprint import pprint
 import pdb
 
+def node_to_chain(node):
+    chain = {
+        "prompt": "",
+        "query": "",
+        "chains": [],
+        "answer": "",
+    }
+
+    import pdb; pdb.set_trace()
+
+    step = {}
+    for i, message in enumerate(node.messages):
+        if message["role"] == "system":
+            chain["prompt"] = message["content"]
+        elif message["role"] == "user":
+            chain["query"] += message["content"]
+        elif message["role"] == "assistant":
+            if "function_call" in message:
+                function_call = message["function_call"]
+                if function_call["name"] == "Finish":
+                    chain["answer"] = function_call["arguments"]
+                else:
+                    step["action"] = function_call["name"]
+                    step["action_input"] = function_call["arguments"]
+            else:
+                step["thought"] = message["content"]
+        elif message["role"] == "function":
+            step["observation"] = message["content"]
+            chain["chains"].append(step)
+            step = {}
+
+    return chain
+
 class UCT_vote_function(base_search_method):
-    def __init__(self,agent_name, prompt_template, llm,env, output_parser):
+    class Config:
+        arbitrary_types_allowed = True
+    memory: BaseMemory = Field
+
+    def __init__(self, agent_name, prompt_template, llm,env, output_parser, start_time, end_time, agent):
         super(UCT_vote_function, self).__init__()
         '''
         偏序驱动的信心上限树算法:
@@ -30,7 +68,10 @@ class UCT_vote_function(base_search_method):
         self.env = env
         self.output_parser = output_parser
         self.simulations = []
-        self.restart()
+        self.start_time = start_time
+        self.end_time = end_time
+
+        self.restart(agent)
 
     def to_json(self):
     
@@ -55,7 +96,7 @@ class UCT_vote_function(base_search_method):
 
         return js_obj
 
-    def restart(self): # 理论上用不到，清空所有的tree
+    def restart(self, agent): # 理论上用不到，清空所有的tree
         self.tree = my_tree()
         self.tree.root.node_type = "Action Input"
         self.tree.root.env = deepcopy(self.env)
@@ -71,7 +112,8 @@ class UCT_vote_function(base_search_method):
         # prefix = prefix.replace("{input_description}",self.env.input_description)
 
         tool_observation = [self.tree.root.env.tool_memory.to_string()]
-        prompt = self._fill_prompt_template(self.tree.root.env.tool, self.tree.root.env.task_description, tool_observation, self.tree.root.messages)
+        #prompt = agent._fill_prompt_template(self.tree.root.env.tool, self.tree.root.env.task_description, tool_observation, self.tree.root.messages)
+        prompt = agent._fill_prompt_template(self.tree.root.env.task_description, tool_observation)
 
         self.tree.root.messages.append({
             "role":"user",
@@ -94,6 +136,7 @@ class UCT_vote_function(base_search_method):
               vote_candidates, # vote叶节点个数
               vote_count, # 投票次数
               single_chain_max_step):
+        
         '''
         epsilon_new_node:以多大概率扩展新节点
         vote_candidates：每次投票时选择多少candidate
@@ -101,7 +144,7 @@ class UCT_vote_function(base_search_method):
         '''
         while self.now_simulation_count < simulation_count:
             
-            print(colored("new trail start!","yellow"))
+            print(colored(f"{self.name} analysis start!","yellow"))
             '''
             执行一次模拟，从根节点出发
             '''
@@ -130,14 +173,17 @@ class UCT_vote_function(base_search_method):
                 print(colored(f"randomly go down to terminal nodes","green"))
             else:
                 begin_default_policy_node = now_node
+
                 end_node = self.default_policy(now_node,this_simulation,single_chain_max_step)
+                # self.pruned self.env.check_success() 
 
                 self.now_simulation_count += 1
                 self.simulations.append(this_simulation)
-                if end_node.pruned is not True:
+
+                if end_node.pruned is not True: # the node is not pruned
                     self.terminal_node.append(end_node)
 
-                if end_node.env.check_success() == 1:
+                if end_node.env.status == 1:
                     self.status = 1
                     # self.llm.display_conversation()
                     # return 1
@@ -147,13 +193,20 @@ class UCT_vote_function(base_search_method):
                 '''
                 self.make_reflection(begin_default_policy_node,end_node)
 
-
             '''
             针对candidate投票
             '''
             self.vote(choice_count,vote_candidates,vote_count)
 
-        return 0
+        if self.terminal_node == []:
+            print(colored("No terminal node found!","red"))
+
+            return None
+        
+        else:
+            final_terminal_node = sorted(self.terminal_node, key=lambda x: sum(x.values), reverse=True)[0]
+
+            return final_terminal_node
 
     def vote(self,choice_count,vote_candidates,vote_count):
         '''
@@ -163,7 +216,6 @@ class UCT_vote_function(base_search_method):
         '''
         # if len(self.terminal_node) < vote_candidates:
         #     return
-        
 
         for choice_count in range(choice_count):
             ordered = list(range(len(self.terminal_node)))
@@ -196,8 +248,6 @@ class UCT_vote_function(base_search_method):
                 "content": prompt,
             })
 
-            # print(prompt)
-
             real_score = [-1]*len(choices)
             max_score = self.tree.root.env.get_score()
             max_position = -1
@@ -209,8 +259,6 @@ class UCT_vote_function(base_search_method):
                 if real_score[k] > max_score:
                     max_position = k
                     max_score = real_score[k]
-            # print(real_score)
-
 
             votes = [0]*len(choices)
             vaild_votes = 0
@@ -310,10 +358,11 @@ class UCT_vote_function(base_search_method):
     def default_policy(self,now_node,this_simulation,single_chain_max_step):
         assert not now_node.is_terminal
         assert now_node.messages != []
-
+        # self.pruned self.env.check_success()
         first_time = True
-        while now_node.get_depth() < single_chain_max_step and not now_node.is_terminal:
-
+        
+        while now_node.get_depth() < single_chain_max_step and not now_node.is_terminal and not now_node.env.status:
+            
             if first_time:
                 '''
                 第一次要拼接diversity prompt
@@ -329,9 +378,15 @@ class UCT_vote_function(base_search_method):
                         # child_des = self.get_former_trice(child,temp_node)
                         # former_candidates_des = former_candidates_des + f"<candidate_{k+1}>\n{child_des}"
                         if temp_node.node_type == "Action Input":
+                            # import pdb; pdb.set_trace()
+
+                            # if temp_node.description is str:
+                            if isinstance(temp_node.description, str):
+                                temp_node.description = json.loads(temp_node.description)
+
                             obj_dict = {
                                 "name": temp_node.father.description,
-                                "arguments": json.loads(temp_node.description),
+                                "arguments": temp_node.description,
                                 "function_output": temp_node.observation,
                                 "mento-carlo-action-value": temp_node.compute_weight(),
                             }
@@ -349,7 +404,7 @@ class UCT_vote_function(base_search_method):
             
             self.llm.change_messages(now_node.messages)
             # self.llm.display_conversation()
-            new_message = self.llm.parse()
+            new_message = self.llm.parse() # execute llm inference
             print(f"New message:\t{new_message}")
             assert new_message["role"] == "assistant"
 
@@ -363,18 +418,17 @@ class UCT_vote_function(base_search_method):
                         now_node.messages = now_node.messages[:-1]
                 except BaseException as e:
                     print(e)
-                    pdb.set_trace()
                     pass
-
+            
             if "content" in new_message.keys() and new_message["content"] != None:
-                # print(new_message["content"])
+                # action --> temp_node
                 temp_node = tree_node()
                 temp_node.node_type = "Thought"
                 temp_node.description = new_message["content"]
                 child_env = deepcopy(now_node.env)
                 
                 temp_node.env = child_env
-                temp_node.is_terminal = child_env.check_success() != 0 
+                temp_node.is_terminal = False
                 temp_node.messages = now_node.messages.copy()
                 temp_node.father = now_node
                 now_node.children.append(temp_node)
@@ -412,10 +466,10 @@ class UCT_vote_function(base_search_method):
                     child_env = deepcopy(now_node.env)
                     
                     temp_node.env = child_env
-                    temp_node.is_terminal = child_env.check_success() != 0 
+                    temp_node.is_terminal = False
                     temp_node.messages = now_node.messages.copy()
                     temp_node.father = now_node
-                    now_node.children.append(temp_node)
+                    now_node.children.append(temp_node) # the action node is child of the thought node
 
                     temp_node.print()
                     now_node = temp_node
@@ -431,108 +485,78 @@ class UCT_vote_function(base_search_method):
                     # observation, status = child_env.step(action_name=now_node.description, action_input=function_input)
                     temp_node.observation = observation
                     temp_node.env = child_env
-                    temp_node.is_terminal = child_env.check_success() != 0 
+                    temp_node.is_terminal = False
                     temp_node.messages = now_node.messages.copy()
                     temp_node.father = now_node
                     now_node.children.append(temp_node)
                     temp_node.print()
                     now_node = temp_node
                     this_simulation.append({"choice":0,"new_generated":True,"score":now_node.env.get_score()})
-
-  
-            # if "function_call" in new_message.keys():
-            #     function_name = new_message["function_call"]["name"]
-            #     # assert function_name in now_node.env.tool_names
-
-            #     # new the Action node
-            #     temp_node = tree_node()
-            #     temp_node.node_type = "Action"
-            #     temp_node.description = function_name
-            #     child_env = deepcopy(now_node.env)
-                
-            #     temp_node.env = child_env
-            #     temp_node.is_terminal = child_env.check_success() != 0 
-            #     temp_node.messages = now_node.messages.copy()
-            #     temp_node.father = now_node
-            #     now_node.children.append(temp_node)
-
-            #     temp_node.print()
-            #     now_node = temp_node
-            #     this_simulation.append({"choice":0,"new_generated":True,"score":now_node.env.get_score()})
-
-
-            #     # new the Action Input and Observation node
-            #     function_input = new_message["function_call"]["arguments"]
-            #     temp_node = tree_node()
-            #     temp_node.node_type = "Action Input"
-            #     temp_node.description = function_input
-            #     child_env = deepcopy(now_node.env)
-
-            #     observation, status = child_env.step(action_name=now_node.description, action_input=function_input)
-            #     temp_node.observation = observation
-            #     temp_node.env = child_env
-            #     temp_node.is_terminal = child_env.check_success() != 0 
-            #     temp_node.messages = now_node.messages.copy()
-            #     temp_node.father = now_node
-            #     now_node.children.append(temp_node)
-            #     temp_node.print()
-            #     now_node = temp_node
-            #     this_simulation.append({"choice":0,"new_generated":True,"score":now_node.env.get_score()})
-
-            #     if status != 0: # 错误，需要剪枝
-            #         # 0代表正常返回
-            #         # 1代表没有对应api名字
-            #         # 2代表输入有错误
-            #         # 3代表生成结束，出现final answer
-            #         # 4代表模型自己决定剪枝
-            #         if status == 4:
-            #             now_node.pruned = True
-            #         now_node.messages.append(new_message)
-            #         return now_node
             
-                    
             now_node.messages.append(new_message)
-            import pdb; pdb.set_trace()
+                    
             if now_node.node_type == "Action Input":
                 now_node.messages.append({
                     "role":"function",
-                    "name": new_message["function_call"]["name"],
-                    "content": now_node.observation,
+                    "name": parsed_response.tool,
+                    "content": str(now_node.observation),
                 })
+            
+            now_node.is_terminal = now_node.env.check_success(now_node.messages[-1])
 
-        now_node.pruned = True #链条过长被剪枝了
+
+            # evaluate whether optimization solutions are proposed in the now_node (terminal status)
+        
         return now_node
 
-    def _fill_prompt_template(
-        self, node_tools, env_description: str = "", tool_observation: List[str] = [], messages: List[dict] = []
-    ) -> str:
+
+
+    # def _fill_prompt_template(
+    #     self, node_tools, env_description: str = "", tool_observation: List[str] = [], messages: List[dict] = []
+    # ) -> str:
         
-        """Fill the placeholders in the prompt template
+    #     """Fill the placeholders in the prompt template
 
-        In the tool agent, these placeholders are supported:
-        - ${agent_name}: the name of the agent
-        - ${env_description}: the description of the environment
-        - ${role_description}: the description of the role of the agent
-        - ${chat_history}: the chat history of the agent
-        - ${tools}: the list of tools and their usage
-        - ${tool_names}: the list of tool names
-        - ${tool_observations}: the observation of the tool in this turn
-        """
-        #retriever = api_retriever()
+    #     In the tool agent, these placeholders are supported:
+    #     - ${agent_name}: the name of the agent
+    #     - ${env_description}: the description of the environment
+    #     - ${role_description}: the description of the role of the agent
+    #     - ${chat_history}: the chat history of the agent
+    #     - ${tools}: the list of tools and their usage
+    #     - ${tool_names}: the list of tool names
+    #     - ${tool_observations}: the observation of the tool in this turn
+    #     """
+    #     #retriever = api_retriever()
         
-        #relevant_tools = retriever.query(Template(self.prompt_template).safe_substitute({"chat_history": self.memory.to_string(add_sender_prefix=True)}), self.tools)
+    #     #relevant_tools = retriever.query(Template(self.prompt_template).safe_substitute({"chat_history": self.memory.to_string(add_sender_prefix=True)}), self.tools)
 
-        tools = "\n".join([f"> {api}: {node_tools.functions[api]['desc']}" for api in node_tools.functions])
-        tools = tools.replace("{{", "{").replace("}}", "}")
-        tool_names = ", ".join([api for api in node_tools.functions])
-        input_arguments = {
-            "agent_name": self.name,
-            "env_description": env_description,                                 
-            "role_description": "",
-            "chat_history": str(messages),
-            "tools": tools,
-            "tool_names": tool_names,
-            "tool_observation": "\n".join(tool_observation),
-        }
+    #     tools = "\n".join([f"> {api}: {node_tools.functions[api]['desc']}" for api in node_tools.functions])
+    #     tools = tools.replace("{{", "{").replace("}}", "}")
+    #     tool_names = ", ".join([api for api in node_tools.functions])
+        
+    #     if self.start_time != "":
+    #         input_arguments = {
+    #             "start_time": self.start_time,
+    #             "end_time": self.end_time,
+    #             "agent_name": self.name,
+    #             "env_description": env_description,                                 
+    #             #"role_description": self.role_description,
+    #             "chat_history": self.memory.to_string(add_sender_prefix=True),
+    #             "tools": tools,
+    #             "tool_names": tool_names,
+    #             "tool_observation": "\n".join(tool_observation),
+    #         }
+    #     else:
+    #         input_arguments = {
+    #             "agent_name": self.name,
+    #             "env_description": env_description,                                 
+    #             #"role_description": self.role_description,
+    #             "chat_history": self.memory.to_string(add_sender_prefix=True),
+    #             "tools": tools,
+    #             "tool_names": tool_names,
+    #             "tool_observation": "\n".join(tool_observation),
+    #         }
 
-        return Template(self.prompt_template).safe_substitute(input_arguments)
+    #     import pdb; pdb.set_trace()
+
+    #     return Template(self.prompt_template).safe_substitute(input_arguments)

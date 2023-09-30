@@ -120,10 +120,8 @@ class OpenAIChat(BaseChatModel):
                 return response["choices"][0]["message"]
             
             except (OpenAIError, KeyboardInterrupt) as error:
-                print(f"Parsing Exception: {repr(e)}. Try again.")
-                if response is not None:
-                    print(f"LLM return: {response}")
-                
+                print(f"Parsing Exception: {repr(error)}. Try again.")
+                                
                 continue
 
         return {"role": "assistant", "content": "OpenAI service is unavailable. Please try again."}
