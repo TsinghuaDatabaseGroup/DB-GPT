@@ -18,7 +18,11 @@ def whether_is_abnormal_metric(
         start_time: int,
         end_time: int,
         metric_name: str = "cpu_usage"):
-        
+
+    if metric_name not in prometheus_metrics:
+        print(f"{metric_name} is unknown")
+        return "The metric is unknown"
+
     metric_values = prometheus('api/v1/query_range',
                                 {'query': prometheus_metrics[metric_name],
                                 'start': start_time,
@@ -46,9 +50,9 @@ def whether_is_abnormal_metric(
 def match_diagnose_knowledge(
         start_time: int,
         end_time: int,
-        metric_name: str = "cpu"):
+        metric_name: str = "cpu",
+        alert_metric: str = ""):
     global slow_queries
-
 
     if "cpu" in metric_name:
         metric_prefix = "cpu"
@@ -60,9 +64,14 @@ def match_diagnose_knowledge(
         metric_prefix = "network"
 
     metrics_list = prometheus_metrics[f"{metric_prefix}_metrics"]
+    
+    alert_metric_list = []
+    alert_metric_list.append(alert_metric)
+    detailed_alert_metric = obtain_values_of_metrics(
+        int(start_time), int(end_time), alert_metric_list)
 
     detailed_metrics = obtain_values_of_metrics(
-        start_time, end_time, metrics_list)
+        int(start_time), int(end_time), metrics_list)
     
     # identify the abnormal metrics
     detailed_abnormal_metrics = {}
@@ -80,6 +89,9 @@ def match_diagnose_knowledge(
     workload_state = ""
     for i, query in enumerate(workload_statistics):
         # workload_state += str(i + 1) + '. ' + str(query) + "\n"
+        if isinstance(query["total_time"], str):
+            query["total_time"] = float(query["total_time"])
+
         query["total_time"] = "{:.2f}".format(query["total_time"])
         query["sql"] = query["sql"].replace("\n", " ")
         query["sql"] = query["sql"].replace("\t", " ")
@@ -89,6 +101,16 @@ def match_diagnose_knowledge(
         # conver the query template into a query and log into file
     
     docs_str = knowledge_matcher.match(detailed_abnormal_metrics)
+
+
+    if detailed_alert_metric:
+        alert_metric_str = """The values of alert metric {} are:
+    {}
+        
+""".format(alert_metric, detailed_alert_metric)
+    else:
+        alert_metric_str = ""
+
 
     # if detailed_abnormal_metrics is not empty
     if detailed_abnormal_metrics:
@@ -124,6 +146,6 @@ def match_diagnose_knowledge(
     {}
 """.format(docs_str)
 
-    knowledge_str= metric_str + workload_str + slow_queries_str + docs_str
+    knowledge_str= alert_metric_str + metric_str + workload_str + slow_queries_str + docs_str
 
     return knowledge_str

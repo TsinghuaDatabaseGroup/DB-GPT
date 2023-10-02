@@ -53,7 +53,7 @@ class UCT_vote_function(base_search_method):
         arbitrary_types_allowed = True
     memory: BaseMemory = Field
 
-    def __init__(self, agent_name, prompt_template, llm,env, output_parser, start_time, end_time, agent):
+    def __init__(self, agent_name, prompt_template, llm,env, output_parser, alert_dict, alert_str, agent):
         super(UCT_vote_function, self).__init__()
         '''
         偏序驱动的信心上限树算法:
@@ -68,8 +68,8 @@ class UCT_vote_function(base_search_method):
         self.env = env
         self.output_parser = output_parser
         self.simulations = []
-        self.start_time = start_time
-        self.end_time = end_time
+        self.alert_dict = alert_dict
+        self.alert_str = alert_str
 
         self.restart(agent)
 
@@ -168,7 +168,7 @@ class UCT_vote_function(base_search_method):
                 while now_node.node_type != "Action Input" and len(now_node.children) > 0:
                     now_node = now_node.children[0]
                     this_simulation.append({"choice":0,"new_generated":False,"score":now_node.env.get_score()})
-
+                
             if now_node.is_terminal:
                 print(colored(f"randomly go down to terminal nodes","green"))
             else:
@@ -421,6 +421,13 @@ class UCT_vote_function(base_search_method):
                     pass
             
             if "content" in new_message.keys() and new_message["content"] != None:
+
+                for _ in range(3):
+                    parsed_response = self.output_parser.parse(new_message)
+                    if parsed_response != None:
+                        break
+                    new_message = self.llm.parse() # execute llm inference
+
                 # action --> temp_node
                 temp_node = tree_node()
                 temp_node.node_type = "Thought"
@@ -436,14 +443,29 @@ class UCT_vote_function(base_search_method):
                 now_node = temp_node
                 this_simulation.append({"choice":0,"new_generated":True,"score":now_node.env.get_score()})
 
-                parsed_response = self.output_parser.parse(new_message)
 
                 if isinstance(parsed_response, AgentAction):
                     # If the response is an action, call the tool
                     # and append the observation to tool_observation
-                    
-                    parameters = json.loads(parsed_response.tool_input)
-                    observation = temp_node.env.tool.call_function(parsed_response.tool, **parameters)
+                    if "whether_is_abnormal_metric" in parsed_response.tool:
+                        parameters = json.loads(parsed_response.tool_input)
+
+                        if "metric_name" in parameters:
+                            parameters["metric_name"] = self.name.lower() + "_" + "usage"
+                    elif "match_diagnose_knowledge" in parsed_response.tool and self.alert_dict != None:
+                        # node_load1{instance="$instance"}
+                        metric_name = self.alert_dict["alert_desc"].split('[')[0]
+                        host = self.alert_dict["alert_exporter"]
+                        alert_metric = f"{metric_name}{{instance=\"{host}\"}}"
+
+                        parameters = {"start_time": self.alert_dict['start_time'], "end_time": self.alert_dict['end_time'], "metric_name": self.name.lower() + "_" + "usage", "alert_metric": alert_metric}
+                    else:
+                        parameters = json.loads(parsed_response.tool_input)
+
+                    if "obtain_start_and_end_time_of_anomaly" in parsed_response.tool and self.alert_dict != {}:
+                        observation = f"The start time is {self.alert_dict['start_time']}, and the end time is {self.alert_dict['end_time']}."
+                    else:
+                        observation = temp_node.env.tool.call_function(parsed_response.tool, **parameters)
                     
                     # tool_observation.append(
                     #     parsed_response.log.strip()

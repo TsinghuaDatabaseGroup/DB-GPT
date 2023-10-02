@@ -9,7 +9,7 @@ import requests
 import json
 import aiohttp
 import asyncio
-import pdb
+import time
 
 try:
     import openai
@@ -121,6 +121,7 @@ class OpenAIChat(BaseChatModel):
             
             except (OpenAIError, KeyboardInterrupt) as error:
                 print(f"Parsing Exception: {repr(error)}. Try again.")
+                time.sleep(.1)
                                 
                 continue
 

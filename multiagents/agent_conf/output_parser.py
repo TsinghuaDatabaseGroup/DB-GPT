@@ -35,8 +35,9 @@ class DBDiag(OutputParser):
             and cleaned_output[1].startswith("Action")
             and cleaned_output[2].startswith("Action Input")
         ):
-            raise OutputParserError(text)
-        
+            # print the error
+            return None
+
         action = cleaned_output[1][len("Action:") :].strip()
         action_input = cleaned_output[2][len("Action Input:") :].strip()
 
@@ -51,7 +52,11 @@ class DBDiag(OutputParser):
                 action_input = action_input[1:]
             if action_input[-1] == ')':
                 action_input = action_input[:-1]
-            action_input = json.loads(action_input)
+            try:
+                action_input = json.loads(action_input)
+            except:
+                print("error in json.loads")
+                return None
 
             action_json = {"diagnose": "", "solution": [], "knowledge": ""}
             

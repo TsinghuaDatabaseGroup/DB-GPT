@@ -3,7 +3,7 @@ max_turn: &max_turn 3
 prompts:
   role_assigner_prompt: &role_assigner_prompt |-
     # Role Description
-    You are the leader of a group of diagnosis experts. Currently, the database in your company may meet problems. The alert is:
+    You are the leader of a group of diagnosis experts. Currently, the database in your company may meet problems. The anomaly alert is:
     ${alert_info}
     
     Now you need to select experts with diverse identity to correctly analyze the root causes of the given alert. The names of available experts are:
@@ -20,7 +20,8 @@ prompts:
     Only respond with the names of selected experts (separated by spaces). Do not include your reason.
 
   chief_dba_format_prompt: &chief_dba_format_prompt |-
-    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. It depends on you to collaborate with other agents to diagnose the root causes. ${role_description}
+    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. It depends on you to collaborate with other agents to diagnose the root causes. The anomaly alert is:
+    ${alert_info}
     
     # Rules and Format Instructions for Response
     
@@ -67,7 +68,8 @@ prompts:
   # Action: Listen
   # Action Input: "None"
   cpu_agent_format_prompt: &cpu_agent_format_prompt |-
-    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. ${role_description}
+    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. The anomaly alert is:
+    ${alert_info}
 
     # Rules and Format Instructions for Response
 
@@ -118,7 +120,8 @@ prompts:
     Based on the above history, what will you, ${agent_name}, do next?
 
   mem_agent_format_prompt: &mem_agent_format_prompt |-
-    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. ${role_description}
+    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. The anomaly alert is:
+    ${alert_info}
 
     # Rules and Format Instructions for Response
 
@@ -159,7 +162,8 @@ prompts:
     Based on the above history, what will you, ${agent_name}, do next?
 
   io_agent_format_prompt: &io_agent_format_prompt |-
-    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. ${role_description}
+    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. The anomaly alert is:
+    ${alert_info}
 
     # Rules and Format Instructions for Response
 
@@ -190,12 +194,13 @@ prompts:
 
     Here is the execution log of tools
     ${tool_observation}
-
+    
     Remember to pay attention to the response format instructions, and strictly follow the rules specified above! And do not easily give root causes if there is no clear evidence.
     Based on the above history, what will you, ${agent_name}, do next?
 
   network_agent_format_prompt: &network_agent_format_prompt |-
-    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. ${role_description}
+    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. The anomaly alert is:
+    ${alert_info}
 
     # Rules and Format Instructions for Response
 
@@ -229,47 +234,6 @@ prompts:
 
     Remember to pay attention to the response format instructions, and strictly follow the rules specified above! And do not easily give root causes if there is no clear evidence.
     Based on the above history, what will you, ${agent_name}, do next?
-
-
-  summary_prompt: &summary_prompt |
-    Progressively summarize the lines of a record that you uses tools, which contains inputs for certain tools and the results returned by these tools. Based on the current summary, you need to summarize from the record the goals that the you intended to solve with each call to the tool, add it onto the previous summary, and eventually return a new summary.
-
-    EXAMPLE
-    Current summary:
-
-    New lines:
-    Thought: First, I need to obtain the start and end time of the anomaly.
-    Action: obtain_start_and_end_time_of_anomaly
-    Action Input: {"input": "json dict string"}
-    Observation: {"start_time": ${start_time},"end_time": ${end_time}}
-
-    New summary:
-    - I now know the start and end time of the anomaly.
-
-    Current summary:
-    - I know the start and end time of the anomaly.
-
-    New lines:
-    Thought: Now that I have the start and end time of the anomaly, I need to diagnose the causes of the anomaly
-    Action: whether_is_abnormal_metric
-    Action Input: {"start_time": ${start_time},"end_time": ${end_time}, "metric_name": "cpu_usage"}
-    Observation: "The metric is abnormal"
-
-    New summary:
-    - I now know the start and end time of the anomaly.
-    - I searched for whether_is_abnormal_metric, and I now know that the CPU usage is abnormal.
-    END OF EXAMPLE
-
-    Now, try to summarize the following record.
-
-    Current summary:
-    ${summary}
-
-    New lines:
-    ${new_lines}
-
-    New summary:
-
 
 monitor_tools: &monitor_tools
 -
@@ -334,7 +298,6 @@ agents:
         llm_type: gpt-4
         model: gpt-4
         temperature: 0.7
-      prompt_template: *summary_prompt
       recursive: true
     llm:
       llm_type: gpt-4
@@ -356,7 +319,6 @@ agents:
         llm_type: gpt-4
         model: gpt-4
         temperature: 0.7
-      prompt_template: *summary_prompt
       recursive: true
     llm:
       llm_type: gpt-4
@@ -378,7 +340,6 @@ agents:
         llm_type: gpt-4
         model: gpt-4
         temperature: 0.7
-      prompt_template: *summary_prompt
       recursive: true
     llm:
       llm_type: gpt-4
@@ -400,7 +361,6 @@ agents:
         llm_type: gpt-4
         model: gpt-4
         temperature: 0.7
-      prompt_template: *summary_prompt
       recursive: true
     llm:
       llm_type: gpt-4
@@ -422,7 +382,6 @@ agents:
         llm_type: gpt-4
         model: gpt-4
         temperature: 0.7
-      prompt_template: *summary_prompt
       recursive: true
     llm:
       llm_type: gpt-4

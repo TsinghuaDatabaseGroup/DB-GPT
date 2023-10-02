@@ -28,13 +28,27 @@ from . import env_registry as EnvironmentRegistry
 from pydantic import BaseModel
 
 
-def extract_alert_time(alert_dict):
+def extract_alert_info(alert_dict):
 
     # Extract the startsAt and endsAt values
     
     alert_dict = re.sub(r'"groupKey": ".*?",', '', alert_dict)
     alert_dict = json.loads(alert_dict)
-    
+
+    alert_status = alert_dict['status']
+    alert_status = alert_status.strip()
+
+    # identify the first alert 
+    alert_desc = alert_dict['alerts'][0]['annotations']['description']
+    alert_desc = alert_desc.strip()
+
+    alert_exporter = alert_dict['alerts'][0]['labels']['instance']
+    alert_exporter = alert_exporter.strip()
+
+    # Critical High Warning Info
+    alert_level = alert_dict['alerts'][0]['labels']['severity']
+    alert_level = alert_level.strip()
+
     starts_at = parser.parse(alert_dict['alerts'][0]['startsAt'])
     ends_at = parser.parse(alert_dict['alerts'][0]['endsAt'])
 
@@ -46,7 +60,20 @@ def extract_alert_time(alert_dict):
     starts_at_seconds = (starts_at - epoch).total_seconds()
     ends_at_seconds = (ends_at - epoch).total_seconds()
 
-    return str(int(starts_at_seconds)), str(int(ends_at_seconds))
+    starts_at_seconds = str(int(starts_at_seconds))
+    ends_at_seconds = str(int(ends_at_seconds))
+
+    alert_info = f"Alert Status: {alert_status}\nAlert Description: {alert_desc}\nAlert Level: {alert_level}\nAlert Starts At: {starts_at_seconds}\nAlert Ends At: {ends_at_seconds}"
+
+    alert_dict = {  "alert_status": alert_status,
+                    "alert_level": alert_level, 
+                    "alert_desc": alert_desc, 
+                    "alert_exporter": alert_exporter, 
+                    "start_time": starts_at_seconds,
+                    "end_time": ends_at_seconds}
+
+
+    return alert_info, alert_dict
 
 
 @EnvironmentRegistry.register("dba")
@@ -117,12 +144,12 @@ class DBAEnvironment(BaseModel):
         # ================== EXPERT RECRUITMENT ==================
         agents = self.role_assign(advice)
         # description = "\n".join([agent.role_description for agent in agents])
-        start_time, end_time = extract_alert_time(self.role_assigner.alert_info)
+        alert_str, alert_dict = extract_alert_info(self.role_assigner.alert_info)
 
-        # assign start_time, end_time to each agent
+        # assign alert info to each agent
         for agent in agents:
-            agent.start_time = start_time
-            agent.end_time = end_time
+            agent.alert_str = alert_str
+            agent.alert_dict = alert_dict
         
         # ================== EXPERT DIAGNOSIS ==================
         # count on these agents to diagnose for the alert

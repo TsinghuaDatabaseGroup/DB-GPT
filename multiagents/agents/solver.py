@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 from colorama import Fore
-
 import re
 import bdb
 import time
@@ -160,8 +159,9 @@ class SolverAgent(BaseAgent):
     verbose: bool = Field(default=False)
     name: str = Field(default="Chief DBA")
     max_history: int = 3
-    start_time: str = ""
-    end_time: str = ""
+    alert_str: str = ""
+    alert_dict: dict = {}
+
 
     def step(
         self, former_solution: str, advice: str, task_description: str = "", **kwargs
@@ -186,9 +186,9 @@ class SolverAgent(BaseAgent):
         # Step1: configure attirbutes in the tasksolving environment
         tasksolving_env = wrap_tasksolving_env(task_description, self.tools, self.tool_memory)
         
-        chain = UCT_vote_function(agent_name=self.name, prompt_template=self.prompt_template, llm=self.llm,env=tasksolving_env, output_parser=self.output_parser, start_time=self.start_time, end_time=self.end_time, agent=self)
+        chain = UCT_vote_function(agent_name=self.name, prompt_template=self.prompt_template, llm=self.llm,env=tasksolving_env, output_parser=self.output_parser, alert_dict=self.alert_dict, alert_str=self.alert_str, agent=self)
 
-        result_node = chain.start(simulation_count=3,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=10)
+        result_node = chain.start(simulation_count=2,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=10)
 
         # result_node.messages
         # result_node.description
@@ -233,10 +233,12 @@ class SolverAgent(BaseAgent):
 
         # adopt tree of thought here
 
+        import pdb; pdb.set_trace()
+
         message = SolverMessage(
             content=""
-            if result is None
-            else result,
+            if result_node.messages is None
+            else result_node.messages,
             sender=self.name,
             receiver=self.get_receiver(),
         )
@@ -261,17 +263,15 @@ class SolverAgent(BaseAgent):
         - ${tool_names}: the list of tool names
         - ${tool_observations}: the observation of the tool in this turn
         """
-        #retriever = api_retriever()
-        
+        #retriever = api_retriever()        
         #relevant_tools = retriever.query(Template(self.prompt_template).safe_substitute({"chat_history": self.memory.to_string(add_sender_prefix=True)}), self.tools)
-
+        
         tools = "\n".join([f"> {tool}: {self.tools.functions[tool]['desc']}" for tool in self.tools.functions])
         tools = tools.replace("{{", "{").replace("}}", "}")
         tool_names = ", ".join([tool for tool in self.tools.functions])
-        if self.start_time != "":
+        if self.alert_dict['start_time'] != "":
             input_arguments = {
-                "start_time": self.start_time,
-                "end_time": self.end_time,
+                "alert_info": self.alert_str,
                 "agent_name": self.name,
                 "env_description": env_description,                                 
                 "role_description": self.role_description,
@@ -289,7 +289,7 @@ class SolverAgent(BaseAgent):
                 "tools": tools,
                 "tool_names": tool_names,
                 "tool_observation": "\n".join(tool_observation),
-            }
+             }
 
         return Template(self.prompt_template).safe_substitute(input_arguments)
 
