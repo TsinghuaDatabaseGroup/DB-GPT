@@ -28,21 +28,28 @@ class VerticalDecisionMaker(BaseDecisionMaker):
         advice: str = "No advice yet.",
         *args,
         **kwargs,
-    ) -> List[SolverMessage]:
+    ) -> List[dict]:
 
-        results: List[SolverMessage] = await asyncio.gather(
+        if len(agents) > 1:
+            agents = agents[:2]
+
+        results = await asyncio.gather(
             *[
                 agent.step(previous_plan, advice, task_description)
                 for agent in agents
             ]
         )
 
+        # review by chief dba
+
+        import pdb; pdb.set_trace()
+
         nonempty_results = []
         for result in results:
-            if result.content != "":
+            if result["content"] != "":
                 nonempty_results.append(result)
 
-        agents[0].add_message_to_memory(nonempty_results)
+        agents[0].add_message_to_memory(nonempty_results) # agents[9].memory
 
         return nonempty_results
 

@@ -163,7 +163,7 @@ class SolverAgent(BaseAgent):
     alert_dict: dict = {}
 
 
-    def step(
+    async def step(
         self, former_solution: str, advice: str, task_description: str = "", **kwargs
     ) -> SolverMessage:
         
@@ -233,15 +233,26 @@ class SolverAgent(BaseAgent):
 
         # adopt tree of thought here
 
-        import pdb; pdb.set_trace()
-
-        message = SolverMessage(
-            content=""
+        message = {
+            "content": ""
             if result_node.messages is None
-            else result_node.messages,
-            sender=self.name,
-            receiver=self.get_receiver(),
-        )
+            else result_node.messages[-1],
+            "sender": self.name,
+            "receiver": self.get_receiver()
+        }
+
+        # message = SolverMessage(
+        #     content={"diagnose": "", "solution": [], "knowledge": ""}
+        #     if result_node.messages is None
+        #     else result_node.messages[-1],
+        #     sender=self.name,
+        #     receiver=self.get_receiver()
+        # )
+
+    # content: dict = Field(default={"diagnose": "", "solution": [], "knowledge": ""})
+    # sender: str = Field(default="")
+    # receiver: Set[str] = Field(default=set({"all"}))
+    # tool_response: List[Tuple[AgentAction, str]] = Field(default=[])
 
         return message
 
@@ -299,4 +310,4 @@ class SolverAgent(BaseAgent):
     def reset(self) -> None:
         """Reset the agent"""
         self.memory.reset()
-        # TODO: reset receiver
+        # TODO: reset receiver        

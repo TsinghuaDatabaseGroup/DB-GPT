@@ -100,6 +100,8 @@ def match_diagnose_knowledge(
 
         # conver the query template into a query and log into file
     
+    # matching_metrics = {**detailed_abnormal_metrics}
+
     docs_str = knowledge_matcher.match(detailed_abnormal_metrics)
 
 

@@ -23,8 +23,6 @@ def node_to_chain(node):
         "answer": "",
     }
 
-    import pdb; pdb.set_trace()
-
     step = {}
     for i, message in enumerate(node.messages):
         if message["role"] == "system":
@@ -362,7 +360,6 @@ class UCT_vote_function(base_search_method):
         first_time = True
         
         while now_node.get_depth() < single_chain_max_step and not now_node.is_terminal and not now_node.env.status:
-            
             if first_time:
                 '''
                 第一次要拼接diversity prompt
@@ -514,18 +511,17 @@ class UCT_vote_function(base_search_method):
                     temp_node.print()
                     now_node = temp_node
                     this_simulation.append({"choice":0,"new_generated":True,"score":now_node.env.get_score()})
-            
-            now_node.messages.append(new_message)
-                    
+                        
             if now_node.node_type == "Action Input":
                 now_node.messages.append({
                     "role":"function",
                     "name": parsed_response.tool,
                     "content": str(now_node.observation),
                 })
+            else:
+                now_node.messages.append(new_message)
             
             now_node.is_terminal = now_node.env.check_success(now_node.messages[-1])
-
 
             # evaluate whether optimization solutions are proposed in the now_node (terminal status)
         
