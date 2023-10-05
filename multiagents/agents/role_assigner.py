@@ -14,7 +14,6 @@ from multiagents.agents.base import BaseAgent
 
 # from multiagents.environments import PipelineEnvironment
 
-
 @agent_registry.register("role_assigner")
 class RoleAssignerAgent(BaseAgent):
     def step(

@@ -24,22 +24,32 @@ class MultiAgents:
         
         # Prepare the config of the task
         task_config = prepare_task_config(task)
-
+        
         # Build the agents
+        reporter = None
         agents = {}
         for agent_config in task_config["agents"]:
+            
             agent_type = AGENT_TYPES(agent_config["agent_type"])
+            agent_type_name = agent_config["agent_type"]
 
-            if agent_type not in agents:
-                agents[agent_type] = [load_agent(agent_config)]
+            agent = load_agent(agent_config)
+
+            if agent_type_name == "reporter":
+                reporter = agent
             else:
-                agents[agent_type].append(load_agent(agent_config))
-        
+                if agent_type not in agents:
+                    agents[agent_type] = [agent]
+                else:
+                    agents[agent_type].append(agent)
+
+        if reporter is None:
+            raise ValueError("Reporter is not specified.")
+
         # Build the environment
         env_config = task_config["environment"]
         env_config["agents"] = agents
-
-        # settings (default is '')
+        env_config["reporter"] = reporter
         env_config["task_description"] = task_config.get("task_description", "")
 
         environment: DBAEnvironment = load_environment(env_config)

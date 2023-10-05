@@ -9,6 +9,7 @@ from .role_assigner import RoleAssignerAgent
 from .critic import CriticAgent
 from .evaluator import EvaluatorAgent
 from .solver import SolverAgent
+from .reporter import ReporterAgent
 from .manager import ManagerAgent
 from .executor import ExecutorAgent
 from .executor_fc import ExecutorAgent_fc

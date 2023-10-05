@@ -31,6 +31,7 @@ class AGENT_TYPES(Enum):
     ROLE_ASSIGNMENT = "role_assigner"
     SOLVER = "solver"
     CRITIC = "critic"
+    REPORTER = "reporter"
     # EXECUTION = 3
     # EVALUATION = 4
     # MANAGER = 5

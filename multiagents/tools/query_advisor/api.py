@@ -222,7 +222,7 @@ def enable_or_disable_bitmapscan_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_bitmapscan knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the bitmapscan operator."
@@ -249,7 +249,7 @@ def enable_or_disable_gathermerge_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_gathermerge knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the gathermerge operator."
@@ -276,7 +276,7 @@ def enable_or_disable_hashagg_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_hashagg knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the hashagg operator."
@@ -303,7 +303,7 @@ def enable_or_disable_hashjoin_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_hashjoin knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the hashjoin operator."
@@ -330,7 +330,7 @@ def enable_or_disable_indexonlyscan_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_indexonlyscan knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the indexonlyscan operator."
@@ -357,7 +357,7 @@ def enable_or_disable_indexscan_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_indexscan knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the indexscan operator."
@@ -384,7 +384,7 @@ def enable_or_disable_material_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_material knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the material operator."
@@ -411,7 +411,7 @@ def enable_or_disable_mergejoin_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_mergejoin knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the mergejoin operator."
@@ -438,7 +438,7 @@ def enable_or_disable_nestloop_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_nestloop knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the nestloop operator."
@@ -465,7 +465,7 @@ def enable_or_disable_parallel_append_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_parallel_append knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the parallel_append operator."
@@ -492,7 +492,7 @@ def enable_or_disable_parallel_hash_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_parallel_hash knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the parallel_hash operator."
@@ -519,7 +519,7 @@ def enable_or_disable_partition_pruning_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_partition_pruning knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the partition_pruning operator."
@@ -546,7 +546,7 @@ def enable_or_disable_seqscan_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_seqscan knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the seqscan operator."
@@ -573,7 +573,7 @@ def enable_or_disable_sort_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_sort knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the sort operator."
@@ -600,7 +600,7 @@ def enable_or_disable_tidscan_operator(action: str, query: str):
             status_code=400,
             detail=f"Failed to explain the query after changing the enable_tidscan knob.")
     else:
-        if action == "ON":
+        if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(
                 new_query_plan)
             text_output = f"The new query plan statistics: total cost is {total_cost} and the operators are {operators},  after enabling the tidscan operator."

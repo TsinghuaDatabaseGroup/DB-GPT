@@ -55,8 +55,7 @@ class UCT_vote_function(base_search_method):
         super(UCT_vote_function, self).__init__()
         '''
         偏序驱动的信心上限树算法:
-        1.适用于0613新版模型接口
-        2.由value决定回传什么节点
+        1.由value决定回传什么节点
         2.回传反思，同时做偏序 
         '''
 
@@ -200,9 +199,13 @@ class UCT_vote_function(base_search_method):
             print(colored("No terminal node found!","red"))
 
             return None
-        
+            
         else:
             final_terminal_node = sorted(self.terminal_node, key=lambda x: sum(x.values), reverse=True)[0]
+            
+            if final_terminal_node.pruned is True:
+                print(colored("Final answer is pruned!","red"))
+                return None
 
             return final_terminal_node
 
@@ -290,6 +293,12 @@ class UCT_vote_function(base_search_method):
                 else:
                     self.good_vote += (-1 == max_position)
                     print(colored(f"vote to Nothing, both candidate punished","yellow"))
+                    for k,child_id in enumerate(choices):
+                        now_node = self.terminal_node[child_id]
+                        while now_node != None:
+                            now_node.pruned = True
+                            now_node = now_node.father
+
             if vaild_votes > 0:
                 for k,child_id in enumerate(choices):
                     vote_count_this_turn = votes[k]
@@ -440,22 +449,28 @@ class UCT_vote_function(base_search_method):
                 now_node = temp_node
                 this_simulation.append({"choice":0,"new_generated":True,"score":now_node.env.get_score()})
 
-
                 if isinstance(parsed_response, AgentAction):
                     # If the response is an action, call the tool
                     # and append the observation to tool_observation
                     if "whether_is_abnormal_metric" in parsed_response.tool:
-                        parameters = json.loads(parsed_response.tool_input)
 
-                        if "metric_name" in parameters:
-                            parameters["metric_name"] = self.name.lower() + "_" + "usage"
+                        metric_name = self.name.lower()
+                        metric_name = metric_name.replace("expert","") + "_" + "usage"
+
+                        parameters = {"start_time": self.alert_dict["start_time"],      
+                                      "end_time": self.alert_dict["end_time"],
+                                      "metric_name": metric_name}
+
                     elif "match_diagnose_knowledge" in parsed_response.tool and self.alert_dict != None:
                         # node_load1{instance="$instance"}
                         metric_name = self.alert_dict["alert_desc"].split('[')[0]
                         host = self.alert_dict["alert_exporter"]
                         alert_metric = f"{metric_name}{{instance=\"{host}\"}}"
 
-                        parameters = {"start_time": self.alert_dict['start_time'], "end_time": self.alert_dict['end_time'], "metric_name": self.name.lower() + "_" + "usage", "alert_metric": alert_metric}
+                        metric_name = self.name.lower()
+                        metric_name = metric_name.replace("expert","") + "_" + "usage"
+
+                        parameters = {"start_time": self.alert_dict['start_time'], "end_time": self.alert_dict['end_time'], "metric_name": metric_name}
                     else:
                         parameters = json.loads(parsed_response.tool_input)
 

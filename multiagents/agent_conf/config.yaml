@@ -13,8 +13,8 @@ prompts:
     
     # Response Format Guidance
     You should respond with a list of expert names. For example:
-    1. CPU
-    2. Memory
+    1. CpuExpert
+    2. MemoryExpert
     ...
     
     Only respond with the names of selected experts (separated by spaces). Do not include your reason.
@@ -281,8 +281,8 @@ agents:
       type: role_assigner
 
   - 
-    agent_type: solver
-    name: Chief
+    agent_type: reporter
+    name: ChiefDBA
     role_description: |-
       You are a Chief DBA with much database diagnosis experience. Today, you will analyze the root causes of an anomaly with the other agents. Here is the outline of the procedure:
       1. Chat and ask how to diangose the root causes of the anomaly with other agents.
@@ -308,7 +308,7 @@ agents:
     verbose: true
   -
     agent_type: solver
-    name: CPU
+    name: CpuExpert
     role_description: You are a CPU agent that can use the tool apis to check CPU usage (whether_is_abnormal_metric), analyze the root causes of high CPU usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection, enable_or_disable_nestloop_operator).
     prompt_template: *cpu_agent_format_prompt
     memory:
@@ -329,7 +329,7 @@ agents:
     verbose: true
   -
     agent_type: solver
-    name: Memory
+    name: MemoryExpert
     role_description: You are a memory agent that can use the db_diag tool to check memory usage (whether_is_abnormal_metric) and analyze the root causes of high memory usage the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions by calling relevant apis.
     prompt_template: *mem_agent_format_prompt
     memory:
@@ -350,7 +350,7 @@ agents:
     verbose: true
   -
     agent_type: solver
-    name: IO
+    name: IoExpert
     role_description: You are a IO agent that can analyze the root causes of high I/O bandwidth usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection), and give optimization solutions by calling relevant apis.
     prompt_template: *io_agent_format_prompt
     memory:
@@ -371,7 +371,7 @@ agents:
     verbose: true
   -
     agent_type: solver
-    name: Network
+    name: NetworkExpert
     role_description: You are a network agent that can analyze the root causes of slow network using the metrics and knowledge gained from (match_diagnose_knowledge), and give solving advice.
     prompt_template: *network_agent_format_prompt
     memory:

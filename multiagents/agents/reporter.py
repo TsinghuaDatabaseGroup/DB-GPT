@@ -22,145 +22,33 @@ from multiagents.tools.api_retrieval import APICaller
 from multiagents.reasoning_algorithms import UCT_vote_function, node_to_chain
 from multiagents.utils.utils import AgentAction, AgentFinish
 from multiagents.reasoning_algorithms import base_env
+from prompt_templates.Report_prompts import  ANOMALY_DESC_PROMPT
 
-
-class ToolNotExistError(BaseException):
-
-    """Exception raised when parsing output from a command fails."""
-
-    def __init__(self, tool_name=""):
-        self.tool_name = tool_name
-
-    def __str__(self):
-        return f"Tool {self.tool_name} does not exist."
-
-
-class wrap_tasksolving_env(base_env):
-    def __init__(self, task_description, tools, tool_memory):
-        super(wrap_tasksolving_env, self).__init__()
-
-        # tool_name, tool_url = 'database',  "http://127.0.0.1:8079/tools/database/"
-        # tool_name, tool_config = load_single_tools(tool_name, tool_url)
-
-        # self.tool, _ = import_all_apis(tool_config)
-
-        self.task_description = task_description
-        self.tool = tools
-        self.tool_memory = tool_memory
-
-        # self.input_description = "The followings are the names of the valid actions:\n"
-        self.tool_names = []
-
-        for api in self.tool.functions:
-            # self.input_description += api + "\n"
-            self.tool_names.append(api)
-        self.tool_names.append("finish")
-
-        # for api in self.tool:
-        #     func_name = api.name
-        #     func_description = api.description
-
-        #     function = {
-        #         "name": func_name,
-        #         "description": func_description,
-        #         "parameters": {
-        #             "type": "object",
-        #             "properties": {},
-        #             "required": []
-        #         },
-        #     }
-
-        #     param_string = pattern_1.findall(func_description)
-
-        #     for i in param_string:
-        #         result = pattern_2.findall(i)[0]
-        #         param_name, param_type = result[0], result[1]
-
-        #         param = {
-        #             param_name: {
-        #                 "type": param_type,
-        #                 "description": "", # TODO
-        #             }
-        #         }
-
-        #         function["parameters"]["properties"].update(param)
-
-        #     self.functions.append(function)
-
-        # self.finish_func = {
-        #     "name": "Finish",
-        #     "description": "If you think you get the result which can answer the input description, call this function to give the final answer",
-        #     "parameters": {
-        #         "type": "object",
-        #         "properties": {
-        #             "answer": {
-        #                 "type": "string",
-        #                 "description": "The final answer you want to give the user"
-        #             },
-        #         },
-        #         "required": ["answer"]
-        #     }
-        # }
-
-        # self.functions.append(self.finish_func)
-
-        self.restart()
-
-    def check_success(self, message):
-
-        if "\"solution\"" in message['content'].lower():
-            self.status = 1
-        else:
-            self.status = 0
-
-        return self.status
-
-    def to_json(self):
-        return {}
-
-    def restart(self):
-        self.status = 0
-
-    def get_score(self):
-
-        return 0.0
-
-
-    def step(self, parsed_response=""):
-            
-        if parsed_response.tool == "Final Answer" or "finish" in parsed_response.tool.lower():
-            self.status = 1
-            return "", 1
-
-        parameters = json.loads(parsed_response.tool_input)
-        observation = self.tool.call_function(parsed_response.tool, **parameters)
-
-        return observation, 0
-
-        # if self.name_to_tool_map.get(action_name):
-        #     observation = self.name_to_tool_map[action_name].run(
-        #         action_input
-        #     )
-        #     # print(observation)
-        #     return observation, 0
-        # else:
-        #     output = f"no such action : {action_name}"
-        #     # print(output)
-        #     return output, 0
-
-
-@agent_registry.register("solver") # solver is also tool agent by default
-class SolverAgent(BaseAgent):
+@agent_registry.register("reporter") # solver is also tool agent by default
+class ReporterAgent(BaseAgent):
     class Config:
         arbitrary_types_allowed = True
 
-    tools: APICaller = Field(default_factory=APICaller)
-    tool_memory: BaseMemory = Field(default_factory=ChatHistoryMemory)
     verbose: bool = Field(default=False)
-    name: str = Field(default="CpuExpert")
+    name: str = Field(default="ChiefDBA")
     max_history: int = 3
     alert_str: str = ""
     alert_dict: dict = {}
+    anomaly_desc_prompt: str = ANOMALY_DESC_PROMPT
+
+    report: dict = {"anomaly date": "", "anomaly description": "", "root cause": "", "diagnosis process": "", "solutions": ""}
+
+    def initialize_report(self):
+
+        seconds = int(self.alert_dict['start_time'])
+        start_date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(seconds))
+        self.report["anomaly date"] = start_date
+
+        anomaly_desc_prompt = self.anomaly_desc_prompt.replace("{anomaly_str}", self.alert_str)
+
+        anomaly_desc = self.llm.generate_response(anomaly_desc_prompt).content
+        
+        self.report["anomaly description"] = anomaly_desc
 
 
     async def step(
@@ -184,10 +72,9 @@ class SolverAgent(BaseAgent):
         # parsed_response = self.output_parser.parse()
 
         # Step1: configure attirbutes in the tasksolving environment
-        tasksolving_env = wrap_tasksolving_env(task_description, self.tools, self.tool_memory)
         
         chain = UCT_vote_function(agent_name=self.name, prompt_template=self.prompt_template, llm=self.llm,env=tasksolving_env, output_parser=self.output_parser, alert_dict=self.alert_dict, alert_str=self.alert_str, agent=self)
-    
+
         result_node = chain.start(simulation_count=2,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=10)
 
         # result_node.messages
@@ -232,36 +119,15 @@ class SolverAgent(BaseAgent):
         #         continue
 
         # adopt tree of thought here
-        
-        if result_node is None:
-            return {}
 
-        thought = ""
-        solutions = ""
-        for message in result_node.messages:
-            if 'content' in message and '"start_time":"xxxx"' not in message['content'].lower() and '"solution"' in message['content'].lower():
-                contents = message['content'].split('\n')
-                for content in contents:
-                    if "thought" in content.lower():
-                        thought = content.strip()
-                        thought = re.sub(r'(?i)thought:\s?', '', thought)
-                    if "solution" in content.lower():
-                        pattern = r'(?i)"solution":\s?(.*?),\s?"'
-                        match = re.search(pattern, content)
-
-                        if match:
-                            solutions = match.group(1)
-        
-        
-        return {
-            "root cause": result_node.messages[-1]
-            if thought == ""
-            else thought,
-            "diagnosis process": result_node.messages,
-            "solutions": solutions,
+        message = {
+            "content": ""
+            if result_node.messages is None
+            else result_node.messages[-1],
             "sender": self.name,
-            "receiver": self.get_receiver()}
-    
+            "receiver": self.get_receiver()
+        }
+
         # message = SolverMessage(
         #     content={"diagnose": "", "solution": [], "knowledge": ""}
         #     if result_node.messages is None
@@ -270,11 +136,12 @@ class SolverAgent(BaseAgent):
         #     receiver=self.get_receiver()
         # )
 
-        # content: dict = Field(default={"diagnose": "", "solution": [], "knowledge": ""})
-        # sender: str = Field(default="")
-        # receiver: Set[str] = Field(default=set({"all"}))
-        # tool_response: List[Tuple[AgentAction, str]] = Field(default=[])
+    # content: dict = Field(default={"diagnose": "", "solution": [], "knowledge": ""})
+    # sender: str = Field(default="")
+    # receiver: Set[str] = Field(default=set({"all"}))
+    # tool_response: List[Tuple[AgentAction, str]] = Field(default=[])
 
+        return message
 
     async def astep(self, env_description: str = "") -> SolverMessage:
         """Asynchronous version of step"""
@@ -323,11 +190,11 @@ class SolverAgent(BaseAgent):
              }
 
         return Template(self.prompt_template).safe_substitute(input_arguments)
-
+    
     def add_message_to_memory(self, messages: List[Message]) -> None:
         self.memory.add_message(messages)
 
     def reset(self) -> None:
         """Reset the agent"""
         self.memory.reset()
-        # TODO: reset receiver
+        # TODO: reset receiver        

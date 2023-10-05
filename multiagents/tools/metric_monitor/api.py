@@ -54,11 +54,11 @@ def match_diagnose_knowledge(
         alert_metric: str = ""):
     global slow_queries
 
-    if "cpu" in metric_name:
+    if "cpu" in metric_name.lower():
         metric_prefix = "cpu"
-    elif "io" in metric_name:
+    elif "io" in metric_name.lower():
         metric_prefix = "io"
-    elif "mem" in metric_name:
+    elif "mem" in metric_name.lower():
         metric_prefix = "memory"
     else:
         metric_prefix = "network"
