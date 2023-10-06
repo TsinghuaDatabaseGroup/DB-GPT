@@ -3,7 +3,6 @@ from multiagents.tools.metric_monitor.anomaly_detection import prometheus
 from multiagents.tools.metric_monitor.anomaly_detection import detect_anomalies
 from multiagents.tools.metrics import prometheus_metrics, postgresql_conf, obtain_values_of_metrics, processed_values
 from multiagents.tools.metrics import diag_start_time, diag_end_time
-import pdb
 from multiagents.tools.metrics import slow_queries, workload_statistics
 from multiagents.tools.metrics import knowledge_matcher
 from utils.markdown_format import generate_prometheus_chart_content

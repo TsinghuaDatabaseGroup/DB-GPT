@@ -267,9 +267,18 @@ class DBAEnvironment(BaseModel):
 
                     if i > 0 and m_response['content'] == diag["diagnosis process"][i-1]['content']:
                         continue
-                    self.reporter.record["anomalyAnalysis"][diag['sender']]["messages"].append({"data": m_response['content'], "time": time.strftime("%H:%M:%S", time.localtime())})
 
-            import pdb; pdb.set_trace()
+                    m_message = m_response['content']
+                    pattern = r'\[chart\] \./alert_results/test/(\w+)\.html'
+                    matches = re.findall(pattern, m_message)
+                    for metric_name in matches:
+                        chart_str = f'[chart] ./alert_results/test/{metric_name}.html'
+                        with open(f"./alert_results/test/{metric_name}.html", "r") as f:
+                            chart_content = f.read()
+
+                        m_message.replace(chart_str, chart_content)
+
+                    self.reporter.record["anomalyAnalysis"][diag['sender']]["messages"].append({"data": m_message, "time": time.strftime("%H:%M:%S", time.localtime())})
 
         # brainstorm over the initial_diags results
         ## summarize to avoid exceeding length limit
