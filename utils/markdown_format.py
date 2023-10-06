@@ -5,12 +5,12 @@ import io
 import base64
 import datetime
 import random
+import numpy as np
 
 # matplotlib.pyplot 文档说明
 # https://matplotlib.org/stable/api/pyplot_summary.html
 
 def generate_prometheus_chart_content(title, values, x_label_format="'%Y-%m-%d %H:%M:%S'", size=(400, 225)):
-
     x_values = []
     y_values = []
     for item in values:
@@ -30,12 +30,18 @@ def generate_chart_content(title, x_values, y_values, size=(400, 225)):
 def plot(title, x_values, y_values, size=(400, 225)):
     colors = ['#87CEEB', '#FF66CC', '#00C957', '#FFA500', '#9400D3', '#98FB98', '#007BA7', '#D2691E']
     random_color = random.choice(colors)
-
+    
     plt.figure(figsize=(size[0]/60, size[1]/60), dpi=60)
     plt.plot(x_values, y_values, color=random_color, linewidth=1.0, alpha=1)
     plt.fill_between(x_values, y_values, color=random_color, alpha=0.2)
     plt.title(title, fontdict={'fontsize': 18})
-    plt.xticks(rotation=45)
+    # plt.xticks(rotation=45)
+    # hide xticks
+    plt.xticks([])
+    # plot the values of y_values in 10 intervals
+    #y_ticks = np.arange(0, float(max(y_values)), float(max(y_values))/10)
+    # import pdb; pdb.set_trace()
+    #plt.yticks(y_ticks)
     ax = plt.gca()
     ax.spines['top'].set_color('#999999')
     ax.spines['right'].set_color('#999999')

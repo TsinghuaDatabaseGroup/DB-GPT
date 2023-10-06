@@ -1,15 +1,12 @@
 import asyncio
 import logging
 from typing import Any, Dict, List
-
 from multiagents.agents.conversation_agent import BaseAgent
 from multiagents.environments.rules.base import Rule
 from multiagents.message import Message
 
 from . import env_registry as EnvironmentRegistry
 from .base import BaseEnvironment
-
-import pdb
 
 @EnvironmentRegistry.register("basic")
 class BasicEnvironment(BaseEnvironment):

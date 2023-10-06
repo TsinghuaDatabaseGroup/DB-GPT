@@ -52,6 +52,7 @@ def load_tools(tool_config: List[Dict]):
 
 
 def load_environment(env_config: Dict) -> BaseEnvironment:
+    
     env_type = env_config.pop("env_type", "basic")
     return env_registry.build(env_type, **env_config)
 

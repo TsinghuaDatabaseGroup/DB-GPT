@@ -26,11 +26,14 @@ advisor = "db2advis"  # option: extend, db2advis (fast)
 # [workload statistics] read from pg_stat_statements 
 dbargs = DBArgs("postgresql", config=postgresql_conf)
 db = Database(dbargs, timeout=-1)
-workload_statistics = db.obtain_historical_queries_statistics()
+
+workload_statistics = ""
+#workload_statistics = db.obtain_historical_queries_statistics()
 
 # [slow queries] read from query logs
 # /var/lib/pgsql/12/data/pg_log/postgresql-Mon.log
-slow_queries = obtain_slow_queries(database_server_conf)
+slow_queries = ""
+#slow_queries = obtain_slow_queries(database_server_conf)
 
 # [diagnosis knowledge]
 knowledge_matcher = KnowledgeExtraction(
@@ -52,7 +55,7 @@ def obtain_values_of_metrics(start_time, end_time, metrics):
                                     'start': start_time,
                                     'end': end_time,
                                     'step': '3'})
-        if metric_values["data"]["result"] != []:
+        if "data" in metric_values and metric_values["data"]["result"] != []:
             metric_values = metric_values["data"]["result"][0]["values"]
 
             # compute the average value of the metric

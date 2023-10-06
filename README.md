@@ -474,7 +474,6 @@ Feel free to cite us if you like this project.
 }
 ```
 
-
 <span id="-contributors"></span>
 
 ## 📧 Contributors

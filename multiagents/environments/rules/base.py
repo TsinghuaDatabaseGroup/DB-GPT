@@ -37,6 +37,7 @@ class Rule(BaseModel):
         updater_config,
         describer_config,
     ):
+        
         order = order_registry.build(**order_config)
         visibility = visibility_registry.build(**visibility_config)
         selector = selector_registry.build(**selector_config)
