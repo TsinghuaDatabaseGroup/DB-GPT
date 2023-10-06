@@ -167,3 +167,5 @@ cython_debug/
 #.idea/
 tool_config.yaml
 chat_history.json
+openai_keys.txt
+others/customllm_test.py
