@@ -8,16 +8,17 @@ from multiagents.llms import BaseLLM
 from multiagents.memory import BaseMemory, ChatHistoryMemory
 from multiagents.message import Message
 from multiagents.custom_parser import OutputParser
+from string import Template
 
 
 class BaseAgent(BaseModel):
     name: str
     llm: BaseLLM
     output_parser: OutputParser
-    prompt_template: str
+    prompt_template: str = Field(default="")
     role_description: str = Field(default="")
     memory: BaseMemory = Field(default_factory=ChatHistoryMemory)
-    max_retry: int = Field(default=100)
+    max_retry: int = Field(default=3)
     receiver: Set[str] = Field(default=set({"all"}))
     async_mode: bool = Field(default=True)
 
@@ -40,6 +41,13 @@ class BaseAgent(BaseModel):
     def add_message_to_memory(self, messages: List[Message]) -> None:
         """Add a message to the memory"""
         pass
+
+    def get_all_prompts(self, **kwargs):
+        prompt = Template(self.prompt_template).safe_substitute(
+            **kwargs
+        )
+
+        return prompt
 
     def get_receiver(self) -> Set[str]:
         return self.receiver

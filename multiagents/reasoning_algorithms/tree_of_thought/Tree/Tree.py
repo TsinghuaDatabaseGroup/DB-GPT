@@ -6,7 +6,9 @@ class my_tree:
     def __init__(self):
         self.root = tree_node()
         self.now_deal_node = self.root
-    
+
+
+
     def get_former_trice(self,start_node,target_node,valid_types=["Thought","Action","Action Input","Observation"]):
         '''
         获取从start_node节点到target_node节点的所有操作，包含target_node自己和start_node
@@ -104,7 +106,7 @@ class tree_node:
         self.father = None
 
 
-        self.io_state = None
+        self.env = None
         self.score = None
 
         self.reflection = []
@@ -221,8 +223,8 @@ class tree_node:
         if self.expand_num != 0:
             json_obj["expand_num"] = self.expand_num
 
-        if self.io_state != None and self.node_type == "Action Input":
-            json_obj["io_state"] = self.io_state.to_json()
+        if self.env != None and self.node_type == "Action Input":
+            json_obj["env"] = self.env.to_json()
         if self.score != None:
             json_obj["score"] = self.score
 

@@ -4,9 +4,9 @@ from typing import List
 
 from multiagents.agents.conversation_agent import BaseAgent
 from multiagents.environments.base import BaseEnvironment
+from multiagents.environments import DBAEnvironment
 from multiagents.initialization import load_agent, load_environment, prepare_task_config
-
-import pdb
+from multiagents.utils.utils import AGENT_TYPES
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
@@ -24,17 +24,35 @@ class MultiAgents:
         
         # Prepare the config of the task
         task_config = prepare_task_config(task)
-
-        # Build the agents
-        agents = []
-        for agent_configs in task_config["agents"]:
-            agent = load_agent(agent_configs)
-            agents.append(agent)
         
+        # Build the agents
+        reporter = None
+        agents = {}
+        for agent_config in task_config["agents"]:
+            
+            agent_type = AGENT_TYPES(agent_config["agent_type"])
+            agent_type_name = agent_config["agent_type"]
+
+            agent = load_agent(agent_config)
+
+            if agent_type_name == "reporter":
+                reporter = agent
+            else:
+                if agent_type not in agents:
+                    agents[agent_type] = [agent]
+                else:
+                    agents[agent_type].append(agent)
+
+        if reporter is None:
+            raise ValueError("Reporter is not specified.")
+
         # Build the environment
         env_config = task_config["environment"]
         env_config["agents"] = agents
-        environment = load_environment(env_config)
+        env_config["reporter"] = reporter
+        env_config["task_description"] = task_config.get("task_description", "")
+
+        environment: DBAEnvironment = load_environment(env_config)
         
         return cls(agents, environment)
 
@@ -42,8 +60,8 @@ class MultiAgents:
         """Run the environment from scratch until it is done."""
         self.environment.reset()
         
-        while not self.environment.is_done():
-            asyncio.run(self.environment.step())
+        #while not self.environment.is_done():
+        asyncio.run(self.environment.step())
 
     def reset(self):
         self.environment.reset()

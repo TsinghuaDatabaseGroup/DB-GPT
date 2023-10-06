@@ -6,6 +6,9 @@ import logging
 import pickle
 import argparse
 import configparser
+import pdb
+import re
+
 
 from .workload import Workload, Table, Column, Query
 from .selec_const import job_table_alias
@@ -124,7 +127,9 @@ def get_columns_from_db(db_connector):
         table_object = Table(table)
         tables.append(table_object)
         for col in db_connector.get_cols(table):
-            column_object = Column(col)
+ 
+            sampled_values = db_connector.get_sampled_values(col, table)
+            column_object = Column(col, sampled_values)
             table_object.add_column(column_object)
             columns.append(column_object)
 
@@ -133,21 +138,40 @@ def get_columns_from_db(db_connector):
     return tables, columns
 
 
-def get_columns_from_schema(schema_file):
-    tables, columns = list(), list()
-    with open(schema_file, "r") as rf:
-        db_schema = json.load(rf)
+# def get_columns_from_schema(schema_file):
+#     tables, columns = list(), list()
+#     with open(schema_file, "r") as rf:
+#         db_schema = json.load(rf)
 
-    for item in db_schema:
-        table_object = Table(item["table"])
-        tables.append(table_object)
-        for col_info in item["columns"]:
-            column_object = Column(col_info["name"])
-            table_object.add_column(column_object)
-            columns.append(column_object)
+#     for item in db_schema:
+#         table_object = Table(item["table"])
+#         tables.append(table_object)
+#         for col_info in item["columns"]:
 
-    return tables, columns
+#             column_object = Column(col_info["name"])
+#             table_object.add_column(column_object)
+#             columns.append(column_object)
 
+#     return tables, columns
+
+
+def replace_placeholders(sql_string, substring, sampled_values):
+    # Define the regex pattern:
+    # 1. Locate the substring (e.g. "WHERE")
+    # 2. Followed by any number of whitespace characters (using \s*)
+    # 3. An operator (+/-/*/=/>/<)
+    # 4. Followed by any number of whitespace characters (using \s*)
+    # 5. A placeholder (e.g. $2, $3, etc.)
+    pattern = re.escape(substring) + r"\s*([\+\-*/=><])\s*(\$\d+)"
+
+    # Replace placeholders with value 2 using re.sub
+    def repl(match):
+        if len(sampled_values) > 1:
+            return substring + ' ' + match.group(1) + ' ' + str(sampled_values[0])
+        else:
+            return substring + ' ' + match.group(1) + ' ' + str(2)
+
+    return re.sub(pattern, repl, sql_string)
 
 def read_row_query(sql_list, exp_conf, columns, type="template"):
     workload = list()
@@ -155,43 +179,48 @@ def read_row_query(sql_list, exp_conf, columns, type="template"):
         if type == "template" and exp_conf["queries"] \
                 and query_id + 1 not in exp_conf["queries"]:
             continue
-
+        
         query = Query(query_id, query_text)
         for column in columns:
-            column_tmp = [col for col in columns if column.name == col.name]
-            if len(column_tmp) == 1:
-                if column.name in query.text.lower() and \
-                        f"{column.table.name}" in query.text.lower():
-                    query.columns.append(column)
-            else:
-                # if column.name in query.text and column.table.name in query.text:
-                # if " " + column.name + " " in query.text and column.table.name in query.text:
-                # todo(0329): newly modified. for JOB,
-                #  SELECT COUNT(*), too many candidates.
-                if "." in query.text.lower().split("from")[0] or \
-                        ("where" in query.text.lower() and (
-                                "." in query.text.lower().split("where")[0] or
-                                "." in query.text.lower().split("where")[-1].split(" ")[1])):
-                    if str(column) in query.text.lower():
-                        query.columns.append(column)
-                    if " as " in query_text.lower():
-                        tbl, col = str(column).split(".")
-                        if f" {job_table_alias[tbl]}.{col}" in query.text.lower() \
-                                or f"({job_table_alias[tbl]}.{col}" in query.text.lower():
-                            query.columns.append(column)
-                # else:
+            # column_tmp = [col for col in columns if column.name == col.name]
+            if column.name in query.text['sql'].lower() and \
+                    f"{column.table.name}" in query.text['sql'].lower():
+                # column.name
+
+                query.text['sql'] = replace_placeholders(query.text['sql'].lower(), column.name, column.sampled_values)
+
+                query.columns.append(column)
+
+            # else:
+            #     # if column.name in query.text and column.table.name in query.text:
+            #     # if " " + column.name + " " in query.text and column.table.name in query.text:
+            #     # todo(0329): newly modified. for JOB,
+            #     #  SELECT COUNT(*), too many candidates.
+            #     if "." in query.text['sql'].lower().split("from")[0] or \
+            #             ("where" in query.text['sql'].lower() and (
+            #                     "." in query.text['sql'].lower().split("where")[0] or
+            #                     "." in query.text['sql'].lower().split("where")[-1].split(" ")[1])):
+            #         if str(column) in query.text['sql'].lower():
+            #             query.columns.append(column)
+            #         if " as " in query_text.lower():
+            #             tbl, col = str(column).split(".")
+            #             if f" {job_table_alias[tbl]}.{col}" in query.text['sql'].lower() \
+            #                     or f"({job_table_alias[tbl]}.{col}" in query.text['sql'].lower():
+            #                 query.columns.append(column)
+            #     # else:
                 #     # todo(0408): newly added. check?
                 #     # if column.name in query.text:
-                #     if column.name in query.text.lower() and \
-                #             f"{column.table.name}" in query.text.lower():
+                #     if column.name in query.text['sql'].lower() and \
+                #             f"{column.table.name}" in query.text['sql'].lower():
                 #         query.columns.append(column)
 
             # todo(0408): newly added. check? (different table, same column name)
-            # if column.name in query.text.lower() and \
-            #         column.table.name in query.text.lower():
+            # if column.name in query.text['sql'].lower() and \
+            #         column.table.name in query.text['sql'].lower():
             #     query.columns.append(column)
             # if column.name in query.text:
             #     query.columns.append(column)
+
         workload.append(query)
 
     logging.info("Queries read.")
@@ -236,22 +265,26 @@ def get_utilized_indexes(
 ):
     utilized_indexes_workload = set()
     query_details = {}
+    
     for query, indexes in zip(workload.queries, indexes_per_query):
-        (
-            utilized_indexes_query,
-            cost_with_indexes,
-        ) = cost_evaluation.which_indexes_utilized_and_cost(query, indexes)
-        utilized_indexes_workload |= utilized_indexes_query
 
-        if detailed_query_information:
-            cost_without_indexes = cost_evaluation.calculate_cost(
-                Workload([query]), indexes=[]
-            )
-            # todo: cost_with_indexes > cost_without_indexes, continue.
-            query_details[query] = {
-                "cost_without_indexes": cost_without_indexes,
-                "cost_with_indexes": cost_with_indexes,
-                "utilized_indexes": utilized_indexes_query,
-            }
+        if '$' not in query.text['sql']:
+            sql = query.text['sql']
+            (
+                utilized_indexes_query,
+                cost_with_indexes,
+            ) = cost_evaluation.which_indexes_utilized_and_cost(sql, indexes)
+            utilized_indexes_workload |= utilized_indexes_query
+
+            if detailed_query_information:
+                cost_without_indexes = cost_evaluation.calculate_cost(
+                    Workload([sql]), indexes=[]
+                )
+                
+                query_details[sql] = {
+                    "cost_without_indexes": round(cost_without_indexes * query.text['frequency'], 2),
+                    "cost_with_indexes": round(cost_with_indexes * query.text['frequency'], 2),
+                    "utilized_indexes": utilized_indexes_query,
+                }
 
     return utilized_indexes_workload, query_details

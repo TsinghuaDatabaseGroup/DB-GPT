@@ -18,9 +18,17 @@ from multiagents.response_formalize_scripts.combine_similar_answer import combin
 
 @output_parser_registry.register("agent_conf")
 class DBDiag(OutputParser):
-    def parse(self, output: LLMResult) -> Union[AgentAction, AgentFinish]:
+    def parse(self, output) -> Union[AgentAction, AgentFinish]:
         # pdb.set_trace()
-        text = output.content
+        # if output is str
+        if isinstance(output, str):
+            text = output
+        else:
+            try:
+                text = output.content
+            except:
+                raise OutputParserError("llm output is not str or LLMResult")
+        
         cleaned_output = text.strip()
         cleaned_output = re.sub(r"\n+", "\n", cleaned_output)
         cleaned_output = cleaned_output.split("\n")
@@ -30,8 +38,9 @@ class DBDiag(OutputParser):
             and cleaned_output[1].startswith("Action")
             and cleaned_output[2].startswith("Action Input")
         ):
-            raise OutputParserError(text)
-        
+            # print the error
+            return None
+
         action = cleaned_output[1][len("Action:") :].strip()
         action_input = cleaned_output[2][len("Action Input:") :].strip()
 
@@ -46,7 +55,11 @@ class DBDiag(OutputParser):
                 action_input = action_input[1:]
             if action_input[-1] == ')':
                 action_input = action_input[:-1]
-            action_input = json.loads(action_input)
+            try:
+                action_input = json.loads(action_input)
+            except:
+                print("error in json.loads")
+                return None
 
             action_json = {"diagnose": "", "solution": [], "knowledge": ""}
             
