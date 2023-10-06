@@ -21,7 +21,7 @@ def whether_is_abnormal_metric(
 
     if metric_name not in prometheus_metrics:
         print(f"{metric_name} is unknown")
-        return "The metric is unknown"
+        return f"The metric {metric_name} is unknown \n {metric_name}"
 
     metric_values = prometheus('api/v1/query_range',
                                 {'query': prometheus_metrics[metric_name],
@@ -41,10 +41,10 @@ def whether_is_abnormal_metric(
 
     if is_abnormal:
         print(f"{metric_name} is abnormal")
-        return "The metric is abnormal"
+        return f"The metric {metric_name} is abnormal \n {prometheus_metrics[metric_name]}"
     else:
         print(f"{metric_name} is normal")
-        return "The metric is normal"
+        return f"The metric {metric_name} is normal \n {prometheus_metrics[metric_name]}"
     
 
 def match_diagnose_knowledge(
@@ -75,10 +75,31 @@ def match_diagnose_knowledge(
     
     # identify the abnormal metrics
     detailed_abnormal_metrics = {}
-
+    top5_abnormal_metrics = {}
+    top5_abnormal_metrics_map = {}
+    
     for metric_name, metric_values in detailed_metrics.items():
-        if detect_anomalies(np.array(metric_values)):
-            detailed_abnormal_metrics[metric_name] = processed_values(metric_values)
+        anomaly_value, is_abnormal = detect_anomalies(np.array(metric_values))
+        if is_abnormal:
+            # maintain the top 5 abnormal metrics
+            if len(top5_abnormal_metrics) < 5:
+                top5_abnormal_metrics[metric_name] = processed_values(metric_values)
+                top5_abnormal_metrics_map[metric_name] = anomaly_value
+                # sort top5_abnormal_metrics_map by keys in descending order
+            else:
+                # identify the min value of top5_abnormal_metrics_map together with the key
+                min_abnormal_value = min(top5_abnormal_metrics_map.values())
+                # identify the key of min_abnormal_value
+                min_abnormal_value_key = list(top5_abnormal_metrics_map.keys())[list(top5_abnormal_metrics_map.values()).index(min_abnormal_value)]
+
+                if anomaly_value > min_abnormal_value:
+
+                    top5_abnormal_metrics[metric_name] = processed_values(metric_values)
+
+                    top5_abnormal_metrics.pop(min_abnormal_value_key)
+                    top5_abnormal_metrics_map.pop(min_abnormal_value_key)
+    
+    detailed_abnormal_metrics = top5_abnormal_metrics
 
     if metric_prefix == "network":
         

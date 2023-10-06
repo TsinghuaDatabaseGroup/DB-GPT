@@ -11,6 +11,10 @@ monitoring_scripts/prometheus/core.py
 .vscode/settings.json
 .idea
 
+openai_keys.txt
+
+others/customllm_test.py
+
 # Distribution / packaging
 .Python
 build/

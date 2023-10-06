@@ -38,7 +38,7 @@ prompts:
     Action Input: (argument for the action)
 
     After you obtain the start and end time of the anomaly, announce it to the agents, and use the following format:
-    Thought: I now know the start and end time of the anomaly, and i need to report it to the agents  
+    Thought: I now know the start and end time of the anomaly.
     Action: Speak
     Action Input: ({"diagnose": the start and end time of the anomaly are ${start_time} and ${end_time}, "solution": [], "knowledge": ""})
 
@@ -104,7 +104,7 @@ prompts:
     Action Input: {"start_time": ${start_time},"end_time": ${end_time}}
 
     After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to the chief DBA, and use the following format:
-    Thought: I now know the root cause of the anomaly, and i need to report it to the chief DBA  
+    Thought: I now know the root cause of the anomaly.
     Action: Speak
     Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
 
@@ -146,7 +146,7 @@ prompts:
     Action Input: {"start_time": ${start_time},"end_time": ${end_time}, "metric_name": "memory"}
 
     After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to the chief DBA, and use the following format:
-    Thought: I now know the root cause of the anomaly, and i need to report it to the chief DBA  
+    Thought: I now know the root cause of the anomaly.
     Action: Speak
     Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
 
@@ -183,7 +183,7 @@ prompts:
     Action Input: {"start_time": ${start_time},"end_time": ${end_time}, "metric_name": "io"}
 
     After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to the chief DBA, and use the following format:
-    Thought: I now know the root cause of the anomaly, and i need to report it to the chief DBA  
+    Thought: I now know the root cause of the anomaly.
     Action: Speak
     Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
 
@@ -220,7 +220,7 @@ prompts:
     Action Input: {"start_time": ${start_time},"end_time": ${end_time}, "metric_name": "network"}
 
     After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to the chief DBA, and use the following format:
-    Thought: I now know the root cause of the anomaly, and i need to report it to the chief DBA  
+    Thought: I now know the root cause of the anomaly.
     Action: Speak
     Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
 
@@ -309,7 +309,7 @@ agents:
   -
     agent_type: solver
     name: CpuExpert
-    role_description: You are a CPU agent that can use the tool apis to check CPU usage (whether_is_abnormal_metric), analyze the root causes of high CPU usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection, enable_or_disable_nestloop_operator).
+    role_description: You are a CPU agent that can use the tool apis to check CPU usage (whether_is_abnormal_metric), analyze the root causes of high CPU usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection, enable_or_disable_nestloop_operator). Note the response should be in markdown format.
     prompt_template: *cpu_agent_format_prompt
     memory:
       memory_type: chat_history
@@ -330,7 +330,7 @@ agents:
   -
     agent_type: solver
     name: MemoryExpert
-    role_description: You are a memory agent that can use the db_diag tool to check memory usage (whether_is_abnormal_metric) and analyze the root causes of high memory usage the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions by calling relevant apis.
+    role_description: You are a memory agent that can use the db_diag tool to check memory usage (whether_is_abnormal_metric) and analyze the root causes of high memory usage the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions by calling relevant apis. Note the response should be in markdown format.
     prompt_template: *mem_agent_format_prompt
     memory:
       memory_type: chat_history
@@ -351,7 +351,7 @@ agents:
   -
     agent_type: solver
     name: IoExpert
-    role_description: You are a IO agent that can analyze the root causes of high I/O bandwidth usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection), and give optimization solutions by calling relevant apis.
+    role_description: You are a IO agent that can analyze the root causes of high I/O bandwidth usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection), and give optimization solutions by calling relevant apis. Note the response should be in markdown format.
     prompt_template: *io_agent_format_prompt
     memory:
       memory_type: chat_history
@@ -372,7 +372,7 @@ agents:
   -
     agent_type: solver
     name: NetworkExpert
-    role_description: You are a network agent that can analyze the root causes of slow network using the metrics and knowledge gained from (match_diagnose_knowledge), and give solving advice.
+    role_description: You are a network agent that can analyze the root causes of slow network using the metrics and knowledge gained from (match_diagnose_knowledge), and give solving advice. Note the response should be in markdown format.
     prompt_template: *network_agent_format_prompt
     memory:
       memory_type: chat_history

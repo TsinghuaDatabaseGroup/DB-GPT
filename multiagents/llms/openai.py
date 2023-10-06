@@ -10,6 +10,8 @@ import json
 import aiohttp
 import asyncio
 import time
+import random
+from termcolor import colored
 
 try:
     import openai
@@ -85,7 +87,7 @@ class OpenAICompletion(BaseCompletionModel):
 class OpenAIChat(BaseChatModel):
     args: OpenAIChatArgs = Field(default_factory=OpenAIChatArgs)
     conversation_history: dict = []
-    TRY_TIME: int = 50
+    TRY_TIME: int = 1000
 
     def __init__(self, max_retry: int = 100, **kwargs):
         super().__init__(**kwargs)  # Call the constructor of the base class
@@ -93,7 +95,7 @@ class OpenAIChat(BaseChatModel):
         args = args.dict()
 
         self.conversation_history = []
-        self.TRY_TIME = 50
+        self.TRY_TIME = 1000
 
         for k, v in args.items():
             args[k] = kwargs.pop(k, v)
@@ -111,7 +113,7 @@ class OpenAIChat(BaseChatModel):
         #messages = self._construct_messages(prompt) # TODO add history messages
         messages = self.conversation_history
 
-        for _ in range(self.TRY_TIME):
+        for i in range(self.TRY_TIME):
 
             try:
                 response = openai.ChatCompletion.create(
@@ -121,7 +123,34 @@ class OpenAIChat(BaseChatModel):
             
             except (OpenAIError, KeyboardInterrupt) as error:
                 print(f"Parsing Exception: {repr(error)}. Try again.")
-                time.sleep(.1)
+
+                if i !=0 and i%10 == 0:
+                    # randomly read a line from openai_keys.txt file as the openai key
+                    with open('openai_keys.txt', 'r') as f:
+                        lines = f.readlines()
+                        rowid = random.randint(0, len(lines)-1)
+                        line = lines[rowid].strip()
+                        items = line.split(" ")
+
+                        while items[0] == openai.api_key:
+                            rowid = random.randint(0, len(lines)-1)
+                            line = lines[rowid].strip()
+                            items = line.split(" ")
+
+                        openai.api_key = items[0]
+                        if len(items) == 1:
+                            openai.organization = ""
+                        else:
+                            openai.organization = items[1]
+
+                        print(f"[{str(rowid)}] openai key changed to {openai.api_key}")
+
+                        if i%100 == 0:
+                            print(colored(f"{messages}", "red"))
+
+                        f.close()
+                else:
+                    time.sleep(1)
                                 
                 continue
 
@@ -130,30 +159,66 @@ class OpenAIChat(BaseChatModel):
 
     def generate_response(self, prompt: str) -> LLMResult:
         messages = self._construct_messages(prompt)
-        try:
-            response = openai.ChatCompletion.create(
-                messages=messages, **self.args.dict()
+
+        for i in range(self.TRY_TIME):
+            try:
+                response = openai.ChatCompletion.create(
+                    messages=messages, **self.args.dict()
+                )
+            except (OpenAIError, KeyboardInterrupt) as error:
+                print(f"Generate_response Exception: {repr(error)}. Try again.")
+                time.sleep(.5)
+
+                if i !=0 and i%10 == 0:
+                    # randomly read a line from openai_keys.txt file as the openai key
+                    with open('openai_keys.txt', 'r') as f:
+                        lines = f.readlines()
+                        rowid = random.randint(0, len(lines)-1)
+                        line = lines[rowid].strip()
+                        items = line.split(" ")
+
+                        while items[0] == openai.api_key:
+                            rowid = random.randint(0, len(lines)-1)
+                            line = lines[rowid].strip()
+                            items = line.split(" ")
+
+                        openai.api_key = items[0]
+                        if len(items) == 1:
+                            openai.organization = ""
+                        else:
+                            openai.organization = items[1]
+
+                        print(f"[{str(rowid)}] openai key changed to {openai.api_key}")
+
+                        if i%100 == 0:
+                            print(colored(f"{messages}", "red"))
+
+                        f.close()
+                else:
+                    time.sleep(1)
+
+                continue
+
+            return LLMResult(
+                content=response["choices"][0]["message"]["content"],
+                send_tokens=response["usage"]["prompt_tokens"],
+                recv_tokens=response["usage"]["completion_tokens"],
+                total_tokens=response["usage"]["total_tokens"],
             )
-        except (OpenAIError, KeyboardInterrupt) as error:
-            raise
-        return LLMResult(
-            content=response["choices"][0]["message"]["content"],
-            send_tokens=response["usage"]["prompt_tokens"],
-            recv_tokens=response["usage"]["completion_tokens"],
-            total_tokens=response["usage"]["total_tokens"],
-        )
 
     async def agenerate_response(self, prompt: str) -> LLMResult:
         messages = self._construct_messages(prompt)
-        try:
-            response = await openai.ChatCompletion.acreate(
-                messages=messages, **self.args.dict()
+
+        for _ in range(self.TRY_TIME):
+            try:
+                response = await openai.ChatCompletion.acreate(
+                    messages=messages, **self.args.dict()
+                )
+            except (OpenAIError, KeyboardInterrupt) as error:
+                raise
+            return LLMResult(
+                content=response["choices"][0]["message"]["content"],
+                send_tokens=response["usage"]["prompt_tokens"],
+                recv_tokens=response["usage"]["completion_tokens"],
+                total_tokens=response["usage"]["total_tokens"],
             )
-        except (OpenAIError, KeyboardInterrupt) as error:
-            raise
-        return LLMResult(
-            content=response["choices"][0]["message"]["content"],
-            send_tokens=response["usage"]["prompt_tokens"],
-            recv_tokens=response["usage"]["completion_tokens"],
-            total_tokens=response["usage"]["total_tokens"],
-        )

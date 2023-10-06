@@ -22,7 +22,7 @@ from multiagents.tools.api_retrieval import APICaller
 from multiagents.reasoning_algorithms import UCT_vote_function, node_to_chain
 from multiagents.utils.utils import AgentAction, AgentFinish
 from multiagents.reasoning_algorithms import base_env
-from prompt_templates.Report_prompts import  ANOMALY_DESC_PROMPT
+from prompt_templates.Report_prompts import  ANOMALY_DESC_PROMPT, ANOMALY_TITLE_PROMPT
 
 @agent_registry.register("reporter") # solver is also tool agent by default
 class ReporterAgent(BaseAgent):
@@ -35,9 +35,13 @@ class ReporterAgent(BaseAgent):
     alert_str: str = ""
     alert_dict: dict = {}
     anomaly_desc_prompt: str = ANOMALY_DESC_PROMPT
+    anomaly_title_prompt: str = ANOMALY_TITLE_PROMPT
+    messages: List[dict] = []
 
-    report: dict = {"anomaly date": "", "anomaly description": "", "root cause": "", "diagnosis process": "", "solutions": ""}
+    report: dict = {"title": "", "anomaly date": "", "anomaly description": "", "root cause": "", "diagnosis process": "", "solutions": ""}
 
+    record: dict = {"anomalyAnalysis": {"RoleAssigner":{"messages":[]},"CpuExpert":{"messages":[]},"MemoryExpert":{"messages":[]},"IoExpert":{"messages":[]},"NetworkExpert":{"messages":[]}}, "brainstorming": {"messages":[]}, "report":{}, "title":"alert name", "time":"alert time"}
+    
     def initialize_report(self):
 
         seconds = int(self.alert_dict['start_time'])
@@ -49,6 +53,47 @@ class ReporterAgent(BaseAgent):
         anomaly_desc = self.llm.generate_response(anomaly_desc_prompt).content
         
         self.report["anomaly description"] = anomaly_desc
+
+        anomaly_title_prompt = self.anomaly_title_prompt.replace("{anomaly_str}", self.alert_str)
+
+        anomaly_title = self.llm.generate_response(anomaly_title_prompt).content
+        
+        self.report["title"] = anomaly_title
+
+        self.record["title"] = self.alert_dict['alert_name']
+        self.record["time"] = self.alert_dict['start_time']
+
+
+    def update_diagnosis(self):
+        prompt = "Please refine the anomaly diagnosis description based on the above review adice. The diagnosis description is as follows:\n" + self.report["root cause"] + "\n ===== \n Note the output still should be in markdown format."
+
+        prompt_message = {"role": "user", "content": prompt}
+
+        self.messages.append(prompt_message)
+
+        self.llm.change_messages(self.messages)
+        new_message = self.llm.parse()
+        
+        if isinstance(new_message, dict):
+            self.report["root cause"] = new_message["content"]
+        else:
+            self.report["root cause"] = new_message.content
+
+
+    def update_solutions(self):
+        prompt = "Please refine the proposed solutions based on the above review adice. The proposed solutions are as follows:\n" + self.report["solutions"] + "\n ===== \n Note the output still should be in markdown format."
+
+        prompt_message = {"role": "user", "content": prompt}
+
+        self.messages.append(prompt_message)
+
+        self.llm.change_messages(self.messages)
+        new_message = self.llm.parse()
+
+        if isinstance(new_message, dict):
+            self.report["solutions"] = new_message["content"]
+        else:
+            self.report["solutions"] = new_message.content
 
 
     async def step(

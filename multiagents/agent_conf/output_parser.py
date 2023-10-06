@@ -24,7 +24,10 @@ class DBDiag(OutputParser):
         if isinstance(output, str):
             text = output
         else:
-            text = output.content
+            try:
+                text = output.content
+            except:
+                raise OutputParserError("llm output is not str or LLMResult")
         
         cleaned_output = text.strip()
         cleaned_output = re.sub(r"\n+", "\n", cleaned_output)

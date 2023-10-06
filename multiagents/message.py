@@ -15,7 +15,7 @@ class SolverMessage(Message):
 
 
 class CriticMessage(Message):
-    is_agree: bool
+    review: str
 
 
 class ExecutorMessage(Message):

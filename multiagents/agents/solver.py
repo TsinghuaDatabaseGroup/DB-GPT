@@ -23,7 +23,6 @@ from multiagents.reasoning_algorithms import UCT_vote_function, node_to_chain
 from multiagents.utils.utils import AgentAction, AgentFinish
 from multiagents.reasoning_algorithms import base_env
 
-
 class ToolNotExistError(BaseException):
 
     """Exception raised when parsing output from a command fails."""
@@ -161,6 +160,7 @@ class SolverAgent(BaseAgent):
     max_history: int = 3
     alert_str: str = ""
     alert_dict: dict = {}
+    messages: List[dict] = []
 
 
     async def step(
@@ -235,7 +235,7 @@ class SolverAgent(BaseAgent):
         
         if result_node is None:
             return {}
-
+        
         thought = ""
         solutions = ""
         for message in result_node.messages:
@@ -275,10 +275,23 @@ class SolverAgent(BaseAgent):
         # receiver: Set[str] = Field(default=set({"all"}))
         # tool_response: List[Tuple[AgentAction, str]] = Field(default=[])
 
-
-    async def astep(self, env_description: str = "") -> SolverMessage:
-        """Asynchronous version of step"""
+    async def astep(self):
         pass
+
+    async def review_step(self) -> CriticMessage:
+        """Asynchronous version of step"""
+        prompt = "Please review the above diagnosis results, and give necessary advice to correct the unclear diagnosis and proposed solutions. Note the review should be in markdown format"
+
+        prompt_message = {"role": "user", "content": prompt}
+
+        self.messages.append(prompt_message)
+
+        self.llm.change_messages(self.messages)
+        new_message = self.llm.parse()
+
+        review_message = {"role": "assistant", "content": new_message.content}
+                
+        return review_message
 
     def _fill_prompt_template(
         self, env_description: str = "", tool_observation: List[str] = []) -> str:

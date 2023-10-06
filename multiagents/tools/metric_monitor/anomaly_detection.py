@@ -14,7 +14,6 @@ def prometheus(url, params):
 
 
 def detect_anomalies(data, significance_level=0.2):
-
     # assume the workload is steadily running 
 
     """
@@ -63,4 +62,4 @@ def detect_anomalies(data, significance_level=0.2):
     
     '''
     
-    return anomalies
+    return ks_statistic, anomalies

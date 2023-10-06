@@ -355,10 +355,15 @@ class UCT_vote_function(base_search_method):
         reflection = new_message['content']
         print(colored(f"Reflexion: {reflection}","green"))
 
+        reflect_message = {
+            "role": "assistant",
+            "content": reflection,
+        }
         start_node.reflection.append(reflection)
+        start_node.messages.append(reflect_message)
         if start_node != self.tree.root:
             self.tree.root.reflection.append(reflection)
-
+            self.tree.root.messages.append(reflect_message)
 
         return reflection
 
@@ -413,6 +418,7 @@ class UCT_vote_function(base_search_method):
             new_message = self.llm.parse() # execute llm inference
             print(f"New message:\t{new_message}")
             assert new_message["role"] == "assistant"
+            now_node.messages.append(new_message)
 
             if first_time:
                 first_time = False
@@ -428,7 +434,7 @@ class UCT_vote_function(base_search_method):
             
             if "content" in new_message.keys() and new_message["content"] != None:
 
-                for _ in range(3):
+                for _ in range(100):
                     parsed_response = self.output_parser.parse(new_message)
                     if parsed_response != None:
                         break
@@ -438,11 +444,13 @@ class UCT_vote_function(base_search_method):
                 temp_node = tree_node()
                 temp_node.node_type = "Thought"
                 temp_node.description = new_message["content"]
+                
                 child_env = deepcopy(now_node.env)
                 
                 temp_node.env = child_env
                 temp_node.is_terminal = False
                 temp_node.messages = now_node.messages.copy()
+                # temp_node.messages.append(new_message)
                 temp_node.father = now_node
                 now_node.children.append(temp_node)
                 temp_node.print()
@@ -490,7 +498,7 @@ class UCT_vote_function(base_search_method):
                         # 3代表生成结束，出现final answer
                         # 4代表模型自己决定剪枝
                         now_node.pruned = True
-                        now_node.messages.append(new_message)
+                        # now_node.messages.append(new_message)
                         return now_node
 
                     # new the Action node
@@ -521,6 +529,7 @@ class UCT_vote_function(base_search_method):
                     temp_node.env = child_env
                     temp_node.is_terminal = False
                     temp_node.messages = now_node.messages.copy()
+                    temp_node.messages.append({"role": "assistant", "content": str(observation)})
                     temp_node.father = now_node
                     now_node.children.append(temp_node)
                     temp_node.print()

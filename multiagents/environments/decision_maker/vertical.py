@@ -29,10 +29,7 @@ class VerticalDecisionMaker(BaseDecisionMaker):
         *args,
         **kwargs,
     ) -> List[dict]:
-
-        if len(agents) > 2:
-            agents = agents[:3]
-
+                        
         results = await asyncio.gather(
             *[
                 agent.step(previous_plan, advice, task_description)
@@ -44,6 +41,8 @@ class VerticalDecisionMaker(BaseDecisionMaker):
         for result in results:
             if result != {}:
                 nonempty_results.append(result)
+
+
 
         # agents[0].add_message_to_memory(nonempty_results) # agents[9].memory
 
