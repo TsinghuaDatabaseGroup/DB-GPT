@@ -7,14 +7,13 @@ from multiagents.environments.base import BaseEnvironment
 from multiagents.environments import DBAEnvironment
 from multiagents.initialization import load_agent, load_environment, prepare_task_config
 from multiagents.utils.utils import AGENT_TYPES
-from multiagents.tools.metrics import workload_statistics
+from multiagents.tools.metrics import get_workload_statistics
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
     datefmt="%m/%d/%Y %H:%M:%S",
     level=logging.INFO,
 )
-
 
 class MultiAgents:
     def __init__(self, agents: List[BaseAgent], environment: BaseEnvironment):

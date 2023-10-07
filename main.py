@@ -1,6 +1,7 @@
 import argparse
 from multiagents.multiagents import MultiAgents
-from multiagents.tools.metrics import workload_statistics, slow_queries, database_server_conf, db
+from multiagents.tools.metrics import database_server_conf, db
+from multiagents.tools.metrics import get_workload_statistics, set_workload_statistics, get_slow_queries, set_slow_queries
 from multiagents.utils.server import obtain_slow_queries
 
 
@@ -15,9 +16,14 @@ parser.add_argument('--enable_workload_statistics_view', type=bool, default=True
 args = parser.parse_args()
 
 if args.enable_slow_query_log == True:
+    # [slow queries] read from query logs
+    # /var/lib/pgsql/12/data/pg_log/postgresql-Mon.log
     slow_queries = obtain_slow_queries(database_server_conf)
+    set_slow_queries(str(slow_queries))
+
 if args.enable_workload_statistics_view == True:
     workload_statistics = db.obtain_historical_queries_statistics()
+    set_workload_statistics(str(workload_statistics))
 
 
 multi_agents = MultiAgents.from_task(args.agent_conf_name, args)

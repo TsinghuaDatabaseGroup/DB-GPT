@@ -1,12 +1,15 @@
 import numpy as np
+import ast
+
 from multiagents.tools.metric_monitor.anomaly_detection import prometheus
 from multiagents.tools.metric_monitor.anomaly_detection import detect_anomalies
 from multiagents.tools.metrics import prometheus_metrics, postgresql_conf, obtain_values_of_metrics, processed_values
 from multiagents.tools.metrics import current_diag_time, diag_start_time, diag_end_time
-from multiagents.tools.metrics import slow_queries, workload_statistics
+from multiagents.tools.metrics import get_workload_statistics, get_slow_queries
 from multiagents.tools.metrics import knowledge_matcher
 from utils.markdown_format import generate_prometheus_chart_content
 from multiagents.tools.index_advisor.api import optimize_index_selection
+
 
 def obtain_start_and_end_time_of_anomaly(input: str = 'json dict string'):
     return {"start_time": diag_start_time, "end_time": diag_end_time}
@@ -26,7 +29,7 @@ def whether_is_abnormal_metric(
                                 'start': start_time,
                                 'end': end_time,
                                 'step': '3'})
-    
+
     if "data" not in metric_values:
         raise Exception("The metric name could be wrong!")
     if "result" in metric_values["data"] and metric_values["data"]["result"] != []:
@@ -57,7 +60,8 @@ def match_diagnose_knowledge(
         end_time: int,
         metric_name: str = "cpu",
         alert_metric: str = ""):
-    global slow_queries
+    slow_queries = get_slow_queries()
+    slow_queries = ast.literal_eval(slow_queries)
 
     if "cpu" in metric_name.lower():
         metric_prefix = "cpu"
@@ -126,6 +130,10 @@ def match_diagnose_knowledge(
             metric_str)
 
     workload_state = ""
+
+    workload_statistics = get_workload_statistics()
+    workload_statistics = ast.literal_eval(workload_statistics)
+
     for i, query in enumerate(workload_statistics):
         # workload_state += str(i + 1) + '. ' + str(query) + "\n"
         if isinstance(query["total_time"], str):

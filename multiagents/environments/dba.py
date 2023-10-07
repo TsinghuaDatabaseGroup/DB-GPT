@@ -110,7 +110,6 @@ class DBAEnvironment(BaseModel):
 
     task_description: str
     # current time in seconds
-    diag_time: time.localtime()
     
     cnt_turn: int = 0
     max_turn: int = 10
