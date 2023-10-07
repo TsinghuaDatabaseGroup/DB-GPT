@@ -35,6 +35,7 @@
     </div>
 
     <el-drawer
+      v-loading="reviewLoading"
       :title="$t('reviewDrawerTitle')"
       :visible.sync="reviewDrawer"
       size="95vw"
@@ -61,21 +62,45 @@
               </div>
               <div class="c-flex-row c-align-items-center" style="height: calc(100% - 40px)">
                 <OneChat
+                  v-if="reviewItem['anomalyAnalysis']"
                   class="chat-container"
-                  sender="Chief DBA"
+                  sender="RoleAssigner"
                   :hire="true"
-                  :messages="messages"
+                  :messages="reviewItem.anomalyAnalysis.RoleAssigner.messages"
                   style="height: 100%; width: 30%;"
                 />
-                <div class="c-flex-row c-flex-wrap" style="width: 70%; height: 100%;">
+                <div class="c-flex-row" style="width: 70%; height: 100%;">
                   <OneChat
-                    v-for="(item, index) in ['CPU Agent', 'Memory Agent', 'IO Agent', 'Network Agent']"
-                    :key="index"
-                    :sender="item"
-                    :hire="index !== 2"
+                    v-if="cpuExpertMessages.length > 0"
+                    sender="CpuExpert"
+                    :hire="true"
                     class="chat-container"
-                    :messages="messages"
-                    style="height: calc(50% - 10px); margin-bottom: 20px; flex: 1 1 calc(50% - 40px); margin-left: 20px"
+                    :messages="cpuExpertMessages"
+                    style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
+                  />
+                  <OneChat
+                    v-if="ioExpertMessages.length > 0"
+                    sender="IoExpert"
+                    :hire="true"
+                    class="chat-container"
+                    :messages="ioExpertMessages"
+                    style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
+                  />
+                  <OneChat
+                    v-if="memoryExpertMessages.length > 0"
+                    sender="CpuExpert"
+                    :hire="true"
+                    class="chat-container"
+                    :messages="memoryExpertMessages"
+                    style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
+                  />
+                  <OneChat
+                    v-if="networkExpertMessages.length > 0"
+                    sender="CpuExpert"
+                    :hire="true"
+                    class="chat-container"
+                    :messages="networkExpertMessages"
+                    style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
                   />
                 </div>
               </div>
@@ -87,7 +112,7 @@
               </span>
               <Chat
                 class="chat-container"
-                :messages="tableMessages"
+                :messages="brainstormingMessages"
                 style="height: calc(100% - 40px); width: 100%; padding: 0"
               />
             </div>
@@ -108,7 +133,7 @@
       destroy-on-close
       direction="rtl"
     >
-      <div class="c-relative c-flex-column" style="overflow: hidden; height: 100%">
+      <div class="c-relative c-flex-column" style="overflow: scroll; height: 100%">
         <VueMarkdown style="height: calc(100% - 40px); width: 100%; padding: 0" :source="report" />
       </div>
     </el-drawer>
@@ -118,7 +143,7 @@
 
 <script>
 
-import { history } from '@/api/api'
+import { alertHistories, alertHistoryDetail } from '@/api/api'
 import Vue from 'vue'
 import Chat from '@/components/Chat'
 import OneChat from '@/components/OneChat'
@@ -130,56 +155,20 @@ export default {
   data() {
     return {
       timeRange: [],
-      messages: [
-        { sender: 'Chief DBA', time: '2023-09-24 20:41:36', content: '已经嗅到该异常，开始进行分析' },
-        { sender: 'Chief DBA', time: '2023-09-24 20:41:36', content: '该异常涉及到XXX指标' },
-        { sender: 'Chief DBA', time: '2023-09-24 20:41:36', content: '经过分析，该指标可受到CPU，IO，NET这几方面影响' },
-        { sender: 'Chief DBA', time: '2023-09-24 20:41:36', content: '联系CPU Colleague，IO Colleague，NET Colleague' },
-        { sender: 'Chief DBA', time: '2023-09-24 20:41:36', content: '任务已下发。' }
-      ],
-      tableMessages: [
-        { sender: 'CPU Agent', time: '2023-09-24 20:41:36', content: '这个问题其实是有一条慢查询导致的' },
-        { sender: 'Memory Agent', time: '2023-09-24 20:41:36', content: '是的，我认同这个结果。该慢查询同样引起Mem变化' },
-        { sender: 'Network Agent', time: '2023-09-24 20:41:36', content: '我这边监控到这条语句进来后，其它语句都超时了。' },
-        { sender: 'CPU Agent', time: '2023-09-24 20:41:36', content: '那我们是否能够定位该异常是由这条慢查询导致的。' },
-        { sender: 'Network Agent', time: '2023-09-24 20:41:36', content: '同意' }
-      ],
-      report:
-        '# 2023年09月24日23:10:25 CPU异常 \n ## 一、概述 \n ### 问题描述 \n 巡检发现xxx时间段，发生例如cpu高的告警或异常 \n ### 根因 \n 比如可能是系统迁移、慢sgl没有走分区裁剪 \n ### 影响范围  \n db/分区表 \n ### 解决方案 \n xxx问题 建议如下修改，可以走xxx剪枝优化场景: 1、修改SQL..',
+      messages: [],
+      cpuExpertMessages: [],
+      ioExpertMessages: [],
+      memoryExpertMessages: [],
+      networkExpertMessages: [],
+      brainstormingMessages: [],
+      tableMessages: [],
+      report: '',
       introMessage: [],
-      historyMessages: [
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' },
-        { title: '2023年09月24日12:08:42-异常报告-CPU满载运行5分钟' }
-      ],
+      historyMessages: [],
       historyLoading: false,
       reviewDrawer: false,
-      reviewItem: undefined,
+      reviewItem: {},
+      reviewLoading: false,
       activeName: 0,
       analyseAt: undefined,
       reportDrawer: false
@@ -189,21 +178,15 @@ export default {
   mounted() {
     // this.messages = JSON.parse(localStorage.getItem(MESSAGEKEY) || '[]')
     // this.getRobotIntro()
-    // this.getDiagnoseHistory()
+    this.getAlertHistories()
   },
   beforeDestroy() {
   },
   methods: {
-    getDiagnoseHistory() {
+    getAlertHistories() {
       this.historyMessages = []
-      history().then(res => {
-        const data = res.data
-        for (const dataKey in data) {
-          this.historyMessages.push({
-            title: dataKey,
-            value: data[dataKey]
-          })
-        }
+      alertHistories().then(res => {
+        this.historyMessages = res.data
       }).finally(() => {
       })
     },
@@ -212,13 +195,33 @@ export default {
         this.reloadRequest()
       }
     },
-    onReviewClick() {
+    onReviewClick(item) {
+      this.reviewLoading = true
       this.activeName = 0
       this.reviewDrawer = true
-      this.reviewItem = true
+      this.getAlertHistoryDetail(item)
     },
-    onReportClick() {
+    getAlertHistoryDetail(item) {
+      this.cpuExpertMessages = []
+      this.ioExpertMessages = []
+      this.memoryExpertMessages = []
+      this.networkExpertMessages = []
+      this.brainstormingMessages = []
+      alertHistoryDetail({ file: item.file_name }).then(res => {
+        this.reviewItem = res.data
+        this.cpuExpertMessages = this.reviewItem.anomalyAnalysis?.CpuExpert?.messages || []
+        this.ioExpertMessages = this.reviewItem.anomalyAnalysis?.IoExpert?.messages || []
+        this.memoryExpertMessages = this.reviewItem.anomalyAnalysis?.MemoryExpert?.messages || []
+        this.networkExpertMessages = this.reviewItem.anomalyAnalysis?.NetworkExpert?.messages || []
+        this.brainstormingMessages = this.reviewItem.brainstorming?.messages || []
+        this.report = this.reviewItem.report.data || []
+      }).finally(() => {
+        this.reviewLoading = false
+      })
+    },
+    onReportClick(item) {
       this.reportDrawer = true
+      this.getAlertHistoryDetail(item)
     },
     onStepClick(activeName) {
       this.activeName = activeName
