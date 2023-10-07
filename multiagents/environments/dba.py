@@ -217,9 +217,7 @@ class DBAEnvironment(BaseModel):
 
         # # Update the set of visible agents for each agent
         # self.rule.update_visible_agents(self)
-
-        import pdb; pdb.set_trace()
-
+        
         return report
 
     def role_assign(self, advice: str = "", alert_info: str = "") -> List[BaseAgent]:

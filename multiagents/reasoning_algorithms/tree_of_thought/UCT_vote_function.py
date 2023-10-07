@@ -418,7 +418,8 @@ class UCT_vote_function(base_search_method):
             new_message = self.llm.parse() # execute llm inference
             print(f"New message:\t{new_message}")
             assert new_message["role"] == "assistant"
-            now_node.messages.append(new_message)
+            if new_message not in now_node.messages:
+                now_node.messages.append(new_message)
 
             if first_time:
                 first_time = False
@@ -530,7 +531,8 @@ class UCT_vote_function(base_search_method):
                     temp_node.env = child_env
                     temp_node.is_terminal = False
                     temp_node.messages = now_node.messages.copy()
-                    temp_node.messages.append({"role": "assistant", "content": str(observation)})
+                    if {"role": "assistant", "content": str(observation)} not in temp_node.messages:
+                        temp_node.messages.append({"role": "assistant", "content": str(observation)})
                     temp_node.father = now_node
                     now_node.children.append(temp_node)
                     temp_node.print()
