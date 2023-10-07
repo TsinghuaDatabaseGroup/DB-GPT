@@ -525,7 +525,7 @@ class UCT_vote_function(base_search_method):
                     temp_node.node_type = "Action Input"
                     temp_node.description = function_input
                     child_env = deepcopy(now_node.env)
-
+                    
                     # observation, status = child_env.step(action_name=now_node.description, action_input=function_input)
                     temp_node.observation = observation
                     temp_node.env = child_env

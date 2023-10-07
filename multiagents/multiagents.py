@@ -18,7 +18,7 @@ class MultiAgents:
     def __init__(self, agents: List[BaseAgent], environment: BaseEnvironment):
         self.agents = agents
         self.environment = environment
-
+    
     @classmethod
     def from_task(cls, task: str):
         
