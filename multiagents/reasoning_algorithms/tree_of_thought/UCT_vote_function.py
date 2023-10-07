@@ -460,6 +460,7 @@ class UCT_vote_function(base_search_method):
                 if isinstance(parsed_response, AgentAction):
                     # If the response is an action, call the tool
                     # and append the observation to tool_observation
+                    
                     if "whether_is_abnormal_metric" in parsed_response.tool:
 
                         metric_name = self.name.lower()
@@ -482,7 +483,7 @@ class UCT_vote_function(base_search_method):
                     else:
                         parameters = json.loads(parsed_response.tool_input)
 
-                    if "obtain_start_and_end_time_of_anomaly" in parsed_response.tool and self.alert_dict != {}:
+                    if "obtain_start_and_end_time_of_anomaly" in parsed_response.tool and self.alert_dict != {} and self.alert_dict != None:
                         observation = f"The start time is {self.alert_dict['start_time']}, and the end time is {self.alert_dict['end_time']}."
                     else:
                         observation = temp_node.env.tool.call_function(parsed_response.tool, **parameters)

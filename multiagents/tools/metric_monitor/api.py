@@ -9,7 +9,6 @@ from utils.markdown_format import generate_prometheus_chart_content
 from multiagents.tools.index_advisor.api import optimize_index_selection
 
 def obtain_start_and_end_time_of_anomaly(input: str = 'json dict string'):
-    
     return {"start_time": diag_start_time, "end_time": diag_end_time}
 
 
@@ -36,7 +35,8 @@ def whether_is_abnormal_metric(
         raise Exception("No metric values found for the given time range")
 
     # draw the metric chart
-    chart_metric_values = [[i, str(value)] for i, value in enumerate(metric_values)]
+    chart_metric_values = [[i, str(value)] for i, value in metric_values]
+
     chart_content = generate_prometheus_chart_content(metric_name, chart_metric_values, x_label_format="%H:%M", size=(400, 225))
     with open(f"./alert_results/test/{metric_name}.html", "w") as f:
         f.write(chart_content)
@@ -106,11 +106,12 @@ def match_diagnose_knowledge(
     
     detailed_abnormal_metrics = top5_abnormal_metrics
 
+    import pdb; pdb.set_trace()
     for i,metric_name in enumerate(top5_abnormal_metrics):
         metric_values = top5_abnormal_metrics[metric_name]
 
         # draw the metric chart
-        chart_metric_values = [[i, str(value)] for i, value in enumerate(metric_values)]
+        chart_metric_values = [[i, str(value)] for i, value in metric_values]
         chart_content = generate_prometheus_chart_content(metric_name, chart_metric_values, x_label_format="%H:%M", size=(400, 225))
         with open(f"./alert_results/test/{metric_name}.html", "w") as f:
             f.write(chart_content)

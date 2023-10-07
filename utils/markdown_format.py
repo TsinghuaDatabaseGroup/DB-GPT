@@ -14,10 +14,10 @@ def generate_prometheus_chart_content(title, values, x_label_format="'%Y-%m-%d %
     x_values = []
     y_values = []
     for item in values:
-        date = datetime.datetime.fromtimestamp(item[0])
-        formatted_date = date.strftime(x_label_format)
-        x_values.append(formatted_date)
-        y_values.append("{:.4f}".format(float(item[1])))
+        # date = datetime.datetime.fromtimestamp(item[0])
+        # formatted_date = date.strftime(x_label_format)
+        x_values.append(item[0])
+        y_values.append(float("{:.4f}".format(float(item[1]))))
     return generate_chart_content(title, x_values, y_values, size)
 
 
