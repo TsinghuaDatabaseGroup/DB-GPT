@@ -260,7 +260,7 @@ class DBAEnvironment(BaseModel):
             self.reporter.report["solutions"] = str(self.reporter.report["solutions"]) + f"\nThe solutions recommended by {diag['sender']}:\n" + solution + "\n"
 
             self.reporter.report["diagnosis process"] = str(self.reporter.report["diagnosis process"]) + f"\n {i+1}. The diagnosis process of {diag['sender']}:\n"
-            import pdb; pdb.set_trace()
+
             for i, m_response in enumerate(diag["diagnosis process"]):
                 if m_response['role'] != "user":
                     self.reporter.report["diagnosis process"] = str(self.reporter.report["diagnosis process"]) + str(m_response["content"]) + "\n"
@@ -276,7 +276,7 @@ class DBAEnvironment(BaseModel):
                         with open(f"./alert_results/test/{metric_name}.html", "r") as f:
                             chart_content = f.read()
 
-                        m_message.replace(chart_str, chart_content)
+                        m_message = m_message.replace(chart_str, chart_content)
 
                     self.reporter.record["anomalyAnalysis"][diag['sender']]["messages"].append({"data": m_message, "time": time.strftime("%H:%M:%S", time.localtime())})
 
@@ -334,7 +334,6 @@ class DBAEnvironment(BaseModel):
                 #     "time":"消息发送时间"
                 # }
 
-        import pdb; pdb.set_trace()
         # review the diagnosis results by the reporter
         self.reporter.update_diagnosis()
         self.reporter.update_solutions()

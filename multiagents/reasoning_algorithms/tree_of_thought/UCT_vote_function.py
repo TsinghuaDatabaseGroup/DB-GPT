@@ -479,7 +479,7 @@ class UCT_vote_function(base_search_method):
                         metric_name = self.name.lower()
                         metric_name = metric_name.replace("expert","") + "_" + "usage"
 
-                        parameters = {"start_time": self.alert_dict['start_time'], "end_time": self.alert_dict['end_time'], "metric_name": metric_name}
+                        parameters = {"start_time": self.alert_dict['start_time'], "end_time": self.alert_dict['end_time'], "metric_name": metric_name, "alert_metric": alert_metric}
                     else:
                         parameters = json.loads(parsed_response.tool_input)
 

@@ -103,27 +103,28 @@ def match_diagnose_knowledge(
 
                     top5_abnormal_metrics.pop(min_abnormal_value_key)
                     top5_abnormal_metrics_map.pop(min_abnormal_value_key)
-    
-    detailed_abnormal_metrics = top5_abnormal_metrics
 
-    import pdb; pdb.set_trace()
+    metric_str = ""
+
     for i,metric_name in enumerate(top5_abnormal_metrics):
-        metric_values = top5_abnormal_metrics[metric_name]
 
-        # draw the metric chart
-        chart_metric_values = [[i, str(value)] for i, value in metric_values]
-        chart_content = generate_prometheus_chart_content(metric_name, chart_metric_values, x_label_format="%H:%M", size=(400, 225))
-        with open(f"./alert_results/test/{metric_name}.html", "w") as f:
-            f.write(chart_content)
+        if metric_name in detailed_metrics:
+            metric_values = detailed_metrics[metric_name]
 
-        detailed_abnormal_metrics = detailed_abnormal_metrics + f"{i+1}. {metric_name} contains abnormal patterns:\n [chart] ./alert_results/test/{metric_name}.html \n"
-        
+            # draw the metric chart
+            chart_metric_values = [[i, str(value)] for i, value in enumerate(metric_values)]
+            chart_content = generate_prometheus_chart_content(metric_name, chart_metric_values, x_label_format="%H:%M", size=(400, 225))
+            with open(f"./alert_results/test/{metric_name}.html", "w") as f:
+                f.write(chart_content)
+
+            metric_str = metric_str + f"{i+1}. {metric_name} contains abnormal patterns: {top5_abnormal_metrics[metric_name]} \n [chart] ./alert_results/test/{metric_name}.html \n"
+
     if metric_prefix == "network":
         
-        return """The {} relevant metric values from Prometheus are: 
+        return """The {} relevant metric values from Prometheus are:\n 
         {}""".format(metric_prefix,
-            detailed_abnormal_metrics)
-    
+            metric_str)
+
     workload_state = ""
     for i, query in enumerate(workload_statistics):
         # workload_state += str(i + 1) + '. ' + str(query) + "\n"
@@ -142,30 +143,23 @@ def match_diagnose_knowledge(
 
     docs_str = knowledge_matcher.match(detailed_abnormal_metrics)
 
-
-    if detailed_alert_metric:
-        alert_metric_str = """The values of alert metric {} are:
-    {}
-        
-""".format(alert_metric, detailed_alert_metric)
+    if detailed_alert_metric != {} and detailed_alert_metric != None:
+        for detailed_values in detailed_alert_metric.values():
+            # draw the metric chart
+            chart_metric_values = [[i, str(value)] for i, value in enumerate(detailed_values)]
+            chart_content = generate_prometheus_chart_content(alert_metric, chart_metric_values, x_label_format="%H:%M", size=(400, 225))
+            with open(f"./alert_results/test/{alert_metric}.html", "w") as f:
+                f.write(chart_content)
+                        
+            alert_metric_str = """The statistics of alert metric {} are:\n [chart] ./alert_results/test/{}.html \n""".format(alert_metric, alert_metric)
     else:
         alert_metric_str = ""
 
-
-    # if detailed_abnormal_metrics is not empty
-    if detailed_abnormal_metrics:
-        metric_str = """The {} metric values are:
-    {}
-        
-""".format(metric_prefix, detailed_abnormal_metrics)
-    else:
-        metric_str = ""
-
     if workload_state:
         workload_str = """The workload statistics are:
-    {}
+        {}
         
-""".format(workload_state)
+        """.format(workload_state)
     else:
         workload_str = ""
             
