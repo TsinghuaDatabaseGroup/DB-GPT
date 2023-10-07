@@ -35,7 +35,7 @@ def load_memory(memory_config: Dict):
     return memory_registry.build(memory_type, **memory_config)
 
 
-def load_tools(tool_config: List[Dict]):
+def load_tools(tool_config: List[Dict], max_api_num):
     
     if len(tool_config) == 0:
         return []
@@ -45,7 +45,7 @@ def load_tools(tool_config: List[Dict]):
     for tool in tool_config:
 
         api_module = importlib.import_module(f"""multiagents.tools.{tool["tool_name"]}.api""")
-        register_functions_from_module(api_module, caller) # functions
+        register_functions_from_module(api_module, caller, max_api_num) # functions
         
 
     return caller
@@ -65,7 +65,7 @@ def load_agent(agent_config: Dict) -> BaseAgent:
     return agent
 
 
-def prepare_task_config(task):
+def prepare_task_config(task, args):
     """Read the yaml config of the given task in `tasks` directory."""
     
     task_path = os.path.join(os.path.dirname(__file__), task)
@@ -92,7 +92,7 @@ def prepare_task_config(task):
         llm = load_llm(agent_configs.get("llm", "xxxx"))
         agent_configs["llm"] = llm
 
-        agent_configs["tools"] = load_tools(agent_configs.get("tools", []))
+        agent_configs["tools"] = load_tools(agent_configs.get("tools", []), args.max_api_num)
 
         agent_configs["name"] = agent_configs['name']
 

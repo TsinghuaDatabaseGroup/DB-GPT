@@ -7,6 +7,9 @@ import pdb
 from termcolor import colored
 from multiagents.utils.database import DBArgs, Database
 from multiagents.knowledge.knowledge_extraction import KnowledgeExtraction
+import time
+
+current_diag_time = time.localtime()
 
 diag_start_time, diag_end_time = obtain_anomaly_time()
 
