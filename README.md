@@ -23,7 +23,7 @@
 
 *[Click to check 29 typical anomalies together with expert analysis!](./anomaly_trigger/29种性能异常与根因分析.pdf) (supported by the DBMind team)*
 
-*[New version is under construction in the new_arch branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/new_ui)
+*[New version is under construction in the new_arch branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/new_ui)*
 
 
 <!-- collection of useful, user-friendly, and advanced database tools. These tools are built around LLMs, including **system diagnosis** (*D-Bot*), **query optimization** (coming soon), and **anomaly simulation** (coming soon) -->
