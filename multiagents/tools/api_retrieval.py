@@ -30,15 +30,19 @@ def get_function_parameters(func):
         return [param.name for param in parameters]
 
 
-def register_functions_from_module(module, caller):
+def register_functions_from_module(module, caller, max_api_num):
     members = inspect.getmembers(module, inspect.isfunction)
 
-    max_api_num = 20
     # 从members中随机选择前max_api_num个函数（如果数量不足则选择全部）
     if len(members) > max_api_num:
         members = random.sample(members, max_api_num)
 
-    for name, func in members:
+    for member in members:
+        if len(member) == 2:
+            name, func = member
+        else:
+            name, _, func = member
+
         if func.__module__ == module.__name__:
             params = get_function_parameters(func)
             caller.register_function(name, params, func)
