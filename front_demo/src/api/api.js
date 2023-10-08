@@ -19,3 +19,11 @@ export async function history(args) {
 export async function nextStep(args) {
   return await post('db_diag/next_step', args)
 }
+
+export async function alertHistories(args) {
+  return await post('alert/histories', args)
+}
+
+export async function alertHistoryDetail(args) {
+  return await post('alert/history-detail', args)
+}
