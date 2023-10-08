@@ -11,6 +11,9 @@ import json
 import os
 
 current_diag_time = time.localtime()
+current_diag_time = time.strftime("%Y-%m-%d-%H:%M:%S", current_diag_time)
+if not os.path.exists(f"./alert_results/{str(current_diag_time)}"):
+    os.makedirs(f"./alert_results/{str(current_diag_time)}")
 
 diag_start_time, diag_end_time = obtain_anomaly_time()
 
@@ -26,6 +29,7 @@ prometheus_metrics = read_prometheus_metrics_yaml(config_path='config/prometheus
 
 # configuration of the index advisor
 advisor = "db2advis"  # option: extend, db2advis (fast)
+
 
 # [workload statistics] read from pg_stat_statements 
 dbargs = DBArgs("postgresql", config=postgresql_conf)
