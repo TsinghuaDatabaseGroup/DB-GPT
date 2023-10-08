@@ -3,10 +3,14 @@ from multiagents.utils.server import obtain_slow_queries, obtain_anomaly_time
 import warnings
 from multiagents.tools.metric_monitor.anomaly_detection import prometheus
 import numpy as np
-import pdb
 from termcolor import colored
 from multiagents.utils.database import DBArgs, Database
 from multiagents.knowledge.knowledge_extraction import KnowledgeExtraction
+import time
+import json
+import os
+
+current_diag_time = time.localtime()
 
 diag_start_time, diag_end_time = obtain_anomaly_time()
 
@@ -27,13 +31,43 @@ advisor = "db2advis"  # option: extend, db2advis (fast)
 dbargs = DBArgs("postgresql", config=postgresql_conf)
 db = Database(dbargs, timeout=-1)
 
-workload_statistics = ""
-#workload_statistics = db.obtain_historical_queries_statistics()
 
-# [slow queries] read from query logs
-# /var/lib/pgsql/12/data/pg_log/postgresql-Mon.log
-slow_queries = ""
-#slow_queries = obtain_slow_queries(database_server_conf)
+WORKLOAD_FILE_NAME = "workload_info.json"
+with open(WORKLOAD_FILE_NAME, 'w') as f:
+    json.dump({'workload_statistics': '', 'slow_queries': ''}, f)
+
+def get_workload_statistics():
+    with open(WORKLOAD_FILE_NAME, 'r') as f:
+        info = json.load(f)
+        return info["workload_statistics"]
+
+def set_workload_statistics(stats):
+    if os.path.exists(WORKLOAD_FILE_NAME):
+        with open(WORKLOAD_FILE_NAME, 'r') as rf:
+            info = json.load(rf)
+        info["workload_statistics"] = stats
+        with open(WORKLOAD_FILE_NAME, 'w') as f:
+            json.dump(info, f)
+    else:
+        with open(WORKLOAD_FILE_NAME, 'w') as f:
+            json.dump({'workload_statistics': stats, 'slow_queries': ''}, f)
+
+def get_slow_queries():
+    with open(WORKLOAD_FILE_NAME, 'r') as f:
+        info = json.load(f)
+        return info["slow_queries"]
+
+def set_slow_queries(stats):
+    if os.path.exists(WORKLOAD_FILE_NAME):
+        with open(WORKLOAD_FILE_NAME, 'r') as rf:
+            info = json.load(rf)
+        info["workload_statistics"] = stats
+        with open(WORKLOAD_FILE_NAME, 'w') as f:
+            json.dump(info, f)
+    else:
+        with open(WORKLOAD_FILE_NAME, 'w') as f:
+            json.dump({'workload_statistics': '', 'slow_queries': stats}, f)
+
 
 # [diagnosis knowledge]
 knowledge_matcher = KnowledgeExtraction(

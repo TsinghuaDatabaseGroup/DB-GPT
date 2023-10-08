@@ -7,6 +7,7 @@ from multiagents.environments.base import BaseEnvironment
 from multiagents.environments import DBAEnvironment
 from multiagents.initialization import load_agent, load_environment, prepare_task_config
 from multiagents.utils.utils import AGENT_TYPES
+from multiagents.tools.metrics import get_workload_statistics
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
@@ -16,14 +17,15 @@ logging.basicConfig(
 
 class MultiAgents:
     def __init__(self, agents: List[BaseAgent], environment: BaseEnvironment):
+        
         self.agents = agents
         self.environment = environment
-    
+
     @classmethod
-    def from_task(cls, task: str):
+    def from_task(cls, task, args):
         
         # Prepare the config of the task
-        task_config = prepare_task_config(task)
+        task_config = prepare_task_config(task, args)
         
         # Build the agents
         reporter = None
@@ -56,12 +58,12 @@ class MultiAgents:
         
         return cls(agents, environment)
 
-    def run(self):
+    def run(self, args):
         """Run the environment from scratch until it is done."""
         self.environment.reset()
         
         #while not self.environment.is_done():
-        asyncio.run(self.environment.step())
+        asyncio.run(self.environment.step(args))
 
     def reset(self):
         self.environment.reset()

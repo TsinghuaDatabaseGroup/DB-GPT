@@ -20,7 +20,6 @@ class APICaller:
 
             return None
 
-
 def get_function_parameters(func):
     if sys.version_info >= (3, 10):
         signature = inspect.signature(func)

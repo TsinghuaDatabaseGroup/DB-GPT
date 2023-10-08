@@ -315,12 +315,12 @@ class Database():
 
         return result
     
-    def obtain_historical_queries_statistics(self):
+    def obtain_historical_queries_statistics(self, topn = 20):
         try:
             #success, res = self.execute_sql('explain (FORMAT JSON, analyze) ' + sql)
             #command = "SELECT query, calls, total_time FROM pg_stat_statements ORDER BY total_time DESC LIMIT 2;"
             
-            command = "SELECT s.query, s.calls, s.total_time, d.datname FROM pg_stat_statements s JOIN pg_database d ON s.dbid = d.oid ORDER BY s.total_time DESC LIMIT 10;"
+            command = f"SELECT s.query, s.calls, s.total_time, d.datname FROM pg_stat_statements s JOIN pg_database d ON s.dbid = d.oid ORDER BY s.total_time DESC LIMIT {topn};"
             success, res = self.execute_sql(command)
             if success == 1:
                 slow_queries = []
@@ -329,7 +329,7 @@ class Database():
                         sql_template = sql_stat[0].replace("\n", "").replace("\t", "").strip()
                         print("===== logged slow query: ", sql_template,sql_stat[1],sql_stat[2],sql_stat[3])
                         slow_queries.append({"sql": sql_template, "calls": sql_stat[1], "total_time": sql_stat[2], "dbname": sql_stat[3]})
-
+                        
                 return slow_queries
             else:
                 logging.error('obtain_historical_queries_statistics Fails!')

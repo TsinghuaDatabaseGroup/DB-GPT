@@ -12,6 +12,7 @@ import time
 from multiagents.utils.utils import AGENT_TYPES
 from multiagents.agents.conversation_agent import BaseAgent
 from multiagents.message import Message, SolverMessage, CriticMessage
+from multiagents.tools.metrics import current_diag_time
 
 from prompt_templates.Diagnosis_smmary_prompts import DIAGNOSIS_SUMMARYY_PROMPT
 
@@ -30,9 +31,9 @@ from . import env_registry as EnvironmentRegistry
 from pydantic import BaseModel
 
 
-def extract_alert_info():
+def extract_alert_info(latest_alert_file):
 
-    with open("latest_alert_info.txt", "r") as f:
+    with open(f"{latest_alert_file}.txt", "r") as f:
         alert_info = f.read()
         alert_info = alert_info.replace("\'", '\"')
         alert_dict = alert_info.replace("'", '"')
@@ -108,7 +109,8 @@ class DBAEnvironment(BaseModel):
     # evaluator: BaseEvaluator
 
     task_description: str
-
+    # current time in seconds
+    
     cnt_turn: int = 0
     max_turn: int = 10
     success: bool = False
@@ -145,11 +147,14 @@ class DBAEnvironment(BaseModel):
         )
 
     async def step(
-        self, advice: str = "No advice yet.", previous_plan: str = "No solution yet."
+        self, 
+        args, 
+        advice: str = "No advice yet.", 
+        previous_plan: str = "No solution yet."
     ) -> List[Message]:
 
         # obtain the alert information
-        alert_str, alert_dict = extract_alert_info()
+        alert_str, alert_dict = extract_alert_info(args.latest_alert_file)
         self.reporter.alert_str = alert_str
         self.reporter.alert_dict = alert_dict
 
@@ -168,9 +173,8 @@ class DBAEnvironment(BaseModel):
 
         self.reporter.record["anomalyAnalysis"]["RoleAssigner"]["messages"].append({"data": expert_select_desc, "time": time.strftime("%H:%M:%S", time.localtime())})
 
-        max_hired_experts = 2
-        if len(selected_experts) > max_hired_experts:
-            selected_experts = selected_experts[:max_hired_experts]
+        if len(selected_experts) > args.max_hired_experts:
+            selected_experts = selected_experts[:args.max_hired_experts]
 
         # assign alert info to each agent
         for agent in selected_experts:
@@ -217,7 +221,7 @@ class DBAEnvironment(BaseModel):
 
         # # Update the set of visible agents for each agent
         # self.rule.update_visible_agents(self)
-        
+
         return report
 
     def role_assign(self, advice: str = "", alert_info: str = "") -> List[BaseAgent]:
@@ -247,8 +251,7 @@ class DBAEnvironment(BaseModel):
             task_description=self.task_description,
             previous_plan=previous_plan,
             advice=advice)
-        
-        diag_messages = []
+
         for i,diag in enumerate(initial_diags):
             self.reporter.report["root cause"] = str(self.reporter.report["root cause"]) + f"\nThe root cause identified by {diag['sender']}:\n" + str(diag["root cause"]) + "\n"
 
@@ -267,11 +270,12 @@ class DBAEnvironment(BaseModel):
                         continue
 
                     m_message = m_response['content']
-                    pattern = r'\[chart\] \./alert_results/test/(\w+)\.html'
+                    
+                    pattern = r'\[chart\] \./alert_results/{}/(\w+)\.html'.format(current_diag_time)
                     matches = re.findall(pattern, m_message)
                     for metric_name in matches:
-                        chart_str = f'[chart] ./alert_results/test/{metric_name}.html'
-                        with open(f"./alert_results/test/{metric_name}.html", "r") as f:
+                        chart_str = f'[chart] ./alert_results/{current_diag_time}/{metric_name}.html'
+                        with open(f"./alert_results/{current_diag_time}/{metric_name}.html", "r") as f:
                             chart_content = f.read()
 
                         m_message = m_message.replace(chart_str, chart_content)

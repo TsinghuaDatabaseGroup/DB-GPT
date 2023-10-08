@@ -3,8 +3,8 @@ from multiagents.tools.index_advisor.index_selection.selection_utils.postgres_db
 from multiagents.tools.index_advisor.index_selection.selection_utils import selec_com
 from multiagents.tools.index_advisor.configs import get_index_result
 from multiagents.tools.metrics import postgresql_conf, advisor
-from multiagents.tools.metrics import workload_statistics
-import pdb
+from multiagents.tools.metrics import get_workload_statistics
+import ast
 
 def optimize_index_selection(start_time: int, end_time: int):
     """optimize_index_selection(start_time : int, end_time : int) returns the recommended index by running the algorithm 'Extend'.
@@ -23,6 +23,9 @@ def optimize_index_selection(start_time: int, end_time: int):
     """
     # 1. Split the workloads by database names
     databases = {}
+    workload_statistics = get_workload_statistics()
+    workload_statistics = ast.literal_eval(workload_statistics)
+
     for query_template in workload_statistics:
         database_name = query_template["dbname"]
 

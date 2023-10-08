@@ -1,12 +1,15 @@
 import numpy as np
+import ast
+
 from multiagents.tools.metric_monitor.anomaly_detection import prometheus
 from multiagents.tools.metric_monitor.anomaly_detection import detect_anomalies
 from multiagents.tools.metrics import prometheus_metrics, postgresql_conf, obtain_values_of_metrics, processed_values
-from multiagents.tools.metrics import diag_start_time, diag_end_time
-from multiagents.tools.metrics import slow_queries, workload_statistics
+from multiagents.tools.metrics import current_diag_time, diag_start_time, diag_end_time
+from multiagents.tools.metrics import get_workload_statistics, get_slow_queries
 from multiagents.tools.metrics import knowledge_matcher
 from utils.markdown_format import generate_prometheus_chart_content
 from multiagents.tools.index_advisor.api import optimize_index_selection
+
 
 def obtain_start_and_end_time_of_anomaly(input: str = 'json dict string'):
     return {"start_time": diag_start_time, "end_time": diag_end_time}
@@ -38,7 +41,7 @@ def whether_is_abnormal_metric(
     chart_metric_values = [[i, str(value)] for i, value in metric_values]
 
     chart_content = generate_prometheus_chart_content(metric_name, chart_metric_values, x_label_format="%H:%M", size=(400, 225))
-    with open(f"./alert_results/test/{metric_name}.html", "w") as f:
+    with open(f"./alert_results/{current_diag_time}/{metric_name}.html", "w") as f:
         f.write(chart_content)
 
     is_abnormal = detect_anomalies(
@@ -46,10 +49,10 @@ def whether_is_abnormal_metric(
 
     if is_abnormal:
         print(f"{metric_name} is abnormal")
-        return f"The metric {metric_name} is abnormal \n " + f"[chart] ./alert_results/test/{metric_name}.html"
+        return f"The metric {metric_name} is abnormal \n " + f"[chart] ./alert_results/{current_diag_time}/{metric_name}.html"
     else:
         print(f"{metric_name} is normal")
-        return f"The metric {metric_name} is normal \n " + f"[chart] ./alert_results/test/{metric_name}.html"
+        return f"The metric {metric_name} is normal \n " + f"[chart] ./alert_results/{current_diag_time}/{metric_name}.html"
     
 
 def match_diagnose_knowledge(
@@ -57,7 +60,8 @@ def match_diagnose_knowledge(
         end_time: int,
         metric_name: str = "cpu",
         alert_metric: str = ""):
-    global slow_queries
+    slow_queries = get_slow_queries()
+    slow_queries = ast.literal_eval(slow_queries)
 
     if "cpu" in metric_name.lower():
         metric_prefix = "cpu"
@@ -114,10 +118,10 @@ def match_diagnose_knowledge(
             # draw the metric chart
             chart_metric_values = [[i, str(value)] for i, value in enumerate(metric_values)]
             chart_content = generate_prometheus_chart_content(metric_name, chart_metric_values, x_label_format="%H:%M", size=(400, 225))
-            with open(f"./alert_results/test/{metric_name}.html", "w") as f:
+            with open(f"./alert_results/{current_diag_time}/{metric_name}.html", "w") as f:
                 f.write(chart_content)
 
-            metric_str = metric_str + f"{i+1}. {metric_name} contains abnormal patterns: {top5_abnormal_metrics[metric_name]} \n [chart] ./alert_results/test/{metric_name}.html \n"
+            metric_str = metric_str + f"{i+1}. {metric_name} contains abnormal patterns: {top5_abnormal_metrics[metric_name]} \n [chart] ./alert_results/{current_diag_time}/{metric_name}.html \n"
 
     if metric_prefix == "network":
         
@@ -126,6 +130,10 @@ def match_diagnose_knowledge(
             metric_str)
 
     workload_state = ""
+
+    workload_statistics = get_workload_statistics()
+    workload_statistics = ast.literal_eval(workload_statistics)
+
     for i, query in enumerate(workload_statistics):
         # workload_state += str(i + 1) + '. ' + str(query) + "\n"
         if isinstance(query["total_time"], str):
@@ -148,10 +156,10 @@ def match_diagnose_knowledge(
             # draw the metric chart
             chart_metric_values = [[i, str(value)] for i, value in enumerate(detailed_values)]
             chart_content = generate_prometheus_chart_content(alert_metric, chart_metric_values, x_label_format="%H:%M", size=(400, 225))
-            with open(f"./alert_results/test/{alert_metric}.html", "w") as f:
+            with open(f"./alert_results/{current_diag_time}/{alert_metric}.html", "w") as f:
                 f.write(chart_content)
                         
-            alert_metric_str = """The statistics of alert metric {} are:\n [chart] ./alert_results/test/{}.html \n""".format(alert_metric, alert_metric)
+            alert_metric_str = """The statistics of alert metric {} are:\n [chart] ./alert_results/{current_diag_time}/{}.html \n""".format(alert_metric, alert_metric)
     else:
         alert_metric_str = ""
 
