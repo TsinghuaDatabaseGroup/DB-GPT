@@ -420,3 +420,94 @@ IO Agent: {'diagnose': 'The anomaly could be due to high usage of disk groups an
  * Debugger is active!
  * Debugger PIN: 127-258-368
  * Detected change in '/Users/Four/JobProjects/Tsinghua/DB-GPT/utils/markdown_format.py', reloading
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8022
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
+127.0.0.1 - - [07/Oct/2023 17:08:22] "POST /alert/history HTTP/1.1" 200 -
+ * Detected change in '/Users/Four/JobProjects/Tsinghua/DB-GPT/api/alert.py', reloading
+ * Restarting with stat
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8022
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
+127.0.0.1 - - [07/Oct/2023 17:18:40] "[33mPOST /alert/history HTTP/1.1[0m" 404 -
+127.0.0.1 - - [07/Oct/2023 17:18:48] "POST /alert/histories HTTP/1.1" 200 -
+ * Detected change in '/Users/Four/JobProjects/Tsinghua/DB-GPT/api/alert.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
+127.0.0.1 - - [07/Oct/2023 17:19:12] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 17:20:30] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 17:20:50] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 21:56:12] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 21:58:12] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 21:58:24] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 21:58:24] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 21:59:12] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 21:59:25] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 21:59:28] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 21:59:28] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:18:38] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:18:49] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:18:51] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:18:52] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:18:52] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:20:02] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:20:04] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:20:04] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:20:21] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:20:23] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:20:23] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:32:06] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:35:33] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:37:53] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:37:57] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:37:57] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:38:24] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:38:27] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:38:27] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:38:50] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:38:54] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:39:10] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:39:11] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:39:11] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:42:16] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:42:18] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:42:18] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:43:51] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:43:53] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:43:53] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:46:33] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:46:34] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:46:34] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:47:55] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:47:55] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:48:38] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:48:56] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:51:01] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 22:51:01] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:04:04] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:04:04] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:04:52] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:04:52] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:13:24] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:13:24] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:19:49] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:19:56] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:19:57] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:19:57] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:23:39] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:23:41] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:23:41] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:27:18] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:27:22] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:27:22] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:28:44] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:28:48] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:28:48] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [07/Oct/2023 23:28:52] "POST /alert/history-detail HTTP/1.1" 200 -
