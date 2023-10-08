@@ -281,6 +281,7 @@ class DBAEnvironment(BaseModel):
 
                     m_message = str(m_response['content'])
                     
+                    # text2charts
                     pattern = r'\[chart\] \./alert_results/{}/(\w+)\.html'.format(current_diag_time)
                     matches = re.findall(pattern, m_message)
                     for metric_name in matches:
@@ -290,8 +291,17 @@ class DBAEnvironment(BaseModel):
 
                         m_message = m_message.replace(chart_str, chart_content)
 
-                    self.reporter.report["diagnosis process"] = str(self.reporter.report["diagnosis process"]) + m_message + "\n"
+                    # text2code
+                    pattern = r"Action: (?P<action>[^\n]+)\nAction Input: (?P<input>\{.*?\})"
+                    for match in re.finditer(pattern, m_message, re.IGNORECASE):
+                        action = match.group('action')
+                        action_input = match.group('input')
+                        
+                        # Formatting it into Markdown code format
+                        markdown_str = f"```\n{action}{action_input}\n```"
+                        m_message = m_message.replace(match.group(0), markdown_str)
 
+                    self.reporter.report["diagnosis process"] = str(self.reporter.report["diagnosis process"]) + m_message + "\n"
                     self.reporter.record["anomalyAnalysis"][diag['sender']]["messages"].append({"data": m_message, "time": time.strftime("%H:%M:%S", time.localtime())})
 
         # brainstorm over the initial_diags results
