@@ -108,9 +108,7 @@ class DBAEnvironment(BaseModel):
     # executor: BaseExecutor
     # evaluator: BaseEvaluator
 
-    task_description: str
-    # current time in seconds
-    
+    task_description: str    
     cnt_turn: int = 0
     max_turn: int = 10
     success: bool = False
@@ -189,7 +187,20 @@ class DBAEnvironment(BaseModel):
         with open("test_report.txt", "w") as f:
             f.write(str(report))
 
-        self.reporter.record["report"] = self.reporter.report
+        # add "anomaly date", "anomaly description", "root cause", "solutions" of self.reporter in a markdown table format into the string report_markdown
+        report_markdown = f"# {self.reporter.report['title']}\n\n"
+        report_markdown = report_markdown + \
+        f"""
+            |                     |       |
+            |---------------------|-------|
+            | Anomaly Date        | {self.reporter.report['anomaly date']}  |
+            | Anomaly Description | {self.reporter.report['anomaly description']}  |
+            | Root Cause          | {self.reporter.report['root cause']}  |
+            | Solutions           | {self.reporter.report['solutions']}  |
+        \n\n"""
+        report_markdown = report_markdown + f"## Diagnosis Process\n" + self.reporter.report['diagnosis process']
+
+        self.reporter.record["report"] = report_markdown
 
         with open("test_record.txt", "w") as f:
             f.write(str(self.reporter.record))
@@ -264,12 +275,11 @@ class DBAEnvironment(BaseModel):
 
             for i, m_response in enumerate(diag["diagnosis process"]):
                 if m_response['role'] != "user":
-                    self.reporter.report["diagnosis process"] = str(self.reporter.report["diagnosis process"]) + str(m_response["content"]) + "\n"
 
                     if i > 0 and m_response['content'] == diag["diagnosis process"][i-1]['content']:
                         continue
 
-                    m_message = m_response['content']
+                    m_message = str(m_response['content'])
                     
                     pattern = r'\[chart\] \./alert_results/{}/(\w+)\.html'.format(current_diag_time)
                     matches = re.findall(pattern, m_message)
@@ -279,6 +289,8 @@ class DBAEnvironment(BaseModel):
                             chart_content = f.read()
 
                         m_message = m_message.replace(chart_str, chart_content)
+
+                    self.reporter.report["diagnosis process"] = str(self.reporter.report["diagnosis process"]) + m_message + "\n"
 
                     self.reporter.record["anomalyAnalysis"][diag['sender']]["messages"].append({"data": m_message, "time": time.strftime("%H:%M:%S", time.localtime())})
 

@@ -4,7 +4,6 @@ from multiagents.tools.metrics import database_server_conf, db
 from multiagents.tools.metrics import get_workload_statistics, set_workload_statistics, get_slow_queries, set_slow_queries
 from multiagents.utils.server import obtain_slow_queries
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--latest_alert_file', type=str, default="latest_alert_info", required=False, help='the file name of latest alert information')
 parser.add_argument('--agent_conf_name', type=str, default="agent_conf", required=False, help='the file name of llm agent settings')
