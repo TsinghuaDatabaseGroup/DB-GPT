@@ -133,8 +133,12 @@
       destroy-on-close
       direction="rtl"
     >
-      <div class="c-relative c-flex-column" style="overflow: scroll; height: 100%">
-        <VueMarkdown style="height: calc(100% - 40px); width: 100%; padding: 0" :source="report" />
+      <div class="c-relative c-flex-column" style="overflow: scroll; height: calc(100% - 40px);">
+        <VueMarkdown
+          style="height: 100%; width: 100%; padding: 20px;"
+          theme="light"
+          :source="report"
+        />
       </div>
     </el-drawer>
 
@@ -148,6 +152,7 @@ import Vue from 'vue'
 import Chat from '@/components/Chat'
 import OneChat from '@/components/OneChat'
 import VueMarkdown from 'vue-markdown'
+import hljs from 'highlight.js'
 
 export default {
   filters: {},
@@ -179,6 +184,7 @@ export default {
     // this.messages = JSON.parse(localStorage.getItem(MESSAGEKEY) || '[]')
     // this.getRobotIntro()
     this.getAlertHistories()
+    hljs.highlightAll()
   },
   beforeDestroy() {
   },
@@ -214,7 +220,7 @@ export default {
         this.memoryExpertMessages = this.reviewItem.anomalyAnalysis?.MemoryExpert?.messages || []
         this.networkExpertMessages = this.reviewItem.anomalyAnalysis?.NetworkExpert?.messages || []
         this.brainstormingMessages = this.reviewItem.brainstorming?.messages || []
-        this.report = this.reviewItem.report.data || []
+        this.report = this.reviewItem.report || ''
       }).finally(() => {
         this.reviewLoading = false
       })
