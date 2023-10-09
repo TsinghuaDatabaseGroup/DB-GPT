@@ -121,6 +121,10 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     │   ├── response_formalize_scripts        # Useless content removal of model response
     │   ├── tools                             # External monitoring/optimization tools for models
     │   └── utils                             # Other functions (e.g., database/json/yaml operations)
+    ├── web_service                           # Web services to view diagnostic reports
+    │   ├── backend                           # Web services backend
+    │   ├── frontend                          # Web services frontend 
+    ├── webhook                               # Use the webhook to save the results of the alert to a file
 
 
 <span id="-prerequisites"></span>
@@ -216,19 +220,26 @@ python openai_test.py
 
 ##### Website Interface
 
-We also provide a local website demo for this environment. You can launch it with
+We also provide a local website for this environment to view diagnostic reports. You can launch it with
+* install dependencies for the first run。
 
-```shell
-# cd website
-cd front_demo
+```
+# install frontend environment
+cd web_service/frontend
 rm -rf node_modules/
 rm -r package-lock.json
 # install dependencies for the first run (nodejs, ^16.13.1 is recommended)
 npm install  --legacy-peer-deps
-# back to root directory
-cd ..
+# install backend environment
+cd web_service/backend
+pip3 install -r requirements.txt
+```
+* run
+```shell
+# cd service directory
+cd web_service
 # launch the local server and open the website
-sh run_demo.sh
+sh run_service.sh
 ```
 
 > Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python are installed.

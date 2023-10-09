@@ -511,3 +511,63 @@ IO Agent: {'diagnose': 'The anomaly could be due to high usage of disk groups an
 127.0.0.1 - - [07/Oct/2023 23:28:48] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
 127.0.0.1 - - [07/Oct/2023 23:28:48] "POST /alert/history-detail HTTP/1.1" 200 -
 127.0.0.1 - - [07/Oct/2023 23:28:52] "POST /alert/history-detail HTTP/1.1" 200 -
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8022
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8022
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
+obtain_historical_queries_statistics Fails!
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8022
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
+127.0.0.1 - - [08/Oct/2023 15:41:32] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 15:41:34] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 15:41:34] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 15:43:31] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 15:43:33] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 15:43:33] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 15:43:45] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 15:43:45] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 15:44:57] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 15:44:57] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 15:47:10] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 15:47:10] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 15:54:06] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 15:54:08] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 15:54:08] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 16:00:22] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 16:00:26] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 16:00:26] "POST /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 16:00:34] "POST /alert/histories HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 16:00:36] "OPTIONS /alert/history-detail HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2023 16:00:36] "POST /alert/history-detail HTTP/1.1" 200 -
+ * Detected change in '/Users/Four/JobProjects/Tsinghua/DB-GPT/webhook/app.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
+ * Detected change in '/Users/Four/JobProjects/Tsinghua/DB-GPT/webhook/app.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
+ * Detected change in '/Users/Four/JobProjects/Tsinghua/DB-GPT/webhook/app.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
+ * Detected change in '/Users/Four/JobProjects/Tsinghua/DB-GPT/webhook/app.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
+ * Detected change in '/Users/Four/JobProjects/Tsinghua/DB-GPT/webhook/app.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-258-368
