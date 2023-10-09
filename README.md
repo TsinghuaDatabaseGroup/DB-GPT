@@ -3,7 +3,7 @@
 </div>
 
 <p align="center">
-  <a href="#-features">Features</a> •
+  <!-- <a href="#-features">Features</a> • -->
   <a href="#-news">Updates</a> •
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-anomalies">Alerts And Anomalies</a> •  
@@ -21,20 +21,24 @@
 
 >Besides, to extend the database maintenance capability, we are also finetuning LLMs to support advanced *query optimiziation* and *anomaly simulation* (comming soon).
 
-*[Click to check 29 typical anomalies together with expert analysis!](./anomaly_trigger/29种性能异常与根因分析.pdf) (supported by the DBMind team)*
+<br>
+    <div align="center">
+    <img src="imgs/frontendv3.png" width="800px">
+    </div>
+<br>
 
 <!-- collection of useful, user-friendly, and advanced database tools. These tools are built around LLMs, including **system diagnosis** (*D-Bot*), **query optimization** (coming soon), and **anomaly simulation** (coming soon) -->
 
 <!-- *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases. -->
 
-<br>
+<!-- <br>
 <div align="center">
 <img src="imgs/dbgpt-v2.png" width="800px">
 </div>
-<br>
+<br> -->
 
 
-<span id="-features"></span>
+<!-- <span id="-features"></span>
 
 ## ✨ Features
 
@@ -44,13 +48,8 @@
 
 - **Practical Tool Utilization**: D-Bot can utilize both monitoring and optimization tools to improve the maintenance capability (with *tool learning* and *tree of thought*).
 
-- **In-depth Reasoning**: Compared with vanilla LLMs, D-Bot will achieve competitive reasoning capability to analyze root causes (with *multi-llm communications*).
+- **In-depth Reasoning**: Compared with vanilla LLMs, D-Bot will achieve competitive reasoning capability to analyze root causes (with *multi-llm communications*). -->
 
-<br>
-    <div align="center">
-    <img src="imgs/frontendv3.png" width="800px">
-    </div>
-<br>
 
 **A demo of using D-Bot**
 
@@ -62,9 +61,9 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 ## 📰 Updates
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [ ] Upgrade the LLM-based diagnosis mechanism: 
+- [x] Upgrade the LLM-based diagnosis mechanism: 
 
-    * [ ] *Task Dispatching -> Concurrent Diagnosis -> RoundTable Discussion -> Report Generation (downloadable)*
+    * [x] *Task Dispatching -> Concurrent Diagnosis -> RoundTable Discussion -> Report Generation (downloadable)*
 
 - [x] Add typical anomalies and alerts (Pigsty) <a href="#-anomalies">🔗 link</a>
 
@@ -118,6 +117,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     │   ├── knowledge                         # Diagnosis experience from documents
     │   ├── llms                              # Supported models
     │   ├── memory                            # The content and summary of chat history
+    │   ├── reasoning_algorithms              # The available algorithm for single LLM reasoning
     │   ├── response_formalize_scripts        # Useless content removal of model response
     │   ├── tools                             # External monitoring/optimization tools for models
     │   └── utils                             # Other functions (e.g., database/json/yaml operations)
@@ -147,11 +147,10 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     
     > (3) Set *"log_line_prefix = '%m [%p] [%d]'"* in postgresql.conf (to record the database names of different queries).
 
-- Prometheus ~~and Grafana ([tutorial](https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/))~~
+- Prometheus
 
-    Check [prometheus.md](materials/help_documents/prometheus.md) for detailed installation guides.
+    > Check [prometheus.md](materials/help_documents/prometheus.md) for detailed installation guides.
 
-    > Grafana is no longer a necessity with our vue-based frontend.
 
 #### 2. Package Installation
 
@@ -221,6 +220,7 @@ python openai_test.py
 ##### Website Interface
 
 We also provide a local website for this environment to view diagnostic reports. You can launch it with
+
 * install dependencies for the first run。
 
 ```
@@ -230,11 +230,10 @@ rm -rf node_modules/
 rm -r package-lock.json
 # install dependencies for the first run (nodejs, ^16.13.1 is recommended)
 npm install  --legacy-peer-deps
-# install backend environment
-cd web_service/backend
-pip3 install -r requirements.txt
 ```
+
 * run
+
 ```shell
 # cd service directory
 cd web_service
@@ -309,6 +308,12 @@ We support AlertManager for Prometheus. You can find more information about how 
 
 
 ### Anomaly Simulation
+
+#### Manually Designed Anomalies
+
+*[Click to check 29 typical anomalies together with expert analysis](./anomaly_trigger/29种性能异常与根因分析.pdf) (supported by the DBMind team)*
+
+### Script-Triggered Anomalies
 
 Within the *[anomaly_trigger](./anomaly_trigger)* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
 
@@ -435,8 +440,8 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 - ~~Project cleaning~~
 - ~~Support more anomalies~~
 - Strictly constrain the llm outputs (excessive irrelevant information) based on the matched knowledge 
-- Query log option (potential to take up disk space and we need to consider it carefully)
-- Add more communication mechanisms
+- ~~Query log option (potential to take up disk space and we need to consider it carefully)~~
+- ~~Add more communication mechanisms~~
 - Support more knowledge sources
 - Support localized private models (e.g., llama/vicuna/luca)
 - Release training datasets
