@@ -21,9 +21,9 @@ export async function nextStep(args) {
 }
 
 export async function alertHistories(args) {
-  return await post('alert/histories', args)
+  return await post('histories', args)
 }
 
 export async function alertHistoryDetail(args) {
-  return await post('alert/history-detail', args)
+  return await post('history-detail', args)
 }

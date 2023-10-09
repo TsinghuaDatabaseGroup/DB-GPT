@@ -1,4 +1,4 @@
-以下是webhook server的安装说明：
+以下是web server backend的安装说明：
 
 ## 1. 安装依赖
 
@@ -18,7 +18,7 @@ pip install -r requirements.txt
     uvicorn.run(
         app = app,
         host = "0.0.0.0",
-        port = 8023
+        port = 8024
     )
 ```
 
@@ -37,7 +37,7 @@ sh run.sh
 安装完成后，你可以使用curl命令测试webhook server是否正常工作。在终端中执行以下命令：
 
 ```bash
-curl http://127.0.0.1:8023/test
+curl http://127.0.0.1:8024/test
 ```
 
 如果一切正常，你应该会收到以下JSON响应：
@@ -46,7 +46,7 @@ curl http://127.0.0.1:8023/test
 {
   "code": 0,
   "msg": "success",
-  "data": "webhook is running"
+  "data": "server is running"
 }
 ```
 

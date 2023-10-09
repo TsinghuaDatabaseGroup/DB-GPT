@@ -119,6 +119,10 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     │   ├── response_formalize_scripts        # 模型响应的无用内容删除
     │   ├── tools                             # 用于模型的外部监控/优化工具
     │   └── utils                             # 其他功能（例如，数据库/JSON/YAML操作）
+    ├── web_service                           # 该服务提供一个查看报告的网站
+    │   ├── backend                           # 网站服务的后端
+    │   ├── frontend                          # 网站服务的前端 
+    ├── webhook                               # 使用该webhook将alert的结果保存到文件中
 
 
 
@@ -219,24 +223,32 @@ python openai_test.py
 
 ##### 网站界面
 
-我们还为此环境提供了本地网站演示。您可以使用以下命令启动它：
+我们还为此环境提供了本地网站用来查看诊断报告。您可以使用以下命令启动它：
+* 如果是首次启动，需要安装对应的配置。
 
-```shell
-# cd website
-cd front_demo
+```
+# 前端配置
+cd web_service/frontend
 rm -rf node_modules/
 rm -r package-lock.json
 # 第一次运行时安装依赖项（建议使用nodejs，建议使用^16.13.1）
 npm install  --legacy-peer-deps
-# 返回根目录
-cd ..
+# 后端配置
+cd web_service/backend
+pip3 install -r requirements.txt
+```
+* 启动
+```shell
+# 进入对应的文件夹
+cd web_service
 # 启动本地服务器并打开网站
-sh run_demo.sh
+sh run_service.sh
 ```
 
-> 如果安装了多个版本的Python，请在run_demo.sh中仔细决定“python app.py”命令。
 
-成功启动本地服务器后，访问 http://127.0.0.1:9228/ 触发诊断过程。
+> 如果安装了多个版本的Python，请在run_service.sh中仔细决定“python app.py”命令。
+
+成功启动本地服务器后，访问 http://127.0.0.1:8025/ 查看诊断报告。
 
 
 ##### 命令行界面
@@ -255,8 +267,8 @@ python main.py
 
 我们支持Prometheus的AlertManager。您可以在此处找到有关如何配置AlertManager的更多信息：[alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/)。
 
-- 我们提供了AlertManager相关的配置文件，包含alertmanager.yml、node_rules.yml、pgsql_rules.yml。路径为根目录下的config [🔗 link](./config/) 文件夹内，您可以将其部署到您的Prometheus服务器中，用来获取相关的异常。
-- 我们还提供了支持获取Alert的webhook server。路径为根目录下的webhook文件夹，您可以将它部署到您的服务器中，用来获取并存储Prometheus的Alert。诊断模型会从该服务器中定时抓取Alert信息，该文件获取方式为SSh，您需要在config文件夹下的tool_config.yaml [🔗 link](./config/tool_config_example.yaml) 中配置您的服务器信息。 
+- 我们提供了AlertManager相关的配置文件，包含alertmanager.yml、node_rules.yml、pgsql_rules.yml。路径为根目录下的 [config](./config/) 文件夹内，您可以将其部署到您的Prometheus服务器中，用来获取相关的异常。
+- 我们还提供了支持获取Alert的webhook server。路径为根目录下的webhook文件夹，您可以将它部署到您的服务器中，用来获取并存储Prometheus的Alert。诊断模型会从该服务器中定时抓取Alert信息，该文件获取方式为SSh，您需要在config文件夹下的 [tool_config.yaml](./config/tool_config_example.yaml) 中配置您的服务器信息。 
 - [node_rules.yml](./config/node_rules.yml) and [pgsql_rules.yml](./config/pgsql_rules.yml) 是引用 https://github.com/Vonng/pigsty 这个开源项目中的代码，他们的监控做的非常棒，感谢他们的付出。
 
 ### 异常模拟器
