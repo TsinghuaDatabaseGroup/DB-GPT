@@ -13,7 +13,7 @@ monitoring_scripts/prometheus/core.py
 
 openai_keys.txt
 others/customllm_test.py
-alert_results/test
+alert_results
 
 # Distribution / packaging
 .Python
