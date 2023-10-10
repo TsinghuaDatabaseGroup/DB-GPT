@@ -3,7 +3,8 @@
     <sidebar class="sidebar-container" />
     <div
       class="main-container"
-      style="width: calc(100vw - 65px); margin-left: 65px; padding: 20px 0; height: 100%; overflow: hidden;">
+      style="width: calc(100vw - 65px); margin-left: 65px; padding: 20px 0; height: 100%; overflow: hidden;"
+    >
       <app-main style="width: 100%" />
     </div>
   </div>
@@ -48,44 +49,46 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import "~@/styles/mixin.scss";
-  @import "~@/styles/variables.scss";
+@import "~@/styles/mixin.scss";
+@import "~@/styles/variables.scss";
 
-  .app-wrapper {
-    @include clearfix;
-    position: relative;
-    height: 100vh;
-    width: 100vw;
-    background: RGBA(247, 250, 255, 1.00);
-    &.mobile.openSidebar{
-      position: fixed;
-      top: 0;
-    }
-  }
-  .drawer-bg {
-    background: #ffffff;
-    opacity: 1;
-    width: 100%;
-    top: 0;
-    height: 100%;
-    position: absolute;
-    z-index: 999;
-  }
+.app-wrapper {
+  @include clearfix;
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  background: RGBA(247, 250, 255, 1.00);
 
-  .fixed-header {
+  &.mobile.openSidebar {
     position: fixed;
     top: 0;
-    right: 0;
-    z-index: 9;
-    width: calc(100% - 54px);
-    transition: width 0.28s;
   }
+}
 
-  .hideSidebar .fixed-header {
-    width: calc(100% - 54px)
-  }
+.drawer-bg {
+  background: #ffffff;
+  opacity: 1;
+  width: 100%;
+  top: 0;
+  height: 100%;
+  position: absolute;
+  z-index: 999;
+}
 
-  .mobile .fixed-header {
-    width: 100%;
-  }
+.fixed-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 9;
+  width: calc(100% - 54px);
+  transition: width 0.28s;
+}
+
+.hideSidebar .fixed-header {
+  width: calc(100% - 54px)
+}
+
+.mobile .fixed-header {
+  width: 100%;
+}
 </style>

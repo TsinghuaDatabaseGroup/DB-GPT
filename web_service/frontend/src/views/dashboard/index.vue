@@ -28,8 +28,8 @@
       <div v-for="(item, index) in historyMessages" :key="index" class="diagnose-item c-flex-row c-align-items-center c-justify-content-between">
         <div class="title">{{ item.title }}</div>
         <div class="c-flex-row c-align-items-center">
-          <el-button type="success" plain size="mini" style="margin-right: 10px" @click="onReviewClick(item)">回放</el-button>
-          <el-button type="warning" plain size="mini" @click="onReportClick(item)">报告</el-button>
+          <el-button type="success" plain size="mini" style="margin-right: 10px" @click="onReviewClick(item)">{{ $t('playbackButton') }}</el-button>
+          <el-button type="warning" plain size="mini" @click="onReportClick(item)">{{ $t('reportButton') }}</el-button>
         </div>
       </div>
     </div>
@@ -44,9 +44,9 @@
     >
       <div class="c-relative c-flex-column" style="overflow: hidden; height: 100%">
         <el-steps :active="activeName" finish-status="success" simple style="width: 100%;">
-          <el-step title="异常分析" style="cursor: pointer" @click.n.native="onStepClick(0)" />
-          <el-step title="圆桌讨论" style="cursor: pointer" @click.n.native="onStepClick(1)" />
-          <el-step title="报告展示" style="cursor: pointer" @click.n.native="onStepClick(2)" />
+          <el-step :title="$t('setpTitle1')" style="cursor: pointer" @click.n.native="onStepClick(0)" />
+          <el-step :title="$t('setpTitle2')" style="cursor: pointer" @click.n.native="onStepClick(1)" />
+          <el-step :title="$t('setpTitle3')" style="cursor: pointer" @click.n.native="onStepClick(2)" />
         </el-steps>
 
         <transition name="fade">
@@ -57,8 +57,8 @@
             @scroll="stepScrollEvent"
           >
             <div class="review-step">
-              <div style="height: 40px; line-height: 40px; color: #666666;">
-                DBA收到异常提醒后，会针对该异常进行分析，进而分配任务给不同的同事，接收到任务的同事会先独立进行分析。
+              <div style="height: 40px; line-height: 40px; color: #333333; font-weight: bold">
+                1.{{ $t('setpTip1') }}
               </div>
               <div class="c-flex-row c-align-items-center" style="height: calc(100% - 40px)">
                 <OneChat
@@ -88,7 +88,7 @@
                   />
                   <OneChat
                     v-if="memoryExpertMessages.length > 0"
-                    sender="CpuExpert"
+                    sender="MemoryExpert"
                     :hire="true"
                     class="chat-container"
                     :messages="memoryExpertMessages"
@@ -96,7 +96,7 @@
                   />
                   <OneChat
                     v-if="networkExpertMessages.length > 0"
-                    sender="CpuExpert"
+                    sender="NetworkExpert"
                     :hire="true"
                     class="chat-container"
                     :messages="networkExpertMessages"
@@ -107,8 +107,8 @@
             </div>
 
             <div class="review-step">
-              <span style="height: 40px; line-height: 40px; color: #666666; margin: 10px 0">
-                接收任务的同事独立进行异常分析后，会加入群组，进行圆桌讨论。
+              <span style="height: 40px; line-height: 40px; color: #333333; font-weight: bold; margin: 10px 0">
+                2.{{ $t('setpTip2') }}
               </span>
               <Chat
                 class="chat-container"
@@ -118,8 +118,8 @@
             </div>
 
             <div class="review-step">
-              <span style="height: 40px; line-height: 40px; color: #666666">圆桌讨论后，DBA会将讨论结果汇总，出具异常分析诊断报告。</span>
-              <VueMarkdown style="height: calc(100% - 40px); width: 100%; padding: 0" :source="report" />
+              <span style="height: 40px; line-height: 40px; color: #333333; font-weight: bold;">3.{{ $t('setpTip3') }}</span>
+              <div style="width: 100%; padding: 10px;" v-html="md.render(report)" />
             </div>
           </div>
         </transition>
@@ -133,11 +133,10 @@
       destroy-on-close
       direction="rtl"
     >
-      <div class="c-relative c-flex-column" style="overflow: scroll; height: calc(100% - 40px);">
-        <VueMarkdown
+      <div class="c-relative c-flex-column" style="overflow-y: scroll; height: calc(100% - 40px); overflow-x: hidden">
+        <div
           style="height: 100%; width: 100%; padding: 20px;"
-          theme="light"
-          :source="report"
+          v-html="md.render(report)"
         />
       </div>
     </el-drawer>
@@ -151,16 +150,23 @@ import { alertHistories, alertHistoryDetail } from '@/api/api'
 import Vue from 'vue'
 import Chat from '@/components/Chat'
 import OneChat from '@/components/OneChat'
-import VueMarkdown from 'vue-markdown'
+import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
 
 export default {
   filters: {},
-  components: { OneChat, Chat, VueMarkdown },
+  components: { OneChat, Chat },
   data() {
     return {
       timeRange: [],
       messages: [],
+      md: new MarkdownIt()
+        .set({ html: true, breaks: true, typographer: true, linkify: true })
+        .set({ highlight: function(code) {
+          return '<pre class="hljs"><code>' +
+              hljs.highlight(code, { language: 'python', ignoreIllegals: true }).value +
+              '</code></pre>'
+        } }),
       cpuExpertMessages: [],
       ioExpertMessages: [],
       memoryExpertMessages: [],
@@ -184,11 +190,14 @@ export default {
     // this.messages = JSON.parse(localStorage.getItem(MESSAGEKEY) || '[]')
     // this.getRobotIntro()
     this.getAlertHistories()
-    hljs.highlightAll()
   },
   beforeDestroy() {
   },
   methods: {
+    customHighlight(code, lang) {
+      const highlightedCode = hljs.highlight(lang, code).value
+      return `<pre class="hljs"><code>${highlightedCode}</code></pre>`
+    },
     getAlertHistories() {
       this.historyMessages = []
       alertHistories().then(res => {
@@ -254,9 +263,17 @@ export default {
 </script>
 
 <style>
-.container >>> .el-collapse-item__header {
-  background: #f9f9f9;
-  width: 100vw;
+
+.hljs {
+  word-break: break-all;
+  white-space: pre-wrap;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #333;
+  font-weight: bold;
 }
 
 .el-input__inner {
@@ -265,10 +282,6 @@ export default {
 
 .el-input--suffix .el-input__inner {
   padding-right: 10px;
-}
-
-.el-collapse-item__content {
-  padding-bottom: 0;
 }
 
 .el-drawer__header {
@@ -283,16 +296,34 @@ export default {
   /*background-color: RGBA(247, 250, 255, 1);*/
 }
 
-.el-collapse-item__header {
-  border-bottom: none;
+table {
+  max-width: 100%;
+  background-color: transparent;
+  border-collapse: collapse;
+  width: 100%;
 }
 
-.el-collapse-item__wrap {
-  border-bottom: none;
+table th,
+table td {
+  padding: 8px;
+  line-height: 20px;
+  text-align: left;
+  vertical-align: top;
+  border: 1px solid #e1e1e1;
 }
 
-.el-collapse {
-  border: none;
+table th {
+  font-weight: bold;
+}
+
+table caption + thead tr:first-child th,
+table caption + thead tr:first-child td,
+table colgroup + thead tr:first-child th,
+table colgroup + thead tr:first-child td,
+table thead:first-child tr:first-child th,
+table thead:first-child tr:first-child td {
+  border: 1px solid #e1e1e1;
+  background-color: #f5f5f5;
 }
 
 </style>
