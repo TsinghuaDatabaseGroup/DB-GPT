@@ -503,3 +503,11 @@ Feel free to cite us if you like this project.
 Other Collaborators: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](https://github.com/LikyThu).
 
 We thank all the contributors to this project. Do not hesitate if you would like to get involved or contribute!
+
+
+
+|                     |       |
+|---------------------|-------|
+| Anomaly Date        | 2023-10-01 22:31:49  |
+| Anomaly Description | During the inspection, it was found that from October 1, 2023, 22:31:49 to October 1, 2023, 22:33:49, the load on the node labeled as \'stdload1\' exceeded its capacity. Specifically, the node was operating at 104%, which is above the maximum expected load of 100%. The system has flagged this as a *warning* situation. Please take time to address this issue carefully.  |
+| Root Cause          | # Revised Anomaly Diagnosis Description|

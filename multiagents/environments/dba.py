@@ -167,8 +167,10 @@ class DBAEnvironment(BaseModel):
         selected_experts = self.role_assign(advice=advice, alert_info=self.role_assigner.alert_str)
 
         # append the names of selected_experts (e.g., selected_experts[0].name) to the task description by \n
-        expert_select_desc = "Based on the task description, I decide to select the following experts to diagnose the problem:" + "\n".join([expert.name for expert in selected_experts])
-
+        if len(selected_experts) > args.max_hired_experts:
+            selected_experts = selected_experts[:args.max_hired_experts]
+        expert_select_desc = "Based on the task description, I decide to select the following experts to diagnose the problem:\n" + "\n".join([expert.name for expert in selected_experts])
+        
         self.reporter.record["anomalyAnalysis"]["RoleAssigner"]["messages"].append({"data": expert_select_desc, "time": time.strftime("%H:%M:%S", time.localtime())})
 
         if len(selected_experts) > args.max_hired_experts:
@@ -189,15 +191,14 @@ class DBAEnvironment(BaseModel):
 
         # add "anomaly date", "anomaly description", "root cause", "solutions" of self.reporter in a markdown table format into the string report_markdown
         report_markdown = f"# {self.reporter.report['title']}\n\n"
+        # do not add any space in front of the first '|' of each row!!
         report_markdown = report_markdown + \
-        f"""
-            |                     |       |
-            |---------------------|-------|
-            | Anomaly Date        | {self.reporter.report['anomaly date']}  |
-            | Anomaly Description | {self.reporter.report['anomaly description']}  |
-            | Root Cause          | {self.reporter.report['root cause']}  |
-            | Solutions           | {self.reporter.report['solutions']}  |
-        \n\n"""
+        f"""|                     |       |
+|---------------------|-------|
+| Anomaly Date        | {self.reporter.report['anomaly date']}  |
+| Anomaly Description | {self.reporter.report['anomaly description']}  |
+| Root Cause          | {self.reporter.report['root cause']}  |
+| Solutions           | {self.reporter.report['solutions']}  |\n\n"""
         report_markdown = report_markdown + f"## Diagnosis Process\n" + self.reporter.report['diagnosis process']
 
         self.reporter.record["report"] = report_markdown
