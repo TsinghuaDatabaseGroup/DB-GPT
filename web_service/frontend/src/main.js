@@ -25,9 +25,6 @@ import '@/permission' // permission control
 
 import i18n from './lang'
 
-import hljs from 'highlight.js'
-Vue.use(hljs.vuePlugin)
-
 import VueClipboard from 'vue-clipboard2'
 VueClipboard.config.autoSetContainer = true // add this line
 Vue.use(VueClipboard)

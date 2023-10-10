@@ -9,5 +9,13 @@ export default {
   timeStartTip: 'Start Time',
   timeEndTip: 'Start Time',
   reportDrawerTitle: 'Analysis Report',
+  playbackButton: 'Playback',
+  reportButton: 'Report',
+  setpTitle1: 'Anomaly Analysis',
+  setpTip1: 'After receiving an exception notification, the DBA analyzes the exception and assigns tasks to different colleagues. The colleagues who receive the task perform the analysis independently first.',
+  setpTitle2: 'Round Table Discussion',
+  setpTip2: 'After the colleagues receiving the task independently analyze the anomaly, they join the group for a roundtable discussion.',
+  setpTitle3: 'Presentation Of Report',
+  setpTip3: 'After the roundtable discussion, the DBA will summarize the discussion results and issue an exception analysis and diagnosis report.',
   timeRangeSelectTip: 'Select the time period when an anomaly occurs'
 }

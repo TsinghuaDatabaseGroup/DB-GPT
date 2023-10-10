@@ -20,7 +20,7 @@
                 <span style="margin-left: 5px; color: #666666">{{ item.time }}</span>
               </span>
               <div class="content c-flex-column">
-                <VueMarkdown :source="item.data" />
+                <div v-html="md.render(item.data)" />
               </div>
             </div>
             <div v-else>
@@ -43,10 +43,11 @@
 
 <script>
 import { parseTime } from '@/utils'
-import VueMarkdown from 'vue-markdown'
+import MarkdownIt from 'markdown-it'
+import hljs from 'highlight.js'
 export default {
   name: 'OneChat',
-  components: { VueMarkdown },
+  components: { },
   props: {
     messages: {
       type: Array,
@@ -68,7 +69,14 @@ export default {
   },
   data() {
     return {
-      chats: []
+      chats: [],
+      md: new MarkdownIt()
+        .set({ html: true, breaks: true, typographer: true, linkify: true })
+        .set({ highlight: function(code) {
+          return '<pre class="hljs"><code>' +
+              hljs.highlight(code, { language: 'python', ignoreIllegals: true }).value +
+              '</code></pre>'
+        } })
     }
   },
   methods: {

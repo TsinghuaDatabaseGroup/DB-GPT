@@ -8,6 +8,14 @@ export default {
   reviewDrawerTitle: '回看分析过程',
   timeStartTip: '开始时间',
   timeEndTip: '结束时间',
+  playbackButton: '回放',
+  reportButton: '报告',
+  setpTitle1: '异常分析',
+  setpTip1: 'DBA收到异常提醒后，会针对该异常进行分析，进而分配任务给不同的同事，接收到任务的同事会先独立进行分析。',
+  setpTitle2: '圆桌讨论',
+  setpTip2: '接收任务的同事独立进行异常分析后，会加入群组，进行圆桌讨论。',
+  setpTitle3: '报告展示',
+  setpTip3: '圆桌讨论后，DBA会将讨论结果汇总，出具异常分析诊断报告。',
   reportDrawerTitle: '分析报告',
   timeRangeSelectTip: '请选择异常发生时间'
 }

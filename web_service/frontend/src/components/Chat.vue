@@ -7,11 +7,11 @@
             <img src="@/assets/avatar-user.png" class="face">
           </template>
           <template v-else>
-            <img v-if="sender === 'RoleAssigner'" src="@/assets/dba_robot.webp" class="face">
-            <img v-if="sender === 'CpuExpert'" src="@/assets/cpu_robot.webp" class="face">
-            <img v-if="sender === 'MemoryExpert'" src="@/assets/mem_robot.webp" class="face">
-            <img v-if="sender === 'IoExpert'" src="@/assets/io_robot.webp" class="face">
-            <img v-if="sender === 'NetworkExpert'" src="@/assets/net_robot.webp" class="face">
+            <img v-if="item.sender === 'RoleAssigner'" src="@/assets/dba_robot.webp" class="face">
+            <img v-if="item.sender === 'CpuExpert'" src="@/assets/cpu_robot.webp" class="face">
+            <img v-if="item.sender === 'MemoryExpert'" src="@/assets/mem_robot.webp" class="face">
+            <img v-if="item.sender === 'IoExpert'" src="@/assets/io_robot.webp" class="face">
+            <img v-if="item.sender === 'NetworkExpert'" src="@/assets/net_robot.webp" class="face">
           </template>
           <div v-if="!item.loading" class="c-flex-column">
             <span style="font-size: 12px; color: #333333; margin-bottom: 5px">
@@ -19,7 +19,7 @@
               <span style="margin-left: 5px; color: #666666">{{ item.time }}</span>
             </span>
             <div class="content c-flex-column">
-              <VueMarkdown :source="item.data" />
+              <div v-html="md.render(item.data)" />
             </div>
           </div>
           <div v-else>
@@ -70,10 +70,11 @@
 
 <script>
 import { parseTime } from '@/utils'
-import VueMarkdown from 'vue-markdown'
+import MarkdownIt from 'markdown-it'
+import hljs from 'highlight.js'
 export default {
   name: 'Chat',
-  components: { VueMarkdown },
+  components: { },
   props: {
     messages: {
       type: Array,
@@ -91,15 +92,13 @@ export default {
       chatText: '',
       pageNow: 1,
       phraseVisible: false,
-      refreshInterval: undefined,
-      phraseList: [
-        '请开始监控',
-        '请结束监控',
-        '给我一些建议',
-        '上面的问题应该怎么解决？'
-      ],
-      viewPDF: false,
-      annexURL: ''
+      md: new MarkdownIt()
+        .set({ html: true, breaks: true, typographer: true, linkify: true })
+        .set({ highlight: function(code) {
+          return '<pre class="hljs"><code>' +
+              hljs.highlight(code, { language: 'python', ignoreIllegals: true }).value +
+              '</code></pre>'
+        } })
     }
   },
   methods: {
