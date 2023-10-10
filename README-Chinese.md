@@ -3,7 +3,7 @@
 </div>
 
 <p align="center">
-  <a href="#-features">特点</a> •
+  <!-- <a href="#-features">特点</a> • -->
   <a href="#-news">最新动态</a> •
   <a href="#-quickstart">快速开始</a> •
   <a href="#-anomalies">案例分析</a> •    
@@ -29,7 +29,8 @@
 
 > 此外，为了扩展D-Bot的数据库维护能力，我们还在对本地大模型（LLMs）进行微调，以支持高级查询优化和异常模拟等功能（即将推出）。
 
-<br>
+
+<!-- <br>
 <div align="center">
 <img src="imgs/dbgpt-v2.png" width="800px">
 </div>
@@ -46,7 +47,7 @@
 
 - **实用工具使用**：D-Bot可以利用监控和优化工具来提高维护能力（使用*tool learning*和*tree of thought*）。
 
-- **深度推理**：与普通的LLM相比，D-Bot将实现竞争性的推理能力，以分析根本原因（使用*multi-llm通信*）。
+- **深度推理**：与普通的LLM相比，D-Bot将实现竞争性的推理能力，以分析根本原因（使用*multi-llm通信*）。 -->
 
 <br>
     <div align="center">
@@ -64,9 +65,9 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 ## 最新动态
 <!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [ ] 升级基于大模型的诊断机制： 
+- [x] 升级基于大模型的诊断机制： 
 
-    * [ ] *任务派发 -> 多模型并发诊断 -> 多模型圆桌讨论 -> 报告生成 (可下载)*
+    * [x] *任务派发 -> 多模型并发诊断 -> 多模型圆桌讨论 -> 报告生成 (可下载)*
 
 
 - [x] 添加典型异常和告警 (Pigsty) <a href="#-anomalies">🔗 link</a>
@@ -116,6 +117,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     │   ├── knowledge                         # 文档中的诊断经验
     │   ├── llms                              # 支持的模型
     │   ├── memory                            # 聊天历史的内容和摘要
+    │   ├── reasoning_algorithms              # 单个大模型可用的推理算法
     │   ├── response_formalize_scripts        # 模型响应的无用内容删除
     │   ├── tools                             # 用于模型的外部监控/优化工具
     │   └── utils                             # 其他功能（例如，数据库/JSON/YAML操作）
@@ -123,7 +125,6 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     │   ├── backend                           # 网站服务的后端
     │   ├── frontend                          # 网站服务的前端 
     ├── webhook                               # 使用该webhook将alert的结果保存到文件中
-
 
 
 #### 1. 先决条件
@@ -134,6 +135,8 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
     > *pg_stat_statements*视图会不断累积不同查询模板的使用信息. 因此， 你需要定期对该视图进行清理： 1) 如果要删除所有历史统计信息, 执行 *"SELECT pg_stat_statements_reset();"*; 2) 如果要删除特定SQL的统计信息, 执行 *"SELECT pg_stat_statements_reset(userid, dbid, queryid);"*.
 
+<span id="-dblog"></span>
+
 - 在 PostgreSQL 中启用慢查询日志（参考[link](https://ubiq.co/database-blog/how-to-enable-slow-query-log-in-postgresql/)）
 
     > (1) 对于 *"systemctl restart postgresql"*，服务名称可能会有所不同（例如，postgresql-12.service）;
@@ -142,11 +145,9 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
     > (3) 在 postgresql.conf 中设置*"log_line_prefix = '%m [%p] [%d]'"*（以记录不同查询的数据库名称）。
 
-- Prometheus ~~和Grafana（[教程](https://grafana.com/docs/grafana/latest/get-started/get-started-grafana-prometheus/)）~~
+- Prometheus
 
-    查看 [prometheus.md](materials/help_documents/prometheus.md) 以获取详细的安装指南。
-
-    > 使用我们基于vue的前端，Grafana不再是必需的。
+    > 查看 [prometheus.md](materials/help_documents/prometheus.md) 以获取详细的安装指南。
 
 
 #### 2. 包安装
@@ -174,32 +175,24 @@ set OPENAI_API_KEY="your_api_key_here"
 步骤3：将数据库/异常/Prometheus的设置添加到 tool_config_example.yaml 并重命名为 tool_config.yaml：
 
     ```bash
-    POSTGRESQL:
+    POSTGRESQL: # 数据库配置
       host: 182.92.xxx.x
       port: 5432
       user: xxxx
       password: xxxxx
       dbname: postgres
 
-    DATABASESERVER:
+    DATABASESERVER: # 数据库所在的服务器配置，remote_directory对应慢查询存放的目录（参考*<a href="#-dblog">慢查询日志配置</a>*）
       server_address: 182.92.xxx.x
       username: root
       password: xxxxx
       remote_directory: /var/lib/pgsql/12/data/log
 
-    PROMETHEUS:
+    PROMETHEUS: # 监控系统配置（区分不同exporter的端口号）
       api_url: http://8.131.xxx.xx:9090/
       postgresql_exporter_instance: 172.27.xx.xx:9187
       node_exporter_instance: 172.27.xx.xx:9100
-
-    BENCHSERVER:
-      server_address: 8.131.xxx.xx
-      username: root
-      password: xxxxx
-      remote_directory: /root/benchmark
     ```
-
-> 您可以忽略BENCHSERVER的设置，在此版本中未使用。
 
 - 如果通过VPN访问openai服务，请执行以下命令：
 
@@ -224,6 +217,7 @@ python openai_test.py
 ##### 网站界面
 
 我们还为此环境提供了本地网站用来查看诊断报告。您可以使用以下命令启动它：
+
 * 如果是首次启动，需要安装对应的配置。
 
 ```
@@ -233,10 +227,8 @@ rm -rf node_modules/
 rm -r package-lock.json
 # 第一次运行时安装依赖项（建议使用nodejs，建议使用^16.13.1）
 npm install  --legacy-peer-deps
-# 后端配置
-cd web_service/backend
-pip3 install -r requirements.txt
 ```
+
 * 启动
 ```shell
 # 进入对应的文件夹
@@ -245,8 +237,7 @@ cd web_service
 sh run_service.sh
 ```
 
-
-> 如果安装了多个版本的Python，请在run_service.sh中仔细决定“python app.py”命令。
+> 如果安装了多个版本的Python，请在run_service.sh中决定“python app.py”命令(例如“python3.5 app.py”)。
 
 成功启动本地服务器后，访问 http://127.0.0.1:8025/ 查看诊断报告。
 
@@ -271,10 +262,15 @@ python main.py
 - 我们还提供了支持获取Alert的webhook server。路径为根目录下的webhook文件夹，您可以将它部署到您的服务器中，用来获取并存储Prometheus的Alert。诊断模型会从该服务器中定时抓取Alert信息，该文件获取方式为SSh，您需要在config文件夹下的 [tool_config.yaml](./config/tool_config_example.yaml) 中配置您的服务器信息。 
 - [node_rules.yml](./config/node_rules.yml) and [pgsql_rules.yml](./config/pgsql_rules.yml) 是引用 https://github.com/Vonng/pigsty 这个开源项目中的代码，他们的监控做的非常棒，感谢他们的付出。
 
-### 异常模拟器
+### 异常触发
+
+#### 人工触发
+
+*[点击查看29种典型的性能异常和根因](./anomaly_trigger/29种性能异常与根因分析.pdf) (由DBMind团队支持)*
+
+#### 脚本触发
 
 在anomaly_trigger目录中，我们旨在提供可能导致典型异常的脚本，例如，
-
 
 | 根因          | 描述                                           | 案例                 |
 |---------------------|-------------------------------------------------------|----------------------|
@@ -294,7 +290,6 @@ python main.py
 | ![](https://img.shields.io/badge/-WORKLOAD_CONTENTION-informational) | 影响SQL执行的工作负载集中	        |   [🔗 link](case_analysis/workload_contention.txt)     |
 | ![](https://img.shields.io/badge/-SMALL_MEMORY_ALLOC-red)    | 分配的内存空间太小	（shared_buffer）              |                      |
 | ![](https://img.shields.io/badge/-IO_SATURATION-red)     | 达到最大I/O容量或吞吐量	               |                      |
-
 
 
 <span id="-customize"></span>
@@ -383,12 +378,13 @@ cd prompt_template_scripts/query_rewrite
 
 - ~~项目清理~~
 - ~~支持更多异常~~
-- 添加更多通信机制
-- 公开生成的异常训练数据
+- *严格*降低模型幻觉
+- ~~添加更多通信机制~~
+- 支持更多的知识来源
 - 微调本地化私有模型
-- 在演示网站中集成准备组件
-- 支持其他数据库，如 MySQL
-- 收集更多知识并存储在矢量数据库中（./knowledge_vector_db）
+- 公开生成的异常训练数据
+- 支持其他数据库（如MySQL、Redis）
+
 
 <span id="-community"></span>
 

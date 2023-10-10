@@ -38,7 +38,7 @@ db = Database(dbargs, timeout=-1)
 
 WORKLOAD_FILE_NAME = "workload_info.json"
 with open(WORKLOAD_FILE_NAME, 'w') as f:
-    json.dump({'workload_statistics': '', 'slow_queries': ''}, f)
+    json.dump({'workload_statistics': '[]', 'slow_queries': '[]'}, f)
 
 def get_workload_statistics():
     with open(WORKLOAD_FILE_NAME, 'r') as f:
@@ -54,7 +54,7 @@ def set_workload_statistics(stats):
             json.dump(info, f)
     else:
         with open(WORKLOAD_FILE_NAME, 'w') as f:
-            json.dump({'workload_statistics': stats, 'slow_queries': ''}, f)
+            json.dump({'workload_statistics': stats, 'slow_queries': '[]'}, f)
 
 def get_slow_queries():
     with open(WORKLOAD_FILE_NAME, 'r') as f:
@@ -70,7 +70,7 @@ def set_slow_queries(stats):
             json.dump(info, f)
     else:
         with open(WORKLOAD_FILE_NAME, 'w') as f:
-            json.dump({'workload_statistics': '', 'slow_queries': stats}, f)
+            json.dump({'workload_statistics': '[]', 'slow_queries': stats}, f)
 
 
 # [diagnosis knowledge]

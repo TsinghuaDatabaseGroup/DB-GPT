@@ -29,8 +29,7 @@ class RoleAssignerAgent(BaseAgent):
             alert_info=alert_info,
         )
 
-        parsed_response = None
-        selected_names = []        
+        selected_names = []
         for i in range(self.max_retry):
             try:
                 response = self.llm.generate_response(

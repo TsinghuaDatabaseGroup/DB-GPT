@@ -61,7 +61,10 @@ def match_diagnose_knowledge(
         metric_name: str = "cpu",
         alert_metric: str = ""):
     slow_queries = get_slow_queries()
-    slow_queries = ast.literal_eval(slow_queries)
+    if slow_queries != "[]" and slow_queries != "":
+        slow_queries = ast.literal_eval(slow_queries)
+    else:
+        slow_queries = []
 
     if "cpu" in metric_name.lower():
         metric_prefix = "cpu"
@@ -129,10 +132,13 @@ def match_diagnose_knowledge(
         {}""".format(metric_prefix,
             metric_str)
 
-    workload_state = ""
-
     workload_statistics = get_workload_statistics()
-    workload_statistics = ast.literal_eval(workload_statistics)
+    if workload_statistics != "[]" and workload_statistics != "":
+        workload_statistics = ast.literal_eval(workload_statistics)
+    else:
+        workload_statistics = []
+
+    workload_state = ""
 
     for i, query in enumerate(workload_statistics):
         # workload_state += str(i + 1) + '. ' + str(query) + "\n"
@@ -159,11 +165,11 @@ def match_diagnose_knowledge(
             with open(f"./alert_results/{current_diag_time}/{alert_metric}.html", "w") as f:
                 f.write(chart_content)
                         
-            alert_metric_str = """The statistics of alert metric {} are:\n [chart] ./alert_results/{current_diag_time}/{}.html \n""".format(alert_metric, alert_metric)
+            alert_metric_str = """The statistics of alert metric {} are:\n [chart] ./alert_results/{}/{}.html \n""".format(alert_metric, current_diag_time, alert_metric)
     else:
         alert_metric_str = ""
 
-    if workload_state:
+    if workload_state != "":
         workload_str = """The workload statistics are:
         {}
         
