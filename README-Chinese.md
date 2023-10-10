@@ -51,9 +51,10 @@
 
 <br>
     <div align="center">
-    <img src="imgs/frontendv3.png" width="800px">
+    <img src="imgs/newfrontend_v1_ch.png" width="800px">
     </div>
 <br>
+
 
 **演示如何使用D-Bot**
 
