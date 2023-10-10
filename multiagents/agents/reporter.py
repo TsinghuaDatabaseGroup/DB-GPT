@@ -60,7 +60,9 @@ class ReporterAgent(BaseAgent):
         
         self.report["title"] = anomaly_title
 
+        self.record["severity"] = self.alert_dict['alerts'][0]['labels']['severity']
         self.record["title"] = self.alert_dict['alert_name']
+        self.record["status"] = self.alert_dict['status']
         self.record["time"] = self.alert_dict['start_time']
 
 
