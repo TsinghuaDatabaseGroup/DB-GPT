@@ -313,7 +313,7 @@ We support AlertManager for Prometheus. You can find more information about how 
 
 *[Click to check 29 typical anomalies together with expert analysis](./anomaly_trigger/29种性能异常与根因分析.pdf) (supported by the DBMind team)*
 
-### Script-Triggered Anomalies
+#### Script-Triggered Anomalies
 
 Within the *[anomaly_trigger](./anomaly_trigger)* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
 
