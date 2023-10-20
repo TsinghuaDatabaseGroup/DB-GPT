@@ -35,7 +35,7 @@
         />
 
         <div class="c-flex-row c-align-items-center" style="margin-left: 20px">
-          <span :style="skipTyped ? 'color: #999999' : 'color: #000000'">动画速度</span>
+          <span :style="skipTyped ? 'color: #999999' : 'color: #000000'">{{ $t('animationSpeedTip') }}</span>
           <el-slider v-model="typeSpeed" :disabled="skipTyped" style="width: 200px; margin-left: 20px" />
         </div>
 
