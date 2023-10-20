@@ -11,6 +11,8 @@ export default {
   playbackButton: '回放',
   reportButton: '报告',
   setpTitle1: '异常分析',
+  playbackAnimationTip: '回放动画',
+  animationSpeedTip: '动画速度',
   setpTip1: 'DBA收到异常提醒后，会针对该异常进行分析，进而分配任务给不同的同事，接收到任务的同事会先独立进行分析。',
   setpTitle2: '圆桌讨论',
   setpTip2: '接收任务的同事独立进行异常分析后，会加入群组，进行圆桌讨论。',

@@ -1,3 +1,5 @@
+import json
+
 import uvicorn
 from fastapi import FastAPI, Request
 
@@ -20,7 +22,7 @@ async def alert(request: Request):
     args = await request.json()
     # 将obj写入文件中
     with open("alert.txt", "a") as f:
-        f.write(str(args) + "\n")
+        f.write(json.dumps(args) + "\n")
     return {
         "code": 0,
         "msg": "success",
