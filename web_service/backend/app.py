@@ -41,6 +41,8 @@ async def histories():
                 resp_data = {}
                 resp_data["title"] = json_data.get("title", "")
                 resp_data["time"] = json_data.get("time", "")
+                resp_data["status"] = json_data.get("status", "")
+                resp_data["severity"] = json_data.get("severity", "")
                 resp_data["file_name"] = file_name
             # 将JSON数据添加到列表中
             json_list.append(resp_data)

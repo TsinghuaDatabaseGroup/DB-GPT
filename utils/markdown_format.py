@@ -3,12 +3,18 @@
 import matplotlib.pyplot as plt
 import io
 import base64
-import datetime
 import random
-import numpy as np
+import json
 
 # matplotlib.pyplot 文档说明
 # https://matplotlib.org/stable/api/pyplot_summary.html
+
+
+def generate_tools_content(command_name, arguments, execution_results, command_status):
+
+    div_str = f'<details><summary><span style="font-size: 14px; font-weight: bold; color: #333333">using Tools:</span></summary><div style="display: flex; flex-direction: column; line-height: 36px"><div style="display: flex; flex-direction: row; align-content: center"><div style="font-size: 14px; color: #333333; width: 160px; flex-shrink: 0">Command Name:</div><div style="font-size: 14px; color: #676c90!important;">{command_name}</div></div><div style="display: flex; flex-direction: row; align-content: center"><div style="font-size: 14px; color: #333333; width: 160px; flex-shrink: 0">Arguments:</div><details><summary>Open</summary><div style="font-size: 14px; color: #676c90!important; white-space: pre-wrap">{json.dumps(arguments, indent=4)}</div></details></div><div style="display: flex; flex-direction: row; align-content: center"><div style="font-size: 14px; color: #333333; width: 160px; flex-shrink: 0">Execution Results:</div><details><summary>Open</summary><div style="font-size: 14px; color: #676c90!important; white-space: pre-wrap">{execution_results}</div></details></div><div style="display: flex; flex-direction: row; align-content: center"><div style="font-size: 14px; color: #333333; width: 160px; flex-shrink: 0">Command Status:</div><div style="font-size: 14px; color: #676c90!important;">{command_status}</div></div></div></details>'
+
+    return div_str
 
 def generate_prometheus_chart_content(title, values, x_label_format="'%Y-%m-%d %H:%M:%S'", size=(400, 225)):
     x_values = []
@@ -60,78 +66,81 @@ def plot(title, x_values, y_values, size=(400, 225)):
 if __name__ == '__main__':
 
     # 测试数据，可使用浏览器打开test.html
-    values = [
-        [
-            1695721125,
-            "0.00033333332976326346"
-        ],
-        [
-            1695721140,
-            "0.0009999999989910673"
-        ],
-        [
-            1695721155,
-            "0.00033333333461390186"
-        ],
-        [
-            1695721170,
-            "0.0010000000038417056"
-        ],
-        [
-            1695721185,
-            "0.00033333333461390186"
-        ],
-        [
-            1695721200,
-            "0.0006666666643771654"
-        ],
-        [
-            1695721215,
-            "0.00033333333461390186"
-        ],
-        [
-            1695721230,
-            "0.0009999999989910673"
-        ],
-        [
-            1695721245,
-            "0.00033333333461390186"
-        ],
-        [
-            1695721260,
-            "0.0006666666692278037"
-        ],
-        [
-            1695721275,
-            "0.0009999999989910673"
-        ],
-        [
-            1695721290,
-            "0.0009999999989910673"
-        ],
-        [
-            1695721305,
-            "0.0006666666643771654"
-        ],
-        [
-            1695721320,
-            "0.0009999999989910673"
-        ],
-        [
-            1695721335,
-            "0.0009999999989910673"
-        ],
-        [
-            1695721350,
-            "0.0010000000038417056"
-        ],
-        [
-            1695721365,
-            "0.00033333333461390186"
-        ]
-    ]
-    chart_content = generate_prometheus_chart_content('IO', values, x_label_format="%H:%M", size=(400, 225))
-    # chart_content = generate_chart_content("CPU iRate", [1, 2, 3, 4, 5, 6], [1, 5, 3, 1, 9, 6])
-    print(len(chart_content))
-    with open("test.html", "w") as f:
-        f.write(chart_content)
+    # values = [
+    #     [
+    #         1695721125,
+    #         "0.00033333332976326346"
+    #     ],
+    #     [
+    #         1695721140,
+    #         "0.0009999999989910673"
+    #     ],
+    #     [
+    #         1695721155,
+    #         "0.00033333333461390186"
+    #     ],
+    #     [
+    #         1695721170,
+    #         "0.0010000000038417056"
+    #     ],
+    #     [
+    #         1695721185,
+    #         "0.00033333333461390186"
+    #     ],
+    #     [
+    #         1695721200,
+    #         "0.0006666666643771654"
+    #     ],
+    #     [
+    #         1695721215,
+    #         "0.00033333333461390186"
+    #     ],
+    #     [
+    #         1695721230,
+    #         "0.0009999999989910673"
+    #     ],
+    #     [
+    #         1695721245,
+    #         "0.00033333333461390186"
+    #     ],
+    #     [
+    #         1695721260,
+    #         "0.0006666666692278037"
+    #     ],
+    #     [
+    #         1695721275,
+    #         "0.0009999999989910673"
+    #     ],
+    #     [
+    #         1695721290,
+    #         "0.0009999999989910673"
+    #     ],
+    #     [
+    #         1695721305,
+    #         "0.0006666666643771654"
+    #     ],
+    #     [
+    #         1695721320,
+    #         "0.0009999999989910673"
+    #     ],
+    #     [
+    #         1695721335,
+    #         "0.0009999999989910673"
+    #     ],
+    #     [
+    #         1695721350,
+    #         "0.0010000000038417056"
+    #     ],
+    #     [
+    #         1695721365,
+    #         "0.00033333333461390186"
+    #     ]
+    # ]
+    # chart_content = generate_prometheus_chart_content('IO', values, x_label_format="%H:%M", size=(400, 225))
+    # # chart_content = generate_chart_content("CPU iRate", [1, 2, 3, 4, 5, 6], [1, 5, 3, 1, 9, 6])
+    # print(len(chart_content))
+    # with open("test.html", "w") as f:
+    #     f.write(chart_content)
+
+    tools_content = generate_tools_content('FileSystemEnv_read_from_file', {'a': 1, 'b': 2}, '0: The Iris dataset was analyzed using Python libraries such as pandas, seaborn, and sklearn. The analysis involved loading the dataset, ge', 'TOOL_CALL_SUCCESS')
+    print(tools_content)

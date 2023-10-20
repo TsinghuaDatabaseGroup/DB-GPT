@@ -1,5 +1,6 @@
 <template>
   <div class="c-flex-column" style=" width: 100%;">
+
     <el-form
       ref="form"
       class="c-shaow-card"
@@ -26,10 +27,19 @@
 
     <div class="c-flex c-flex-column" style="height: calc(100vh - 120px); overflow-y: auto; margin: 10px 0; padding: 0 20px">
       <div v-for="(item, index) in historyMessages" :key="index" class="diagnose-item c-flex-row c-align-items-center c-justify-content-between">
-        <div class="title">{{ item.title }}</div>
         <div class="c-flex-row c-align-items-center">
-          <el-button type="success" plain size="mini" style="margin-right: 10px" @click="onReviewClick(item)">{{ $t('playbackButton') }}</el-button>
-          <el-button type="warning" plain size="mini" @click="onReportClick(item)">{{ $t('reportButton') }}</el-button>
+          <div class="severity" :style="severityStyle[item.severity]" />
+          <div class="title" style="margin-right: 20px">{{ item.title }}</div>
+        </div>
+        <div class="c-flex-row c-align-items-center">
+          <el-button type="success" size="small" style="margin-right: 10px" @click="onReviewClick(item)">{{ $t('playbackButton') }}<i
+            class="el-icon-video-camera-solid el-icon--right"
+            style="font-size: 16px"
+          /></el-button>
+          <el-button type="warning" size="small" @click="onReportClick(item)">{{ $t('reportButton') }}<i
+            class="el-icon-document-add el-icon--right"
+            style="font-size: 16px"
+          /></el-button>
         </div>
       </div>
     </div>
@@ -57,69 +67,92 @@
             @scroll="stepScrollEvent"
           >
             <div class="review-step">
-              <div style="height: 40px; line-height: 40px; color: #333333; font-weight: bold">
+              <div style="height: 40px; line-height: 40px; color: #333333; font-weight: bold; font-size: 18px">
                 1.{{ $t('setpTip1') }}
               </div>
               <div class="c-flex-row c-align-items-center" style="height: calc(100% - 40px)">
                 <OneChat
-                  v-if="reviewItem['anomalyAnalysis']"
+                  v-if="roleAssignerMessages.length > 0"
+                  id="RoleAssigner"
+                  key="RoleAssigner"
                   class="chat-container"
                   sender="RoleAssigner"
                   :hire="true"
-                  :messages="reviewItem.anomalyAnalysis.RoleAssigner.messages"
+                  :skip-typed="skipTyped"
+                  :messages="roleAssignerMessages"
                   style="height: 100%; width: 30%;"
+                  @playbackComplete="onRoleAssignerPlaybackComplete('0')"
                 />
                 <div class="c-flex-row" style="width: 70%; height: 100%;">
                   <OneChat
                     v-if="cpuExpertMessages.length > 0"
+                    id="CpuExpert"
+                    key="CpuExpert"
                     sender="CpuExpert"
                     :hire="true"
+                    :skip-typed="skipTyped"
                     class="chat-container"
                     :messages="cpuExpertMessages"
                     style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
+                    @playbackComplete="onPlaybackComplete(1)"
                   />
                   <OneChat
                     v-if="ioExpertMessages.length > 0"
+                    id="IoExpert"
+                    key="IoExpert"
                     sender="IoExpert"
                     :hire="true"
+                    :skip-typed="skipTyped"
                     class="chat-container"
                     :messages="ioExpertMessages"
                     style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
+                    @playbackComplete="onPlaybackComplete(1)"
                   />
                   <OneChat
                     v-if="memoryExpertMessages.length > 0"
+                    id="MemoryExpert"
+                    key="MemoryExpert"
                     sender="MemoryExpert"
                     :hire="true"
+                    :skip-typed="skipTyped"
                     class="chat-container"
                     :messages="memoryExpertMessages"
                     style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
+                    @playbackComplete="onPlaybackComplete(1)"
                   />
                   <OneChat
                     v-if="networkExpertMessages.length > 0"
+                    id="NetworkExpert"
+                    key="NetworkExpert"
                     sender="NetworkExpert"
                     :hire="true"
+                    :skip-typed="skipTyped"
                     class="chat-container"
                     :messages="networkExpertMessages"
                     style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
+                    @playbackComplete="onPlaybackComplete(1)"
                   />
                 </div>
               </div>
             </div>
 
             <div class="review-step">
-              <span style="height: 40px; line-height: 40px; color: #333333; font-weight: bold; margin: 10px 0">
+              <span style="height: 40px; line-height: 40px; color: #333333; font-weight: bold; margin: 10px 0; font-size: 18px">
                 2.{{ $t('setpTip2') }}
               </span>
               <Chat
+                v-if="brainstormingMessages.length > 0"
                 class="chat-container"
+                :skip-typed="skipTyped"
                 :messages="brainstormingMessages"
                 style="height: calc(100% - 40px); width: 100%; padding: 0"
+                @playbackComplete="onBrainstormingPlaybackComplete()"
               />
             </div>
 
             <div class="review-step">
-              <span style="height: 40px; line-height: 40px; color: #333333; font-weight: bold;">3.{{ $t('setpTip3') }}</span>
-              <div style="width: 100%; padding: 10px;" v-html="md.render(report)" />
+              <span style="height: 40px; line-height: 40px; color: #333333; font-weight: bold; font-size: 18px">3.{{ $t('setpTip3') }}</span>
+              <div style="width: 100%; padding: 10px; background-color: RGBA(242, 246, 255, 1); border-radius: 8px" v-html="md.render(report)" />
             </div>
           </div>
         </transition>
@@ -160,6 +193,11 @@ export default {
     return {
       timeRange: [],
       messages: [],
+      severityStyle: {
+        'CRIT': 'background-color: #F56C6C;',
+        'WARN': 'background-color: #E6A23C;',
+        'INFO': 'background-color: #909399;'
+      },
       md: new MarkdownIt()
         .set({ html: true, breaks: true, typographer: true, linkify: true })
         .set({ highlight: function(code) {
@@ -167,6 +205,8 @@ export default {
               hljs.highlight(code, { language: 'python', ignoreIllegals: true }).value +
               '</code></pre>'
         } }),
+      expertCount: 0,
+      roleAssignerMessages: [],
       cpuExpertMessages: [],
       ioExpertMessages: [],
       memoryExpertMessages: [],
@@ -182,16 +222,13 @@ export default {
       reviewLoading: false,
       activeName: 0,
       analyseAt: undefined,
-      reportDrawer: false
+      reportDrawer: false,
+      skipTyped: true
     }
   },
   watch: {},
   mounted() {
-    // this.messages = JSON.parse(localStorage.getItem(MESSAGEKEY) || '[]')
-    // this.getRobotIntro()
     this.getAlertHistories()
-  },
-  beforeDestroy() {
   },
   methods: {
     customHighlight(code, lang) {
@@ -216,7 +253,29 @@ export default {
       this.reviewDrawer = true
       this.getAlertHistoryDetail(item)
     },
+    onRoleAssignerPlaybackComplete() {
+      this.cpuExpertMessages = this.reviewItem.anomalyAnalysis?.CpuExpert?.messages || []
+      this.ioExpertMessages = this.reviewItem.anomalyAnalysis?.IoExpert?.messages || []
+      this.memoryExpertMessages = this.reviewItem.anomalyAnalysis?.MemoryExpert?.messages || []
+      this.networkExpertMessages = this.reviewItem.anomalyAnalysis?.NetworkExpert?.messages || []
+      this.expertCount += this.cpuExpertMessages.length > 0 ? 1 : 0
+      this.expertCount += this.ioExpertMessages.length > 0 ? 1 : 0
+      this.expertCount += this.memoryExpertMessages.length > 0 ? 1 : 0
+      this.expertCount += this.networkExpertMessages.length > 0 ? 1 : 0
+    },
+    onPlaybackComplete(value) {
+      this.expertCount -= value
+      if (this.expertCount <= 0) {
+        this.brainstormingMessages = this.reviewItem.brainstorming?.messages || []
+        this.onStepClick(1)
+      }
+    },
+    onBrainstormingPlaybackComplete() {
+      this.onStepClick(2)
+      this.report = this.reviewItem.report || ''
+    },
     getAlertHistoryDetail(item) {
+      this.roleAssignerMessages = []
       this.cpuExpertMessages = []
       this.ioExpertMessages = []
       this.memoryExpertMessages = []
@@ -224,12 +283,7 @@ export default {
       this.brainstormingMessages = []
       alertHistoryDetail({ file: item.file_name }).then(res => {
         this.reviewItem = res.data
-        this.cpuExpertMessages = this.reviewItem.anomalyAnalysis?.CpuExpert?.messages || []
-        this.ioExpertMessages = this.reviewItem.anomalyAnalysis?.IoExpert?.messages || []
-        this.memoryExpertMessages = this.reviewItem.anomalyAnalysis?.MemoryExpert?.messages || []
-        this.networkExpertMessages = this.reviewItem.anomalyAnalysis?.NetworkExpert?.messages || []
-        this.brainstormingMessages = this.reviewItem.brainstorming?.messages || []
-        this.report = this.reviewItem.report || ''
+        this.roleAssignerMessages = this.reviewItem.anomalyAnalysis.RoleAssigner.messages || []
       }).finally(() => {
         this.reviewLoading = false
       })
@@ -239,6 +293,7 @@ export default {
       this.getAlertHistoryDetail(item)
     },
     onStepClick(activeName) {
+      console.log('======onStepClick==========:', activeName)
       this.activeName = activeName
       const calcHeight = this.$refs.setpScrollDiv.getBoundingClientRect().height
       this.scrollToTopWithAnimation(calcHeight * this.activeName)
@@ -269,6 +324,13 @@ export default {
   white-space: pre-wrap;
   padding: 10px;
   border-radius: 4px;
+}
+
+.severity {
+  width: 16px;
+  height: 16px;
+  border-radius: 16px;
+  margin-right: 6px
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -358,7 +420,8 @@ table thead:first-child tr:first-child td {
   flex-shrink: 0;
   border-bottom: 1px solid #f2f2f2;
   .title {
-    color: #000000;
+    color: #333333;
+    font-size: 16px;
   }
 }
 

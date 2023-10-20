@@ -1,9 +1,9 @@
 <template>
   <div class="c-flex-column c-relative" style="width: 100%; height: 100%;">
-    <div id="scroll-container" class="scroll-container c-relative">
+    <div :id="componentId + '-scroll-container'" class="scroll-container c-relative">
       <div
         class="message-header c-relative c-flex-row c-align-items-center"
-        :style="hire ? 'background-color: #67C23A;' : 'background-color: RGBA(225, 243, 216, 1.00);'"
+        :style="headerStyle[sender]"
       >
         <img v-if="sender === 'RoleAssigner'" src="@/assets/dba_robot.webp" class="face">
         <img v-if="sender === 'CpuExpert'" src="@/assets/cpu_robot.webp" class="face">
@@ -12,42 +12,18 @@
         <img v-if="sender === 'NetworkExpert'" src="@/assets/net_robot.webp" class="face">
         <span style="font-size: 16px; color: #FFFFFF; margin-left: 10px">{{ sender }}</span>
       </div>
-      <template v-if="hire">
-        <div v-for="(item, index) in messages" :key="index">
-          <div class="text-item c-flex-row left">
-            <div v-if="!item.loading" class="c-flex-column">
-              <span style="font-size: 12px; color: #333333; margin-bottom: 5px">
-                <span style="margin-left: 5px; color: #666666">{{ item.time }}</span>
-              </span>
-              <div class="content c-flex-column">
-                <div v-html="md.render(item.data)" />
-              </div>
-            </div>
-            <div v-else>
-              <div class="content c-flex-row c-justify-content-left" style="padding: 10px 40px 10px 20px">
-                <i class="el-icon-loading" style="font-size: 20px; color: #000000" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
-      <template v-else>
-        <div class="c-flex-column c-align-items-center c-justify-content-center" style="height: 60%;">
-          <span style="font-size: 14px; color: #999999;">未被雇佣</span>
-        </div>
-      </template>
-      <div class="item-space" />
     </div>
   </div>
 </template>
 
 <script>
-import { parseTime } from '@/utils'
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
+import Typed from 'typed.js'
+
 export default {
   name: 'OneChat',
-  components: { },
+  components: {},
   props: {
     messages: {
       type: Array,
@@ -61,43 +37,165 @@ export default {
       required: true,
       default: ''
     },
-    hire: {
+    skipTyped: {
       type: Boolean,
-      required: true,
       default: false
     }
   },
   data() {
     return {
+      headerStyle: {
+        'RoleAssigner': 'background-color: #01B77E;',
+        'CpuExpert': 'background-color: #0F2F5F;',
+        'MemoryExpert': 'background-color: #FB9996;',
+        'IoExpert': 'background-color: #7649af;',
+        'NetworkExpert': 'background-color: #ecb42b;'
+      },
+      typedObjs: [],
+      componentId: Math.random().toString(36).substr(2, 9),
       chats: [],
+      scrollObserver: undefined,
       md: new MarkdownIt()
         .set({ html: true, breaks: true, typographer: true, linkify: true })
-        .set({ highlight: function(code) {
-          return '<pre class="hljs"><code>' +
+        .set({
+          highlight: function(code) {
+            return '<pre class="hljs"><code>' +
               hljs.highlight(code, { language: 'python', ignoreIllegals: true }).value +
               '</code></pre>'
-        } })
+          }
+        })
     }
   },
+  watch: {
+    messages: {
+      handler() {
+        setTimeout(() => {
+          if (this.messages.length > 0) {
+            this.dealMessage(0)
+          }
+        })
+      },
+      deep: true,
+      immediate: true
+    },
+    skip: {
+      handler() {}
+    }
+  },
+  mounted() {
+    const target = document.getElementById(this.componentId + '-scroll-container')
+    // 创建MutationObserver对象
+    this.scrollObserver = new MutationObserver(function(mutationsList, observer) {
+      // 处理高度变化操作
+      target.scrollTop = target.scrollHeight - target.clientHeight
+    })
+    // 配置观察选项
+    const config = { attributes: true, childList: true, subtree: true }
+    // 开始观察目标节点
+    this.scrollObserver.observe(target, config)
+  },
+  destroyed() {
+    if (this.scrollObserver) {
+      this.scrollObserver.disconnect()
+      this.scrollObserver = undefined
+    }
+    this.typedObjs.forEach(item => {
+      item.destroy()
+    })
+  },
   methods: {
-    parseTime(value) {
-      return parseTime(value, '{m}-{d}')
-    },
-    isNotEmpty(arr) {
-      return arr && arr.length > 0 && arr.some(element => element.trim() !== '')
-    },
-    // 初始化滚动
-    initScrollBar() {
-      this.$nextTick(() => {
-        var container = this.$el.querySelector('.scroll-container')
-        container.scrollTop = container.scrollHeight
+    resetTypeds() {
+      this.typedObjs.forEach(item => {
+        item.reset(true)
       })
+    },
+    dealMessage(index) {
+      if (index >= this.messages.length) {
+        this.$emit('playbackComplete')
+        if (this.scrollObserver) {
+          this.scrollObserver.disconnect()
+          this.scrollObserver = undefined
+        }
+        return
+      }
+      const message = this.messages[index]
+
+      if (!message.data || message.data.trim().length === 0) {
+        this.dealMessage(index + 1)
+        return
+      }
+
+      const divId = 'message-' + Math.random().toString(36).substr(2, 9)
+
+      const messagesContainer = document.getElementById(this.componentId + '-scroll-container')
+      messagesContainer.innerHTML = messagesContainer.innerHTML +
+        `<div class="text-item c-flex-column">
+            <span style="font-size: 12px; color: #333333; margin-bottom: 5px">
+              <span style="margin-left: 5px; color: #666666">${message.time}</span>
+            </span>
+            <div id="${divId}" class="content c-flex-column"></div>
+        </div>`
+
+      setTimeout(() => {
+        try {
+          if (this.skipTyped) {
+            const contentContainer = document.getElementById(divId)
+            contentContainer.innerHTML = this.md.render(message.data)
+            this.dealMessage(index + 1)
+          } else {
+            const typedObj = new Typed('#' + divId, {
+              strings: [this.md.render(message.data)],
+              typeSpeed: 1,
+              showCursor: false,
+              contentType: 'html',
+              onComplete: (self) => {
+                this.dealMessage(index + 1)
+              } })
+            this.typedObjs.push(typedObj)
+          }
+        } catch (e) {
+          console.log('Typed Error', e)
+        }
+      }, 0)
     }
   }
 }
 </script>
 
+<style>
+.text-item {
+  margin: 20px 10px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  word-break: break-all;
+  word-wrap: break-word;
+  overflow-x: scroll;
+}
+
+.content {
+  color: #333333;
+  font-size: 14px;
+  min-height: 20px;
+  border-radius: 20px;
+  padding: 6px 12px;
+  line-height: 20px;
+  background-color: #ffffff;
+  word-break: break-all;
+  word-wrap: break-word;
+  position: relative;
+}
+
+.json-viewer {
+  width: 100%;
+}
+
+</style>
+
 <style lang="scss" scoped>
+
+.json-viewer {
+  width: 100%;
+}
 
 .bottom-input-container {
   background: #ffffff;
@@ -115,7 +213,6 @@ export default {
   position: sticky;
   top: 0;
   width: 100%;
-  background-color: #67C23A;
   z-index: 10;
   padding: 5px 10px
 }
@@ -128,6 +225,7 @@ export default {
   padding-bottom: 20px;
   width: 100%;
   height: 100%;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
 
   .item-space {
     height: 15px;
@@ -153,27 +251,6 @@ export default {
     height: 40px;
     border-radius: 40px;
     margin-right: 7px;
-  }
-
-  .text-item {
-    margin: 20px 10px;
-    align-items: flex-start;
-    justify-content: flex-start;
-    word-break: break-all;
-    word-wrap: break-word;
-    overflow-x: scroll;
-    .content {
-      color: #333333;
-      font-size: 14px;
-      min-height: 20px;
-      border-radius: 20px;
-      padding: 6px 12px;
-      line-height: 20px;
-      background-color: #ffffff;
-      word-break: break-all;
-      word-wrap: break-word;
-      position: relative;
-    }
   }
 }
 </style>
