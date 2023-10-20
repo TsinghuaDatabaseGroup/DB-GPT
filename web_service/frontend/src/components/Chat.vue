@@ -22,6 +22,10 @@ export default {
     skipTyped: {
       type: Boolean,
       default: false
+    },
+    typeSpeed: {
+      type: Number,
+      default: 100
     }
   },
   data() {
@@ -126,7 +130,7 @@ export default {
           } else {
             const typedObj = new Typed('#' + divId, {
               strings: [this.md.render(message.data)],
-              typeSpeed: 1,
+              typeSpeed: 100 - this.typeSpeed,
               showCursor: false,
               contentType: 'html',
               onComplete: (self) => {

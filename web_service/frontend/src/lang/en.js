@@ -10,6 +10,8 @@ export default {
   timeEndTip: 'Start Time',
   reportDrawerTitle: 'Analysis Report',
   playbackButton: 'Playback',
+  playbackAnimationTip: 'Playback Animation',
+  animationSpeedTip: 'Animation Speed',
   reportButton: 'Report',
   setpTitle1: 'Anomaly Analysis',
   setpTip1: 'After receiving an exception notification, the DBA analyzes the exception and assigns tasks to different colleagues. The colleagues who receive the task perform the analysis independently first.',

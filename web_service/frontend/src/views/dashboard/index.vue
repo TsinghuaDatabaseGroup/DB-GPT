@@ -1,29 +1,47 @@
 <template>
   <div class="c-flex-column" style=" width: 100%;">
 
-    <el-form
-      ref="form"
-      class="c-shaow-card"
-      :inline="true"
-      label-position="left"
-      size="mini"
-      style="padding-top: 20px; padding-left: 20px; margin: 0 20px; border-radius: 80px!important;"
+    <div
+      class="c-flex-row c-align-items-center c-justify-content-between c-shaow-card"
+      style="padding: 10px 20px; margin: 0 20px; border-radius: 80px!important;"
     >
-
-      <el-form-item :label="$t('queryTimeTip') + ':'">
-        <el-date-picker
-          v-model="timeRange"
-          type="datetimerange"
-          range-separator="-"
-          format="yyyy-MM-dd HH:mm:ss"
-          value-format="timestamp"
-          :start-placeholder="$t('timeStartTip')"
-          :end-placeholder="$t('timeEndTip')"
-          :clearable="false"
-          @change="timeRangeOnChange"
+      <el-form
+        ref="form"
+        :inline="true"
+        label-position="left"
+      >
+        <el-form-item :label="$t('queryTimeTip') + ':'" style="margin-bottom: 0">
+          <el-date-picker
+            v-model="timeRange"
+            type="datetimerange"
+            range-separator="-"
+            format="yyyy-MM-dd HH:mm:ss"
+            value-format="timestamp"
+            :start-placeholder="$t('timeStartTip')"
+            :end-placeholder="$t('timeEndTip')"
+            :clearable="false"
+            @change="timeRangeOnChange"
+          />
+        </el-form-item>
+      </el-form>
+      <div class="c-flex-row c-align-items-center" style="flex-shrink: 0">
+        <el-switch
+          v-model="skipTyped"
+          style="display: block"
+          active-color="#ff4949"
+          inactive-color="#13ce66"
+          active-text=""
+          :inactive-text="$t('playbackAnimationTip')"
         />
-      </el-form-item>
-    </el-form>
+
+        <div class="c-flex-row c-align-items-center" style="margin-left: 20px">
+          <span :style="skipTyped ? 'color: #999999' : 'color: #000000'">动画速度</span>
+          <el-slider v-model="typeSpeed" :disabled="skipTyped" style="width: 200px; margin-left: 20px" />
+        </div>
+
+      </div>
+
+    </div>
 
     <div class="c-flex c-flex-column" style="height: calc(100vh - 120px); overflow-y: auto; margin: 10px 0; padding: 0 20px">
       <div v-for="(item, index) in historyMessages" :key="index" class="diagnose-item c-flex-row c-align-items-center c-justify-content-between">
@@ -77,7 +95,7 @@
                   key="RoleAssigner"
                   class="chat-container"
                   sender="RoleAssigner"
-                  :hire="true"
+                  :type-speed="typeSpeed"
                   :skip-typed="skipTyped"
                   :messages="roleAssignerMessages"
                   style="height: 100%; width: 30%;"
@@ -89,7 +107,7 @@
                     id="CpuExpert"
                     key="CpuExpert"
                     sender="CpuExpert"
-                    :hire="true"
+                    :type-speed="typeSpeed"
                     :skip-typed="skipTyped"
                     class="chat-container"
                     :messages="cpuExpertMessages"
@@ -101,7 +119,7 @@
                     id="IoExpert"
                     key="IoExpert"
                     sender="IoExpert"
-                    :hire="true"
+                    :type-speed="typeSpeed"
                     :skip-typed="skipTyped"
                     class="chat-container"
                     :messages="ioExpertMessages"
@@ -113,7 +131,7 @@
                     id="MemoryExpert"
                     key="MemoryExpert"
                     sender="MemoryExpert"
-                    :hire="true"
+                    :type-speed="typeSpeed"
                     :skip-typed="skipTyped"
                     class="chat-container"
                     :messages="memoryExpertMessages"
@@ -125,7 +143,7 @@
                     id="NetworkExpert"
                     key="NetworkExpert"
                     sender="NetworkExpert"
-                    :hire="true"
+                    :type-speed="typeSpeed"
                     :skip-typed="skipTyped"
                     class="chat-container"
                     :messages="networkExpertMessages"
@@ -143,6 +161,7 @@
               <Chat
                 v-if="brainstormingMessages.length > 0"
                 class="chat-container"
+                :type-speed="typeSpeed"
                 :skip-typed="skipTyped"
                 :messages="brainstormingMessages"
                 style="height: calc(100% - 40px); width: 100%; padding: 0"
@@ -223,7 +242,8 @@ export default {
       activeName: 0,
       analyseAt: undefined,
       reportDrawer: false,
-      skipTyped: true
+      skipTyped: true,
+      typeSpeed: 100
     }
   },
   watch: {},
