@@ -32,7 +32,7 @@ async def histories():
     # 遍历文件列表
     for file_name in file_list:
         # 确保文件是以.json扩展名结尾
-        if file_name.endswith(".json"):
+        if file_name.endswith(".json") or file_name.endswith(".jsonl"):
             # 拼接文件路径
             file_path = os.path.join(folder_path, file_name)
             # 打开文件并读取JSON数据
@@ -41,8 +41,7 @@ async def histories():
                 resp_data = {}
                 resp_data["title"] = json_data.get("title", "")
                 resp_data["time"] = json_data.get("time", "")
-                resp_data["status"] = json_data.get("status", "")
-                resp_data["severity"] = json_data.get("severity", "")
+                resp_data["alerts"] = json_data.get("alerts", "")
                 resp_data["file_name"] = file_name
             # 将JSON数据添加到列表中
             json_list.append(resp_data)
@@ -75,7 +74,7 @@ async def history_detail(request: Request):
         }
     # 拼接文件路径
     file_path = "../../alert_results/examples/" + file_name
-    if file_path.endswith(".json"):
+    if file_path.endswith(".json") or file_path.endswith(".jsonl"):
         # 打开文件并读取JSON数据
         with open(file_path, "r") as file:
             json_data = json.load(file)
