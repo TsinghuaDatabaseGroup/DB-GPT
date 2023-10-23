@@ -46,11 +46,18 @@
     <div class="c-flex c-flex-column" style="height: calc(100vh - 120px); overflow-y: auto; margin: 10px 0; padding: 0 20px">
       <div v-for="(item, index) in historyMessages" :key="index" class="diagnose-item c-flex-row c-align-items-center c-justify-content-between">
         <div class="c-flex-row c-align-items-center">
-          <div class="severity" :style="severityStyle[item.severity]" />
           <div class="title" style="margin-right: 20px">{{ item.title }}</div>
         </div>
         <div class="c-flex-row c-align-items-center">
-          <el-button type="success" size="small" style="margin-right: 10px" @click="onReviewClick(item)">{{ $t('playbackButton') }}<i
+
+          <div v-for="(alert_item, alert_index) in item.alerts" :key="alert_index" class="c-flex-row">
+            <div class="severity" :style="severityStyle[alert_item.alert_level]" />
+            <div style="color: #666666">{{ alert_item.alert_name }}</div>
+          </div>
+
+        </div>
+        <div class="c-flex-row c-align-items-center">
+          <el-button type="success" size="small" style="margin:0 10px" @click="onReviewClick(item)">{{ $t('playbackButton') }}<i
             class="el-icon-video-camera-solid el-icon--right"
             style="font-size: 16px"
           /></el-button>
@@ -294,7 +301,7 @@ export default {
       this.onStepClick(2)
       this.report = this.reviewItem.report || ''
     },
-    getAlertHistoryDetail(item) {
+    getAlertHistoryDetail(item, callback) {
       this.roleAssignerMessages = []
       this.cpuExpertMessages = []
       this.ioExpertMessages = []
@@ -304,13 +311,18 @@ export default {
       alertHistoryDetail({ file: item.file_name }).then(res => {
         this.reviewItem = res.data
         this.roleAssignerMessages = this.reviewItem.anomalyAnalysis.RoleAssigner.messages || []
+        if (callback) {
+          callback()
+        }
       }).finally(() => {
         this.reviewLoading = false
       })
     },
     onReportClick(item) {
       this.reportDrawer = true
-      this.getAlertHistoryDetail(item)
+      this.getAlertHistoryDetail(item, () => {
+        this.report = this.reviewItem.report || ''
+      })
     },
     onStepClick(activeName) {
       console.log('======onStepClick==========:', activeName)
