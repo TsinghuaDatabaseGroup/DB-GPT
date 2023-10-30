@@ -194,7 +194,7 @@
     >
       <div class="c-relative c-flex-column" style="overflow-y: scroll; height: calc(100% - 40px); overflow-x: hidden">
         <div
-          style="height: 100%; width: 100%; padding: 20px;"
+          style="height: 100%; width: 100%; padding: 20px; background-color: RGBA(242, 246, 255, 1); border-radius: 8px;"
           v-html="md.render(report)"
         />
       </div>

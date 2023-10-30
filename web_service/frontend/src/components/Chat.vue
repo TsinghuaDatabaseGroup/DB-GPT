@@ -189,7 +189,7 @@ export default {
 }
 
 .content {
-  color: #333333;
+  color: #111111;
   font-size: 14px;
   min-height: 20px;
   border-radius: 20px;
