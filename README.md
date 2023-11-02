@@ -23,6 +23,8 @@
 
 *[Click to check 29 typical anomalies together with expert analysis!](./anomaly_trigger/29种性能异常与根因分析.pdf) (supported by the DBMind team)*
 
+*[Document2Knowledge module is available!](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/new_ui#1-knowledge-extraction-document)*
+
 *[New version is under construction in the new_arch branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/new_ui)*
 
 
