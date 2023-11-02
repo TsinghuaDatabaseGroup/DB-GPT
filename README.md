@@ -392,9 +392,7 @@ python doc2knowledge.py
 > The summary for the same document sections is cached. You can delete this file if do not like to reuse the previous caches.
 
 
-    <!-- - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](multiagents/knowledge/root_causes_dbmind.jsonl). -->
-
-
+<!-- - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](multiagents/knowledge/root_causes_dbmind.jsonl). -->
 
 
 <span id="-tools"></span>
