@@ -7,7 +7,7 @@
   <a href="#-news">Updates</a> •
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-anomalies">Alerts And Anomalies</a> •  
-  <a href="#-customize">Customization</a> • 
+  <a href="#-customize">Customize Knowledge And Tools</a> • 
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-contributors">Contributors</a>
@@ -357,15 +357,44 @@ python main.py --anomaly POOR_JOIN_PERFORMANCE,CPU_CONTENTION
 ``` -->
 
 
+
 <span id="-customize"></span>
 
-## 📎 Customize Your KnowledgeBase And Tools
+## 📎 Customize Knowledge And Tools
 
-#### 1. Knowledge Preparation
+<span id="-doc2knowledge"></span>
 
-- Extract knowledge from both code (./knowledge_json/knowledge_from_code) and documents (./knowledge_json/knowledge_from_document).
+#### 1. Knowledge Extraction (Document)
 
-    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](multiagents/knowledge/root_causes_dbmind.jsonl).
+Step 1. Rename *doc2knowledge/config_template.json* into *doc2knowledge/config.json*. And add the value for "api_key" ("organization" is optional)
+
+> GPT-4 is necessary to utilize the *function calling* feature. I will try to solve this limit.
+
+Step 2. Split documents into separated section files by the section indexes (e.g., section1, section1.1, section2 ...). And copy the section files into the *docs/<your_document_name>/raw/*. For example:
+
+    .
+    ├── docs
+    │   ├── report_example
+    |   │   ├── raw    
+    |   │   |    ├── 1 title.txt    
+    |   │   |    ├── 1.1 category.txt
+
+> It is a laborious work and hard to find a better way than manually splitting the given document
+
+> You can jump over this step and directly run the *report_example* case
+
+Step 3. Modify the arguments in *doc2knowledge.py* script and run the script:
+
+```bash
+python doc2knowledge.py
+```
+
+> The summary for the same document sections is cached. You can delete this file if do not like to reuse the previous caches.
+
+
+    <!-- - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](multiagents/knowledge/root_causes_dbmind.jsonl). -->
+
+
 
 
 <span id="-tools"></span>

@@ -11,9 +11,14 @@ def get_config(key):
 
 def get_cache(key):
     key = key.lower().strip()
+
+    if not ExistFile("cache.json"):
+        SaveJson(dict(), "cache.json")
+    
     cache = LoadJson("cache.json")
     if key in cache:
         return cache[key]
+        # crea
     return None
 
 # cache utils

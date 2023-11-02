@@ -26,7 +26,7 @@ found at [http://www.imdb.com/interfaces](http://www.imdb.com/interfaces)
   wget https://bitbucket.org/alberanid/imdbpy/get/5.0.zip
   ```
 
-3. create openGauss database (e.g., name imdbload):
+3. create yyyyy database (e.g., name imdbload):
 
   ```sh
   createdb imdbload
@@ -38,7 +38,7 @@ found at [http://www.imdb.com/interfaces](http://www.imdb.com/interfaces)
   imdbpy2sql.py -d PATH_TO_GZ_FILES -u postgres://username:password@hostname/imdbload
   ```
 
-Now you should have a openGauss database named `imdbload` with the
+Now you should have a yyyyy database named `imdbload` with the
 imdb data. Note that this database has some secondary indexes (but not
 on all foreign key attributes). You can export all tables to CSV:
 

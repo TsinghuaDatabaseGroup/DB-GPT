@@ -1,10 +1,9 @@
-from utils import *
+from utilss import *
 
 global llm
 
 def Initialize(doc, target_dir):
     doc_path = pjoin("./docs/", doc)
-    # CreateFolder(pjoin(doc_path, "raw"))
     CreateFolder(pjoin(doc_path, target_dir))
 
 def Summarize(idx, title, content, summary_min_length=400):
@@ -71,6 +70,7 @@ def ExtractKnowledge(nodes_mapping, root_index, iteration=2, iteration_gap=1, so
     r = nodes_mapping[root_index]
     source_sections = [r['name']]
     RULES_EXTRACTION_PROMPT_MSG[0]['content'] = RULES_EXTRACTION_PROMPT_MSG[0]['content'].replace('${alert_info}', ' '.join(r['children']))
+
     messages = RULES_EXTRACTION_PROMPT_MSG + MSG(r['full_summary'])
     extracted_rules = []
 
@@ -89,7 +89,6 @@ def ExtractKnowledge(nodes_mapping, root_index, iteration=2, iteration_gap=1, so
                     rule = rule.replace('"{','{')
                     rule = rule.replace('"}','}')
                     rule = rule.replace('\\"', '"')
-                    print(COLOR1("```\n{0}\n```".format(rule)))
 
                     # evaluate redundancy
                     new_knowledge = {'source_sections':str(new_source_sections), 'id':len(extracted_rules)-1, 'rule':rule}
@@ -106,6 +105,8 @@ def ExtractKnowledge(nodes_mapping, root_index, iteration=2, iteration_gap=1, so
                     if not_exist:
                         extracted_rules.append(rule)
                         message = "Success!"
+
+                        print(COLOR1("```\n{0}\n```".format(rule)))
 
                         # append to the json file in pretty format
                         with open(target_file, 'a') as wf:
@@ -150,7 +151,7 @@ if __name__=="__main__":
     # root_index:
 
     args = HeavenArguments.from_parser([
-        LiteralArgumentDescriptor("backend", default="gpt-4", choices=['gpt-3.5-turbo', 'gpt-4']),
+        LiteralArgumentDescriptor("backend", default="gpt-4", choices=['gpt-4']),
         StrArgumentDescriptor("doc", short='d', default="report_example"),
         StrArgumentDescriptor("root_index", short='r', default="1"), # e.g., section 1
         IntArgumentDescriptor("summary_min_length", short='l', default=400),
@@ -173,5 +174,5 @@ if __name__=="__main__":
 
     assert (args.root_index) in nodes_mapping, f"Invalid root index: {args.root_index}"
 
-    target_file = "./docs/" + args.doc + '/' + target_dir + '/' + "extracted_knowledge.jsonl"
+    target_file = "./docs/" + args.doc + '/' + target_dir + '/' + "extracted_knowledge_4.jsonl"
     extracted_rules = ExtractKnowledge(nodes_mapping, root_index=args.root_index, iteration=args.num_iteration, iteration_gap=args.iteration_gap, source_file=args.doc,target_file=target_file)
