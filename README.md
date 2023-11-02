@@ -364,7 +364,7 @@ python main.py --anomaly POOR_JOIN_PERFORMANCE,CPU_CONTENTION
 
 <span id="-doc2knowledge"></span>
 
-#### 1. Knowledge Extraction (Document)
+### 1. Knowledge Extraction (Document)
 
 Step 1. Rename *doc2knowledge/config_template.json* into *doc2knowledge/config.json*. And add the value for "api_key" ("organization" is optional)
 
@@ -397,7 +397,7 @@ python doc2knowledge.py
 
 <span id="-tools"></span>
 
-#### 2. Tool Preparation
+### 2. Tool Preparation
 
 - Tool APIs (for optimization)
 
