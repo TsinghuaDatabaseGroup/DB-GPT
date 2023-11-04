@@ -1,6 +1,5 @@
 import sys
 import os
-import pdb
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 three_up_path = os.path.abspath(os.path.join(script_dir, '..', '..', '..'))
