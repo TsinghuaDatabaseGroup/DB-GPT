@@ -3,7 +3,7 @@
     <sidebar class="sidebar-container" />
     <div
       class="main-container"
-      style="width: calc(100vw - 65px); margin-left: 65px; padding: 20px 0; height: 100%; overflow: hidden;"
+      style="width: calc(100vw - 65px); margin-left: 65px; padding: 0 0; height: 100%; overflow: hidden;"
     >
       <app-main style="width: 100%" />
     </div>
