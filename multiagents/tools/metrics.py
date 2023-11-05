@@ -13,7 +13,10 @@ import os
 current_diag_time = time.localtime()
 current_diag_time = time.strftime("%Y-%m-%d-%H:%M:%S", current_diag_time)
 if not os.path.exists(f"./alert_results/{str(current_diag_time)}"):
-    os.makedirs(f"./alert_results/{str(current_diag_time)}")
+    try:
+        os.makedirs(f"./alert_results/{str(current_diag_time)}")
+    except:
+        pass
 
 diag_start_time, diag_end_time = obtain_anomaly_time()
 
@@ -37,41 +40,46 @@ db = Database(dbargs, timeout=-1)
 
 
 WORKLOAD_FILE_NAME = "workload_info.json"
-with open(WORKLOAD_FILE_NAME, 'w') as f:
-    json.dump({'workload_statistics': '[]', 'slow_queries': '[]'}, f)
+ANOMALY_FILE_NAME = "anomalies/testing_set/testing_set_with_workload_last_10.json"
+# with open(WORKLOAD_FILE_NAME, 'w') as f:
+#     json.dump({'workload_statistics': '[]', 'slow_queries': '[]'}, f)
 
 def get_workload_statistics():
     with open(WORKLOAD_FILE_NAME, 'r') as f:
         info = json.load(f)
         return info["workload_statistics"]
 
-def set_workload_statistics(stats):
-    if os.path.exists(WORKLOAD_FILE_NAME):
-        with open(WORKLOAD_FILE_NAME, 'r') as rf:
-            info = json.load(rf)
-        info["workload_statistics"] = stats
-        with open(WORKLOAD_FILE_NAME, 'w') as f:
-            json.dump(info, f)
-    else:
-        with open(WORKLOAD_FILE_NAME, 'w') as f:
-            json.dump({'workload_statistics': stats, 'slow_queries': '[]'}, f)
+# def set_workload_statistics(stats):
+#     if os.path.exists(WORKLOAD_FILE_NAME):
+#         with open(WORKLOAD_FILE_NAME, 'r') as rf:
+#             info = json.load(rf)
+#         info["workload_statistics"] = stats
+#         with open(WORKLOAD_FILE_NAME, 'w') as f:
+#             json.dump(info, f)
+#     else:
+#         with open(WORKLOAD_FILE_NAME, 'w') as f:
+#             json.dump({'workload_statistics': stats, 'slow_queries': '[]'}, f)
 
-def get_slow_queries():
-    with open(WORKLOAD_FILE_NAME, 'r') as f:
+def get_slow_queries(diag_id):
+    with open(ANOMALY_FILE_NAME, 'r') as f:
         info = json.load(f)
-        return info["slow_queries"]
+    return info[diag_id]["slow_queries"]
 
-def set_slow_queries(stats):
-    if os.path.exists(WORKLOAD_FILE_NAME):
-        with open(WORKLOAD_FILE_NAME, 'r') as rf:
-            info = json.load(rf)
-        info["workload_statistics"] = stats
-        with open(WORKLOAD_FILE_NAME, 'w') as f:
-            json.dump(info, f)
-    else:
-        with open(WORKLOAD_FILE_NAME, 'w') as f:
-            json.dump({'workload_statistics': '[]', 'slow_queries': stats}, f)
+# def set_slow_queries(stats):
+#     if os.path.exists(WORKLOAD_FILE_NAME):
+#         with open(WORKLOAD_FILE_NAME, 'r') as rf:
+#             info = json.load(rf)
+#         info["workload_statistics"] = stats
+#         with open(WORKLOAD_FILE_NAME, 'w') as f:
+#             json.dump(info, f)
+#     else:
+#         with open(WORKLOAD_FILE_NAME, 'w') as f:
+#             json.dump({'workload_statistics': '[]', 'slow_queries': stats}, f)
 
+def get_workload_sqls(diag_id):
+    with open(ANOMALY_FILE_NAME, 'r') as f:
+        info = json.load(f)
+    return info[diag_id]["workload"]
 
 # [diagnosis knowledge]
 knowledge_matcher = KnowledgeExtraction(
@@ -105,7 +113,8 @@ def obtain_values_of_metrics(start_time, end_time, metrics):
             required_values[metric.split('{')[0]] = values
         else:
             #raise Exception("No metric values found for the given time range")
-            print(colored(f"No metric values found for {start_time}-{end_time} of {metric}", "red"))
+            # print(colored(f"No metric values found for {start_time}-{end_time} of {metric}", "red"))
+            pass
 
     return required_values
 
