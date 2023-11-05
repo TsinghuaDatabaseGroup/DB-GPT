@@ -1,4 +1,4 @@
-from multiagents.utils.core import read_yaml, read_prometheus_metrics_yaml
+from multiagents.utils.yaml_utils import read_yaml, read_prometheus_metrics_yaml
 from multiagents.utils.server import obtain_slow_queries, obtain_anomaly_time
 import warnings
 from multiagents.tools.metric_monitor.anomaly_detection import prometheus
