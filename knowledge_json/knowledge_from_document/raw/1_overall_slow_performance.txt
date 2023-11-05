@@ -32,7 +32,7 @@ There can be multiple reasons for overall slow performance, including but not li
 [Step Four] Investigate whether there are anomalies in system resources:
 - High CPU usage: Check CPU usage via OPS metrics or operating system commands.
 - High IO: Check IO statistics for high utilization or elevated read/write wait times.
-- High memory usage: Identify abnormal memory consumption and potential GaussDB process memory issues.
+- High memory usage: Identify abnormal memory consumption and potential xxxx process memory issues.
 - Network anomalies: Address network connectivity issues, latency, and bandwidth saturation.
 
 [Step Five] Investigate whether the database kernel is being optimally utilized:

@@ -1,0 +1,7 @@
+{
+    "openai-api": {
+        "api_key": "",
+        "organization": "",
+        "temperature": 0
+    }
+}

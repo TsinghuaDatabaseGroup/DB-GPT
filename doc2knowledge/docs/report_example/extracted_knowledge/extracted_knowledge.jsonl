@@ -1,0 +1,12 @@
+{
+    "source_sections": "['1 title.txt', '1.4 root_cause.txt', '1.5 solution.txt']",
+    "id": 0,
+    "rule": "{\n\"name\": \"high_cpu_usage\",\n\"content\": \"High CPU usage can be caused by the execution of specific SQL statements that consume high CPU resources, such as scanning multiple partitions at once.\",\n\"metrics\": [\"cpu_usage\", \"sql_execution_time\", \"number_of_partitions_scanned\"],\n\"steps\": \"Identify the SQL statements that are causing high CPU usage through the analysis of kernel performance views and WDR reports. If a SQL statement is found to be scanning a large number of partitions, consider optimizing the SQL query by modifying the SQL call method to use constants in the expression and assign values through the JDBC API interface. This will leverage the kernel's current partition table pruning ability, reducing partition scanning and lowering CPU consumption. Test this solution in a test environment before deploying it to production to fully verify its effectiveness.\"\n}\""
+}
+====================
+{
+    "source_sections": "['1 title.txt', '1.4 root_cause.txt', '1.5 solution.txt', '1.6 more_info.txt']",
+    "id": 1,
+    "rule": "{\n\"name\": \"sql_performance_analysis\",\n\"content\": \"Analyzing SQL performance can help identify problematic SQL statements that may be causing high CPU usage or other performance issues.\",\n\"metrics\": [\"total_execution_time\", \"average_execution_time\", \"execution_frequency\"],\n\"steps\": \"Collect SQL statistics in the current environment, including the top 10 SQL statements sorted by total execution time, average execution time, and execution frequency. Collect WDR reports, which contain database performance statistics, load profile, instance efficiency percentages, and SQL statement performance statistics. Analyze these reports to identify any SQL statements that may be causing performance issues.\"\n}\""
+}
+====================
