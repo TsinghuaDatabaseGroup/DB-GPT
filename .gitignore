@@ -4,7 +4,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 monitoring_scripts/prometheus/core.py
-
+doc2knowledge/docs/overall_diagnosis_knowledge/raw/raw.txt
 # C extensions
 *.so
 .DS_Store

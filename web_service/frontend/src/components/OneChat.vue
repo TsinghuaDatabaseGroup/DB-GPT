@@ -142,6 +142,7 @@ export default {
 
       setTimeout(() => {
         try {
+          // message.data = message.data.replace('CpuExpert', '<img src="../assets/cpu_robot.webp">')
           if (this.skipTyped) {
             const contentContainer = document.getElementById(divId)
             contentContainer.innerHTML = this.md.render(message.data)
