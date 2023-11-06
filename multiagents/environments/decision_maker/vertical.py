@@ -43,7 +43,6 @@ class VerticalDecisionMaker(BaseDecisionMaker):
                 nonempty_results.append(result)
 
 
-
         # agents[0].add_message_to_memory(nonempty_results) # agents[9].memory
 
         return nonempty_results

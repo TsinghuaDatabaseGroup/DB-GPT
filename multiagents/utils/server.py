@@ -9,8 +9,8 @@ def obtain_anomaly_time():
         last_line = f.readlines()[-1].replace("\n", "")
         diag_start_time = last_line.split('-')[0]
         diag_end_time = last_line.split('-')[1]
-    print("diag_start_time: ", diag_start_time)
-    print("diag_end_time: ", diag_end_time)
+    # print("diag_start_time: ", diag_start_time)
+    # print("diag_end_time: ", diag_end_time)
 
     if not diag_start_time or not diag_end_time:
         raise Exception("No start and end time of anomaly!")

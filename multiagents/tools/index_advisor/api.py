@@ -24,7 +24,8 @@ def optimize_index_selection(start_time: int, end_time: int):
     # 1. Split the workloads by database names
     databases = {}
     workload_statistics = get_workload_statistics()
-    workload_statistics = ast.literal_eval(workload_statistics)
+    if isinstance(workload_statistics, str):
+        workload_statistics = ast.literal_eval(workload_statistics)
 
     for query_template in workload_statistics:
         database_name = query_template["dbname"]

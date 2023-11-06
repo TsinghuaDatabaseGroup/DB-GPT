@@ -8,6 +8,7 @@ import re
 from dateutil import parser, tz
 from datetime import datetime, timedelta
 import time
+import ast
 
 from multiagents.utils.utils import AGENT_TYPES
 from multiagents.agents.conversation_agent import BaseAgent
@@ -31,15 +32,23 @@ from . import env_registry as EnvironmentRegistry
 from pydantic import BaseModel
 
 
-def extract_alert_info(latest_alert_file):
+def generate_tools_content(command_name, arguments, execution_results, command_status):
 
-    with open(f"{latest_alert_file}.txt", "r") as f:
-        alert_info = f.read()
+    div_str = f'<details open><summary><span style="font-size: 14px; font-weight: bold; color: #333333">using Tools:</span></summary><div style="display: flex; flex-direction: column; line-height: 36px"><div style="display: flex; flex-direction: row; align-content: center"><div style="font-size: 14px; color: #333333; width: 160px; flex-shrink: 0">Command Name:</div><div style="font-size: 14px; color: #676c90!important;">{command_name}</div></div><div style="display: flex; flex-direction: row; align-content: center"><div style="font-size: 14px; color: #333333; width: 160px; flex-shrink: 0">Arguments:</div><details><summary>Open</summary><div style="font-size: 14px; color: #676c90!important; white-space: pre-wrap">{json.dumps(arguments, indent=4)}</div></details></div><div style="display: flex; flex-direction: row; align-content: center"><div style="font-size: 14px; color: #333333; width: 160px; flex-shrink: 0">Command Status:</div><div style="font-size: 14px; color: #676c90!important;">{command_status}</div></div></div></details>'
+
+    return div_str
+
+def extract_alert_info(alert_info):
+
+    if isinstance(alert_info, str):
+
         alert_info = alert_info.replace("\'", '\"')
         alert_dict = alert_info.replace("'", '"')
-    
-    alert_dict = re.sub(r'"groupKey": ".*?",', '', alert_dict)
-    alert_dict = json.loads(alert_dict)
+        
+        alert_dict = re.sub(r'"groupKey": ".*?",', '', alert_dict)
+        alert_dict = json.loads(alert_dict)
+    else:
+        alert_dict = alert_info
 
     alert_status = alert_dict['status']
     alert_status = alert_status.strip()
@@ -108,7 +117,7 @@ class DBAEnvironment(BaseModel):
     # executor: BaseExecutor
     # evaluator: BaseEvaluator
 
-    task_description: str    
+    task_description: str
     cnt_turn: int = 0
     max_turn: int = 10
     success: bool = False
@@ -128,13 +137,6 @@ class DBAEnvironment(BaseModel):
             kwargs.pop("decision_maker", {"type": "vertical"}),
             decision_maker_registry,
         )
-        
-        # executor = build_components(
-        #     kwargs.pop("executor", {"type": "none"}), executor_registry
-        # )
-        # evaluator = build_components(
-        #     kwargs.pop("evaluator", {"type": "basic"}), evaluator_registry
-        # )
 
         super().__init__(
             role_assigner=role_assigner,
@@ -150,20 +152,38 @@ class DBAEnvironment(BaseModel):
         advice: str = "No advice yet.", 
         previous_plan: str = "No solution yet."
     ) -> List[Message]:
+        
+        alert_str = ""
+        alert_dict = []
 
-        # obtain the alert information
-        alert_str, alert_dict = extract_alert_info(args.latest_alert_file)
+        for alert_info in args.alerts:
+            tmp_alert_str, tmp_alert_dict = extract_alert_info(alert_info)
+            alert_str = alert_str + f"{len(alert_dict)+1}. " + tmp_alert_str + "\n\n"
+            alert_dict.append(tmp_alert_dict)
+
+        self.reporter.start_time = args.start_at_seconds
         self.reporter.alert_str = alert_str
         self.reporter.alert_dict = alert_dict
-
         self.reporter.initialize_report()
 
-        self.reporter.record["anomalyAnalysis"]["RoleAssigner"]["messages"].append({"data": self.reporter.report["anomaly description"], "time": time.strftime("%H:%M:%S", time.localtime())})
+        # ================== vanilla model ==================
+        # self.reporter.report["anomaly description"]
+        # solver = self.agents[AGENT_TYPES.SOLVER][0]
+        # solver.alert_str = alert_str
 
+        # prompt = solver._fill_prompt_template("",[])
+        # message = solver.llm._construct_messages(prompt)
+        # system_prompt = solver.llm._construct_system_messages(solver.role_description)
+        # solver.llm.change_messages(system_prompt+message)
+        # summarized_diags = solver.llm.parse()
+        # ===================================================
+
+        self.reporter.record["anomalyAnalysis"]["RoleAssigner"]["messages"].append({"data": self.reporter.report["anomaly description"], "time": time.strftime("%H:%M:%S", time.localtime())})
+        
         self.role_assigner.alert_str = self.reporter.report["anomaly description"]
         self.role_assigner.alert_dict = self.reporter.alert_dict
 
-        # ================== EXPERT RECRUITMENT ==================
+        # ================== Expert Assignment ==================
         selected_experts = self.role_assign(advice=advice, alert_info=self.role_assigner.alert_str)
 
         # append the names of selected_experts (e.g., selected_experts[0].name) to the task description by \n
@@ -173,25 +193,32 @@ class DBAEnvironment(BaseModel):
         
         self.reporter.record["anomalyAnalysis"]["RoleAssigner"]["messages"].append({"data": expert_select_desc, "time": time.strftime("%H:%M:%S", time.localtime())})
 
-        if len(selected_experts) > args.max_hired_experts:
-            selected_experts = selected_experts[:args.max_hired_experts]
-
-        # assign alert info to each agent
+        # assign alert info to each agent (check)
         for agent in selected_experts:
-            agent.alert_str = self.role_assigner.alert_str
-            agent.alert_dict = self.role_assigner.alert_dict
+            agent.start_time = args.start_at_seconds
+            agent.end_time = args.end_at_seconds
+            agent.alert_dict = alert_dict
+            agent.alert_str = alert_str
+            agent.diag_id = args.diag_id
         
-        # ================== EXPERT DIAGNOSIS ==================
+        # ================== Expert Diagnosis ==================
         # count on these experts to diagnose for the alert        
         report = await self.decision_making(selected_experts, None, previous_plan, advice) # plans: the list of diagnosis messages
-
-        # record the report in a file named test_report.txt
-        with open("test_report.txt", "w") as f:
-            f.write(str(report))
 
         # add "anomaly date", "anomaly description", "root cause", "solutions" of self.reporter in a markdown table format into the string report_markdown
         report_markdown = f"# {self.reporter.report['title']}\n\n"
         # do not add any space in front of the first '|' of each row!!
+        self.reporter.report['anomaly date'] = self.reporter.report['anomaly date'].replace('\n', '<br>')
+        self.reporter.report['anomaly description'] = self.reporter.report['anomaly description'].replace('\n', '<br>')
+        self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('\n', '<br>')
+        self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('# ', '')
+        self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('#', '')
+
+        self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('\n', '<br>')
+        self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('# ', '')
+        self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('#', '')
+
+
         report_markdown = report_markdown + \
         f"""|                     |       |
 |---------------------|-------|
@@ -199,52 +226,26 @@ class DBAEnvironment(BaseModel):
 | Anomaly Description | {self.reporter.report['anomaly description']}  |
 | Root Cause          | {self.reporter.report['root cause']}  |
 | Solutions           | {self.reporter.report['solutions']}  |\n\n"""
-        report_markdown = report_markdown + f"## Diagnosis Process\n" + self.reporter.report['diagnosis process']
+        report_markdown = report_markdown + f"## Diagnosis Process\n" + self.reporter.report['diagnosis process'].strip()
 
         self.reporter.record["report"] = report_markdown
 
-        with open("test_record.txt", "w") as f:
-            f.write(str(self.reporter.record))
-
-        # ================== Report Generation ==================
-        # discuss over the diagnosis results
-        # messages = await self.agents[i].astep(env_descriptions[i]) for i in agent_ids]
-        
-        # # Get the next agent index
-        # agent_ids = self.rule.get_next_agent_idx(self)
-
-        # # Generate current environment description
-        # env_descriptions = self.rule.get_env_description(self)
-
-        # # Generate the next message
-        # messages = await asyncio.gather(
-        #     *[self.agents[i].astep(env_descriptions[i]) for i in agent_ids]
-        # )
-
-        # # Some rules will select certain messages from all the messages
-        # selected_messages = self.rule.select_message(self, messages)
-        # # pdb.set_trace()        
-        # self.last_messages = selected_messages
-        
-        # self.print_messages(selected_messages)
-
-        # # Update the memory of the agents
-        # self.rule.update_memory(self)
-
-        # # Update the set of visible agents for each agent
-        # self.rule.update_visible_agents(self)
-
-        return report
+        return report, self.reporter.record
 
     def role_assign(self, advice: str = "", alert_info: str = "") -> List[BaseAgent]:
         """Assign roles to agents"""
-        
+
         agents = self.role_assigner.step(
             role_assigner=self.agents[AGENT_TYPES.ROLE_ASSIGNMENT][0],
             group_members=self.agents[AGENT_TYPES.SOLVER],
             advice=advice,
             alert_info=alert_info
         )
+
+        # random a value from 0 to len(self.agents[AGENT_TYPES.SOLVER]) - 1
+        # import random
+        # solver_idx = random.randint(0, len(self.agents[AGENT_TYPES.SOLVER]) - 1)
+        # agents= [self.agents[AGENT_TYPES.SOLVER][solver_idx]]
         
         return agents
 
@@ -264,15 +265,45 @@ class DBAEnvironment(BaseModel):
             previous_plan=previous_plan,
             advice=advice)
 
+        print("============= Finish the initial diagnosis =============")
+        
         for i,diag in enumerate(initial_diags):
-            self.reporter.report["root cause"] = str(self.reporter.report["root cause"]) + f"\nThe root cause identified by {diag['sender']}:\n" + str(diag["root cause"]) + "\n"
+            
+            self.reporter.record["top metrics"] = self.reporter.record["top metrics"] + diag["top metrics"]
 
-            solution = str(diag["solutions"]).replace("\"","")
-            solution = solution.replace("\\n", "\n")
+            prompt = DIAGNOSIS_SUMMARYY_PROMPT
+            prompt = prompt.replace("{diagnosis_messages}", str(diag["root cause"]))
+            message = self.reporter.llm._construct_messages(prompt)
+            self.reporter.llm.change_messages(self.reporter.role_description, message)
+            summarized_diags = self.reporter.llm.parse()            
+            
+            # if summarized_diags is of dict type
+            if isinstance(summarized_diags, dict):
+                diag_message = summarized_diags["content"]
+            else:
+                diag_message = summarized_diags.content
 
-            self.reporter.report["solutions"] = str(self.reporter.report["solutions"]) + f"\nThe solutions recommended by {diag['sender']}:\n" + solution + "\n"
+            self.reporter.report["root cause"] = str(self.reporter.report["root cause"]) + f"<br>The root causes identified by {diag['sender']}:<br>" + str(diag_message) + "<br>"
 
-            self.reporter.report["diagnosis process"] = str(self.reporter.report["diagnosis process"]) + f"\n {i+1}. The diagnosis process of {diag['sender']}:\n"
+            # solution = str(diag["solutions"]).replace("\"","")
+            # solution = solution.replace("\\n", "\n")
+            solution = str(diag["solutions"])
+
+            prompt = DIAGNOSIS_SUMMARYY_PROMPT
+            prompt = prompt.replace("{diagnosis_messages}", str(solution))
+            message = self.reporter.llm._construct_messages(prompt)
+            self.reporter.llm.change_messages(self.reporter.role_description, message)
+            summarized_solutions = self.reporter.llm.parse()            
+            
+            # if summarized_diags is of dict type
+            if isinstance(summarized_diags, dict):
+                summarized_solutions = summarized_solutions["content"]
+            else:
+                summarized_solutions = summarized_solutions.content
+
+            self.reporter.report["solutions"] = str(self.reporter.report["solutions"]) + f"<br>The solutions recommended by {diag['sender']}:<br>" + summarized_solutions + "<br>"
+
+            self.reporter.report["diagnosis process"] = str(self.reporter.report["diagnosis process"]) + f"<br>{i+1}. The diagnosis process of {diag['sender']}:<br>"
 
             for i, m_response in enumerate(diag["diagnosis process"]):
                 if m_response['role'] != "user":
@@ -281,6 +312,8 @@ class DBAEnvironment(BaseModel):
                         continue
 
                     m_message = str(m_response['content'])
+
+                    m_message = m_message.replace('\\n', '\n')
                     
                     # text2charts
                     pattern = r'\[chart\] \./alert_results/{}/(\w+)\.html'.format(current_diag_time)
@@ -290,20 +323,40 @@ class DBAEnvironment(BaseModel):
                         with open(f"./alert_results/{current_diag_time}/{metric_name}.html", "r") as f:
                             chart_content = f.read()
 
-                        m_message = m_message.replace(chart_str, chart_content)
+                        if chart_content != "":
+                            m_message = m_message.replace(chart_str, ' \n ' + chart_content + ' \n ')
+                        else:
+                            # remove non-existing charts
+                            m_message = m_message.replace(chart_str, "")
+
+                    pattern = r'\[chart\].*?\.html'
+                    m_message = re.sub(pattern, '', str(m_message), flags=re.DOTALL)
+                    
+                    m_message = m_message.replace("']\"", "")
+                    m_message = m_message.replace("’]", "")
+                    m_message = m_message.replace("']", "")
+                    m_message = m_message.strip()
 
                     # text2code
                     pattern = r"Action: (?P<action>[^\n]+)\nAction Input: (?P<input>\{.*?\})"
-                    for match in re.finditer(pattern, m_message, re.IGNORECASE):
+                    
+                    for match in re.finditer(pattern, m_message, re.IGNORECASE | re.DOTALL):
                         action = match.group('action')
                         action_input = match.group('input')
                         
                         # Formatting it into Markdown code format
-                        markdown_str = f"```\n{action}{action_input}\n```"
+                        # markdown_str = f"```\n{action}{action_input}\n```"
+
+                        markdown_str = generate_tools_content(action, action_input, "", "Success")
                         m_message = m_message.replace(match.group(0), markdown_str)
 
+                    m_message = m_message.replace("\n", "<br>")
+
                     self.reporter.report["diagnosis process"] = str(self.reporter.report["diagnosis process"]) + m_message + "\n"
-                    self.reporter.record["anomalyAnalysis"][diag['sender']]["messages"].append({"data": m_message, "time": time.strftime("%H:%M:%S", time.localtime())})
+                    if 'time' not in m_response:
+                        m_response['time'] = time.strftime("%H:%M:%S", time.localtime())
+
+                    self.reporter.record["anomalyAnalysis"][diag['sender']]["messages"].append({"data": m_message, "time": m_response['time']})
 
         # brainstorm over the initial_diags results
         ## summarize to avoid exceeding length limit
@@ -330,14 +383,15 @@ class DBAEnvironment(BaseModel):
 
 
             prompt = prompt.replace("{diagnosis_messages}", diag_process)
+            message = self.reporter.llm._construct_messages(prompt)
+            self.reporter.llm.change_messages(self.reporter.role_description, message)
+            summarized_diags = self.reporter.llm.parse()            
             
-            summarized_diags = self.reporter.llm.generate_response(prompt)
-
             # if summarized_diags is of dict type
             if isinstance(summarized_diags, dict):
-                diag_message = {"role": "assistant", "content": summarized_diags["content"]}
+                diag_message = {"role": "assistant", "content": summarized_diags["content"], "time": time.strftime("%H:%M:%S", time.localtime())}
             else:
-                diag_message = {"role": "assistant", "content": summarized_diags.content}
+                diag_message = {"role": "assistant", "content": summarized_diags.content, "time": time.strftime("%H:%M:%S", time.localtime())}
             #Message(content={"diagnose": summarized_diags.content}, sender="summary")
 
             # self.reporter.messages.append(diag_message)
@@ -348,15 +402,19 @@ class DBAEnvironment(BaseModel):
         for agent in agents:
             review = await agent.review_step()
             if isinstance(review, dict) and "content" in review and review["content"] != "":
-                for agent in agents:
-                    agent.messages.append(review)
+                for agent2 in agents:
+                    agent2.messages.append(review)
+                
                 self.reporter.messages.append(review)
 
-                self.reporter.record["brainstorming"]["messages"].append({"sender": agent.name, "data": review["content"], "time": time.strftime("%H:%M:%S", time.localtime())})
+                if 'time' not in review:
+                    self.reporter.record["brainstorming"]["messages"].append({"sender": agent.name, "data": review["content"], "time": time.strftime("%H:%M:%S", time.localtime())})
+                else:
+                    self.reporter.record["brainstorming"]["messages"].append({"sender": agent.name, "data": review["content"], "time": review['time']})
                 # {
                 #     "sender":"ChiefDBA",
                 #     "data":"#diagnose /n xxxxxx /n  # solution /n XXXXXX/n   # knowledge /n  XXXXX/n  下面展示图表 ```chart xxczxczxczczxc ```` ",
-                #     "time":"消息发送时间"
+                #     "time":"message sending time"
                 # }
 
         # review the diagnosis results by the reporter
@@ -375,9 +433,3 @@ class DBAEnvironment(BaseModel):
     def reset(self) -> None:
         """Reset the environment"""
         self.cnt_turn = 0
-        # self.rule.reset()
-        # self.role_assigner.reset()
-        # self.solver.reset()
-        # for critic in self.critics:
-        #     critic.reset()
-        # self.evaluator.reset()

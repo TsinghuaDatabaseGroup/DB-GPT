@@ -13,7 +13,7 @@ import re
 import json
 from pydantic import BaseModel, Field
 from pprint import pprint
-import pdb
+import datetime
 
 def node_to_chain(node):
     chain = {
@@ -51,47 +51,50 @@ class UCT_vote_function(base_search_method):
         arbitrary_types_allowed = True
     memory: BaseMemory = Field
 
-    def __init__(self, agent_name, prompt_template, llm,env, output_parser, alert_dict, alert_str, agent):
+    def __init__(self, diag_id, start_time, end_time, agent_name, role_description, prompt_template, llm,env, output_parser, alert_dict, alert_str, agent):
         super(UCT_vote_function, self).__init__()
         '''
         偏序驱动的信心上限树算法:
         1.由value决定回传什么节点
         2.回传反思，同时做偏序 
         '''
-
+        self.diag_id = diag_id
         self.name = agent_name
+        self.role_description = role_description
         self.prompt_template = prompt_template
         self.llm = llm
         self.env = env
         self.output_parser = output_parser
-        self.simulations = []
+        # self.simulations = []
+        self.start_time = start_time
+        self.end_time = end_time
         self.alert_dict = alert_dict
         self.alert_str = alert_str
 
         self.restart(agent)
 
-    def to_json(self):
+    # def to_json(self):
     
-        js_obj = {
-            "win": self.status == 1,
-            "simulation_count": self.now_simulation_count,
-            "simulations": self.simulations,
-            "tree":self.tree.to_json_recursive()
-        }
+    #     js_obj = {
+    #         "win": self.status == 1,
+    #         "simulation_count": self.now_simulation_count,
+    #         "simulations": self.simulations,
+    #         "tree":self.tree.to_json_recursive()
+    #     }
 
-        js_obj["answer_generation"] = {
-            "valid_data": False,
-            "final_answer": "",
-            "chain": [],
-        }
+    #     js_obj["answer_generation"] = {
+    #         "valid_data": False,
+    #         "final_answer": "",
+    #         "chain": [],
+    #     }
 
-        if len(self.terminal_node) > 0:
-            final_terminal_node = sorted(self.terminal_node, key=lambda x: sum(x.values)/(len(x.values)+1e-8), reverse=True)[0]
-            js_obj["answer_generation"]["valid_data"] = True
-            js_obj["answer_generation"]["final_answer"] = final_terminal_node.description
-            js_obj["answer_generation"]["chain"] = final_terminal_node.get_chain_result_from_this_node()
+    #     if len(self.terminal_node) > 0:
+    #         final_terminal_node = sorted(self.terminal_node, key=lambda x: sum(x.values)/(len(x.values)+1e-8), reverse=True)[0]
+    #         js_obj["answer_generation"]["valid_data"] = True
+    #         js_obj["answer_generation"]["final_answer"] = final_terminal_node.description
+    #         js_obj["answer_generation"]["chain"] = final_terminal_node.get_chain_result_from_this_node()
 
-        return js_obj
+    #     return js_obj
 
     def restart(self, agent): # 理论上用不到，清空所有的tree
         self.tree = my_tree()
@@ -112,17 +115,21 @@ class UCT_vote_function(base_search_method):
         #prompt = agent._fill_prompt_template(self.tree.root.env.tool, self.tree.root.env.task_description, tool_observation, self.tree.root.messages)
         prompt = agent._fill_prompt_template(self.tree.root.env.task_description, tool_observation)
 
+        now_time = datetime.datetime.now()
+        now_time = now_time.strftime("%H:%M:%S")
+
         self.tree.root.messages.append({
             "role":"user",
             "content": prompt,
+            "time": str(now_time)
         })
 
         self.status = 0
         self.now_simulation_count = 0
-        self.simulations = []
+        # self.simulations = []
         self.terminal_node = []
         self.total_vote = 0
-        self.good_vote = 0 
+        self.good_vote = 0
 
         pass
 
@@ -139,6 +146,9 @@ class UCT_vote_function(base_search_method):
         vote_candidates：每次投票时选择多少candidate
         vote_count：每次投票时投多少票
         '''
+
+        top_abnormal_metric_values = []
+
         while self.now_simulation_count < simulation_count:
             
             print(colored(f"{self.name} analysis start!","yellow"))
@@ -157,7 +167,7 @@ class UCT_vote_function(base_search_method):
                 if decision == -1:
                     print(colored("decide to make new node!","green"))
                     break
-                print(colored(f"decide to go down child {decision}","green"))
+                # print(colored(f"decide to go down child {decision}","green"))
 
                 now_node = now_node.children[decision]
                 this_simulation.append({"choice":decision,"new_generated":False,"score":now_node.env.get_score()})
@@ -167,15 +177,16 @@ class UCT_vote_function(base_search_method):
                     this_simulation.append({"choice":0,"new_generated":False,"score":now_node.env.get_score()})
                 
             if now_node.is_terminal:
-                print(colored(f"randomly go down to terminal nodes","green"))
+                # print(colored(f"randomly go down to terminal nodes","green"))
+                pass
             else:
                 begin_default_policy_node = now_node
 
-                end_node = self.default_policy(now_node,this_simulation,single_chain_max_step)
+                end_node, top_abnormal_metric_values = self.default_policy(now_node,this_simulation,single_chain_max_step)
                 # self.pruned self.env.check_success() 
 
                 self.now_simulation_count += 1
-                self.simulations.append(this_simulation)
+                # self.simulations.append(this_simulation)
 
                 if end_node.pruned is not True: # the node is not pruned
                     self.terminal_node.append(end_node)
@@ -196,18 +207,18 @@ class UCT_vote_function(base_search_method):
             self.vote(choice_count,vote_candidates,vote_count)
 
         if self.terminal_node == []:
-            print(colored("No terminal node found!","red"))
+            # print(colored("No terminal node found!","red"))
 
-            return None
+            return None, top_abnormal_metric_values
             
         else:
             final_terminal_node = sorted(self.terminal_node, key=lambda x: sum(x.values), reverse=True)[0]
             
             if final_terminal_node.pruned is True:
-                print(colored("Final answer is pruned!","red"))
-                return None
+                # print(colored("Final answer is pruned!","red"))
+                return None, top_abnormal_metric_values
 
-            return final_terminal_node
+            return final_terminal_node, top_abnormal_metric_values
 
     def vote(self,choice_count,vote_candidates,vote_count):
         '''
@@ -227,9 +238,14 @@ class UCT_vote_function(base_search_method):
             messages = []
             prompt = VOTE_BEST_SYSTEM_PROMPT
             prompt = prompt.replace("{task_description}",self.env.task_description)
+
+            now_time = datetime.datetime.now()
+            now_time = now_time.strftime("%H:%M:%S")
+
             messages.append({
                 "role":"system",
                 "content": prompt,
+                "time": str(now_time)                
             })
 
             prompt = VOTE_BEST_USER_PROMPT
@@ -244,9 +260,13 @@ class UCT_vote_function(base_search_method):
                 candidates_description += "*"*30 + "\n"
             prompt = prompt.replace("{candidate_description}",candidates_description)
 
+            now_time = datetime.datetime.now()
+            now_time = now_time.strftime("%H:%M:%S")
+
             messages.append({
                 "role":"user",
                 "content": prompt,
+                "time": str(now_time)                
             })
 
             real_score = [-1]*len(choices)
@@ -267,12 +287,12 @@ class UCT_vote_function(base_search_method):
                 '''
                 多次投票
                 '''
-                self.llm.change_messages(messages)
+                self.llm.change_messages("", messages)
                 message = self.llm.parse()
                 vote = message["content"]
                 # print(vote)
                 best_candiate_line = vote.split("\n")[-1]
-                print(best_candiate_line)
+                # print(best_candiate_line)
                 re_pattern = r"\"?candidate[ \_](\d+)\"?"
                 re_result = re.findall(re_pattern,best_candiate_line.lower())
                 if re_result != []:
@@ -286,13 +306,13 @@ class UCT_vote_function(base_search_method):
                         votes[vote_to] += 1
                         self.good_vote += (vote_to == max_position)
                         vaild_votes += 1
-                        print(colored(f"valid vote to {choices[vote_to]}","yellow"))
+                        # print(colored(f"valid vote to {choices[vote_to]}","yellow"))
                     else:
                         self.good_vote += (-1 == max_position)
-                        print(colored(f"vote to Invalid candidates, both candidate punished","yellow"))
+                        # print(colored(f"vote to Invalid candidates, both candidate punished","yellow"))
                 else:
                     self.good_vote += (-1 == max_position)
-                    print(colored(f"vote to Nothing, both candidate punished","yellow"))
+                    # print(colored(f"vote to Nothing, both candidate punished","yellow"))
                     for k,child_id in enumerate(choices):
                         now_node = self.terminal_node[child_id]
                         while now_node != None:
@@ -303,7 +323,7 @@ class UCT_vote_function(base_search_method):
                 for k,child_id in enumerate(choices):
                     vote_count_this_turn = votes[k]
                     value = (vote_count_this_turn / vaild_votes  - 1 / vote_candidates) / np.sqrt(vaild_votes)
-                    print(value)
+                    # print(value)
                     now_node = self.terminal_node[child_id]
                     while now_node != None:
                         now_node.values.append(value)
@@ -311,7 +331,8 @@ class UCT_vote_function(base_search_method):
                         now_node = now_node.father  
         
         if self.total_vote > 0:
-            print(f"ratio={self.good_vote}/{self.total_vote}={self.good_vote/self.total_vote}")
+            # print(f"ratio={self.good_vote}/{self.total_vote}={self.good_vote/self.total_vote}")
+            pass
 
     def make_decision_by_value(self, now_node, epsilon_new_node):
         '''
@@ -329,7 +350,7 @@ class UCT_vote_function(base_search_method):
             return exp_x/np.sum(exp_x)
         
         weights = my_softmax(np.array(weights))
-        print(weights)
+        # print(weights)
         result = np.random.multinomial(1,weights)
         for k, v in enumerate(result[:-1]):
             if v == 1:
@@ -342,22 +363,30 @@ class UCT_vote_function(base_search_method):
         '''
         make_reflection_prompt = MAKE_REFLEXION_USER_PROMPT
 
+        now_time = datetime.datetime.now()
+        now_time = now_time.strftime("%H:%M:%S")
+
         new_message = {
             "role": "user",
             "content":make_reflection_prompt,
+            "time": str(now_time)
         }
 
         message_list = end_node.messages.copy()
         message_list.append(new_message)
 
-        self.llm.change_messages(message_list)
+        self.llm.change_messages(self.role_description, message_list)
         new_message = self.llm.parse()
         reflection = new_message['content']
         print(colored(f"Reflexion: {reflection}","green"))
 
+        now_time = datetime.datetime.now()
+        now_time = now_time.strftime("%H:%M:%S")
+
         reflect_message = {
             "role": "assistant",
             "content": reflection,
+            "time": str(now_time)
         }
         start_node.reflection.append(reflection)
         start_node.messages.append(reflect_message)
@@ -372,6 +401,8 @@ class UCT_vote_function(base_search_method):
         assert now_node.messages != []
         # self.pruned self.env.check_success()
         first_time = True
+
+        top_abnormal_metric_values = []
         
         while now_node.get_depth() < single_chain_max_step and not now_node.is_terminal and not now_node.env.status:
             if first_time:
@@ -393,30 +424,37 @@ class UCT_vote_function(base_search_method):
 
                             # if temp_node.description is str:
                             if isinstance(temp_node.description, str):
-                                temp_node.description = json.loads(temp_node.description)
-
-                            obj_dict = {
-                                "name": temp_node.father.description,
-                                "arguments": temp_node.description,
-                                "function_output": temp_node.observation,
-                                "mento-carlo-action-value": temp_node.compute_weight(),
-                            }
-                            js_list.append(obj_dict)
+                                try:
+                                    temp_node.description = json.loads(temp_node.description)
+                                    obj_dict = {
+                                        "name": temp_node.father.description,
+                                        "arguments": temp_node.description,
+                                        "function_output": temp_node.observation,
+                                        "mento-carlo-action-value": temp_node.compute_weight(),
+                                    }
+                                    js_list.append(obj_dict)
+                                except:
+                                    pass
                     
                     if len(js_list) > 0:
                         former_candidates_des = former_candidates_des + f"{json.dumps(js_list,indent=2)}\n"
                         if now_node.observation != "":
                             former_candidates_des = former_candidates_des + f"again, your former observation: {now_node.observation}\n"
                         diverse_prompt = diverse_prompt.replace("{previous_candidate}",former_candidates_des)
-                        now_node.messages.append({"role":"user", "content":diverse_prompt})
+                        # record current time in hour-minutes-seconds
 
-                        self.llm.change_messages(now_node.messages)
+                        now_time = datetime.datetime.now()
+                        now_time = now_time.strftime("%H:%M:%S")
+
+                        now_node.messages.append({"role":"user", "content":diverse_prompt, "time": str(now_time)})
+
+                        self.llm.change_messages(self.role_description, now_node.messages)
                         # self.llm.display_conversation()
             
-            self.llm.change_messages(now_node.messages)
+            self.llm.change_messages(self.role_description, now_node.messages)
             # self.llm.display_conversation()
             new_message = self.llm.parse() # execute llm inference
-            print(f"New message:\t{new_message}")
+            # print(f"New message:\t{new_message['content']}")
             assert new_message["role"] == "assistant"
             if new_message not in now_node.messages:
                 now_node.messages.append(new_message)
@@ -430,15 +468,17 @@ class UCT_vote_function(base_search_method):
                     if "This is not the first time you try this task" in now_node.messages[-1]["content"]:
                         now_node.messages = now_node.messages[:-1]
                 except BaseException as e:
-                    print(e)
+                    # print(e)
                     pass
             
             if "content" in new_message.keys() and new_message["content"] != None:
 
-                for _ in range(100):
+                for _ in range(3):
                     parsed_response = self.output_parser.parse(new_message)
+                    
                     if parsed_response != None:
                         break
+                    # import pdb; pdb.set_trace()
                     new_message = self.llm.parse() # execute llm inference
 
                 # action --> temp_node
@@ -454,41 +494,66 @@ class UCT_vote_function(base_search_method):
                 # temp_node.messages.append(new_message)
                 temp_node.father = now_node
                 now_node.children.append(temp_node)
-                temp_node.print()
+                # temp_node.print()
                 now_node = temp_node
                 this_simulation.append({"choice":0,"new_generated":True,"score":now_node.env.get_score()})
 
                 if isinstance(parsed_response, AgentAction):
                     # If the response is an action, call the tool
                     # and append the observation to tool_observation
-                    
+                    parameters = []                    
                     if "whether_is_abnormal_metric" in parsed_response.tool:
 
                         metric_name = self.name.lower()
                         metric_name = metric_name.replace("expert","") + "_" + "usage"
 
-                        parameters = {"start_time": self.alert_dict["start_time"],      
-                                      "end_time": self.alert_dict["end_time"],
-                                      "metric_name": metric_name}
-
+                        parameters = {"start_time": self.start_time,      
+                                    "end_time": self.end_time,
+                                    "metric_name": metric_name}
                     elif "match_diagnose_knowledge" in parsed_response.tool and self.alert_dict != None:
                         # node_load1{instance="$instance"}
-                        metric_name = self.alert_dict["alert_desc"].split('[')[0]
-                        host = self.alert_dict["alert_exporter"]
-                        alert_metric = f"{metric_name}{{instance=\"{host}\"}}"
+                        for alert in self.alert_dict:
+                            metric_name = alert["alert_desc"].split('[')[0]
+                            host = alert["alert_exporter"]
+                            alert_metric = f"{metric_name}{{instance=\"{host}\"}}"
 
-                        metric_name = self.name.lower()
-                        metric_name = metric_name.replace("expert","") + "_" + "usage"
+                            metric_name = self.name.lower()
+                            metric_name = metric_name.replace("expert","") + "_" + "usage"
 
-                        parameters = {"start_time": self.alert_dict['start_time'], "end_time": self.alert_dict['end_time'], "metric_name": metric_name, "alert_metric": alert_metric}
+                            parameters.append({"start_time": self.start_time, "end_time": self.end_time, "metric_name": metric_name, "alert_metric": alert_metric, "diag_id": self.diag_id})
                     else:
-                        parameters = json.loads(parsed_response.tool_input)
+                        # import pdb; pdb.set_trace()
+                        try:
+                            parameters = json.loads(parsed_response.tool_input)
+                        except:
+                            parameters = None
 
-                    if "obtain_start_and_end_time_of_anomaly" in parsed_response.tool and self.alert_dict != {} and self.alert_dict != None:
-                        observation = f"The start time is {self.alert_dict['start_time']}, and the end time is {self.alert_dict['end_time']}."
+                    observation = None
+                    if "obtain_start_and_end_time_of_anomaly" in parsed_response.tool and self.alert_dict != [] and self.alert_dict != None:
+                        observation = f"The start time is {self.start_time}, and the end time is {self.end_time}."
                     else:
-                        observation = temp_node.env.tool.call_function(parsed_response.tool, **parameters)
-                    
+                        if isinstance(parameters, list):
+                            observation = []
+                            for parameter in parameters:
+                                result = temp_node.env.tool.call_function(parsed_response.tool, **parameter)
+                                if isinstance(result, (tuple, list)):
+                                    observation.append(result[0])
+                                    top_abnormal_metric_values = result[1]
+                                else:
+                                    observation.append(result)
+                                                        
+                        elif parameters == None:
+                            pass
+                        else:
+                            # observation = temp_node.env.tool.call_function(parsed_response.tool, **parameters)
+                            result = temp_node.env.tool.call_function(parsed_response.tool, **parameters)
+
+                            if isinstance(result, (tuple, list)):
+                                observation = result[0]
+                                top_abnormal_metric_values = result[1]
+                            else:
+                                observation = result
+
                     # tool_observation.append(
                     #     parsed_response.log.strip()
                     #     + f"\nObservation: {str(observation).strip()}"
@@ -501,7 +566,7 @@ class UCT_vote_function(base_search_method):
                         # 4代表模型自己决定剪枝
                         now_node.pruned = True
                         # now_node.messages.append(new_message)
-                        return now_node
+                        return now_node, top_abnormal_metric_values
 
                     # new the Action node
                     temp_node = tree_node()
@@ -515,7 +580,7 @@ class UCT_vote_function(base_search_method):
                     temp_node.father = now_node
                     now_node.children.append(temp_node) # the action node is child of the thought node
 
-                    temp_node.print()
+                    # temp_node.print()
                     now_node = temp_node
                     this_simulation.append({"choice":0,"new_generated":True,"score":now_node.env.get_score()})
 
@@ -531,30 +596,37 @@ class UCT_vote_function(base_search_method):
                     temp_node.env = child_env
                     temp_node.is_terminal = False
                     temp_node.messages = now_node.messages.copy()
-                    if {"role": "assistant", "content": str(observation)} not in temp_node.messages:
-                        temp_node.messages.append({"role": "assistant", "content": str(observation)})
+
+                    now_time = datetime.datetime.now()
+                    now_time = now_time.strftime("%H:%M:%S")
+                    temp_message = {"role": "assistant", "content": f'The observation of {parsed_response.tool}: {observation}', "time": str(now_time)}
+                    if temp_message not in temp_node.messages:
+                        temp_node.messages.append(temp_message)
+                    
                     temp_node.father = now_node
                     now_node.children.append(temp_node)
-                    temp_node.print()
                     now_node = temp_node
                     this_simulation.append({"choice":0,"new_generated":True,"score":now_node.env.get_score()})
                         
-            if now_node.node_type == "Action Input":
-                now_node.messages.append({
-                    "role":"function",
-                    "name": parsed_response.tool,
-                    "content": str(now_node.observation),
-                })
-            else:
-                now_node.messages.append(new_message)
+            # if now_node.node_type == "Action Input":
+
+            #     now_time = datetime.datetime.now()
+            #     now_time = now_time.strftime("%H:%M:%S")
+
+            #     now_node.messages.append({
+            #         "role":"function",
+            #         "name": parsed_response.tool,
+            #         "content": str(now_node.observation),
+            #         "time": str(now_time)
+            #     })
+            # else:
+            #     now_node.messages.append(new_message)
             
             now_node.is_terminal = now_node.env.check_success(now_node.messages[-1])
 
             # evaluate whether optimization solutions are proposed in the now_node (terminal status)
         
-        return now_node
-
-
+        return now_node, top_abnormal_metric_values
 
     # def _fill_prompt_template(
     #     self, node_tools, env_description: str = "", tool_observation: List[str] = [], messages: List[dict] = []

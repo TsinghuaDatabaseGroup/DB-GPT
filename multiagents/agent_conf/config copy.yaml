@@ -269,8 +269,6 @@ agents:
   - 
     agent_type: role_assigner
     name: role assigner
-    role_description: |-
-      You are a role assigner. Your task is to select experts with diverse identity to correctly analyze the root causes of the given alerts.
     prompt_template: *role_assigner_prompt
     memory:
       memory_type: chat_history

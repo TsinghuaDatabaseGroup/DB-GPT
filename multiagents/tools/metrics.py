@@ -40,7 +40,7 @@ db = Database(dbargs, timeout=-1)
 
 
 WORKLOAD_FILE_NAME = "workload_info.json"
-ANOMALY_FILE_NAME = "anomalies/testing_set/testing_set_with_workload_last_10.json"
+ANOMALY_FILE_NAME = "anomalies/public_testing_set/testing_cases.json"
 # with open(WORKLOAD_FILE_NAME, 'w') as f:
 #     json.dump({'workload_statistics': '[]', 'slow_queries': '[]'}, f)
 

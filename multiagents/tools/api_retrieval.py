@@ -34,9 +34,11 @@ def register_functions_from_module(module, caller, max_api_num):
     members = inspect.getmembers(module, inspect.isfunction)
 
     # 从members中随机选择前max_api_num个函数（如果数量不足则选择全部）
-    if len(members) > max_api_num:
-        members = random.sample(members, max_api_num)
+    # if len(members) > max_api_num:
+    #     members = random.sample(members, max_api_num)
 
+    api_cnt = 0
+    necessary_names = ["match_diagnose_knowledge", "obtain_start_and_end_time_of_anomaly", "whether_is_abnormal_metric"]
     for member in members:
         if len(member) == 2:
             name, func = member
@@ -44,5 +46,11 @@ def register_functions_from_module(module, caller, max_api_num):
             name, _, func = member
 
         if func.__module__ == module.__name__:
+            if name not in necessary_names:
+                api_cnt = api_cnt + 1
+                        
             params = get_function_parameters(func)
             caller.register_function(name, params, func)
+            
+            if api_cnt >= max_api_num:
+                break

@@ -153,13 +153,16 @@ class SolverAgent(BaseAgent):
     class Config:
         arbitrary_types_allowed = True
 
+    diag_id: str = ""
     tools: APICaller = Field(default_factory=APICaller)
     tool_memory: BaseMemory = Field(default_factory=ChatHistoryMemory)
     verbose: bool = Field(default=False)
     name: str = Field(default="CpuExpert")
     max_history: int = 3
+    start_time: str = ""
+    end_time: str = ""
     alert_str: str = ""
-    alert_dict: dict = {}
+    alert_dict: List[dict] = []
     messages: List[dict] = []
 
 
@@ -186,9 +189,9 @@ class SolverAgent(BaseAgent):
         # Step1: configure attirbutes in the tasksolving environment
         tasksolving_env = wrap_tasksolving_env(task_description, self.tools, self.tool_memory)
         
-        chain = UCT_vote_function(agent_name=self.name, prompt_template=self.prompt_template, llm=self.llm,env=tasksolving_env, output_parser=self.output_parser, alert_dict=self.alert_dict, alert_str=self.alert_str, agent=self)
-    
-        result_node = chain.start(simulation_count=2,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=10)
+        chain = UCT_vote_function(diag_id=self.diag_id, start_time=self.start_time, end_time=self.end_time, agent_name=self.name, role_description=self.role_description, prompt_template=self.prompt_template, llm=self.llm,env=tasksolving_env, output_parser=self.output_parser, alert_dict=self.alert_dict, alert_str=self.alert_str, agent=self)
+
+        result_node, top_abnormal_metric_values  = chain.start(simulation_count=1,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=4)
 
         # result_node.messages
         # result_node.description
@@ -259,6 +262,7 @@ class SolverAgent(BaseAgent):
             else thought,
             "diagnosis process": result_node.messages,
             "solutions": solutions,
+            "top metrics": top_abnormal_metric_values,
             "sender": self.name,
             "receiver": self.get_receiver()}
     
@@ -281,16 +285,14 @@ class SolverAgent(BaseAgent):
     async def review_step(self) -> CriticMessage:
         """Asynchronous version of step"""
         prompt = "Please review the above diagnosis results, and give necessary advice to correct the unclear diagnosis and proposed solutions. Note the review should be in markdown format"
-
-        prompt_message = {"role": "user", "content": prompt}
+        
+        prompt_message = {"role": "user", "content": prompt, "time": time.strftime("%H:%M:%S", time.localtime())}
 
         self.messages.append(prompt_message)
 
-        self.llm.change_messages(self.messages)
-        new_message = self.llm.parse()
+        self.llm.change_messages(self.role_description, self.messages)
+        review_message = self.llm.parse()
 
-        review_message = {"role": "assistant", "content": new_message.content}
-                
         return review_message
 
     def _fill_prompt_template(
@@ -313,27 +315,17 @@ class SolverAgent(BaseAgent):
         tools = "\n".join([f"> {tool}: {self.tools.functions[tool]['desc']}" for tool in self.tools.functions])
         tools = tools.replace("{{", "{").replace("}}", "}")
         tool_names = ", ".join([tool for tool in self.tools.functions])
-        if self.alert_dict['start_time'] != "":
-            input_arguments = {
-                "alert_info": self.alert_str,
-                "agent_name": self.name,
-                "env_description": env_description,                                 
-                "role_description": self.role_description,
-                "chat_history": self.memory.to_string(add_sender_prefix=True),
-                "tools": tools,
-                "tool_names": tool_names,
-                "tool_observation": "\n".join(tool_observation),
-            }
-        else:
-            input_arguments = {
-                "agent_name": self.name,
-                "env_description": env_description,                                 
-                "role_description": self.role_description,
-                "chat_history": self.memory.to_string(add_sender_prefix=True),
-                "tools": tools,
-                "tool_names": tool_names,
-                "tool_observation": "\n".join(tool_observation),
-             }
+
+        input_arguments = {
+            "alert_info": self.alert_str,
+            "agent_name": self.name,
+            "env_description": env_description,                                 
+            "role_description": self.role_description,
+            "chat_history": self.memory.to_string(add_sender_prefix=True),
+            "tools": tools,
+            "tool_names": tool_names,
+            "tool_observation": "\n".join(tool_observation),
+        }
 
         return Template(self.prompt_template).safe_substitute(input_arguments)
 
