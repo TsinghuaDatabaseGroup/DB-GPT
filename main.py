@@ -9,10 +9,11 @@ import asyncio
 import time
 
 async def main(args):
+
     multi_agents = MultiAgents.from_task(args.agent_conf_name, args)
     report, records = await multi_agents.run(args)
 
-    cur_time = time.time()
+    cur_time = int(time.time())
     with open(f"./alert_results/examples/{str(cur_time)}.jsonl", "w") as f:
         json.dump(records, f, indent=4)
 
@@ -24,8 +25,9 @@ if __name__ == "__main__":
     with open("./anomalies/public_testing_set/testing_cases.json", "r") as f:
         anomaly_jsons = json.load(f)
 
-    content = next(iter(anomaly_jsons.values()))
+    diag_id, content = next(iter(anomaly_jsons.items()))
 
+    
     args.start_at_seconds = content["start_time"]
     args.end_at_seconds = content["end_time"]
 
@@ -56,6 +58,6 @@ if __name__ == "__main__":
         args.labels = []
     args.start_at_seconds = content["start_time"]
     args.end_at_seconds = content["end_time"]        
-    args.diag_id = str(0)
+    args.diag_id = str(diag_id)
     
     asyncio.run(main(args))

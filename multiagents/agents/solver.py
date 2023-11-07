@@ -193,76 +193,51 @@ class SolverAgent(BaseAgent):
 
         result_node, top_abnormal_metric_values  = chain.start(simulation_count=1,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=4)
 
-        # result_node.messages
-        # result_node.description
-
-        # print(colored(f"start analysis ({self.name})", "green")) # role 
-        # for i in range(self.max_retry):
-        #     try:
-        #         time.sleep(.1)
-        #         response = self.llm.generate_response(prompt) # new node (terminal conditon: the action is speak)
-        #         # chain = UCT_vote_function(llm=self.llm,env=env)
-                
-        #         parsed_response = self.output_parser.parse(response)
-        #         if isinstance(parsed_response, AgentAction):
-        #             # If the response is an action, call the tool
-        #             # and append the observation to tool_observation
-        #             observation, status = tasksolving_env.step(parsed_response)
-                    
-        #             tool_observation.append(
-        #                 parsed_response.log.strip()
-        #                 + f"\nObservation: {str(observation).strip()}"
-        #             )
-        #         break
-        #     except BaseException as e:
-        #         logging.error(e)
-        #         logging.warning("Retrying...")
-        #         continue
-        
-        # history = self.memory.to_messages(self.name, start_index=-self.max_history)
-        # print(colored(f"end analysis ({self.name})", "green")) # role 
-
-        # for i in range(self.max_retry):
-        #     try:
-        #         response = self.llm.generate_response(
-        #             prompt
-        #         )
-        #         parsed_response = self.output_parser.parse(response)
-        #         break
-        #     except (KeyboardInterrupt, bdb.BdbQuit):
-        #         raise
-        #     except Exception as e:
-        #         continue
-
-        # adopt tree of thought here
-        
         if result_node is None:
             return {}
-        
-        thought = ""
-        solutions = ""
-        for message in result_node.messages:
-            if 'content' in message and '"start_time":"xxxx"' not in message['content'].lower() and '"solution"' in message['content'].lower():
-                contents = message['content'].split('\n')
-                for content in contents:
-                    if "thought" in content.lower():
-                        thought = content.strip()
-                        thought = re.sub(r'(?i)thought:\s?', '', thought)
-                    if "solution" in content.lower():
-                        pattern = r'(?i)"solution":\s?(.*?),\s?"'
-                        match = re.search(pattern, content)
 
-                        if match:
-                            solutions = match.group(1)
+        prompt = "Analyze the diagnosed root causes based on above discussions in details. Note the analysis should be in markdown format."
+        diag_message = self.llm._construct_messages(prompt)
+        diag_messages = result_node.messages + diag_message
+        self.llm.change_messages("You are a database expert", diag_messages)
+        root_causes = self.llm.parse()        
+        if isinstance(root_causes, dict):
+            root_causes = root_causes["content"]
+        else:
+            root_causes = root_causes.content
+
+
+        prompt = "Give the optimization solutions based on above discussions in details. Note the solutions should be in markdown format."
+        solution_message = self.llm._construct_messages(prompt)
+        solution_messages = result_node.messages + solution_message
+        self.llm.change_messages("You are a database expert", solution_messages)
+        solutions = self.llm.parse()        
+        if isinstance(solutions, dict):
+            solutions = solutions["content"]
+        else:
+            solutions = solutions.content
         
-        
+        # thought = ""
+        # solutions = ""
+        # for message in result_node.messages:
+        #     if 'content' in message and '"start_time":"xxxx"' not in message['content'].lower() and '"solution"' in message['content'].lower():
+
+        #         contents = message['content'].split('\n')
+        #         for content in contents:
+        #             if "thought" in content.lower():
+        #                 thought = content.strip()
+        #                 thought = re.sub(r'(?i)thought:\s?', '', thought)
+        #             if "solution" in content.lower():
+        #                 pattern = r'(?i)"solution":\s?(.*?),\s?"'
+        #                 match = re.search(pattern, content)
+        #                 if match:
+        #                     solutions = match.group(1)
+
         return {
-            "root cause": result_node.messages[-1]
-            if thought == ""
-            else thought,
+            "root cause": root_causes,
             "diagnosis process": result_node.messages,
             "solutions": solutions,
-            "top metrics": top_abnormal_metric_values,
+            "topMetrics": top_abnormal_metric_values,
             "sender": self.name,
             "receiver": self.get_receiver()}
     

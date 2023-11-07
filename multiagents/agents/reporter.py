@@ -41,7 +41,7 @@ class ReporterAgent(BaseAgent):
 
     report: dict = {"title": "", "anomaly date": "", "anomaly description": "", "root cause": "", "diagnosis process": "", "solutions": ""}
 
-    record: dict = {"anomalyAnalysis": {"RoleAssigner":{"messages":[]},"CpuExpert":{"messages":[]},"MemoryExpert":{"messages":[]},"IoExpert":{"messages":[]},"NetworkExpert":{"messages":[]}}, "brainstorming": {"messages":[]}, "report":{}, "title":"alert name", "time":"alert time", "top metrics": []} # type: bar / line
+    record: dict = {"anomalyAnalysis": {"RoleAssigner":{"messages":[]},"CpuExpert":{"messages":[]},"MemoryExpert":{"messages":[]},"IoExpert":{"messages":[]},"NetworkExpert":{"messages":[]}}, "brainstorming": {"messages":[]}, "report":{}, "title":"alert name", "time":"alert time", "topMetrics": []} # type: bar / line
 
     def initialize_report(self):
         

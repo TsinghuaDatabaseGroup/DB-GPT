@@ -269,7 +269,8 @@ class DBAEnvironment(BaseModel):
         
         for i,diag in enumerate(initial_diags):
             
-            self.reporter.record["top metrics"] = self.reporter.record["top metrics"] + diag["top metrics"]
+            self.reporter.record["topMetrics"] = self.reporter.record["topMetrics"] + diag["topMetrics"]
+            # diag["root cause"] for diag in initial_diags
 
             prompt = DIAGNOSIS_SUMMARYY_PROMPT
             prompt = prompt.replace("{diagnosis_messages}", str(diag["root cause"]))
