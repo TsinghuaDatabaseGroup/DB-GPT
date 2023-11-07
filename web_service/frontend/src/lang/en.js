@@ -1,9 +1,9 @@
 export default {
   analysisButton: 'Analysis',
   timeRangeTip: 'Select the time when the exception occurs for analysis',
-  timeTip: 'Select Abnormal Time',
+  timeTip: 'Select Anomaly Time',
   refreshTip: 'Auto Refresh',
-  queryTimeTip: 'Diagnose Time',
+  queryTimeTip: 'Anomaly Time',
   instanceTip: 'Instance',
   reviewDrawerTitle: 'Analysis Process Review',
   timeStartTip: 'Start Time',

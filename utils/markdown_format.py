@@ -29,7 +29,7 @@ def generate_prometheus_chart_content(title, values, x_label_format="'%Y-%m-%d %
 
 def generate_chart_content(title, x_values, y_values, size=(400, 225)):
     image_base64 = plot(title, x_values, y_values, size)
-    div_str = f'<img alt="" src="{image_base64}">'
+    div_str = f'<img style="border-radius: 8px;" src="{image_base64}">'
     return div_str
 
 

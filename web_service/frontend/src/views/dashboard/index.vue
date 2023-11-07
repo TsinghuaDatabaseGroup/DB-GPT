@@ -1,29 +1,30 @@
 <template>
   <div class="c-flex-row" style="width: 100%; font-size: 1rem">
-    <div class="c-flex-column" style=" width: 50%;">
+    <div class="c-flex-column" style=" width: 55%;">
       <div
         class="c-flex-row c-align-items-center c-justify-content-between c-shaow-card"
         style="padding: 10px 20px; margin: 20px 20px 0; border-radius: 80px!important;"
       >
-        <!--        <el-form-->
-        <!--          ref="form"-->
-        <!--          :inline="true"-->
-        <!--          label-position="left"-->
-        <!--        >-->
-        <!--          <el-form-item :label="$t('queryTimeTip') + ':'" style="margin-bottom: 0">-->
-        <!--            <el-date-picker-->
-        <!--              v-model="timeRange"-->
-        <!--              type="datetimerange"-->
-        <!--              range-separator="-"-->
-        <!--              format="yyyy-MM-dd HH:mm:ss"-->
-        <!--              value-format="timestamp"-->
-        <!--              :start-placeholder="$t('timeStartTip')"-->
-        <!--              :end-placeholder="$t('timeEndTip')"-->
-        <!--              :clearable="false"-->
-        <!--              @change="timeRangeOnChange"-->
-        <!--            />-->
-        <!--          </el-form-item>-->
-        <!--        </el-form>-->
+        <el-form
+          ref="form"
+          :inline="true"
+          label-position="left"
+        >
+          <el-form-item :label="$t('queryTimeTip') + ':'" style="margin-bottom: 0">
+            <el-date-picker
+              v-model="timeRange"
+              type="datetimerange"
+              range-separator="-"
+              format="yyyy-MM-dd HH:mm:ss"
+              value-format="timestamp"
+              :start-placeholder="$t('timeStartTip')"
+              :end-placeholder="$t('timeEndTip')"
+              :clearable="false"
+              @change="timeRangeOnChange"
+            />
+          </el-form-item>
+        </el-form>
+
         <div class="c-flex-row c-align-items-center" style="flex-shrink: 0">
           <el-switch
             v-model="skipTyped"
@@ -33,66 +34,66 @@
             active-text=""
             :inactive-text="$t('playbackAnimationTip')"
           />
-
-          <div class="c-flex-row c-align-items-center" style="margin-left: 20px">
-            <span :style="skipTyped ? 'color: #999999' : 'color: #000000'">{{ $t('animationSpeedTip') }}</span>
-            <el-slider v-model="typeSpeed" :disabled="skipTyped" style="width: 200px; margin-left: 20px" />
-          </div>
-
+          <!--          <div class="c-flex-row c-align-items-center" style="margin-left: 20px">-->
+          <!--            <span :style="skipTyped ? 'color: #999999' : 'color: #000000'">{{ $t('animationSpeedTip') }}</span>-->
+          <!--            <el-slider v-model="typeSpeed" :disabled="skipTyped" style="width: 100px; margin-left: 20px" />-->
+          <!--          </div>-->
         </div>
 
       </div>
-      <div class="c-flex c-flex-column" style="height: calc(100vh - 400px); overflow-y: auto; margin: 10px 0; padding: 0">
+      <div class="c-flex c-flex-column" style="height: calc(100vh - 100px); overflow-y: auto; margin: 10px 0; padding-left: 20px">
         <div
           v-for="(item, index) in historyMessages"
           :key="index"
-          class="diagnose-item c-flex-row c-align-items-center c-justify-content-between"
-          :style="openIndex === index ? 'background: rgba(232, 236, 255, 1);' : ''"
+          class="diagnose-item c-flex-column"
+          style="background: RGBA(245, 246, 249, 1.00);"
         >
-          <!--        <div class="c-flex-row c-align-items-center">-->
-          <!--          <div class="title" style="margin-right: 20px; width: 40vw;">{{ item.title }}</div>-->
-          <!--        </div>-->
-          <div class="c-flex-row c-align-items-center c-justify-content-left">
-            <div v-for="(alert_item, alert_index) in item.alerts" :key="alert_index" class="c-flex-row c-justify-content-left" style="">
-              <div :style="severityStyle[alert_item.alert_level]">
-                [{{ alert_item.alert_level }}🔥]
+          <div class="c-flex-row c-align-items-center c-justify-content-between">
+            <div class="c-flex-row c-align-items-center c-justify-content-left">
+              <div v-for="(alert_item, alert_index) in item.alerts" :key="alert_index" class="c-flex-row c-justify-content-left" style="">
+                <div :style="severityStyle[alert_item.alert_level]">
+                  [{{ alert_item.alert_level }}🔥]
+                </div>
+                <div style="color: #666666; margin-left: 5px">{{ alert_item.alert_name }}</div>
               </div>
-              <div style="color: #666666; margin-left: 5px">{{ alert_item.alert_name }}</div>
+              <div style="color: #999999; font-size: 12px; margin-left: 10px; height: 12px; line-height: 12px; margin-top: 4px">{{ item.time }}</div>
+            </div>
+            <div class="c-flex-row c-align-items-center">
+              <el-button type="success" size="small" style="margin:0 10px" @click="onReviewClick(item)">{{ $t('playbackButton') }}<i
+                class="el-icon-video-camera-solid el-icon--right"
+                style="font-size: 16px"
+              />
+              </el-button>
+              <el-button type="warning" size="small" @click="onReportClick(item, index)">{{ $t('reportButton') }}<i
+                class="el-icon-document-add el-icon--right"
+                style="font-size: 16px"
+              /></el-button>
             </div>
           </div>
-          <div class="c-flex-row c-align-items-center">
-            <el-button type="success" size="small" style="margin:0 10px" @click="onReviewClick(item)">{{ $t('playbackButton') }}<i
-              class="el-icon-video-camera-solid el-icon--right"
-              style="font-size: 16px"
-            /></el-button>
-            <el-button type="warning" size="small" @click="onReportClick(item, index)">{{ $t('reportButton') }}<i
-              class="el-icon-document-add el-icon--right"
-              style="font-size: 16px"
-            /></el-button>
-          </div>
+          <el-carousel
+            v-if="openIndex === index"
+            v-loading="openReportLoading"
+            :interval="3000"
+            arrow="always"
+            style="background: RGBA(255, 255, 255, 1.00); padding: 10px; margin: 10px; border-radius: 8px; height: 260px;"
+          >
+            <el-carousel-item v-for="(chartItem, chartIndex) in charts" :key="chartIndex">
+              <lineChart
+                style="height: 200px; width: calc(100% - 40px);"
+                :chart-option="chartItem"
+              />
+            </el-carousel-item>
+          </el-carousel>
         </div>
       </div>
-      <el-carousel
-        v-loading="openReportLoading"
-        :interval="3000"
-        arrow="always"
-        style="background: rgba(232, 236, 255, 1); margin: 20px; border-radius: 8px;
-       height: 260px; padding: 10px;"
-      >
-        <el-carousel-item v-for="(item, index) in charts" :key="index">
-          <lineChart
-            style="height: 200px; width: calc(50vw - 40px);"
-            :chart-option="item"
-          />
-        </el-carousel-item>
-      </el-carousel>
     </div>
     <div
       v-loading="openReportLoading"
       class="c-relative c-flex-column"
-      style="overflow-y: scroll; height: 100vh; overflow-x: hidden; width: 50%; background: rgba(232, 236, 255, 1); padding: 20px;"
+      style="overflow-y: scroll; height: 100vh; overflow-x: hidden; width: 45%; background: RGBA(245, 246, 249, 1.00);"
     >
       <div
+        style="background-color: white; padding: 10px; margin: 10px; border-radius: 8px"
         v-html="md.render(openReport)"
       />
     </div>
@@ -283,7 +284,11 @@ export default {
     },
     getAlertHistories() {
       this.historyMessages = []
-      alertHistories().then(res => {
+      var data = {}
+      if (this.timeRange && this.timeRange.length > 1) {
+        data = { start: this.timeRange[0] / 1000, end: this.timeRange[1] / 1000 }
+      }
+      alertHistories(data).then(res => {
         this.historyMessages = res.data
         this.onReportClick(this.historyMessages[0], 0)
       }).finally(() => {
@@ -291,7 +296,8 @@ export default {
     },
     timeRangeOnChange() {
       if (this.timeRange && this.timeRange.length > 1) {
-        this.reloadRequest()
+        console.log('===========:', this.timeRange)
+        this.getAlertHistories()
       }
     },
     onReviewClick(item) {
@@ -343,6 +349,7 @@ export default {
       const that = this
       // that.openReportLoading = true
       that.openIndex = index
+      that.charts = []
       this.getAlertHistoryDetail(item, () => {
         // that.openReportLoading = false
         that.openReport = that.reviewItem.report || ''
@@ -451,6 +458,9 @@ table thead:first-child tr:first-child td {
   background-color: #f5f5f5;
 }
 
+.el-carousel__button {
+  background-color: #999999 !important;
+}
 </style>
 
 <style lang="scss" scoped>
@@ -479,13 +489,11 @@ table thead:first-child tr:first-child td {
 }
 
 .diagnose-item {
-  height: 60px;
   flex-shrink: 0;
-  padding: 0 20px;
-  border-bottom: 1px solid #f2f2f2;
-  border-bottom-left-radius: 30px;
-  border-top-left-radius: 30px;
-
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;
   .title {
     color: #333333;
     font-size: 16px;

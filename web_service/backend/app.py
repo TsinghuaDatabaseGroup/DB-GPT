@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 
 import uvicorn
 from fastapi import FastAPI, Request
@@ -25,7 +26,15 @@ async def histories_options():
 
 
 @app.post('/histories')
-async def histories():
+async def histories(request: Request):
+
+    args = await request.json()
+    start = args.get("start", None)
+    end = args.get("end", None)
+
+    #文件名称为时间戳，获取文件名称在start和end时间之间的文件
+
+
     folder_path = "../../alert_results/examples"
     file_list = os.listdir(folder_path)
     file_list = sorted(file_list, reverse=True)
@@ -36,12 +45,19 @@ async def histories():
         if file_name.endswith(".json") or file_name.endswith(".jsonl"):
             # 拼接文件路径
             file_path = os.path.join(folder_path, file_name)
+            timestamp = int(os.path.splitext(file_name)[0])
+            # 将时间戳转换为datetime对象
+            if start and timestamp < int(start):
+                continue
+            if end and timestamp > int(end):
+                continue
+            print('timestamp:', timestamp)
             # 打开文件并读取JSON数据
             with open(file_path, "r") as file:
                 json_data = json.load(file)
                 resp_data = {}
                 resp_data["title"] = json_data.get("title", "")
-                resp_data["time"] = json_data.get("time", "")
+                resp_data["time"] = datetime.fromtimestamp(int(json_data.get("time", ""))).strftime("%Y-%m-%d %H:%M:%S")
                 resp_data["alerts"] = json_data.get("alerts", "")
                 resp_data["file_name"] = file_name
             # 将JSON数据添加到列表中
@@ -79,6 +95,7 @@ async def history_detail(request: Request):
         # 打开文件并读取JSON数据
         with open(file_path, "r") as file:
             json_data = json.load(file)
+            json_data["time"] = datetime.fromtimestamp(int(json_data.get("time", ""))).strftime("%Y-%m-%d %H:%M:%S")
             return {
                 "code": 0,
                 "msg": "success",

@@ -57,7 +57,7 @@ export default {
   position: relative;
   height: 100vh;
   width: 100vw;
-  background: RGBA(247, 250, 255, 1.00);
+  background: RGBA(230, 230, 245, 1.00);
 
   &.mobile.openSidebar {
     position: fixed;
