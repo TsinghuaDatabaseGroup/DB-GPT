@@ -49,7 +49,6 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)
 <span id="-news"></span>
 
 ## 📰 Updates
-<!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
 - [x] Upgrade the LLM-based diagnosis mechanism: 
 
@@ -57,9 +56,7 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)
 
 - [x] Add typical anomalies and alerts (Pigsty) <a href="#-anomalies">🔗 link</a>
 
-<!-- - [x] **[2023/9/10]** Add diagnosis logs [🔗 link](logs/diag_training_data.txt) and replay button in the frontend [⏱ link](logs/info.log) -->
-
-- [x] An end-to-end framework is available! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀 link</a>
+- [x] An end-to-end framework is available! <a href="#-diagnosis">🚀 link</a>
 
 <!-- - [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗 link</a> -->
 
@@ -71,7 +68,6 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)
     * [x] Index optimization algorithms (for PostgreSQL)
     * [x] Physical operator hints (for PostgreSQL)
     * [ ] Backup and Point-in-time Recovery (Pigsty)
-
 
 
 - [x] Our vision papers are released (continuously update) 
@@ -89,15 +85,7 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)
 
 ## 🕹 QuickStart
 
-<!-- <br>
-<div align="center">
-<img src="imgs/workflow.png" width="800px">
-</div>
-<br> -->
-
-### D-Bot
-
-#### Folder Structure
+### Folder Structure
 
     .
     ├── multiagents
@@ -119,7 +107,7 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)
 
 <span id="-frontend"></span>
 
-#### Website Side
+### Website Side
 
 We provide a local website to browse historical diagnosis reports and procedures. You can easily launch it with
 
@@ -147,11 +135,11 @@ sh run_service.sh
 
 After successfully launching the local server, visit [http://127.0.0.1:8025/](http://127.0.0.1:8025/) to trigger the diagnosis procedure.
 
-#### Diagnosis
+### Diagnosis
 
 <span id="-prerequisites"></span>
 
-##### 1. Prerequisites
+#### 1. Prerequisites
 
 - PostgreSQL v12 or higher
 
@@ -174,7 +162,7 @@ After successfully launching the local server, visit [http://127.0.0.1:8025/](ht
     > Check [prometheus.md](materials/help_documents/prometheus.md) for detailed installation guides.
 
 
-##### 2. Package Installation
+#### 2. Package Installation
 
 Step 1: Install python packages.
 
@@ -289,21 +277,6 @@ Within the *[anomaly_trigger](./anomaly_trigger)* directory, we aim to offer scr
 | ![](https://img.shields.io/badge/-IO_SATURATION-red)     | Reach the max I/O capacity or  throughput               |                      |
 
 
-<!-- Anomaly Simulation Commands:
-
-```bash
-cd anomaly_trigger/
-python main.py --anomaly INSERT_LARGE_DATA    --threads 100
-python main.py --anomaly MISSING_INDEXES      --threads 100 --ncolumn 20 --colsize 100 --nrow 2000000
-python main.py --anomaly VACUUM               --threads 100 --ncolumn 20 --colsize 100 --nrow 2000000
-python main.py --anomaly LOCK_CONTENTION      --threads 100 --ncolumn 80 --colsize 80 --nrow 400
-python main.py --anomaly REDUNDANT_INDEX      --threads 100 --ncolumn 80 --colsize 80 --nrow 400000 --duration 100
-python main.py --anomaly INSERT_LARGE_DATA,IO_CONTENTION
-python main.py --anomaly FETCH_LARGE_DATA,CORRELATED_SUBQUERY
-python main.py --anomaly POOR_JOIN_PERFORMANCE,CPU_CONTENTION
-``` -->
-
-
 
 <span id="-customize"></span>
 
@@ -339,9 +312,6 @@ python doc2knowledge.py
 > The summary for the same document sections is cached. You can delete this file if do not like to reuse the previous caches.
 
 
-<!-- - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](multiagents/knowledge/root_causes_dbmind.jsonl). -->
-
-
 <span id="-tools"></span>
 
 ### 2. Tool Preparation
@@ -368,25 +338,6 @@ python doc2knowledge.py
     ```
 
     > History messages may take up many tokens, and so carefully decide the *turn number*.
-
-
-<!-- ## Prompt Template Generation (optional)
-
-Derive *high-quality prompt templates* from a small number of collected samples (splitting into training and evaluation sets), e.g.,
-
-1. Prompts for index tuning optimization
-
-```bash
-cd prompt_template_scripts/index_tuning
-./run.sh
-```
-
-2. Prompts for query rewrite optimization
-
-```bash
-cd prompt_template_scripts/query_rewrite
-./run.sh
-``` -->
 
 
 <span id="-FAQ"></span>
@@ -421,9 +372,8 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 - Strictly constrain the llm outputs (excessive irrelevant information) based on the matched knowledge 
 - ~~Query log option (potential to take up disk space and we need to consider it carefully)~~
 - ~~Add more communication mechanisms~~
-- Support more knowledge sources
-- Support localized private models (e.g., llama/vicuna/luca)
-- Release training datasets
+- ~~Support more knowledge sources~~
+- Localized model that reaches D-bot(gpt4)'s capability
 - Support other databases (e.g., mysql/redis)
 
 
@@ -433,6 +383,7 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 - [Tsinghua University](https://www.tsinghua.edu.cn/en/)
 - [ModelBest](https://modelbest.cn/)
+
 
 <span id="-projects"></span>
 
