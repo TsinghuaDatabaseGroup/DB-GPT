@@ -84,11 +84,6 @@ export default {
     this.scrollObserver.observe(target, config)
   },
   methods: {
-    resetTypeds() {
-      this.typedObjs.forEach(item => {
-        item.reset(true)
-      })
-    },
     dealMessage(index) {
       if (index >= this.messages.length) {
         this.$emit('playbackComplete')
@@ -114,7 +109,7 @@ export default {
         `<div class="text-item c-flex-row left">
           <img src="${faceImage}" class="face">
           <div class="c-flex-column">
-            <span style="font-size: 12px; color: #333333; margin-bottom: 5px">
+            <span style="font-size: 1rem; color: #333333; margin-bottom: 5px">
               ${message.sender}
               <span style="margin-left: 5px; color: #666666">${message.time}</span>
             </span>
@@ -189,7 +184,7 @@ export default {
 }
 
 .content {
-  color: #333333;
+  color: #111111;
   font-size: 14px;
   min-height: 20px;
   border-radius: 20px;

@@ -1,5 +1,5 @@
 <template>
-  <VChart class="lineChart" :option="chartOption" autoresize />
+  <VChart class="lineChart" style="width: 100%; height: 100%" :option="chartOption" autoresize />
 </template>
 
 <script>

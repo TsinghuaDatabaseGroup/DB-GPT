@@ -28,6 +28,7 @@ async def histories_options():
 async def histories():
     folder_path = "../../alert_results/examples"
     file_list = os.listdir(folder_path)
+    file_list = sorted(file_list, reverse=True)
     json_list = []
     # 遍历文件列表
     for file_name in file_list:
