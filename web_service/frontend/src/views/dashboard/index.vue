@@ -50,13 +50,13 @@
         >
           <div class="c-flex-row c-align-items-center c-justify-content-between">
             <div class="c-flex-row c-align-items-center c-justify-content-left">
-              <div v-for="(alert_item, alert_index) in item.alerts" :key="alert_index" class="c-flex-row c-justify-content-left" style="">
+              <div v-for="(alert_item, alert_index) in item.alerts" :key="alert_index" class="c-flex-row c-justify-content-left" style="margin-right: 10px">
                 <div :style="severityStyle[alert_item.alert_level]">
                   [{{ alert_item.alert_level }}🔥]
                 </div>
                 <div style="color: #666666; margin-left: 5px">{{ alert_item.alert_name }}</div>
               </div>
-              <div style="color: #999999; font-size: 12px; margin-left: 10px; height: 12px; line-height: 12px; margin-top: 4px">{{ item.time }}</div>
+              <div style="color: #999999; font-size: 12px; height: 12px; line-height: 12px; margin-top: 4px">{{ item.time }}</div>
             </div>
             <div class="c-flex-row c-align-items-center">
               <el-button type="success" size="small" style="margin:0 10px" @click="onReviewClick(item)">{{ $t('playbackButton') }}<i
@@ -70,20 +70,23 @@
               /></el-button>
             </div>
           </div>
-          <el-carousel
-            v-if="openIndex === index"
-            v-loading="openReportLoading"
-            :interval="3000"
-            arrow="always"
-            style="background: RGBA(255, 255, 255, 1.00); padding: 10px; margin: 10px; border-radius: 8px; height: 260px;"
-          >
-            <el-carousel-item v-for="(chartItem, chartIndex) in charts" :key="chartIndex">
-              <lineChart
-                style="height: 200px; width: calc(100% - 40px);"
-                :chart-option="chartItem"
-              />
-            </el-carousel-item>
-          </el-carousel>
+          <el-collapse-transition>
+            <el-carousel
+              v-if="openIndex === index"
+              v-loading="openReportLoading"
+              :interval="3000"
+              arrow="always"
+              height="260"
+              style="background: RGBA(255, 255, 255, 1.00); padding: 10px; margin: 10px; border-radius: 8px;"
+            >
+              <el-carousel-item v-for="(chartItem, chartIndex) in charts" :key="chartIndex">
+                <lineChart
+                  style="height: 200px; width: calc(100% - 40px);"
+                  :chart-option="chartItem"
+                />
+              </el-carousel-item>
+            </el-carousel>
+          </el-collapse-transition>
         </div>
       </div>
     </div>
@@ -235,7 +238,7 @@ export default {
       timeRange: [],
       messages: [],
       openReport: '',
-      openIndex: 0,
+      openIndex: -1,
       severityStyle: {
         'CRIT': 'color: #F56C6C;',
         'WARN': 'color: #E6A23C;',
@@ -296,7 +299,6 @@ export default {
     },
     timeRangeOnChange() {
       if (this.timeRange && this.timeRange.length > 1) {
-        console.log('===========:', this.timeRange)
         this.getAlertHistories()
       }
     },
@@ -346,12 +348,15 @@ export default {
       })
     },
     onReportClick(item, index) {
+      if (index === this.openIndex) {
+        return
+      }
       const that = this
-      // that.openReportLoading = true
+      that.openReportLoading = true
       that.openIndex = index
       that.charts = []
       this.getAlertHistoryDetail(item, () => {
-        // that.openReportLoading = false
+        that.openReportLoading = false
         that.openReport = that.reviewItem.report || ''
         const topMetrics = this.reviewItem.topMetrics
         topMetrics.forEach(item => {
@@ -461,6 +466,11 @@ table thead:first-child tr:first-child td {
 .el-carousel__button {
   background-color: #999999 !important;
 }
+
+.el-carousel__container {
+  height: 260px!important;
+}
+
 </style>
 
 <style lang="scss" scoped>
@@ -494,6 +504,7 @@ table thead:first-child tr:first-child td {
   margin-bottom: 10px;
   border-bottom-left-radius: 10px;
   border-top-left-radius: 10px;
+  transition: height 3s ease-in-out;
   .title {
     color: #333333;
     font-size: 16px;
