@@ -1,6 +1,7 @@
 from typing import List
 from pydantic import Field
 from multiagents.message import Message
+import time
 
 from . import memory_registry
 from .base import BaseMemory
@@ -35,6 +36,7 @@ class ChatHistoryMemory(BaseMemory):
                 {
                     "role": "user" if message.sender != my_name else "assistant",
                     "content": f"[{message.sender}]: {message.content}",
+                    "time": time.strftime("%H:%M:%S", time.localtime())
                 }
             )
         return messages

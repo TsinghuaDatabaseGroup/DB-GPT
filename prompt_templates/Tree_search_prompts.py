@@ -151,6 +151,6 @@ Your output should with the following format:
 ...
 - analyze candidate n: xxx
 - most close to succeess: xxx
-- best candidate: "<candidate_x>"
+-  "<candidate_x>"
 Begin!
 '''

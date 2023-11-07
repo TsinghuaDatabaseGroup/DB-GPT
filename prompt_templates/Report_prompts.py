@@ -1,6 +1,6 @@
 
 ANOMALY_DESC_PROMPT='''
-You are a company expert. Please describe the following anomaly event in natural language:  
+Please describe the following anomaly event in natural language:  
 {anomaly_str}
 
 Note do not miss any important information in each line of the event. And the description templates should be like: 
@@ -11,10 +11,10 @@ Note do not miss any important information in each line of the event. And the de
 '''
 
 ANOMALY_TITLE_PROMPT='''
-You are a company expert. Please give a title for the following anomaly event within 15 words:
+Please give a title for the following anomaly event within 15 words:
 {anomaly_str}
 
 Note the title template is like: 
-"Analysis Report of High CPU Usage"
+Analysis Report of High CPU Usage
 '''
 
