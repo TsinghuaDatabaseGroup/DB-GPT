@@ -23,25 +23,16 @@
 >Besides, to extend the database maintenance capability, we are also finetuning LLMs to support localized diagnosis, *query rewriting* and *anomaly simulation* (comming soon).
 
 <p align="center">
-    <img src="imgs/overview_v2.png" width="800px">
+    <img src="imgs/overview_v2.png" width="400px">
 </p>
 
 
-<!-- <span id="-features"></span>
-
-## ✨ Features
-
-### D-Bot - Your Personal DBA
-
-- **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
-
-- **Practical Tool Utilization**: D-Bot can utilize both monitoring and optimization tools to improve the maintenance capability (with *tool learning* and *tree of thought*).
-
-- **In-depth Reasoning**: Compared with vanilla LLMs, D-Bot will achieve competitive reasoning capability to analyze root causes (with *multi-llm communications*). -->
-
 <span id="-demo"></span>
 
-**A demo of D-Bot**
+## 🗺 Online Demo
+
+In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)
+), you can browse all the historical diagnosis results, used metrics, and the detailed diagnosis processes.
 
 <p align="center">
   <a href="http://dbgpt.dbmind.cn">
