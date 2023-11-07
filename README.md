@@ -4,6 +4,7 @@
 
 <p align="center">
   <!-- <a href="#-features">Features</a> • -->
+  <a href="#-demo">Demo</a> •
   <a href="#-news">Updates</a> •
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-anomalies">Alerts And Anomalies</a> •  
@@ -17,25 +18,13 @@
     【English | <a href="README-Chinese.md">中文</a>】
 </p> -->
 
-🦾 Our mission is to build your personal database administrator (D-Bot). D-Bot is good at *reading documents, using various tools, writing analysis reports, and strictly following your orders!!* 🧑‍💻
+🦾 Our mission is to build your personal database administrator (D-Bot). D-Bot is good at *reading documents, using various tools, writing analysis reports!* 🧑‍💻
 
 >Besides, to extend the database maintenance capability, we are also finetuning LLMs to support localized diagnosis, *query rewriting* and *anomaly simulation* (comming soon).
 
-<br>
-    <div align="center">
-    <img src="imgs/newfrontend_v1.png" width="800px">
-    </div>
-<br>
-
-<!-- collection of useful, user-friendly, and advanced database tools. These tools are built around LLMs, including **system diagnosis** (*D-Bot*), **query optimization** (coming soon), and **anomaly simulation** (coming soon) -->
-
-<!-- *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases. -->
-
-<!-- <br>
-<div align="center">
-<img src="imgs/dbgpt-v2.png" width="800px">
-</div>
-<br> -->
+<p align="center">
+    <img src="imgs/overview.png" width="800px">
+</p>
 
 
 <!-- <span id="-features"></span>
@@ -50,16 +39,21 @@
 
 - **In-depth Reasoning**: Compared with vanilla LLMs, D-Bot will achieve competitive reasoning capability to analyze root causes (with *multi-llm communications*). -->
 
+<span id="-demo"></span>
 
-**A demo of using D-Bot**
+**A demo of D-Bot**
 
-https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
+<p align="center">
+  <a href="http://dbgpt.dbmind.cn">
+    <img src="imgs/frontend_v2.png" width="800px" alt="frontend_v2">
+  </a>
+</p>
 
-<!-- <br>
-    <div align="center">
-    <img src="imgs/example_report.png" width="800px">
-    </div>
-<br> -->
+<p align="center">
+  <a href="http://dbgpt.dbmind.cn">
+    <img src="imgs/newfrontend_v1.png" width="800px" alt="frontend_v2">
+  </a>
+</p>
 
 <span id="-news"></span>
 
@@ -134,7 +128,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 <span id="-frontend"></span>
 
-#### Website
+#### Website Side
 
 We provide a local website to browse historical diagnosis reports and procedures. You can easily launch it with
 
