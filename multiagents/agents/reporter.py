@@ -31,6 +31,7 @@ class ReporterAgent(BaseAgent):
 
     verbose: bool = Field(default=False)
     name: str = Field(default="ChiefDBA")
+    start_time: str = ""
     max_history: int = 3
     alert_str: str = ""
     alert_dict: dict = {}
@@ -40,40 +41,64 @@ class ReporterAgent(BaseAgent):
 
     report: dict = {"title": "", "anomaly date": "", "anomaly description": "", "root cause": "", "diagnosis process": "", "solutions": ""}
 
-    record: dict = {"anomalyAnalysis": {"RoleAssigner":{"messages":[]},"CpuExpert":{"messages":[]},"MemoryExpert":{"messages":[]},"IoExpert":{"messages":[]},"NetworkExpert":{"messages":[]}}, "brainstorming": {"messages":[]}, "report":{}, "title":"alert name", "time":"alert time"}
-    
-    def initialize_report(self):
+    record: dict = {"anomalyAnalysis": {"RoleAssigner":{"messages":[]},"CpuExpert":{"messages":[]},"MemoryExpert":{"messages":[]},"IoExpert":{"messages":[]},"NetworkExpert":{"messages":[]}}, "brainstorming": {"messages":[]}, "report":{}, "title":"alert name", "time":"alert time", "topMetrics": []} # type: bar / line
 
-        seconds = int(self.alert_dict['start_time'])
+    def initialize_report(self):
+        
+        seconds = int(self.start_time)
         start_date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(seconds))
         self.report["anomaly date"] = start_date
+        self.record["time"] = self.start_time
+
+        if self.alert_str == "":
+            return
 
         anomaly_desc_prompt = self.anomaly_desc_prompt.replace("{anomaly_str}", self.alert_str)
-
-        anomaly_desc = self.llm.generate_response(anomaly_desc_prompt).content
+        anomaly_desc_message = self.llm._construct_messages(anomaly_desc_prompt)
         
+        self.llm.change_messages(self.role_description, anomaly_desc_message)
+
+        anomaly_desc = self.llm.parse()
+        anomaly_desc = anomaly_desc['content']
         self.report["anomaly description"] = anomaly_desc
 
         anomaly_title_prompt = self.anomaly_title_prompt.replace("{anomaly_str}", self.alert_str)
+        anomaly_title_message = self.llm._construct_messages(anomaly_title_prompt)
+        self.llm.change_messages(self.role_description, anomaly_title_message)
+        anomaly_title = self.llm.parse()
+        anomaly_title = anomaly_title['content']
+        self.report["title"] = anomaly_title.replace('\\"','')
+        self.report["title"] = anomaly_title.replace('"','')
+        self.record["title"] = anomaly_title.replace('\\"','')
+        self.record["title"] = anomaly_title.replace('"','')
 
-        anomaly_title = self.llm.generate_response(anomaly_title_prompt).content
-        
-        self.report["title"] = anomaly_title
+        self.record["severity"] = []        
+        self.record["status"] = []
+        alert_names = []
+        for alert in self.alert_dict:
 
-        self.record["severity"] = self.alert_dict['alerts'][0]['labels']['severity']
-        self.record["title"] = self.alert_dict['alert_name']
-        self.record["status"] = self.alert_dict['status']
-        self.record["time"] = self.alert_dict['start_time']
+            if isinstance(alert, dict):
+                alert_names.append({"alert_name": alert['alert_name'],
+                                "alert_status": alert['alert_status'],
+                                "alert_level": alert['alert_level']})
 
+            # self.record["severity"].append(alert['alert_level'])
+            # self.record["status"].append(alert['alert_status'])
+
+            # if isinstance(alert, dict) and  'alert_name' in alert:
+            #     alert_names.append(alert['alert_name'])
+
+        self.report["alerts"] = alert_names
+        self.record["alerts"] = alert_names
 
     def update_diagnosis(self):
-        prompt = "Please refine the anomaly diagnosis description based on the above review adice. The diagnosis description is as follows:\n" + self.report["root cause"] + "\n ===== \n Note the output still should be in markdown format."
+        prompt = "You are writing a report. Please summarize the refined anomaly diagnosis based on the above review adice. The anomaly diagnosis is as follows:\n" + self.report["root cause"] + "\n ===== \n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the anomaly diagnosis description based on the above advice.'\n"
 
-        prompt_message = {"role": "user", "content": prompt}
+        prompt_message = {"role": "user", "content": prompt, "time": time.strftime("%H:%M:%S", time.localtime())}
 
         self.messages.append(prompt_message)
 
-        self.llm.change_messages(self.messages)
+        self.llm.change_messages(self.role_description, self.messages)
         new_message = self.llm.parse()
         
         if isinstance(new_message, dict):
@@ -83,13 +108,13 @@ class ReporterAgent(BaseAgent):
 
 
     def update_solutions(self):
-        prompt = "Please refine the proposed solutions based on the above review adice. The proposed solutions are as follows:\n" + self.report["solutions"] + "\n ===== \n Note the output still should be in markdown format."
+        prompt = "You are writing a report. Please summarize the refined solutions based on the above review adice. The solutions are as follows:\n" + self.report["solutions"] + "\n ===== \n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the solutions based on the above advice.'\n"
 
-        prompt_message = {"role": "user", "content": prompt}
+        prompt_message = {"role": "user", "content": prompt, "time": time.strftime("%H:%M:%S", time.localtime())}
 
         self.messages.append(prompt_message)
 
-        self.llm.change_messages(self.messages)
+        self.llm.change_messages(self.role_description, self.messages)
         new_message = self.llm.parse()
 
         if isinstance(new_message, dict):
@@ -100,143 +125,17 @@ class ReporterAgent(BaseAgent):
 
     async def step(
         self, former_solution: str, advice: str, task_description: str = "", **kwargs
-    ) -> SolverMessage:
-        
-        # prompt = self._fill_prompt_template(
-        #     former_solution, critic_opinions, advice, task_description
-        # )
-        # try to find the diagnosis steps based on the identified alerts
-        
-        # tool_observation = [self.tool_memory.to_string()] # get the results of using tools
-        # prompt = self._fill_prompt_template(task_description, tool_observation)
-        
-        # prompt = self.get_all_prompts(
-        #     advice=advice,
-        #     task_description=task_description,
-        #     role_description=self.role_description,
-        #     **kwargs,
-        # )
-        # parsed_response = self.output_parser.parse()
-
-        # Step1: configure attirbutes in the tasksolving environment
-        
-        chain = UCT_vote_function(agent_name=self.name, prompt_template=self.prompt_template, llm=self.llm,env=tasksolving_env, output_parser=self.output_parser, alert_dict=self.alert_dict, alert_str=self.alert_str, agent=self)
-
-        result_node = chain.start(simulation_count=2,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=10)
-
-        # result_node.messages
-        # result_node.description
-
-        # print(colored(f"start analysis ({self.name})", "green")) # role 
-        # for i in range(self.max_retry):
-        #     try:
-        #         time.sleep(.1)
-        #         response = self.llm.generate_response(prompt) # new node (terminal conditon: the action is speak)
-        #         # chain = UCT_vote_function(llm=self.llm,env=env)
-                
-        #         parsed_response = self.output_parser.parse(response)
-        #         if isinstance(parsed_response, AgentAction):
-        #             # If the response is an action, call the tool
-        #             # and append the observation to tool_observation
-        #             observation, status = tasksolving_env.step(parsed_response)
-                    
-        #             tool_observation.append(
-        #                 parsed_response.log.strip()
-        #                 + f"\nObservation: {str(observation).strip()}"
-        #             )
-        #         break
-        #     except BaseException as e:
-        #         logging.error(e)
-        #         logging.warning("Retrying...")
-        #         continue
-        
-        # history = self.memory.to_messages(self.name, start_index=-self.max_history)
-        # print(colored(f"end analysis ({self.name})", "green")) # role 
-
-        # for i in range(self.max_retry):
-        #     try:
-        #         response = self.llm.generate_response(
-        #             prompt
-        #         )
-        #         parsed_response = self.output_parser.parse(response)
-        #         break
-        #     except (KeyboardInterrupt, bdb.BdbQuit):
-        #         raise
-        #     except Exception as e:
-        #         continue
-
-        # adopt tree of thought here
-
-        message = {
-            "content": ""
-            if result_node.messages is None
-            else result_node.messages[-1],
-            "sender": self.name,
-            "receiver": self.get_receiver()
-        }
-
-        # message = SolverMessage(
-        #     content={"diagnose": "", "solution": [], "knowledge": ""}
-        #     if result_node.messages is None
-        #     else result_node.messages[-1],
-        #     sender=self.name,
-        #     receiver=self.get_receiver()
-        # )
-
-    # content: dict = Field(default={"diagnose": "", "solution": [], "knowledge": ""})
-    # sender: str = Field(default="")
-    # receiver: Set[str] = Field(default=set({"all"}))
-    # tool_response: List[Tuple[AgentAction, str]] = Field(default=[])
-
-        return message
+    ):
+        pass
 
     async def astep(self, env_description: str = "") -> SolverMessage:
         """Asynchronous version of step"""
         pass
 
     def _fill_prompt_template(
-        self, env_description: str = "", tool_observation: List[str] = []) -> str:
-        
-        """Fill the placeholders in the prompt template
+        self, env_description: str = "", tool_observation: List[str] = []):
+        pass
 
-        In the tool agent, these placeholders are supported:
-        - ${agent_name}: the name of the agent
-        - ${env_description}: the description of the environment
-        - ${role_description}: the description of the role of the agent
-        - ${chat_history}: the chat history of the agent
-        - ${tools}: the list of tools and their usage
-        - ${tool_names}: the list of tool names
-        - ${tool_observations}: the observation of the tool in this turn
-        """
-        #retriever = api_retriever()        
-        #relevant_tools = retriever.query(Template(self.prompt_template).safe_substitute({"chat_history": self.memory.to_string(add_sender_prefix=True)}), self.tools)
-        
-        tools = "\n".join([f"> {tool}: {self.tools.functions[tool]['desc']}" for tool in self.tools.functions])
-        tools = tools.replace("{{", "{").replace("}}", "}")
-        tool_names = ", ".join([tool for tool in self.tools.functions])
-        if self.alert_dict['start_time'] != "":
-            input_arguments = {
-                "alert_info": self.alert_str,
-                "agent_name": self.name,
-                "env_description": env_description,                                 
-                "role_description": self.role_description,
-                "chat_history": self.memory.to_string(add_sender_prefix=True),
-                "tools": tools,
-                "tool_names": tool_names,
-                "tool_observation": "\n".join(tool_observation),
-            }
-        else:
-            input_arguments = {
-                "agent_name": self.name,
-                "env_description": env_description,                                 
-                "role_description": self.role_description,
-                "chat_history": self.memory.to_string(add_sender_prefix=True),
-                "tools": tools,
-                "tool_names": tool_names,
-                "tool_observation": "\n".join(tool_observation),
-             }
-
-        return Template(self.prompt_template).safe_substitute(input_arguments)
     
     def add_message_to_memory(self, messages: List[Message]) -> None:
         self.memory.add_message(messages)
@@ -244,4 +143,4 @@ class ReporterAgent(BaseAgent):
     def reset(self) -> None:
         """Reset the agent"""
         self.memory.reset()
-        # TODO: reset receiver        
+        # TODO: reset receiver

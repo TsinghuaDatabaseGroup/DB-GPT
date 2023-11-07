@@ -125,7 +125,7 @@ class Database():
         while fail == 1 and i < cnt:
             try:
                 fail = 0
-                print("========== start execution", i)
+                # print("========== start execution", i)
                 cur.execute(sql)
             except BaseException:
                 fail = 1
@@ -139,11 +139,11 @@ class Database():
         cur.close()
         self.conn.close()
 
-        print("========== finish time:", time.time())
+        # print("========== finish time:", time.time())
 
         if fail == 1:
             # raise RuntimeError("Database query failed")
-            print("SQL Execution Fatal!!")
+            # print("SQL Execution Fatal!!")
 
             return 0, ''
         elif fail == 0:
@@ -315,7 +315,7 @@ class Database():
 
         return result
     
-    def obtain_historical_queries_statistics(self, topn = 20):
+    def obtain_historical_queries_statistics(self, topn = 50):
         try:
             #success, res = self.execute_sql('explain (FORMAT JSON, analyze) ' + sql)
             #command = "SELECT query, calls, total_time FROM pg_stat_statements ORDER BY total_time DESC LIMIT 2;"
@@ -327,7 +327,9 @@ class Database():
                 for sql_stat in res:
                     if not "postgres" in sql_stat[3]:
                         sql_template = sql_stat[0].replace("\n", "").replace("\t", "").strip()
-                        print("===== logged slow query: ", sql_template,sql_stat[1],sql_stat[2],sql_stat[3])
+                        # print("===== logged slow query: ", sql_template,sql_stat[1],sql_stat[2],sql_stat[3])
+                        sql_template = sql_template.lower()
+                        sql_template = sql_template.replace("explain ", "")
                         slow_queries.append({"sql": sql_template, "calls": sql_stat[1], "total_time": sql_stat[2], "dbname": sql_stat[3]})
                         
                 return slow_queries

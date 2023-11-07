@@ -32,10 +32,11 @@ class RoleAssignerAgent(BaseAgent):
         selected_names = []
         for i in range(self.max_retry):
             try:
-                response = self.llm.generate_response(
-                    prompt
-                )
-                cleaned_output = response.content
+                message = self.llm._construct_messages(prompt)
+                self.llm.change_messages(self.role_description, message)
+                response = self.llm.parse()
+
+                cleaned_output = response['content']
                 cleaned_output = cleaned_output.strip()
                 cleaned_output = re.sub(r"\n+", "\n", cleaned_output)
                 cleaned_output = cleaned_output.replace("\n", " ")

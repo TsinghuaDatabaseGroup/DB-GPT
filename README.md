@@ -7,19 +7,19 @@
   <a href="#-news">Updates</a> •
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-anomalies">Alerts And Anomalies</a> •  
-  <a href="#-customize">Customize Knowledge And Tools</a> • 
+  <a href="#-customize">Knowledge And Tools</a> • 
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-contributors">Contributors</a>
 </p>
 
-<p align="center">
+<!-- <p align="center">
     【English | <a href="README-Chinese.md">中文</a>】
-</p>
+</p> -->
 
 🦾 Our mission is to build your personal database administrator (D-Bot). D-Bot is good at *reading documents, using various tools, writing analysis reports, and strictly following your orders!!* 🧑‍💻
 
->Besides, to extend the database maintenance capability, we are also finetuning LLMs to support advanced *query optimiziation* and *anomaly simulation* (comming soon).
+>Besides, to extend the database maintenance capability, we are also finetuning LLMs to support localized diagnosis, *query rewriting* and *anomaly simulation* (comming soon).
 
 <br>
     <div align="center">
@@ -132,9 +132,41 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     ├── webhook                               # Use the webhook to save the results of the alert to a file
 
 
+<span id="-frontend"></span>
+
+#### Website
+
+We provide a local website to browse historical diagnosis reports and procedures. You can easily launch it with
+
+* install dependencies for the first run。
+
+```
+# install frontend environment
+cd web_service/frontend
+rm -rf node_modules/
+rm -r package-lock.json
+# install dependencies for the first run (nodejs, ^16.13.1 is recommended)
+npm install  --legacy-peer-deps
+```
+
+* run
+
+```shell
+# cd service directory
+cd web_service
+# launch the local server and open the website
+sh run_service.sh
+```
+
+> Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python are installed.
+
+After successfully launching the local server, visit [http://127.0.0.1:8025/](http://127.0.0.1:8025/) to trigger the diagnosis procedure.
+
+#### Diagnosis
+
 <span id="-prerequisites"></span>
 
-#### 1. Prerequisites
+##### 1. Prerequisites
 
 - PostgreSQL v12 or higher
 
@@ -157,7 +189,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     > Check [prometheus.md](materials/help_documents/prometheus.md) for detailed installation guides.
 
 
-#### 2. Package Installation
+##### 2. Package Installation
 
 Step 1: Install python packages.
 
@@ -203,7 +235,6 @@ Step 3: Add database/anomaly/prometheus settings into [tool_config_example.yaml]
 > *remote_directory* in the DATABASESERVER setting indicates where the slow query log file is located at (<a href="#-prerequisites">link</a>).
 
 
-
 - If accessing openai service via vpn, execute this command:
 ```bash
 # macos
@@ -216,88 +247,19 @@ cd others
 python openai_test.py
 ```
 
-<span id="-diagnosis"></span>
+#### Diagnosis
 
-#### 3. Diagnosis & Optimization
-
-<span id="-frontend"></span>
-
-##### Website Interface
-
-We also provide a local website for this environment to view diagnostic reports. You can launch it with
-
-* install dependencies for the first run。
-
-```
-# install frontend environment
-cd web_service/frontend
-rm -rf node_modules/
-rm -r package-lock.json
-# install dependencies for the first run (nodejs, ^16.13.1 is recommended)
-npm install  --legacy-peer-deps
-```
-
-* run
-
-```shell
-# cd service directory
-cd web_service
-# launch the local server and open the website
-sh run_service.sh
-```
-
-> Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python are installed.
-
-After successfully launching the local server, visit [http://127.0.0.1:9228/](http://127.0.0.1:9228/) to trigger the diagnosis procedure.
-
-
-##### Command-line Interface
+- Test single case
 
 ```shell
 python main.py
 ```
 
-<!-- (1) ./run_benchmark_tpcc.sh or ./run_db_exception.sh
+- Test in batch
 
-    Example Anomalies: INSERT_LARGE_DATA, IO_CONTENTION
-
-<details><summary><b>monitoring dashboard</b></summary>
-<br>
-<div align="center">
-<img src="imgs/insert.png" width="800px">
-</div>
-<br>
-</details>
-  
----
-
-(2) ./run_benchmark_job.sh
-
-    Example Anomalies: POOR_JOIN_PERFORMANCE, CPU_CONTENTION
-
-
-<details><summary><b>monitoring dashboard</b></summary>
-<br>
-<div align="center">
-<img src="imgs/join.png" width="800px">
-</div>
-<br>
-</details>
-
----
-
-(3) ./run_benchmark_tpch.sh
-
-    Example Anomalies: FETCH_LARGE_DATA (lineitem with 28GB); CORRELATED_SUBQUERY
-
-<details><summary><b>monitoring dashboard</b></summary>
-<br>
-<div align="center">
-<img src="imgs/subquery.png" width="800px">
-</div>
-<br>
-</details> -->
-
+```shell
+python batch_main.py
+```
 
 <span id="-anomalies"></span>
 
@@ -494,8 +456,6 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 https://github.com/OpenBMB/AgentVerse
 
 https://github.com/Vonng/pigsty
-
-https://github.com/OpenBMB/BMTools
 
 
 <span id="-citation"></span>

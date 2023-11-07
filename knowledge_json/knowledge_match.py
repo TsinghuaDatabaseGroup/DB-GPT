@@ -63,10 +63,10 @@ class KnowledgeExtraction():
         best_docs = [self.corpus[b] for b in best_index]
         best_names = [self.matched_attr[b] for b in best_index]
         docs_str = ""
-        print("Best docs: ", best_docs)
+        # print("Best docs: ", best_docs)
         for i, docs in enumerate(best_docs):
             docs_str = docs_str + "{}: ".format(best_names[i]) + docs + "\n\n"
-        print("docs_str: ", docs_str)
+        # print("docs_str: ", docs_str)
 
         return docs_str
     

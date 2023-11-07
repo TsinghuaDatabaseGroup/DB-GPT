@@ -21,8 +21,8 @@ class DescriptionAssigner(BaseRoleAssigner):
     """
 
     alert_str: str = ""
-    alert_dict: str  = ""
-
+    alert_dict: List[dict] = []
+    
     def step(
         self,
         role_assigner: RoleAssignerAgent,

@@ -39,7 +39,7 @@ class PostgresDatabaseConnector(DatabaseConnector):
         self.create_connection()
 
         # Set the random seed to obtain deterministic statistics
-        self.set_random_seed()
+        # self.set_random_seed()
 
         logging.disable(logging.DEBUG)
         # logging.info("Postgres connector created: {}({})".format(self.db_name, self.host))
@@ -305,7 +305,11 @@ END $$;""")
     def _get_plan(self, query):
         # create view and return the next sql.
         query_text = self._prepare_query(query)
-        statement = f"explain (format json) {query_text}"
+        if "explain (format json)" not in query_text:
+            statement = f"explain (format json) {query_text}"
+        else:
+            statement = query_text
+        
         query_plan = self.exec_fetch(statement)[0][0]["Plan"]
         # drop view
         self._cleanup_query(query)

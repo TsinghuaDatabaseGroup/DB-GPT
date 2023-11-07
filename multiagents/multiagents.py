@@ -23,7 +23,8 @@ class MultiAgents:
 
     @classmethod
     def from_task(cls, task, args):
-        
+
+
         # Prepare the config of the task
         task_config = prepare_task_config(task, args)
         
@@ -58,12 +59,14 @@ class MultiAgents:
         
         return cls(agents, environment)
 
-    def run(self, args):
+    async def run(self, args):
         """Run the environment from scratch until it is done."""
         self.environment.reset()
         
         #while not self.environment.is_done():
-        asyncio.run(self.environment.step(args))
+        report, records = await self.environment.step(args)
+
+        return report, records
 
     def reset(self):
         self.environment.reset()

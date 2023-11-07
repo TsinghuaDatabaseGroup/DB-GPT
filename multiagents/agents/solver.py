@@ -153,13 +153,16 @@ class SolverAgent(BaseAgent):
     class Config:
         arbitrary_types_allowed = True
 
+    diag_id: str = ""
     tools: APICaller = Field(default_factory=APICaller)
     tool_memory: BaseMemory = Field(default_factory=ChatHistoryMemory)
     verbose: bool = Field(default=False)
     name: str = Field(default="CpuExpert")
     max_history: int = 3
+    start_time: str = ""
+    end_time: str = ""
     alert_str: str = ""
-    alert_dict: dict = {}
+    alert_dict: List[dict] = []
     messages: List[dict] = []
 
 
@@ -186,79 +189,55 @@ class SolverAgent(BaseAgent):
         # Step1: configure attirbutes in the tasksolving environment
         tasksolving_env = wrap_tasksolving_env(task_description, self.tools, self.tool_memory)
         
-        chain = UCT_vote_function(agent_name=self.name, prompt_template=self.prompt_template, llm=self.llm,env=tasksolving_env, output_parser=self.output_parser, alert_dict=self.alert_dict, alert_str=self.alert_str, agent=self)
-    
-        result_node = chain.start(simulation_count=2,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=10)
+        chain = UCT_vote_function(diag_id=self.diag_id, start_time=self.start_time, end_time=self.end_time, agent_name=self.name, role_description=self.role_description, prompt_template=self.prompt_template, llm=self.llm,env=tasksolving_env, output_parser=self.output_parser, alert_dict=self.alert_dict, alert_str=self.alert_str, agent=self)
 
-        # result_node.messages
-        # result_node.description
+        result_node, top_abnormal_metric_values  = chain.start(simulation_count=1,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=4)
 
-        # print(colored(f"start analysis ({self.name})", "green")) # role 
-        # for i in range(self.max_retry):
-        #     try:
-        #         time.sleep(.1)
-        #         response = self.llm.generate_response(prompt) # new node (terminal conditon: the action is speak)
-        #         # chain = UCT_vote_function(llm=self.llm,env=env)
-                
-        #         parsed_response = self.output_parser.parse(response)
-        #         if isinstance(parsed_response, AgentAction):
-        #             # If the response is an action, call the tool
-        #             # and append the observation to tool_observation
-        #             observation, status = tasksolving_env.step(parsed_response)
-                    
-        #             tool_observation.append(
-        #                 parsed_response.log.strip()
-        #                 + f"\nObservation: {str(observation).strip()}"
-        #             )
-        #         break
-        #     except BaseException as e:
-        #         logging.error(e)
-        #         logging.warning("Retrying...")
-        #         continue
-        
-        # history = self.memory.to_messages(self.name, start_index=-self.max_history)
-        # print(colored(f"end analysis ({self.name})", "green")) # role 
-
-        # for i in range(self.max_retry):
-        #     try:
-        #         response = self.llm.generate_response(
-        #             prompt
-        #         )
-        #         parsed_response = self.output_parser.parse(response)
-        #         break
-        #     except (KeyboardInterrupt, bdb.BdbQuit):
-        #         raise
-        #     except Exception as e:
-        #         continue
-
-        # adopt tree of thought here
-        
         if result_node is None:
             return {}
-        
-        thought = ""
-        solutions = ""
-        for message in result_node.messages:
-            if 'content' in message and '"start_time":"xxxx"' not in message['content'].lower() and '"solution"' in message['content'].lower():
-                contents = message['content'].split('\n')
-                for content in contents:
-                    if "thought" in content.lower():
-                        thought = content.strip()
-                        thought = re.sub(r'(?i)thought:\s?', '', thought)
-                    if "solution" in content.lower():
-                        pattern = r'(?i)"solution":\s?(.*?),\s?"'
-                        match = re.search(pattern, content)
 
-                        if match:
-                            solutions = match.group(1)
+        prompt = "Analyze the diagnosed root causes based on above discussions in details. Note the analysis should be in markdown format."
+        diag_message = self.llm._construct_messages(prompt)
+        diag_messages = result_node.messages + diag_message
+        self.llm.change_messages("You are a database expert", diag_messages)
+        root_causes = self.llm.parse()        
+        if isinstance(root_causes, dict):
+            root_causes = root_causes["content"]
+        else:
+            root_causes = root_causes.content
+
+
+        prompt = "Give the optimization solutions based on above discussions in details. Note the solutions should be in markdown format."
+        solution_message = self.llm._construct_messages(prompt)
+        solution_messages = result_node.messages + solution_message
+        self.llm.change_messages("You are a database expert", solution_messages)
+        solutions = self.llm.parse()        
+        if isinstance(solutions, dict):
+            solutions = solutions["content"]
+        else:
+            solutions = solutions.content
         
-        
+        # thought = ""
+        # solutions = ""
+        # for message in result_node.messages:
+        #     if 'content' in message and '"start_time":"xxxx"' not in message['content'].lower() and '"solution"' in message['content'].lower():
+
+        #         contents = message['content'].split('\n')
+        #         for content in contents:
+        #             if "thought" in content.lower():
+        #                 thought = content.strip()
+        #                 thought = re.sub(r'(?i)thought:\s?', '', thought)
+        #             if "solution" in content.lower():
+        #                 pattern = r'(?i)"solution":\s?(.*?),\s?"'
+        #                 match = re.search(pattern, content)
+        #                 if match:
+        #                     solutions = match.group(1)
+
         return {
-            "root cause": result_node.messages[-1]
-            if thought == ""
-            else thought,
+            "root cause": root_causes,
             "diagnosis process": result_node.messages,
             "solutions": solutions,
+            "topMetrics": top_abnormal_metric_values,
             "sender": self.name,
             "receiver": self.get_receiver()}
     
@@ -281,16 +260,14 @@ class SolverAgent(BaseAgent):
     async def review_step(self) -> CriticMessage:
         """Asynchronous version of step"""
         prompt = "Please review the above diagnosis results, and give necessary advice to correct the unclear diagnosis and proposed solutions. Note the review should be in markdown format"
-
-        prompt_message = {"role": "user", "content": prompt}
+        
+        prompt_message = {"role": "user", "content": prompt, "time": time.strftime("%H:%M:%S", time.localtime())}
 
         self.messages.append(prompt_message)
 
-        self.llm.change_messages(self.messages)
-        new_message = self.llm.parse()
+        self.llm.change_messages(self.role_description, self.messages)
+        review_message = self.llm.parse()
 
-        review_message = {"role": "assistant", "content": new_message.content}
-                
         return review_message
 
     def _fill_prompt_template(
@@ -313,27 +290,17 @@ class SolverAgent(BaseAgent):
         tools = "\n".join([f"> {tool}: {self.tools.functions[tool]['desc']}" for tool in self.tools.functions])
         tools = tools.replace("{{", "{").replace("}}", "}")
         tool_names = ", ".join([tool for tool in self.tools.functions])
-        if self.alert_dict['start_time'] != "":
-            input_arguments = {
-                "alert_info": self.alert_str,
-                "agent_name": self.name,
-                "env_description": env_description,                                 
-                "role_description": self.role_description,
-                "chat_history": self.memory.to_string(add_sender_prefix=True),
-                "tools": tools,
-                "tool_names": tool_names,
-                "tool_observation": "\n".join(tool_observation),
-            }
-        else:
-            input_arguments = {
-                "agent_name": self.name,
-                "env_description": env_description,                                 
-                "role_description": self.role_description,
-                "chat_history": self.memory.to_string(add_sender_prefix=True),
-                "tools": tools,
-                "tool_names": tool_names,
-                "tool_observation": "\n".join(tool_observation),
-             }
+
+        input_arguments = {
+            "alert_info": self.alert_str,
+            "agent_name": self.name,
+            "env_description": env_description,                                 
+            "role_description": self.role_description,
+            "chat_history": self.memory.to_string(add_sender_prefix=True),
+            "tools": tools,
+            "tool_names": tool_names,
+            "tool_observation": "\n".join(tool_observation),
+        }
 
         return Template(self.prompt_template).safe_substitute(input_arguments)
 

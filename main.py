@@ -1,29 +1,63 @@
-import argparse
+from our_argparse import args
 from multiagents.multiagents import MultiAgents
 from multiagents.tools.metrics import database_server_conf, db
-from multiagents.tools.metrics import get_workload_statistics, set_workload_statistics, get_slow_queries, set_slow_queries
+from multiagents.tools.metrics import get_workload_statistics, get_slow_queries, WORKLOAD_FILE_NAME
 from multiagents.utils.server import obtain_slow_queries
+import json
+import os
+import asyncio
+import time
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--latest_alert_file', type=str, default="latest_alert_info", required=False, help='the file name of latest alert information')
-parser.add_argument('--agent_conf_name', type=str, default="agent_conf", required=False, help='the file name of llm agent settings')
-parser.add_argument('--max_hired_experts', type=int, default=2, required=False, help='the maximum number of hired experts')
-parser.add_argument('--max_api_num', type=int, default=20, required=False, help='the maximum number of tool apis passed to single llm')
-# parser.add_argument('--max_abnormal_metric_num', type=int, default=5, required=False, help='the maximum number of abnormal metrics (after detectiion) passed to single llm')
-parser.add_argument('--enable_slow_query_log', type=bool, default=False, required=False, help='True for enabling the collection of slow queries from database logs')
-parser.add_argument('--enable_workload_statistics_view', type=bool, default=True, required=False, help='True for enabling the collection of query template information from database view')
-args = parser.parse_args()
+async def main(args):
 
-if args.enable_slow_query_log == True:
-    # [slow queries] read from query logs
-    # /var/lib/pgsql/12/data/pg_log/postgresql-Mon.log
-    slow_queries = obtain_slow_queries(database_server_conf)
-    set_slow_queries(str(slow_queries))
+    multi_agents = MultiAgents.from_task(args.agent_conf_name, args)
+    report, records = await multi_agents.run(args)
 
-if args.enable_workload_statistics_view == True:
-    workload_statistics = db.obtain_historical_queries_statistics()
-    set_workload_statistics(str(workload_statistics))
+    cur_time = int(time.time())
+    with open(f"./alert_results/examples/{str(cur_time)}.jsonl", "w") as f:
+        json.dump(records, f, indent=4)
 
+    return report, records
 
-multi_agents = MultiAgents.from_task(args.agent_conf_name, args)
-multi_agents.run(args)
+if __name__ == "__main__":
+
+    # read from the anomalies with alerts. for each anomaly, 
+    with open("./anomalies/public_testing_set/testing_cases.json", "r") as f:
+        anomaly_jsons = json.load(f)
+
+    diag_id, content = next(iter(anomaly_jsons.items()))
+
+    
+    args.start_at_seconds = content["start_time"]
+    args.end_at_seconds = content["end_time"]
+
+    slow_queries = []
+    workload_statistics = []
+    workload_sqls = ""
+    if args.enable_slow_query_log == True:
+        # [slow queries] read from query logs
+        # /var/lib/pgsql/12/data/pg_log/postgresql-Mon.log
+        # slow_queries = obtain_slow_queries(database_server_conf)
+        slow_queries = content["slow_queries"]
+    if args.enable_workload_statistics_view == True:
+        workload_statistics = db.obtain_historical_queries_statistics(topn = 50)
+    if args.enable_workload_sqls == True:
+        workload_sqls = content["workload"]
+
+    with open(WORKLOAD_FILE_NAME, 'w') as f:
+        json.dump({'slow_queries': slow_queries, 'workload_statistics': workload_statistics, 'workload_sqls': workload_sqls}, f)
+
+    if "alerts" in content and content["alerts"] != []:
+        args.alerts = content["alerts"] # possibly multiple alerts for a single anomaly
+    else:
+        args.alerts = []
+    
+    if "labels" in content and content["labels"] != []:
+        args.labels = content["labels"]
+    else:
+        args.labels = []
+    args.start_at_seconds = content["start_time"]
+    args.end_at_seconds = content["end_time"]        
+    args.diag_id = str(diag_id)
+    
+    asyncio.run(main(args))

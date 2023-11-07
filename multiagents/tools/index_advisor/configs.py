@@ -40,10 +40,11 @@ def get_index_result(algo, work_list, connector, columns,
 
     indexes = algorithm.calculate_best_indexes(workload, overhead=overhead)
 
-    indexes = indexes[0]
-
-    if indexes == []:
+    if indexes == [] or indexes == None or indexes == "":
         return [], -1, -1
+
+    if isinstance(indexes[0], list) and len(indexes) >= 1:
+        indexes = indexes[0]
 
     # if indexes are of string type
     if not isinstance(indexes, list):
@@ -72,4 +73,3 @@ def get_index_result(algo, work_list, connector, columns,
             ind_cost.append(ind_cost_)
 
     return indexes, total_no_cost, total_ind_cost
-
