@@ -1,10 +1,9 @@
 <template>
-  <div class="c-flex-row" style="width: 100%">
-    <div class="c-flex-column" style=" width: 40%; padding: 20px 0">
-
+  <div class="c-flex-row" style="width: 100%; font-size: 1rem">
+    <div class="c-flex-column" style=" width: 50%;">
       <div
         class="c-flex-row c-align-items-center c-justify-content-between c-shaow-card"
-        style="padding: 10px 20px; margin: 0 20px; border-radius: 80px!important;"
+        style="padding: 10px 20px; margin: 20px 20px 0; border-radius: 80px!important;"
       >
         <!--        <el-form-->
         <!--          ref="form"-->
@@ -43,13 +42,12 @@
         </div>
 
       </div>
-
-      <div class="c-flex c-flex-column" style="height: calc(100vh - 120px); overflow-y: auto; margin: 10px 0; padding: 0">
+      <div class="c-flex c-flex-column" style="height: calc(100vh - 400px); overflow-y: auto; margin: 10px 0; padding: 0">
         <div
           v-for="(item, index) in historyMessages"
           :key="index"
           class="diagnose-item c-flex-row c-align-items-center c-justify-content-between"
-          :style="openIndex === index ? 'background: rgb(232, 236, 255);' : ''"
+          :style="openIndex === index ? 'background: rgba(232, 236, 255, 1);' : ''"
         >
           <!--        <div class="c-flex-row c-align-items-center">-->
           <!--          <div class="title" style="margin-right: 20px; width: 40vw;">{{ item.title }}</div>-->
@@ -74,148 +72,146 @@
           </div>
         </div>
       </div>
-
-      <el-drawer
-        v-loading="reviewLoading"
-        :title="$t('reviewDrawerTitle')"
-        :visible.sync="reviewDrawer"
-        size="95vw"
-        destroy-on-close
-        direction="rtl"
+      <el-carousel
+        v-loading="openReportLoading"
+        :interval="3000"
+        arrow="always"
+        style="background: rgba(232, 236, 255, 1); margin: 20px; border-radius: 8px;
+       height: 260px; padding: 10px;"
       >
-        <div class="c-relative c-flex-column" style="overflow: hidden; height: 100%">
-          <el-steps :active="activeName" finish-status="success" simple style="width: 100%;">
-            <el-step :title="$t('setpTitle1')" style="cursor: pointer" @click.n.native="onStepClick(0)" />
-            <el-step :title="$t('setpTitle2')" style="cursor: pointer" @click.n.native="onStepClick(1)" />
-            <el-step :title="$t('setpTitle3')" style="cursor: pointer" @click.n.native="onStepClick(2)" />
-          </el-steps>
-
-          <transition name="fade">
-            <div
-              ref="setpScrollDiv"
-              class="c-relative c-flex-column"
-              style="height: calc(199 - 60px); overflow-y: auto; margin: 10px 0"
-              @scroll="stepScrollEvent"
-            >
-              <div class="review-step">
-                <div style="height: 40px; line-height: 40px; color: #333333; font-weight: bold; font-size: 18px">
-                  1.{{ $t('setpTip1') }}
-                </div>
-                <div class="c-flex-row c-align-items-center" style="height: calc(100% - 40px)">
-                  <OneChat
-                    v-if="roleAssignerMessages.length > 0"
-                    id="RoleAssigner"
-                    key="RoleAssigner"
-                    class="chat-container"
-                    sender="RoleAssigner"
-                    :type-speed="typeSpeed"
-                    :skip-typed="skipTyped"
-                    :messages="roleAssignerMessages"
-                    style="height: 100%; width: 30%;"
-                    @playbackComplete="onRoleAssignerPlaybackComplete('0')"
-                  />
-                  <div class="c-flex-row" style="width: 70%; height: 100%;">
-                    <OneChat
-                      v-if="cpuExpertMessages.length > 0"
-                      id="CpuExpert"
-                      key="CpuExpert"
-                      sender="CpuExpert"
-                      :type-speed="typeSpeed"
-                      :skip-typed="skipTyped"
-                      class="chat-container"
-                      :messages="cpuExpertMessages"
-                      style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
-                      @playbackComplete="onPlaybackComplete(1)"
-                    />
-                    <OneChat
-                      v-if="ioExpertMessages.length > 0"
-                      id="IoExpert"
-                      key="IoExpert"
-                      sender="IoExpert"
-                      :type-speed="typeSpeed"
-                      :skip-typed="skipTyped"
-                      class="chat-container"
-                      :messages="ioExpertMessages"
-                      style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
-                      @playbackComplete="onPlaybackComplete(1)"
-                    />
-                    <OneChat
-                      v-if="memoryExpertMessages.length > 0"
-                      id="MemoryExpert"
-                      key="MemoryExpert"
-                      sender="MemoryExpert"
-                      :type-speed="typeSpeed"
-                      :skip-typed="skipTyped"
-                      class="chat-container"
-                      :messages="memoryExpertMessages"
-                      style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
-                      @playbackComplete="onPlaybackComplete(1)"
-                    />
-                    <OneChat
-                      v-if="networkExpertMessages.length > 0"
-                      id="NetworkExpert"
-                      key="NetworkExpert"
-                      sender="NetworkExpert"
-                      :type-speed="typeSpeed"
-                      :skip-typed="skipTyped"
-                      class="chat-container"
-                      :messages="networkExpertMessages"
-                      style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
-                      @playbackComplete="onPlaybackComplete(1)"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="review-step">
-                <span style="height: 40px; line-height: 40px; color: #333333; font-weight: bold; margin: 10px 0; font-size: 18px">
-                  2.{{ $t('setpTip2') }}
-                </span>
-                <Chat
-                  v-if="brainstormingMessages.length > 0"
-                  class="chat-container"
-                  :type-speed="typeSpeed"
-                  :skip-typed="skipTyped"
-                  :messages="brainstormingMessages"
-                  style="height: calc(100% - 40px); width: 100%; padding: 0"
-                  @playbackComplete="onBrainstormingPlaybackComplete()"
-                />
-              </div>
-
-              <div class="review-step">
-                <span style="height: 40px; line-height: 40px; color: #333333; font-weight: bold; font-size: 18px">3.{{ $t('setpTip3') }}</span>
-                <div style="width: 100%; padding: 10px; background-color: RGBA(242, 246, 255, 1); border-radius: 8px" v-html="md.render(report)" />
-              </div>
-            </div>
-          </transition>
-        </div>
-      </el-drawer>
-
-      <el-drawer
-        :title="$t('reportDrawerTitle')"
-        :visible.sync="reportDrawer"
-        size="50vw"
-        destroy-on-close
-        direction="rtl"
-      >
-        <div class="c-relative c-flex-column" style="overflow-y: scroll; height: calc(100% - 40px); overflow-x: hidden">
-          <div
-            style="height: 100%; width: 100%; padding: 20px;"
-            v-html="md.render(report)"
+        <el-carousel-item v-for="(item, index) in charts" :key="index">
+          <lineChart
+            style="height: 200px; width: calc(50vw - 40px);"
+            :chart-option="item"
           />
-        </div>
-      </el-drawer>
-
+        </el-carousel-item>
+      </el-carousel>
     </div>
     <div
+      v-loading="openReportLoading"
       class="c-relative c-flex-column"
-      style="overflow-y: scroll; height: 100vh; overflow-x: hidden; width: 60%; background: rgb(232, 236, 255);"
+      style="overflow-y: scroll; height: 100vh; overflow-x: hidden; width: 50%; background: rgba(232, 236, 255, 1); padding: 20px;"
     >
       <div
-        style="height: 100%; width: 100%; padding: 20px;"
         v-html="md.render(openReport)"
       />
     </div>
+    <el-drawer
+      v-if="reviewDrawer"
+      v-loading="reviewLoading"
+      :title="$t('reviewDrawerTitle')"
+      :visible.sync="reviewDrawer"
+      size="95vw"
+      destroy-on-close
+      direction="rtl"
+    >
+      <div class="c-relative c-flex-column" style="overflow: hidden; height: 100%">
+        <el-steps :active="activeName" finish-status="success" simple style="width: 100%;">
+          <el-step :title="$t('setpTitle1')" style="cursor: pointer" @click.n.native="onStepClick(0)" />
+          <el-step :title="$t('setpTitle2')" style="cursor: pointer" @click.n.native="onStepClick(1)" />
+          <el-step :title="$t('setpTitle3')" style="cursor: pointer" @click.n.native="onStepClick(2)" />
+        </el-steps>
+
+        <transition name="fade">
+          <div
+            ref="setpScrollDiv"
+            class="c-relative c-flex-column"
+            style="height: calc(199 - 60px); overflow-y: auto; margin: 10px 0"
+            @scroll="stepScrollEvent"
+          >
+            <div class="review-step">
+              <div style="height: 40px; line-height: 40px; color: #333333; font-weight: bold; font-size: 18px">
+                1.{{ $t('setpTip1') }}
+              </div>
+              <div class="c-flex-row c-align-items-center" style="height: calc(100% - 40px)">
+                <OneChat
+                  v-if="roleAssignerMessages.length > 0"
+                  id="RoleAssigner"
+                  key="RoleAssigner"
+                  class="chat-container"
+                  sender="RoleAssigner"
+                  :type-speed="typeSpeed"
+                  :skip-typed="skipTyped"
+                  :messages="roleAssignerMessages"
+                  style="height: 100%; width: 30%;"
+                  @playbackComplete="onRoleAssignerPlaybackComplete('0')"
+                />
+                <div class="c-flex-row" style="width: 70%; height: 100%;">
+                  <OneChat
+                    v-if="cpuExpertMessages.length > 0"
+                    id="CpuExpert"
+                    key="CpuExpert"
+                    sender="CpuExpert"
+                    :type-speed="typeSpeed"
+                    :skip-typed="skipTyped"
+                    class="chat-container"
+                    :messages="cpuExpertMessages"
+                    style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
+                    @playbackComplete="onPlaybackComplete(1)"
+                  />
+                  <OneChat
+                    v-if="ioExpertMessages.length > 0"
+                    id="IoExpert"
+                    key="IoExpert"
+                    sender="IoExpert"
+                    :type-speed="typeSpeed"
+                    :skip-typed="skipTyped"
+                    class="chat-container"
+                    :messages="ioExpertMessages"
+                    style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
+                    @playbackComplete="onPlaybackComplete(1)"
+                  />
+                  <OneChat
+                    v-if="memoryExpertMessages.length > 0"
+                    id="MemoryExpert"
+                    key="MemoryExpert"
+                    sender="MemoryExpert"
+                    :type-speed="typeSpeed"
+                    :skip-typed="skipTyped"
+                    class="chat-container"
+                    :messages="memoryExpertMessages"
+                    style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
+                    @playbackComplete="onPlaybackComplete(1)"
+                  />
+                  <OneChat
+                    v-if="networkExpertMessages.length > 0"
+                    id="NetworkExpert"
+                    key="NetworkExpert"
+                    sender="NetworkExpert"
+                    :type-speed="typeSpeed"
+                    :skip-typed="skipTyped"
+                    class="chat-container"
+                    :messages="networkExpertMessages"
+                    style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
+                    @playbackComplete="onPlaybackComplete(1)"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="review-step">
+              <span style="height: 40px; line-height: 40px; color: #333333; font-weight: bold; margin: 10px 0; font-size: 18px">
+                2.{{ $t('setpTip2') }}
+              </span>
+              <Chat
+                v-if="brainstormingMessages.length > 0"
+                class="chat-container"
+                :type-speed="typeSpeed"
+                :skip-typed="skipTyped"
+                :messages="brainstormingMessages"
+                style="height: calc(100% - 40px); width: 100%; padding: 0"
+                @playbackComplete="onBrainstormingPlaybackComplete()"
+              />
+            </div>
+
+            <div class="review-step">
+              <span style="height: 40px; line-height: 40px; color: #333333; font-weight: bold; font-size: 18px">3.{{ $t('setpTip3') }}</span>
+              <div style="width: 100%; padding: 10px; background-color: RGBA(242, 246, 255, 1); border-radius: 8px" v-html="md.render(report)" />
+            </div>
+          </div>
+        </transition>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -227,10 +223,12 @@ import Chat from '@/components/Chat'
 import OneChat from '@/components/OneChat'
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
+import lineChart from '@/components/echarts/vue-chart'
+import { lineChartOption } from '@/utils/echart-ori-options'
 
 export default {
   filters: {},
-  components: { OneChat, Chat },
+  components: { OneChat, Chat, lineChart },
   data() {
     return {
       timeRange: [],
@@ -268,9 +266,10 @@ export default {
       reviewLoading: false,
       activeName: 0,
       analyseAt: undefined,
-      reportDrawer: false,
       skipTyped: true,
-      typeSpeed: 100
+      typeSpeed: 100,
+      openReportLoading: false,
+      charts: []
     }
   },
   watch: {},
@@ -302,6 +301,7 @@ export default {
       this.getAlertHistoryDetail(item)
     },
     onRoleAssignerPlaybackComplete() {
+      this.expertCount = 0
       this.cpuExpertMessages = this.reviewItem.anomalyAnalysis?.CpuExpert?.messages || []
       this.ioExpertMessages = this.reviewItem.anomalyAnalysis?.IoExpert?.messages || []
       this.memoryExpertMessages = this.reviewItem.anomalyAnalysis?.MemoryExpert?.messages || []
@@ -340,16 +340,23 @@ export default {
       })
     },
     onReportClick(item, index) {
-      // this.reportDrawer = true
       const that = this
+      // that.openReportLoading = true
       that.openIndex = index
       this.getAlertHistoryDetail(item, () => {
+        // that.openReportLoading = false
         that.openReport = that.reviewItem.report || ''
-        console.log('===:', that.reviewItem)
+        const topMetrics = this.reviewItem.topMetrics
+        topMetrics.forEach(item => {
+          var option = JSON.parse(JSON.stringify(lineChartOption))
+          option.series[0].data = item.values
+          option.title.text = item.title
+          option.color = option.color[Math.floor(Math.random() * option.color.length)]
+          that.charts.push(option)
+        })
       })
     },
     onStepClick(activeName) {
-      console.log('======onStepClick==========:', activeName)
       this.activeName = activeName
       const calcHeight = this.$refs.setpScrollDiv.getBoundingClientRect().height
       this.scrollToTopWithAnimation(calcHeight * this.activeName)

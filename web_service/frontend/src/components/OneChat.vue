@@ -108,11 +108,6 @@ export default {
     })
   },
   methods: {
-    resetTypeds() {
-      this.typedObjs.forEach(item => {
-        item.reset(true)
-      })
-    },
     dealMessage(index) {
       if (index >= this.messages.length) {
         this.$emit('playbackComplete')
@@ -124,7 +119,7 @@ export default {
       }
       const message = this.messages[index]
 
-      if (!message.data || message.data.trim().length === 0) {
+      if (!(message.data && message.data.trim())) {
         this.dealMessage(index + 1)
         return
       }
@@ -134,7 +129,7 @@ export default {
       const messagesContainer = document.getElementById(this.componentId + '-scroll-container')
       messagesContainer.innerHTML = messagesContainer.innerHTML +
         `<div class="text-item c-flex-column">
-            <span style="font-size: 12px; color: #333333; margin-bottom: 5px">
+            <span style="font-size: 1rem; color: #333333; margin-bottom: 5px">
               <span style="margin-left: 5px; color: #666666">${message.time}</span>
             </span>
             <div id="${divId}" class="content c-flex-column"></div>
@@ -142,7 +137,6 @@ export default {
 
       setTimeout(() => {
         try {
-          // message.data = message.data.replace('CpuExpert', '<img src="../assets/cpu_robot.webp">')
           if (this.skipTyped) {
             const contentContainer = document.getElementById(divId)
             contentContainer.innerHTML = this.md.render(message.data)
@@ -178,7 +172,7 @@ export default {
 }
 
 .content {
-  color: #111111;
+  color: #333333;
   font-size: 14px;
   min-height: 20px;
   border-radius: 20px;

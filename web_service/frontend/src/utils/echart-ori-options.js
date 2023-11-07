@@ -1,10 +1,10 @@
 export const lineChartOption = {
-  title: { show: false },
+  title: { show: true },
   grid: {
-    left: '60',
-    top: 10,
-    bottom: 50,
-    right: 20
+    left: 80,
+    top: 60,
+    bottom: 30,
+    right: 80
   },
   tooltip: {
     trigger: 'axis',
@@ -17,7 +17,7 @@ export const lineChartOption = {
       type: 'shadow'
     }
   },
-  color: [],
+  color: ['#1890FF', '#FFFF00', '#975FE4', ['#FE2E2E', '#01DF01', '#FFFF00']],
   legend: {
     data: [],
     bottom: 0,
@@ -96,5 +96,12 @@ export const lineChartOption = {
       show: false
     }
   },
-  series: []
+  series: [{
+    name: '',
+    data: [],
+    type: 'line',
+    smooth: true,
+    showSymbol: false
+  }]
 }
+

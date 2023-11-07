@@ -124,3 +124,10 @@
   width: 100%;
   height: 100%;
 }
+
+details {
+  padding: 10px;
+  background-color: rgba(23, 95, 255, 0.1);
+  border-radius: 8px;
+  margin: 10px 0;
+}
