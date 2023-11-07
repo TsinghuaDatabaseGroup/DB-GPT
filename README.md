@@ -18,12 +18,12 @@
     【English | <a href="README-Chinese.md">中文</a>】
 </p> -->
 
-🦾 Our mission is to build your personal database administrator (D-Bot). D-Bot is good at *reading documents, using various tools, writing analysis reports!* 🧑‍💻
+🦾 Build your personal database administrator (D-Bot)🧑‍💻, which is good at *reading documents, using various tools, writing analysis reports!* 
 
->Besides, to extend the database maintenance capability, we are also finetuning LLMs to support localized diagnosis, *query rewriting* and *anomaly simulation* (comming soon).
+<!-- >Besides, to extend the database maintenance capability, we are also finetuning LLMs to support localized diagnosis, *query rewriting* and *anomaly simulation* (comming soon). -->
 
 <p align="center">
-    <img src="imgs/overview_v2.png" width="400px">
+    <img src="imgs/overview_v2.png" width="600px">
 </p>
 
 
@@ -133,9 +133,9 @@ sh run_service.sh
 
 > Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python are installed.
 
-After successfully launching the local server, visit [http://127.0.0.1:8025/](http://127.0.0.1:8025/) to trigger the diagnosis procedure.
+After successfully launching the local server, visit [http://127.0.0.1:8025/](http://127.0.0.1:8025/) to browse the diagnosis reports.
 
-### Diagnosis
+### Anomaly Diagnosis
 
 <span id="-prerequisites"></span>
 
