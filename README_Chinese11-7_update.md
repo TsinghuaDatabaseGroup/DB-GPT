@@ -1,5 +1,5 @@
 <div align= "center">
-    <h1> <img src="imgs/dbagent.png" width="100px"> LLM作为数据库管理员</h1>
+    <h1> <img src="imgs/dbagent.png" width="100px">数字运维员工</h1>
 </div>
 
 <p align="center">
@@ -41,7 +41,7 @@
 ## 📰 更新
 
 - [x] 升级基于 LLM 的诊断机制:
-  - [x] _任务分派 -> 并行诊断 -> 交叉审查 -> 报告生成 (可下载)_
+  - [x] _任务分派 -> 并行诊断 -> 交叉审查 -> 报告生成_
 - [x] 添加典型异常和警报 (Pigsty) <a href="#-anomalies">🔗 链接</a>
 - [x] 提供端到端框架！<a href="#-diagnosis">🚀 链接</a>
 - [ ] 在多个层次上支持监控和优化工具 [🔗 链接](multiagents/tools)
@@ -54,11 +54,11 @@
   - [ ] 备份和时间点恢复 (Pigsty)
 
 - [x] 我们的愿景论文已发布 (持续更新)
-  - _LLM 作为数据库管理员。_ [[论文]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[推特]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[幻灯片]](materials/slides)
-  - _DB-GPT: 大型语言模型与数据库相遇。_ [[论文]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
+  - _LLM As DBA_ [[论文]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[推特]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[幻灯片]](materials/slides)
+  - _DB-GPT: Large Language Model Meets Database_ [[论文]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
 
 > 该项目正在不断引入新特性 👫👫<br/>
-> 不要忘记点赞 ⭐ 并关注 👀 以保持最新 :)
+> 不要忘记星标 ⭐ 并关注 👀 以同步最新进展 :)
 
 <span id="-quickstart"></span>
 
@@ -68,24 +68,24 @@
 
     .
     ├── multiagents
-    │   ├── agent_conf                        # 每个代理的设置
-    │   ├── agents                            # 不同代理类型的实现
-    │   ├── environments                      # 例如，聊天命令 / 聊天更新 / 终端条件
-    │   ├── knowledge                         # 来自文档的诊断经验
-    │   ├── llms                              # 支持的模型
-    │   ├── memory                            # 聊天历史的内容和摘要
-    │   ├── reasoning_algorithms              # 单个LLM推理的可用算法
-    │   ├── response_formalize_scripts        # 模型响应的无用内容移除
-    │   ├── tools                             # 模型的外部监控/优化工具
-    │   └── utils                             # 其他功能（例如，数据库/json/yaml操作）
-    ├── web_service                           # 查看诊断报告的网络服务
-    │   ├── backend                           # 网络服务后端
-    │   ├── frontend                          # 网络服务前端
-    ├── webhook                               # 使用webhook将警报结果保存到文件
+    │   ├── agent_conf           # Agent配置信息
+    │   ├── agents               # 不同类型Agent的实现
+    │   ├── environments         # 例如，诊断顺序 / 诊断更新 / 终止条件
+    │   ├── knowledge            # 来自文档的诊断经验
+    │   ├── llms                 # 支持的模型
+    │   ├── memory               # 诊断历史的内容和摘要
+    │   ├── reasoning_algorithms # 单个LLM的推理算法
+    │   ├── response_formalize_scripts  # 无用内容移除
+    │   ├── tools                # 模型的外部监控/优化工具
+    │   └── utils                # 其他功能（例如，数据库/json/yaml操作）
+    ├── web_service              # 查看诊断报告的网络服务
+    │   ├── backend              # 网络服务后端
+    │   ├── frontend             # 网络服务前端
+    ├── webhook                  # 使用webhook将告警结果保存到文件
 
 <span id="-frontend"></span>
 
-### 网站端
+### 网页端
 
 我们提供一个本地网站来浏览历史诊断报告和流程。你可以轻松地启动它：
 
@@ -217,15 +217,15 @@ python batch_main.py
 
 <span id="-anomalies"></span>
 
-## 🎩 警报和异常
+## 🎩 告警和异常
 
-### 警报管理
+### 告警管理
 
 我们支持 Prometheus 的 AlertManager。您可以在这里找到有关如何配置 alertmanager 的更多信息：[alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/)。
 
 - 我们提供与 AlertManager 相关的配置文件，包括[alertmanager.yml](./config/alertmanager.yml)、[node_rules.yml](./config/node_rules.yml)和[pgsql_rules.yml](./config/pgsql_rules.yml)。路径位于根目录的[config folder](./config/)中，您可以将其部署到您的 Prometheus 服务器以检索相关的异常。
-- 我们还提供支持获取警报的 webhook 服务器。路径是根目录中的 webhook 文件夹，您可以将其部署到您的服务器以获取和存储 Prometheus 的警报。诊断模型定期从此服务器抓取警报信息。这个文件是使用 SSH 获取的。您需要在 config 文件夹中的[tool_config.yaml](./config/tool_config_example.yaml)中配置您的服务器信息。
-- [node_rules.yml](./config/node_rules.yml)和[pgsql_rules.yml](./config/pgsql_rules.yml)是引用https://github.com/Vonng/pigsty代码在这个开源项目中，他们的监控做得非常好，感谢他们的努力。
+- 我们还提供支持获取警报的 webhook 服务器。路径是根目录中的 webhook 文件夹，您可以将其部署到您的服务器以获取和存储 Prometheus 的警报。这个文件是使用 SSH 获取的。您需要在 config 文件夹中的[tool_config.yaml](./config/tool_config_example.yaml)中配置您的服务器信息。
+- [node_rules.yml](./config/node_rules.yml)和[pgsql_rules.yml](./config/pgsql_rules.yml)是引用[https://github.com/Vonng/pigsty](https://github.com/Vonng/pigsty)开源项目，他们的监控做得非常好，感谢他们的努力。
 
 ### 异常模拟
 
@@ -247,7 +247,7 @@ python batch_main.py
 | COMMIT_CONTENTION     | 高并发提交影响 SQL 执行     | ![](https://img.shields.io/badge/-NodeLoadHigh-Informational) ![](https://img.shields.io/badge/-NodeOutOfMem-informational) |
 | SMALL_MEMORY_ALLOC    | 工具分配的内存空间过小      |                                                                                                                             |
 
-#### 人为设计的异常
+#### 手动触发异常
 
 _[点击查看 29 种典型异常与专家分析](./anomaly_trigger/29种性能异常与根因分析.pdf)（由 DBMind 团队支持）_
 
@@ -255,13 +255,13 @@ _[点击查看 29 种典型异常与专家分析](./anomaly_trigger/29种性能�
 
 ## 📎 自定义知识和工具
 
-### 1. 知识提取 (Zui Chen)
+### 1. 知识提取 (陈醉)
 
 <span id="-doc2knowledge"></span>
 
-步骤 1. 将*doc2knowledge/config_template.json*重命名为*doc2knowledge/config.json*。并为"api_key"添加值（"organization"是可选的）
+步骤 1. 将*./doc2knowledge/config_template.json*重命名为*doc2knowledge/config.json*。并为"api_key"添加值（"organization"是可选的）
 
-> GPT-4 是使用*函数调用*功能所必需的。我将尝试解决这个限制。
+> GPT-4 是使用*function call*功能所必需的。我将尝试解决这个限制。
 
 步骤 2. 按章节索引将文档分割为单独的章节文件（例如，section1, section1.1, section2 ...）。并将章节文件复制到 _docs/<your_document_name>/raw/_。例如：
 
@@ -279,6 +279,7 @@ _[点击查看 29 种典型异常与专家分析](./anomaly_trigger/29种性能�
 步骤 3. 修改*doc2knowledge.py*脚本中的参数并运行脚本：
 
 ```bash
+cd doc2knowledge/
 python doc2knowledge.py
 ```
 
@@ -341,7 +342,7 @@ python doc2knowledge.py
 ## 👫 社区
 
 - [清华大学](https://www.tsinghua.edu.cn/en/)
-- [ModelBest](https://modelbest.cn/)
+- [面壁科技](https://modelbest.cn/)
 
 <span id="-projects"></span>
 
@@ -355,7 +356,6 @@ https://github.com/Vonng/pigsty
 
 ## 📒 引用
 
-如果你喜欢这个项目，请随意引用我们。
 
 ```bibtex
 @misc{zhou2023llm4diag,

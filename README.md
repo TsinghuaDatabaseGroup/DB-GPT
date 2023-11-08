@@ -13,9 +13,9 @@
   <a href="#-contributors">Contributors</a>
 </p>
 
-<!-- <p align="center">
-    【English | <a href="README-Chinese.md">中文</a>】
-</p> -->
+<p align="center">
+    【English | <a href="README_Chinese11-7_update.md">中文</a>】
+</p>
 
 🦾 Build your personal database administrator (D-Bot)🧑‍💻, which is good at *reading documents, using various tools, writing analysis reports!* 
 
@@ -50,7 +50,7 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you ca
 
 - [x] Upgrade the LLM-based diagnosis mechanism: 
 
-    * [x] *Task Dispatching -> Concurrent Diagnosis -> Cross Review -> Report Generation (downloadable)*
+    * [x] *Task Dispatching -> Concurrent Diagnosis -> Cross Review -> Report Generation*
 
 - [x] Add typical anomalies and alerts (Pigsty) <a href="#-anomalies">🔗 link</a>
 
@@ -89,7 +89,7 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you ca
     ├── multiagents
     │   ├── agent_conf                        # Settings of each agent
     │   ├── agents                            # Implementation of different agent types 
-    │   ├── environments                      # E.g., chat orders / chat update / terminal conditions
+    │   ├── environments                      # E.g., diag orders / diag update / terminal conditions
     │   ├── knowledge                         # Diagnosis experience from documents
     │   ├── llms                              # Supported models
     │   ├── memory                            # The content and summary of chat history
@@ -218,7 +218,7 @@ cd others
 python openai_test.py
 ```
 
-#### 3. Diagnosis
+#### 3. Generate New Diagnosis Report
 
 - Test single case
 
@@ -241,7 +241,8 @@ python batch_main.py
 We support AlertManager for Prometheus. You can find more information about how to configure alertmanager here: [alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/).
 
 - We provide AlertManager-related configuration files, including [alertmanager.yml](./config/alertmanager.yml), [node_rules.yml](./config/node_rules.yml), and [pgsql_rules.yml](./config/pgsql_rules.yml). The path is in the [config folder](./config/) in the root directory, which you can deploy to your Prometheus server to retrieve the associated exceptions.
-- We also provide webhook server that supports getting alerts. The path is a webhook folder in the root directory that you can deploy to your server to get and store Prometheus's alerts. The diagnostic model periodically grabs Alert information from this server. This file is obtained using SSh. You need to configure your server information in the [tool_config.yaml](./config/tool_config_example.yaml) in the config folder.
+- We also provide webhook server that supports getting alerts. The path is a webhook folder in the root directory that you can deploy to your server to get and store Prometheus's alerts in files. 
+- Currently, the alert file is obtained using SSh. You need to configure your server information in the [tool_config.yaml](./config/tool_config_example.yaml) in the config folder.
 - [node_rules.yml](./config/node_rules.yml) and [pgsql_rules.yml](./config/pgsql_rules.yml) is a reference https://github.com/Vonng/pigsty code in this open source project, their monitoring do very well, thank them for their effort.
 
 
@@ -299,6 +300,7 @@ Step 2. Split documents into separated section files by the section indexes (e.g
 Step 3. Modify the arguments in *doc2knowledge.py* script and run the script:
 
 ```bash
+cd doc2knowledge/
 python doc2knowledge.py
 ```
 
@@ -356,6 +358,7 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 - ~~Add more communication mechanisms~~
 - ~~Support more knowledge sources~~
 - Localized model that reaches D-bot(gpt4)'s capability
+- Prometheus-as-a-Service
 - Support other databases (e.g., mysql/redis)
 
 
