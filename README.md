@@ -31,8 +31,7 @@
 
 ## 🗺 Online Demo
 
-In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)
-), you can browse all the historical diagnosis results, used metrics, and the detailed diagnosis processes.
+In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you can browse all the historical diagnosis results, used metrics, and the detailed diagnosis processes.
 
 <p align="center">
   <a href="http://dbgpt.dbmind.cn">
@@ -251,9 +250,9 @@ We support AlertManager for Prometheus. You can find more information about how 
 
 #### Script-Triggered Anomalies
 
-Within the *[anomaly_trigger](./anomaly_trigger)* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
+We offer scripts that could incur typical anomalies. Check out different anomaly cases in [http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)
 
-| Root Cause          | Description                                           | Alerts                 |
+| Root Cause          | Description                                           | Potential Alerts                 |
 |---------------------|-------------------------------------------------------|----------------------|
 | INSERT_LARGE_DATA    | Long execution time for large data insertions         |    ![](https://img.shields.io/badge/-NodeOutOfMem-informational)   |
 | FETCH_LARGE_DATA    | Long execution time for large data fetching           |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational)   |
