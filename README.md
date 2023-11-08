@@ -253,7 +253,7 @@ We support AlertManager for Prometheus. You can find more information about how 
 
 Within the *[anomaly_trigger](./anomaly_trigger)* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
 
-| Root Cause          | Description                                           | Potential Alerts                 |
+| Root Cause          | Description                                           | Alerts                 |
 |---------------------|-------------------------------------------------------|----------------------|
 | INSERT_LARGE_DATA    | Long execution time for large data insertions         |    ![](https://img.shields.io/badge/-NodeOutOfMem-informational)   |
 | FETCH_LARGE_DATA    | Long execution time for large data fetching           |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational)   |
