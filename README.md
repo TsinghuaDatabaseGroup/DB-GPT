@@ -135,7 +135,7 @@ sh run_service.sh
 
 After successfully launching the local server, visit [http://127.0.0.1:8025/](http://127.0.0.1:8025/) to browse the diagnosis reports.
 
-### Anomaly Diagnosis
+### Diagnosis Side
 
 <span id="-prerequisites"></span>
 
@@ -249,10 +249,6 @@ We support AlertManager for Prometheus. You can find more information about how 
 
 ### Anomaly Simulation
 
-#### Manually Designed Anomalies
-
-*[Click to check 29 typical anomalies together with expert analysis](./anomaly_trigger/29种性能异常与根因分析.pdf) (supported by the DBMind team)*
-
 #### Script-Triggered Anomalies
 
 Within the *[anomaly_trigger](./anomaly_trigger)* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
@@ -265,12 +261,16 @@ Within the *[anomaly_trigger](./anomaly_trigger)* directory, we aim to offer scr
 | VACUUM              |       Unused space caused by data modifications       |  ![](https://img.shields.io/badge/-NodeOutOfMem-informational)    |
 | POOR_JOIN_PERFORMANCE | Poor performance of Join operators                  |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational)    |
 | CORRELATED_SUBQUERY | Non-promotable subqueries in SQL                      |     ![](https://img.shields.io/badge/-NodeLoadHigh-Informational),![](https://img.shields.io/badge/-PostgresDown-red) |
-| LOCK_CONTENTION     | Lock contention issues                                |  ![](https://img.shields.io/badge/-NodeCpuHigh-Informational)
-,![](https://img.shields.io/badge/-PostgresRestart-red) |
+| LOCK_CONTENTION     | Lock contention issues                                |  ![](https://img.shields.io/badge/-NodeCpuHigh-Informational) ![](https://img.shields.io/badge/-PostgresRestart-red) |
 | CPU_CONTENTION      | Severe external CPU resource contention               |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational)   |
-| IO_CONTENTION       | IO resource contention affecting SQL performance      |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational),![](https://img.shields.io/badge/-NodeOutOfMem-informational)      |
-| COMMIT_CONTENTION | High-concurrency commits affecting SQL execution        |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational), ![](https://img.shields.io/badge/-NodeOutOfMem-informational)   |
+| IO_CONTENTION       | IO resource contention affecting SQL performance      |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational) ![](https://img.shields.io/badge/-NodeOutOfMem-informational)      |
+| COMMIT_CONTENTION | High-concurrency commits affecting SQL execution        |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational) ![](https://img.shields.io/badge/-NodeOutOfMem-informational)   |
 | SMALL_MEMORY_ALLOC    | Tool small allocated memory space              |                      |
+
+
+#### Manually Designed Anomalies
+
+*[Click to check 29 typical anomalies together with expert analysis](./anomaly_trigger/29种性能异常与根因分析.pdf) (supported by the DBMind team)*
 
 
 <span id="-customize"></span>
@@ -382,7 +382,7 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 <span id="-projects"></span>
 
-## Relevant Projects
+## 🤗 Relevant Projects
 
 https://github.com/OpenBMB/AgentVerse
 
@@ -391,7 +391,7 @@ https://github.com/Vonng/pigsty
 
 <span id="-citation"></span>
 
-## Citation
+## 📒 Citation
 Feel free to cite us if you like this project.
 ```bibtex
 @misc{zhou2023llm4diag,
@@ -426,3 +426,7 @@ Feel free to cite us if you like this project.
 Other Collaborators: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](https://github.com/LikyThu).
 
 We thank all the contributors to this project. Do not hesitate if you would like to get involved or contribute!
+
+## ⭐️ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=TsinghuaDatabaseGroup/DB-GPT&type=Date)](https://star-history.com/#TsinghuaDatabaseGroup/DB-GPT&Date)
