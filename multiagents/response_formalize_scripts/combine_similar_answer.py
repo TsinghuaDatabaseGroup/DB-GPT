@@ -5,14 +5,27 @@ import re
 from scipy import spatial  # for calculating vector similarities for search
 import pdb
 import time
+import logging
 
-model = "text-embedding-ada-002"
-api_key = os.environ.get("OPENAI_API_KEY")
+try:
+    import openai
+    from openai.error import OpenAIError
+except ImportError:
+    is_openai_available = False
+    logging.warning("openai package is not installed")
+else:
+    openai.api_key = os.environ.get("OPENAI_API_KEY")
+    openai.proxy = os.environ.get("http_proxy")
+    if openai.proxy is None:
+        openai.proxy = os.environ.get("HTTP_PROXY")
+    if openai.api_key is None:
+        logging.warning(
+            "OpenAI API key is not set. Please set the environment variable OPENAI_API_KEY"
+        )
+        is_openai_available = False
+    else:
+        is_openai_available = True
 
-headers = {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + api_key
-}
 
 similarity = lambda x, y: 1 - spatial.distance.cosine(x, y)
 
@@ -36,17 +49,22 @@ def combine_similar_answers(text, output_format='str'):
             k = 0
             while not is_embedded and k < 10:
                 try:
-                    response = requests.post('https://xxxx/v1/embeddings', json={"input": sentence, "model": model},
-                                            headers=headers)
-                    if "data" in response.json():                        
-                        embedding = response.json()["data"][0]["embedding"]
+                    response = openai.Embedding.create(
+                        input=sentence,
+                        model="text-embedding-ada-002"
+                    )
+                    
+                    if "data" in response:
+                        embedding = response['data'][0]['embedding']
                         is_embedded = True
                     else:
                         time.sleep(0.01)
                         k += 1
-                except:
+                except OpenAIError as e:
+                    print("OpenAI API error: {}".format(e))
                     time.sleep(0.01)
                     pass
+
             if is_embedded == True:
                 sentences.append({"text": sentence, "embedding": embedding})
 

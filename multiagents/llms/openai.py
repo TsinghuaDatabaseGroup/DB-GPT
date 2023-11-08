@@ -128,9 +128,9 @@ class OpenAIChat(BaseChatModel):
     def parse(self):
         #messages = self._construct_messages(prompt) # TODO add history messages
 
-        training_data_position = "./logs/diag_training_data_with_exact_sqls.jsonl"
+        # training_data_position = "./logs/diag_training_data_with_exact_sqls.jsonl"
         
-        api_key = os.environ.get("OPENAI_API_KEY")
+        # api_key = os.environ.get("OPENAI_API_KEY")
 
         messages = self.conversation_history
 
@@ -145,31 +145,37 @@ class OpenAIChat(BaseChatModel):
         for i in range(self.TRY_TIME):
 
             try:
-                headers = {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + api_key
-                }
-                url = "https://xxxx/v1/chat/completions"
+
+                # headers = {
+                #     "Content-Type": "application/json",
+                #     "Authorization": "Bearer " + api_key
+                # }
+                # url = "https://xxxx/v1/chat/completions"
                 
-                payload = {
-                    "model": "gpt-4",
-                    "messages": messages
-                }
+                # payload = {
+                #     "model": "gpt-4",
+                #     "messages": messages
+                # }
 
-                start = time.time()
-                response = requests.post(url, json=payload, headers=headers)
-                end = time.time()
-                # print("gpt4 latency (seconds): ", end-start)
-                with open("gpt4_latency.txt", "a") as f:
-                    f.write(str(end-start)+"s\n")
+                # start = time.time()
+                # response = requests.post(url, json=payload, headers=headers)
+                # end = time.time()
+                # with open("gpt4_latency.txt", "a") as f:
+                #     f.write(str(end-start)+"s\n")
 
-                if isinstance(response.text, str):
-                    output = json.loads(response.text)
-                    if "choices" in output:
-                        output = output["choices"][0]["message"]["content"]
-                    else:
-                        print(colored("Fail to prase the response: " + str(response.text), "red"))
-                        raise Exception("Fail to prase the response: ", response.text)
+                response = openai.ChatCompletion.create(
+                    messages=messages,
+                    **self.args.dict(),
+                )
+                output = response["choices"][0]["message"]["content"]
+
+                # if isinstance(response.text, str):
+                #     output = json.loads(response.text)
+                #     if "choices" in output:
+                #         output = output["choices"][0]["message"]["content"]
+                #     else:
+                #         print(colored("Fail to prase the response: " + str(response.text), "red"))
+                #         raise Exception("Fail to prase the response: ", response.text)
 
                 # response = openai.ChatCompletion.create(
                 #     messages=messages, **self.args.dict()
@@ -177,70 +183,66 @@ class OpenAIChat(BaseChatModel):
 
                 output = remove_charts(output)
 
-                with open(training_data_position, "a") as wf:
-                    if isinstance(messages, list):
-                        messages_str = messages # messages[-1]
-                        if isinstance(messages_str, dict):
-                            messages_str = str(messages_str["content"])
-                        else:
-                            messages_str = str(messages_str)
-                    else:
-                        if isinstance(messages, dict):
-                            messages_str = str()
-                        else:
-                            messages_str = str(messages)
+                # with open(training_data_position, "a") as wf:
+                #     if isinstance(messages, list):
+                #         messages_str = messages # messages[-1]
+                #         if isinstance(messages_str, dict):
+                #             messages_str = str(messages_str["content"])
+                #         else:
+                #             messages_str = str(messages_str)
+                #     else:
+                #         if isinstance(messages, dict):
+                #             messages_str = str()
+                #         else:
+                #             messages_str = str(messages)
 
-                    # messages_str = messages_str.replace('\n', '\\n')
-                    # messages_str = messages_str.replace('"', '\\"')
+                #     # messages_str = messages_str.replace('\n', '\\n')
+                #     # messages_str = messages_str.replace('"', '\\"')
 
-                    # output = output.replace('\n', '\\n')
-                    # output = output.replace('"', '\\"')
+                #     # output = output.replace('\n', '\\n')
+                #     # output = output.replace('"', '\\"')
 
-                    messages_str = remove_charts(messages_str)
+                #     messages_str = remove_charts(messages_str)
 
-                    # dump into the json file in pretty format
-                    json.dump({"input": str(messages_str), "output": str(output)}, wf)
-                    # add \n at the end of the line
-                    wf.write('\n')
+                #     # dump into the json file in pretty format
+                #     json.dump({"input": str(messages_str), "output": str(output)}, wf)
+                #     # add \n at the end of the line
+                #     wf.write('\n')
 
-                # import pdb; pdb.set_trace()
                 return {"role": "assistant", "content": output, "time": time.strftime("%H:%M:%S", time.localtime())}
-            except:
+            except (OpenAIError, KeyboardInterrupt) as error:
+                print(f"Generate_response Exception: {repr(error)}. Try again.")
 
                 if i !=0 and i%10 == 0:
-                    # randomly read a line from openai_keys.txt file as the openai key
-                    with open('openai_keys.txt', 'r') as f:
-                        lines = f.readlines()
-                        rowid = random.randint(0, len(lines)-1)
-                        line = lines[rowid].strip()
-                        items = line.split(" ")
+                    # randomly read a line from openai_keys.txt file (key pool)
+                    if os.path.exists('openai_keys.txt'):
 
-                        while items[0] == api_key:
+                        with open('openai_keys.txt', 'r') as f:
+                            lines = f.readlines()
                             rowid = random.randint(0, len(lines)-1)
                             line = lines[rowid].strip()
                             items = line.split(" ")
 
-                        api_key = items[0]
-                        # if len(items) == 1:
-                        #     openai.organization = ""
-                        # else:
-                        #     openai.organization = items[1]
+                            while items[0] == openai.api_key:
+                                rowid = random.randint(0, len(lines)-1)
+                                line = lines[rowid].strip()
+                                items = line.split(" ")
 
-                        # print(f"[{str(rowid)}] openai key changed to {api_key}")
-                        # if i%100 == 0:
-                        #     print(colored(f"{messages}", "red"))
+                            openai.api_key = items[0]
+                            # if len(items) == 1:
+                            #     openai.organization = ""
+                            # else:
+                            #     openai.organization = items[1]
 
-                        f.close()
-                else:
-                    time.sleep(1)
-                                
+                            # print(f"[{str(rowid)}] openai key changed to {api_key}")
+                            # if i%100 == 0:
+                            #     print(colored(f"{messages}", "red"))
+
+                            f.close()
+                time.sleep(min(i**2, 60))               
                 continue
 
         return {"role": "assistant", "content": "OpenAI service is unavailable. Please try again."}
-
-
-
-
 
 
 
