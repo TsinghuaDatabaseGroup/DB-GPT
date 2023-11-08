@@ -51,7 +51,7 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you ca
 
 - [x] Upgrade the LLM-based diagnosis mechanism: 
 
-    * [x] *Task Dispatching -> Concurrent Diagnosis -> RoundTable Discussion -> Report Generation (downloadable)*
+    * [x] *Task Dispatching -> Concurrent Diagnosis -> Cross Review -> Report Generation (downloadable)*
 
 - [x] Add typical anomalies and alerts (Pigsty) <a href="#-anomalies">🔗 link</a>
 
@@ -278,7 +278,7 @@ We offer scripts that could incur typical anomalies. Check out different anomaly
 
 <span id="-doc2knowledge"></span>
 
-### 1. Knowledge Extraction (Document)
+### 1. Knowledge Extraction (Zui Chen)
 
 Step 1. Rename *doc2knowledge/config_template.json* into *doc2knowledge/config.json*. And add the value for "api_key" ("organization" is optional)
 
@@ -321,17 +321,6 @@ python doc2knowledge.py
     For functions within [[query_rewrite](multiagents/tools/query_advisor), [physical_hint](multiagents/tools/query_advisor)], you can use *api_test.py* script to verify the effectiveness. 
 
     If the function actually works, append it to the *api.py* of corresponding module.
-
-<span id="-tot"></span>
-
-- Tool Usage Algorithm (*tree of thought*)
-
-    ```bash
-    cd tree_of_thought
-    python test_database.py
-    ```
-
-    > History messages may take up many tokens, and so carefully decide the *turn number*.
 
 
 <span id="-FAQ"></span>
