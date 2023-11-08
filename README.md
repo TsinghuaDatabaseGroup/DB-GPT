@@ -23,7 +23,7 @@
 <!-- >Besides, to extend the database maintenance capability, we are also finetuning LLMs to support localized diagnosis, *query rewriting* and *anomaly simulation* (comming soon). -->
 
 <p align="center">
-    <img src="imgs/overview_v2.png" width="600px">
+    <img src="imgs/overview_v3.png" width="800px">
 </p>
 
 
