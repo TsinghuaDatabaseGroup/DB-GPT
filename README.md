@@ -259,18 +259,18 @@ Within the *[anomaly_trigger](./anomaly_trigger)* directory, we aim to offer scr
 
 | Root Cause          | Description                                           | Potential Alerts                 |
 |---------------------|-------------------------------------------------------|----------------------|
-| ![](https://img.shields.io/badge/-INSERT_LARGE_DATA-Informational)    | Long execution time for large data insertions         |    NodeOutOfMem   |
-| ![](https://img.shields.io/badge/-FETCH_LARGE_DATA-Informational)    | Long execution time for large data fetching           |   NodeLoadHigh   |
-| ![](https://img.shields.io/badge/-REDUNDANT_INDEX-Informational)      | Unnecessary and redundant indexes in tables           |  NodeLoadHigh     |
-| ![](https://img.shields.io/badge/-VACUUM-Informational)              |       Unused space caused by data modifications       |  NodeOutOfMem    |
-| ![](https://img.shields.io/badge/-POOR_JOIN_PERFORMANCE-Informational) | Poor performance of Join operators                  |   NodeLoadHigh    |
-| ![](https://img.shields.io/badge/-CORRELATED_SUBQUERY-Informational) | Non-promotable subqueries in SQL                      |     NodeLoadHigh,PostgresDown     |
-| ![](https://img.shields.io/badge/-LOCK_CONTENTION-informational)     | Lock contention issues                                |  NodeCpuHigh,PostgresRestart |
-| ![](https://img.shields.io/badge/-CPU_CONTENTION-informational)      | Severe external CPU resource contention               |   NodeLoadHigh   |
-| ![](https://img.shields.io/badge/-IO_CONTENTION-informational)       | IO resource contention affecting SQL performance      |   NodeLoadHigh,NodeOutOfMem      |
-| ![](https://img.shields.io/badge/-COMMIT_CONTENTION-informational) | High-concurrency commits affecting SQL execution        |   NodeLoadHigh,NodeOutOfMem   |
-| ![](https://img.shields.io/badge/-SMALL_MEMORY_ALLOC-red)    | Tool small allocated memory space              |                      |                  |
-
+| INSERT_LARGE_DATA    | Long execution time for large data insertions         |    ![](https://img.shields.io/badge/-NodeOutOfMem-informational)   |
+| FETCH_LARGE_DATA    | Long execution time for large data fetching           |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational)   |
+| REDUNDANT_INDEX      | Unnecessary and redundant indexes in tables           |  ![](https://img.shields.io/badge/-NodeLoadHigh-Informational)     |
+| VACUUM              |       Unused space caused by data modifications       |  ![](https://img.shields.io/badge/-NodeOutOfMem-informational)    |
+| POOR_JOIN_PERFORMANCE | Poor performance of Join operators                  |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational)    |
+| CORRELATED_SUBQUERY | Non-promotable subqueries in SQL                      |     ![](https://img.shields.io/badge/-NodeLoadHigh-Informational),![](https://img.shields.io/badge/-PostgresDown-red) |
+| LOCK_CONTENTION     | Lock contention issues                                |  ![](https://img.shields.io/badge/-NodeCpuHigh-Informational)
+,![](https://img.shields.io/badge/-PostgresRestart-red) |
+| CPU_CONTENTION      | Severe external CPU resource contention               |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational)   |
+| IO_CONTENTION       | IO resource contention affecting SQL performance      |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational),![](https://img.shields.io/badge/-NodeOutOfMem-informational)      |
+| COMMIT_CONTENTION | High-concurrency commits affecting SQL execution        |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational), ![](https://img.shields.io/badge/-NodeOutOfMem-informational)   |
+| SMALL_MEMORY_ALLOC    | Tool small allocated memory space              |                      |
 
 
 <span id="-customize"></span>
