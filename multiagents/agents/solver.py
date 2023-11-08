@@ -196,7 +196,7 @@ class SolverAgent(BaseAgent):
         if result_node is None:
             return {}
 
-        prompt = "Analyze the diagnosed root causes based on above discussions in details. Note the analysis should be in markdown format."
+        prompt = "Analyze the diagnosed root causes based on above discussions in details. Note the analysis should be only about root causes in markdown format!!! And do not mention anything about the solutions!!!"
         diag_message = self.llm._construct_messages(prompt)
         diag_messages = result_node.messages + diag_message
         self.llm.change_messages("You are a database expert", diag_messages)
@@ -207,7 +207,7 @@ class SolverAgent(BaseAgent):
             root_causes = root_causes.content
 
 
-        prompt = "Give the optimization solutions based on above discussions in details. Note the solutions should be in markdown format."
+        prompt = "Give the optimization solutions based on above discussions in details. Note give the optimization solutions only and do not mention anything about the root causes!!! The solutions should be in markdown format."
         solution_message = self.llm._construct_messages(prompt)
         solution_messages = result_node.messages + solution_message
         self.llm.change_messages("You are a database expert", solution_messages)
@@ -216,7 +216,9 @@ class SolverAgent(BaseAgent):
             solutions = solutions["content"]
         else:
             solutions = solutions.content
-        
+
+        import pdb; pdb.set_trace()
+
         # thought = ""
         # solutions = ""
         # for message in result_node.messages:

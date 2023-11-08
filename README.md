@@ -109,6 +109,13 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you ca
 
 We provide a local website to browse historical diagnosis reports and procedures. You can easily launch it with
 
+* install nodejs (16.13.1 and above is recommended)
+
+```
+npm install -g n
+sudo n 16.18.1
+```
+
 * install dependencies for the first run。
 
 ```
@@ -116,7 +123,7 @@ We provide a local website to browse historical diagnosis reports and procedures
 cd web_service/frontend
 rm -rf node_modules/
 rm -r package-lock.json
-# install dependencies for the first run (nodejs, ^16.13.1 is recommended)
+# install dependencies for the first run
 npm install  --legacy-peer-deps
 ```
 
