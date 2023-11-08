@@ -5,7 +5,6 @@
 <p align="center">
   <!-- <a href="#-features">Features</a> • -->
   <a href="#-demo">Demo</a> •
-  <a href="#-news">Updates</a> •
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-anomalies">Alerts And Anomalies</a> •  
   <a href="#-customize">Knowledge And Tools</a> • 
