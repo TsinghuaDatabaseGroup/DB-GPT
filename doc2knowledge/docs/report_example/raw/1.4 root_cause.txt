@@ -1,0 +1,7 @@
+5根本原因[Root Cause]
+综合上述分析，业务切到yyyyy后CPU高，主要分两方面：
+    1. Gauss 300 yyyyyCPU监实现方一样， yyyyy包含user/system/nice/iowait等指标，所以相同业务情况下会显示高一些。
+    2.通过分析内核的性能视图和WDR报告，下述语句的执行次数以及CPU都比较高，基本可以确定是下述SQL导致的CPU高：
+        select  FROM nettol.n11 trans splitdetails where trans_time >= to_timestamp($1,?) and trans_time <= to_timestamp($2.?) and pass_id =any(ARRAY [$3. $4. $5, $6. $7. $8, $9, $10,$11,$12,$13
+        $14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31
+        $32])

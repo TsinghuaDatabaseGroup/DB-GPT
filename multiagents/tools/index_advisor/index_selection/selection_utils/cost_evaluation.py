@@ -40,9 +40,7 @@ class CostEvaluation:
     def which_indexes_utilized_and_cost(self, query, indexes):
         # simulate hypothetical indexes all together.
         self._prepare_cost_calculation(indexes, store_size=True)
-
         
-
         plan = self.db_connector.get_plan(query)
         cost = plan["Total Cost"]
         plan_str = str(plan)

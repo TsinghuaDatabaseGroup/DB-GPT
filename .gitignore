@@ -4,12 +4,16 @@ __pycache__/
 *.py[cod]
 *$py.class
 monitoring_scripts/prometheus/core.py
-
+doc2knowledge/docs/overall_diagnosis_knowledge/raw/raw.txt
 # C extensions
 *.so
 .DS_Store
 .vscode/settings.json
 .idea
+
+openai_keys.txt
+others/customllm_test.py
+alert_results
 
 # Distribution / packaging
 .Python
@@ -167,3 +171,5 @@ cython_debug/
 #.idea/
 tool_config.yaml
 chat_history.json
+openai_keys.txt
+others/customllm_test.py

@@ -44,3 +44,4 @@ flask==2.1.1
 tiktoken
 requests
 jpype1==1.4.1
+rapidfuzz

@@ -65,7 +65,7 @@ class GPT_Forward(LLM):
         for text in texts:
             total_estimated_cost += gpt_get_estimated_cost(
                 self.config, text, max_tokens) * n
-        print(f"Estimated cost: ${total_estimated_cost:.2f}")
+        # print(f"Estimated cost: ${total_estimated_cost:.2f}")
         # Ask the user to confirm in the command line
         if os.getenv("LLM_SKIP_CONFIRM") is None:
             confirm = input("Continue? (y/n) ")
@@ -91,7 +91,7 @@ class GPT_Forward(LLM):
         prompt_batches = [prompt[i:i + batch_size]
                           for i in range(0, len(prompt), batch_size)]
         if not self.disable_tqdm:
-            print(
+            # print(
                 f"[{self.config['name']}] Generating {len(prompt) * n} completions, "
                 f"split into {len(prompt_batches)} batches of size {batch_size * n}")
         text = []
@@ -108,7 +108,7 @@ class GPT_Forward(LLM):
         prompt_batches = [prompt[i:i + batch_size]
                           for i in range(0, len(prompt), batch_size)]
         if not self.disable_tqdm:
-            print(
+            # print(
                 f"[{self.config['name']}] Generating {len(prompt) * n} completions, "
                 f"split into {len(prompt_batches)} batches of size {batch_size * n}")
         res = []
@@ -132,7 +132,7 @@ class GPT_Forward(LLM):
             log_prob_range_batches = [log_prob_range[i:i + batch_size]
                                       for i in range(0, len(log_prob_range), batch_size)]
         if not self.disable_tqdm:
-            print(
+            # print(
                 f"[{self.config['name']}] Getting log probs for {len(text)} strings, "
                 f"split into {len(text_batches)} batches of (maximum) size {batch_size}")
         log_probs = []
@@ -162,8 +162,8 @@ class GPT_Forward(LLM):
             except Exception as e:
                 if 'is greater than the maximum' in str(e):
                     raise BatchSizeException()
-                print(e)
-                print('Retrying...')
+                # print(e)
+                # print('Retrying...')
                 time.sleep(5)
 
         return [response['choices'][i]['text'] for i in range(len(response['choices']))]
@@ -183,8 +183,8 @@ class GPT_Forward(LLM):
                 response = openai.Completion.create(
                     **config, prompt=prompt)
             except Exception as e:
-                print(e)
-                print('Retrying...')
+                # print(e)
+                # print('Retrying...')
                 time.sleep(5)
         return response['choices']
 
@@ -212,8 +212,8 @@ class GPT_Forward(LLM):
                 response = openai.Completion.create(
                     **config, prompt=text)
             except Exception as e:
-                print(e)
-                print('Retrying...')
+                # print(e)
+                # print('Retrying...')
                 time.sleep(5)
         log_probs = [response['choices'][i]['logprobs']['token_logprobs'][1:]
                      for i in range(len(response['choices']))]
@@ -269,7 +269,7 @@ class GPT_Insert(LLM):
         for text in texts:
             total_estimated_cost += gpt_get_estimated_cost(
                 self.config, text, max_tokens) * n
-        print(f"Estimated cost: ${total_estimated_cost:.2f}")
+        # print(f"Estimated cost: ${total_estimated_cost:.2f}")
         # Ask the user to confirm in the command line
         if os.getenv("LLM_SKIP_CONFIRM") is None:
             confirm = input("Continue? (y/n) ")
@@ -296,7 +296,7 @@ class GPT_Insert(LLM):
         prompt_batches = [prompt[i:i + batch_size]
                           for i in range(0, len(prompt), batch_size)]
         if not self.disable_tqdm:
-            print(
+            # print(
                 f"[{self.config['name']}] Generating {len(prompt) * n} completions, split into {len(prompt_batches)} batches of (maximum) size {batch_size * n}")
         text = []
         for prompt_batch in tqdm(prompt_batches, disable=self.disable_tqdm):
@@ -319,8 +319,8 @@ class GPT_Insert(LLM):
                 response = openai.Completion.create(
                     **config, prompt=prefix, suffix=suffix)
             except Exception as e:
-                print(e)
-                print('Retrying...')
+                # print(e)
+                # print('Retrying...')
                 time.sleep(5)
 
         # Remove suffix from the generated text

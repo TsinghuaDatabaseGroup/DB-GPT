@@ -36,7 +36,7 @@ def combine_similar_answers(text, output_format='str'):
             k = 0
             while not is_embedded and k < 10:
                 try:
-                    response = requests.post('https://api.openai.com/v1/embeddings', json={"input": sentence, "model": model},
+                    response = requests.post('https://xxxx/v1/embeddings', json={"input": sentence, "model": model},
                                             headers=headers)
                     if "data" in response.json():                        
                         embedding = response.json()["data"][0]["embedding"]

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, List, Tuple
 
 from pydantic import BaseModel
 
-# from agentverse.agents import Agent
+# from multiagents.agents import Agent
 from abc import abstractmethod
 
 from . import updater_registry as UpdaterRegistry

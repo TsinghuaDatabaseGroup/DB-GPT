@@ -1,0 +1,166 @@
+max_turn: &max_turn 3
+
+prompts:
+  role_assigner_prompt: &role_assigner_prompt |-
+    # Role Description
+    You are the leader of a group of diagnosis experts. Currently, the database in your company may meet problems. The anomaly alert is:
+    ${alert_info}
+    
+    Now you need to select experts with diverse identity to correctly analyze the root causes of the given alert. The names of available experts are:
+    ${task_description}
+    
+    Which experts will you recruit to generate an accurate solution? Note you can only select one to three experts!!!
+    
+    # Response Format Guidance
+    You should respond with a list of expert names. For example:
+    1. CpuExpert
+    2. MemoryExpert
+    ...
+    
+    Only respond with the names of selected experts (separated by spaces). Do not include your reason.
+
+  chief_dba_format_prompt: &chief_dba_format_prompt |-
+    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. It depends on you to collaborate with other agents to diagnose the root causes. The anomaly alert is:
+    ${alert_info}
+    
+    # Rules and Format Instructions for Response
+    
+    ===============
+
+    - Must listen to the advice of the user, and respond to the user's advice in the following format:
+    Thought: I now know the advice of the user, and i need to consider it during the diagnosis and optimization solutions
+    Action: Speak
+    Action Input: ({"diagnose": response to the advice, "solution": [], "knowledge": ""})
+
+    - You can detect and diagnose anomaly as follows to use tool:
+    Thought: (your thought)
+    Action: (an action name, it can be one of [Speak], pay attention to the capitalization)
+    Action Input: (argument for the action)
+
+    After you obtain the start and end time of the anomaly, announce it to the agents, and use the following format:
+    Thought: I now know the start and end time of the anomaly.
+    Action: Speak
+    Action Input: ({"diagnose": the start and end time of the anomaly are ${start_time} and ${end_time}, "solution": [], "knowledge": ""})
+
+    After all the agents have announced the root causes they found, you should summarize all the mentioned root causes and optimization solutions point by point:
+    Thought: I now know the root causes and optimization solutions from other agents, and i need to conclude them point by point
+    Action: Speak
+    Action Input: ({"diagnose": The identified root causes of the anomaly are ..., "solution": The suggested optimization solutions are ..., "knowledge": ""})
+
+    ===============
+
+    Here is the conversation history
+    ${chat_history}
+
+    Here is the execution log of tools
+    ${tool_observation}
+
+    - Once an agent has announced the root causes he found, it is your responsibility to memorize the root causes. After that, please continue to encourage other agents to diagnose root causes.
+
+    - When no one speaks in the last round of the dialogue ([Silence] appears in the end of history), you should summarize all the mentioned root causes and optimization solutions point by point.
+
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! And do not easily give root causes if there is no clear evidence or responses from other agents.
+    Based on the above history, what will you, ${agent_name}, do next?
+
+
+  # - During diagnosis, you can listen to the chief dba by responding:
+  # Thought: (your thought)
+  # Action: Listen
+  # Action Input: "None"
+  solver_agent_format_prompt: &solver_agent_format_prompt |-
+    You are in a company whose databases meet an anomaly. The anomaly alert is:
+    ${alert_info}
+    Please give your diagnosis and optimization solutions. Note the response should be in markdown format.
+
+monitor_tools: &monitor_tools
+-
+  tool_name: metric_monitor
+
+optimization_tools: &optimization_tools
+-
+  tool_name: metric_monitor
+-  
+  tool_name: index_advisor
+-  
+  tool_name: query_advisor
+
+
+name: Database Administrator
+
+environment:
+  env_type: dba
+  max_turns: *max_turn
+  rule:
+    order:
+      type: sequential
+    visibility:
+      type: all
+    selector:
+      type: basic
+    updater:
+      type: basic
+    describer:
+      type: basic
+
+agents:
+  - 
+    agent_type: role_assigner
+    name: role assigner
+    prompt_template: *role_assigner_prompt
+    memory:
+      memory_type: chat_history
+    llm:
+      llm_type: gpt-3.5-turbo
+      model: "gpt-3.5-turbo"
+      temperature: 0
+      max_tokens: 256
+    output_parser:
+      type: role_assigner
+
+  - 
+    agent_type: reporter
+    name: ChiefDBA
+    role_description: |-
+      You are a Chief DBA with much database diagnosis experience. Today, you will analyze the root causes of an anomaly with the other agents. Here is the outline of the procedure:
+      1. Chat and ask how to diangose the root causes of the anomaly with other agents.
+      2. Summarize the root causes and detailed solutions spoken by other agents.
+
+      Your answer needs to be concise and accurate.
+    prompt_template: *chief_dba_format_prompt
+    memory:
+      memory_type: chat_history
+    tool_memory:
+      memory_type: chat_history
+      llm:
+        llm_type: gpt-4
+        model: gpt-4
+        temperature: 0.7
+      recursive: true
+    llm:
+      llm_type: gpt-4
+      model: gpt-4
+      temperature: 0.7
+      max_tokens: 1024
+    tools: *monitor_tools
+    verbose: true
+  -
+    agent_type: solver
+    name: Solver
+    role_description: You are a database adminstrator that can analyze the root causes of anomalies, and give optimization solutions (e.g., optimize_index_selection, enable_or_disable_nestloop_operator). Note the response should be in markdown format.
+    prompt_template: *solver_agent_format_prompt
+    memory:
+      memory_type: chat_history
+    tool_memory:
+      memory_type: chat_history
+      llm:
+        llm_type: gpt-4
+        model: gpt-4
+        temperature: 0.7
+      recursive: true
+    llm:
+      llm_type: gpt-4
+      model: gpt-4
+      temperature: 0.7
+      max_tokens: 1024
+    tools: *optimization_tools
+    verbose: true

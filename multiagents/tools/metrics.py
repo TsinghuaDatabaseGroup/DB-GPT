@@ -1,12 +1,22 @@
-from multiagents.utils.core import read_yaml, read_prometheus_metrics_yaml
+from multiagents.utils.yaml_utils import read_yaml, read_prometheus_metrics_yaml
 from multiagents.utils.server import obtain_slow_queries, obtain_anomaly_time
 import warnings
 from multiagents.tools.metric_monitor.anomaly_detection import prometheus
 import numpy as np
-import pdb
 from termcolor import colored
 from multiagents.utils.database import DBArgs, Database
 from multiagents.knowledge.knowledge_extraction import KnowledgeExtraction
+import time
+import json
+import os
+
+current_diag_time = time.localtime()
+current_diag_time = time.strftime("%Y-%m-%d-%H:%M:%S", current_diag_time)
+if not os.path.exists(f"./alert_results/{str(current_diag_time)}"):
+    try:
+        os.makedirs(f"./alert_results/{str(current_diag_time)}")
+    except:
+        pass
 
 diag_start_time, diag_end_time = obtain_anomaly_time()
 
@@ -23,14 +33,53 @@ prometheus_metrics = read_prometheus_metrics_yaml(config_path='config/prometheus
 # configuration of the index advisor
 advisor = "db2advis"  # option: extend, db2advis (fast)
 
+
 # [workload statistics] read from pg_stat_statements 
 dbargs = DBArgs("postgresql", config=postgresql_conf)
 db = Database(dbargs, timeout=-1)
-workload_statistics = db.obtain_historical_queries_statistics()
 
-# [slow queries] read from query logs
-# /var/lib/pgsql/12/data/pg_log/postgresql-Mon.log
-slow_queries = obtain_slow_queries(database_server_conf)
+
+WORKLOAD_FILE_NAME = "workload_info.json"
+ANOMALY_FILE_NAME = "anomalies/public_testing_set/testing_cases.json"
+# with open(WORKLOAD_FILE_NAME, 'w') as f:
+#     json.dump({'workload_statistics': '[]', 'slow_queries': '[]'}, f)
+
+def get_workload_statistics():
+    with open(WORKLOAD_FILE_NAME, 'r') as f:
+        info = json.load(f)
+        return info["workload_statistics"]
+
+# def set_workload_statistics(stats):
+#     if os.path.exists(WORKLOAD_FILE_NAME):
+#         with open(WORKLOAD_FILE_NAME, 'r') as rf:
+#             info = json.load(rf)
+#         info["workload_statistics"] = stats
+#         with open(WORKLOAD_FILE_NAME, 'w') as f:
+#             json.dump(info, f)
+#     else:
+#         with open(WORKLOAD_FILE_NAME, 'w') as f:
+#             json.dump({'workload_statistics': stats, 'slow_queries': '[]'}, f)
+
+def get_slow_queries(diag_id):
+    with open(ANOMALY_FILE_NAME, 'r') as f:
+        info = json.load(f)
+    return info[diag_id]["slow_queries"]
+
+# def set_slow_queries(stats):
+#     if os.path.exists(WORKLOAD_FILE_NAME):
+#         with open(WORKLOAD_FILE_NAME, 'r') as rf:
+#             info = json.load(rf)
+#         info["workload_statistics"] = stats
+#         with open(WORKLOAD_FILE_NAME, 'w') as f:
+#             json.dump(info, f)
+#     else:
+#         with open(WORKLOAD_FILE_NAME, 'w') as f:
+#             json.dump({'workload_statistics': '[]', 'slow_queries': stats}, f)
+
+def get_workload_sqls(diag_id):
+    with open(ANOMALY_FILE_NAME, 'r') as f:
+        info = json.load(f)
+    return info[diag_id]["workload"]
 
 # [diagnosis knowledge]
 knowledge_matcher = KnowledgeExtraction(
@@ -52,7 +101,7 @@ def obtain_values_of_metrics(start_time, end_time, metrics):
                                     'start': start_time,
                                     'end': end_time,
                                     'step': '3'})
-        if metric_values["data"]["result"] != []:
+        if "data" in metric_values and metric_values["data"]["result"] != []:
             metric_values = metric_values["data"]["result"][0]["values"]
 
             # compute the average value of the metric
@@ -64,7 +113,8 @@ def obtain_values_of_metrics(start_time, end_time, metrics):
             required_values[metric.split('{')[0]] = values
         else:
             #raise Exception("No metric values found for the given time range")
-            print(colored(f"No metric values found for {start_time}-{end_time} of {metric}", "red"))
+            # print(colored(f"No metric values found for {start_time}-{end_time} of {metric}", "red"))
+            pass
 
     return required_values
 

@@ -5,32 +5,13 @@ POSTGRESQL:
   password: xxxxx
   dbname: postgres
 
-MYSQL:
-  host: XXX.XXX.121.62
-  port: 3306
-  user: root
-  password: XXXXX
-
 DATABASESERVER:
   server_address: 182.92.xxx.x
   username: root
   password: xxxxx
   remote_directory: /var/lib/pgsql/12/data/log
 
-ALERTMANAGERSERVER:
-  server_address: 182.92.XXX.X
-  username: root
-  password: XXXXXXX
-  alert_log_path: /webhook/alert.txt
-
-
 PROMETHEUS:
   api_url: http://8.131.xxx.xx:9090/
   postgresql_exporter_instance: 172.27.xx.xx:9187
   node_exporter_instance: 172.27.xx.xx:9100
-
-BENCHSERVER:
-  server_address: 8.131.xxx.xx
-  username: root
-  password: xxxxx
-  remote_directory: /root/benchmark

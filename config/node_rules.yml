@@ -740,7 +740,7 @@ groups:
           description: |
             node_up[ins={{ $labels.ins }}, instance={{ $labels.instance }}] = {{ $value }} < 1
             http://g.pigsty/d/node-instance?var-ins={{ $labels.ins }}
-
+      
       # haproxy the load balancer
       - alert: HaproxyDown
         expr: haproxy_up < 1

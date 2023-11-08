@@ -164,8 +164,6 @@ def redundent_index(threads,duration,ncolumns,nrows,colsize,nindex,table_name='t
     print_time()
 
 
-
-
 '''io_contention'''
 def io_contention():
     print_time()

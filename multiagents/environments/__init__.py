@@ -4,3 +4,4 @@ env_registry = Registry(name="EnvironmentRegistry")
 
 from .base import BaseEnvironment
 from .basic import BasicEnvironment
+from .dba import DBAEnvironment

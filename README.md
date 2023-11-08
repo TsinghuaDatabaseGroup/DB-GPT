@@ -3,79 +3,59 @@
 </div>
 
 <p align="center">
-  <a href="#-features">Features</a> •
+  <!-- <a href="#-features">Features</a> • -->
+  <a href="#-demo">Demo</a> •
   <a href="#-news">Updates</a> •
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-anomalies">Alerts And Anomalies</a> •  
-  <a href="#-customize">Customization</a> • 
+  <a href="#-customize">Knowledge And Tools</a> • 
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-contributors">Contributors</a>
 </p>
 
-<p align="center">
+<!-- <p align="center">
     【English | <a href="README-Chinese.md">中文</a>】
+</p> -->
+
+🦾 Build your personal database administrator (D-Bot)🧑‍💻, which is good at *reading documents, using various tools, writing analysis reports!* 
+
+<!-- >Besides, to extend the database maintenance capability, we are also finetuning LLMs to support localized diagnosis, *query rewriting* and *anomaly simulation* (comming soon). -->
+
+<p align="center">
+    <img src="imgs/overview_v3.png" width="800px">
 </p>
 
-🦾 Our mission is to build your personal database administrator (D-Bot). D-Bot is good at *reading documents, using various tools, writing analysis reports, and strictly following your orders!!* 🧑‍💻
 
->Besides, to extend the database maintenance capability, we are also finetuning LLMs to support advanced *query optimiziation* and *anomaly simulation* (comming soon).
+<span id="-demo"></span>
 
-*[Click to check 29 typical anomalies together with expert analysis!](./anomaly_trigger/29种性能异常与根因分析.pdf) (supported by the DBMind team)*
+## 🗺 Online Demo
 
-*[The Document2Knowledge function is available!](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/new_ui#1-knowledge-extraction-document)*
+In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you can browse all the historical diagnosis results, used metrics, and the detailed diagnosis processes.
 
-*[New version is under construction in the new_arch branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/new_ui)*
+<p align="center">
+  <a href="http://dbgpt.dbmind.cn">
+    <img src="imgs/frontend_v2.png" width="800px" alt="frontend_v2">
+  </a>
+</p>
 
-
-<!-- collection of useful, user-friendly, and advanced database tools. These tools are built around LLMs, including **system diagnosis** (*D-Bot*), **query optimization** (coming soon), and **anomaly simulation** (coming soon) -->
-
-<!-- *D-Bot*, a LLM-based DBA, can acquire database maintenance experience from textual sources, and provide **reasonable**, **well-founded**, **in-time** diagnosis and optimization advice for target databases. -->
-
-<br>
-<div align="center">
-<img src="imgs/dbgpt-v2.png" width="800px">
-</div>
-<br>
-
-
-<span id="-features"></span>
-
-## ✨ Features
-
-### D-Bot - Your Personal DBA
-
-- **Well-Founded Diagnosis**: D-Bot can provide founded diagnosis by utilizing relevant database knowledge (with *document2experience*).
-
-- **Practical Tool Utilization**: D-Bot can utilize both monitoring and optimization tools to improve the maintenance capability (with *tool learning* and *tree of thought*).
-
-- **In-depth Reasoning**: Compared with vanilla LLMs, D-Bot will achieve competitive reasoning capability to analyze root causes (with *multi-llm communications*).
-
-<br>
-    <div align="center">
-    <img src="imgs/frontendv3.png" width="800px">
-    </div>
-<br>
-
-**A demo of using D-Bot**
-
-https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6bb512e7af3a
-
+<p align="center">
+  <a href="http://dbgpt.dbmind.cn">
+    <img src="imgs/newfrontend_v1.png" width="800px" alt="frontend_v2">
+  </a>
+</p>
 
 <span id="-news"></span>
 
 ## 📰 Updates
-<!-- - [x] **[2023/8/23]** 100\% accurate tool calling and refined diagnosis <a href="#-solid_response">🔗</a> -->
 
-- [ ] Upgrade the LLM-based diagnosis mechanism: 
+- [x] Upgrade the LLM-based diagnosis mechanism: 
 
-    * [ ] *Task Dispatching -> Concurrent Diagnosis -> RoundTable Discussion -> Report Generation (downloadable)*
+    * [x] *Task Dispatching -> Concurrent Diagnosis -> RoundTable Discussion -> Report Generation (downloadable)*
 
 - [x] Add typical anomalies and alerts (Pigsty) <a href="#-anomalies">🔗 link</a>
 
-<!-- - [x] **[2023/9/10]** Add diagnosis logs [🔗 link](logs/diag_training_data.txt) and replay button in the frontend [⏱ link](logs/info.log) -->
-
-- [x] An end-to-end framework is available! Start diag+tool service with a single command, experiencing 5x speed up!! <a href="#-diagnosis">🚀 link</a>
+- [x] An end-to-end framework is available! <a href="#-diagnosis">🚀 link</a>
 
 <!-- - [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗 link</a> -->
 
@@ -87,7 +67,6 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     * [x] Index optimization algorithms (for PostgreSQL)
     * [x] Physical operator hints (for PostgreSQL)
     * [ ] Backup and Point-in-time Recovery (Pigsty)
-
 
 
 - [x] Our vision papers are released (continuously update) 
@@ -105,15 +84,7 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
 
 ## 🕹 QuickStart
 
-<!-- <br>
-<div align="center">
-<img src="imgs/workflow.png" width="800px">
-</div>
-<br> -->
-
-### D-Bot
-
-#### Folder Structure
+### Folder Structure
 
     .
     ├── multiagents
@@ -123,10 +94,47 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     │   ├── knowledge                         # Diagnosis experience from documents
     │   ├── llms                              # Supported models
     │   ├── memory                            # The content and summary of chat history
+    │   ├── reasoning_algorithms              # The available algorithm for single LLM reasoning
     │   ├── response_formalize_scripts        # Useless content removal of model response
     │   ├── tools                             # External monitoring/optimization tools for models
     │   └── utils                             # Other functions (e.g., database/json/yaml operations)
+    ├── web_service                           # Web services to view diagnostic reports
+    │   ├── backend                           # Web services backend
+    │   ├── frontend                          # Web services frontend 
+    ├── webhook                               # Use the webhook to save the results of the alert to a file
 
+
+<span id="-frontend"></span>
+
+### Website Side
+
+We provide a local website to browse historical diagnosis reports and procedures. You can easily launch it with
+
+* install dependencies for the first run。
+
+```
+# install frontend environment
+cd web_service/frontend
+rm -rf node_modules/
+rm -r package-lock.json
+# install dependencies for the first run (nodejs, ^16.13.1 is recommended)
+npm install  --legacy-peer-deps
+```
+
+* run
+
+```shell
+# cd service directory
+cd web_service
+# launch the local server and open the website
+sh run_service.sh
+```
+
+> Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python are installed.
+
+After successfully launching the local server, visit [http://127.0.0.1:8025/](http://127.0.0.1:8025/) to browse the diagnosis reports.
+
+### Diagnosis Side
 
 <span id="-prerequisites"></span>
 
@@ -148,11 +156,10 @@ https://github.com/OpenBMB/AgentVerse/assets/11704492/c633419d-afbb-47d4-bb12-6b
     
     > (3) Set *"log_line_prefix = '%m [%p] [%d]'"* in postgresql.conf (to record the database names of different queries).
 
-- Prometheus ~~and Grafana ([tutorial](https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/))~~
+- Prometheus
 
-    Check [prometheus.md](materials/help_documents/prometheus.md) for detailed installation guides.
+    > Check [prometheus.md](materials/help_documents/prometheus.md) for detailed installation guides.
 
-    > Grafana is no longer a necessity with our vue-based frontend.
 
 #### 2. Package Installation
 
@@ -200,7 +207,6 @@ Step 3: Add database/anomaly/prometheus settings into [tool_config_example.yaml]
 > *remote_directory* in the DATABASESERVER setting indicates where the slow query log file is located at (<a href="#-prerequisites">link</a>).
 
 
-
 - If accessing openai service via vpn, execute this command:
 ```bash
 # macos
@@ -213,81 +219,19 @@ cd others
 python openai_test.py
 ```
 
-<span id="-diagnosis"></span>
+#### 3. Diagnosis
 
-#### 3. Diagnosis & Optimization
-
-<span id="-frontend"></span>
-
-##### Website Interface
-
-We also provide a local website demo for this environment. You can launch it with
-
-```shell
-# cd website
-cd front_demo
-rm -rf node_modules/
-rm -r package-lock.json
-# install dependencies for the first run (nodejs, ^16.13.1 is recommended)
-npm install  --legacy-peer-deps
-# back to root directory
-cd ..
-# launch the local server and open the website
-sh run_demo.sh
-```
-
-> Modify the "python app.py" command within *run_demo.sh* if multiple versions of Python are installed.
-
-After successfully launching the local server, visit [http://127.0.0.1:9228/](http://127.0.0.1:9228/) to trigger the diagnosis procedure.
-
-
-##### Command-line Interface
+- Test single case
 
 ```shell
 python main.py
 ```
 
-<!-- (1) ./run_benchmark_tpcc.sh or ./run_db_exception.sh
+- Test in batch
 
-    Example Anomalies: INSERT_LARGE_DATA, IO_CONTENTION
-
-<details><summary><b>monitoring dashboard</b></summary>
-<br>
-<div align="center">
-<img src="imgs/insert.png" width="800px">
-</div>
-<br>
-</details>
-  
----
-
-(2) ./run_benchmark_job.sh
-
-    Example Anomalies: POOR_JOIN_PERFORMANCE, CPU_CONTENTION
-
-
-<details><summary><b>monitoring dashboard</b></summary>
-<br>
-<div align="center">
-<img src="imgs/join.png" width="800px">
-</div>
-<br>
-</details>
-
----
-
-(3) ./run_benchmark_tpch.sh
-
-    Example Anomalies: FETCH_LARGE_DATA (lineitem with 28GB); CORRELATED_SUBQUERY
-
-<details><summary><b>monitoring dashboard</b></summary>
-<br>
-<div align="center">
-<img src="imgs/subquery.png" width="800px">
-</div>
-<br>
-</details> -->
-
+```shell
+python batch_main.py
+```
 
 <span id="-anomalies"></span>
 
@@ -304,57 +248,67 @@ We support AlertManager for Prometheus. You can find more information about how 
 
 ### Anomaly Simulation
 
-Within the *[anomaly_trigger](./anomaly_trigger)* directory, we aim to offer scripts that could incur typical anomalies, e.g., 
+#### Script-Triggered Anomalies
 
-| Root Cause          | Description                                           | Case                 |
+We offer scripts that could incur typical anomalies. Check out different anomaly cases in [http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)
+
+| Root Cause          | Description                                           | Potential Alerts                 |
 |---------------------|-------------------------------------------------------|----------------------|
-| ![](https://img.shields.io/badge/-INSERT_LARGE_DATA-Informational)    | Long execution time for large data insertions         |                      |
-| ![](https://img.shields.io/badge/-FETCH_LARGE_DATA-Informational)    | Long execution time for large data fetching           |                      |
-| ![](https://img.shields.io/badge/-MISSING_INDEXES-Informational)     | Missing indexes causing performance issues            |   [🔗 link](case_analysis/missing_indexes.txt)     |
-| ![](https://img.shields.io/badge/-REDUNDANT_INDEX-Informational)      | Unnecessary and redundant indexes in tables           |                      |
-| ![](https://img.shields.io/badge/-VACUUM-Informational)              |       Unused space caused by data modifications       |                      |
-| ![](https://img.shields.io/badge/-POOR_JOIN_PERFORMANCE-Informational) | Poor performance of Join operators                  |                      |
-| ![](https://img.shields.io/badge/-CORRELATED_SUBQUERY-Informational) | Non-promotable subqueries in SQL                      |                      |
-| ![](https://img.shields.io/badge/-LACK_STATISTIC_INFO-Informational) | Outdated statistical info affecting execution plan    |                      |
-| ![](https://img.shields.io/badge/-LOCK_CONTENTION-informational)     | Lock contention issues                                |                      |
-| ![](https://img.shields.io/badge/-CPU_CONTENTION-informational)      | Severe external CPU resource contention               |                      |
-| ![](https://img.shields.io/badge/-IO_CONTENTION-informational)       | IO resource contention affecting SQL performance      |                      |
-| ![](https://img.shields.io/badge/-INSERT_CONTENTION-informational) | High-concurrency inserts affecting SQL execution        |   [🔗 link](case_analysis/concurrent_inserts.txt)     |
-| ![](https://img.shields.io/badge/-COMMIT_CONTENTION-informational) | High-concurrency commits affecting SQL execution        |   [🔗 link](case_analysis/concurrent_commits.txt)     |
-| ![](https://img.shields.io/badge/-WORKLOAD_CONTENTION-informational) | Workload concentration affecting SQL execution        |   [🔗 link](case_analysis/workload_contention.txt)     |
-| ![](https://img.shields.io/badge/-SMALL_MEMORY_ALLOC-red)    | Tool small allocated memory space              |                      |
-| ![](https://img.shields.io/badge/-IO_SATURATION-red)     | Reach the max I/O capacity or  throughput               |                      |
+| INSERT_LARGE_DATA    | Long execution time for large data insertions         |    ![](https://img.shields.io/badge/-NodeOutOfMem-informational)   |
+| FETCH_LARGE_DATA    | Long execution time for large data fetching           |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational)   |
+| REDUNDANT_INDEX      | Unnecessary and redundant indexes in tables           |  ![](https://img.shields.io/badge/-NodeLoadHigh-Informational)     |
+| VACUUM              |       Unused space caused by data modifications       |  ![](https://img.shields.io/badge/-NodeOutOfMem-informational)    |
+| POOR_JOIN_PERFORMANCE | Poor performance of Join operators                  |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational)    |
+| CORRELATED_SUBQUERY | Non-promotable subqueries in SQL                      |     ![](https://img.shields.io/badge/-NodeLoadHigh-Informational),![](https://img.shields.io/badge/-PostgresDown-red) |
+| LOCK_CONTENTION     | Lock contention issues                                |  ![](https://img.shields.io/badge/-NodeCpuHigh-Informational) ![](https://img.shields.io/badge/-PostgresRestart-red) |
+| CPU_CONTENTION      | Severe external CPU resource contention               |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational)   |
+| IO_CONTENTION       | IO resource contention affecting SQL performance      |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational) ![](https://img.shields.io/badge/-NodeOutOfMem-informational)      |
+| COMMIT_CONTENTION | High-concurrency commits affecting SQL execution        |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational) ![](https://img.shields.io/badge/-NodeOutOfMem-informational)   |
+| SMALL_MEMORY_ALLOC    | Tool small allocated memory space              |                      |
 
 
-<!-- Anomaly Simulation Commands:
+#### Manually Designed Anomalies
 
-```bash
-cd anomaly_trigger/
-python main.py --anomaly INSERT_LARGE_DATA    --threads 100
-python main.py --anomaly MISSING_INDEXES      --threads 100 --ncolumn 20 --colsize 100 --nrow 2000000
-python main.py --anomaly VACUUM               --threads 100 --ncolumn 20 --colsize 100 --nrow 2000000
-python main.py --anomaly LOCK_CONTENTION      --threads 100 --ncolumn 80 --colsize 80 --nrow 400
-python main.py --anomaly REDUNDANT_INDEX      --threads 100 --ncolumn 80 --colsize 80 --nrow 400000 --duration 100
-python main.py --anomaly INSERT_LARGE_DATA,IO_CONTENTION
-python main.py --anomaly FETCH_LARGE_DATA,CORRELATED_SUBQUERY
-python main.py --anomaly POOR_JOIN_PERFORMANCE,CPU_CONTENTION
-``` -->
+*[Click to check 29 typical anomalies together with expert analysis](./anomaly_trigger/29种性能异常与根因分析.pdf) (supported by the DBMind team)*
 
 
 <span id="-customize"></span>
 
-## 📎 Customize Your KnowledgeBase And Tools
+## 📎 Customize Knowledge And Tools
 
-#### 1. Knowledge Preparation
+<span id="-doc2knowledge"></span>
 
-- Extract knowledge from both code (./knowledge_json/knowledge_from_code) and documents (./knowledge_json/knowledge_from_document).
+### 1. Knowledge Extraction (Document)
 
-    - Add code blocks into [diagnosis_code.txt](./knowledge_json/knowledge_from_code/scripts/diagnosis_code.txt) file -> Rerun the *extract_knowledge.py* script -> Check the update results and sync to [root_causes_dbmind.jsonl](multiagents/knowledge/root_causes_dbmind.jsonl).
+Step 1. Rename *doc2knowledge/config_template.json* into *doc2knowledge/config.json*. And add the value for "api_key" ("organization" is optional)
+
+> GPT-4 is necessary to utilize the *function calling* feature. I will try to solve this limit.
+
+Step 2. Split documents into separated section files by the section indexes (e.g., section1, section1.1, section2 ...). And copy the section files into the *docs/<your_document_name>/raw/*. For example:
+
+    .
+    ├── docs
+    │   ├── report_example
+    |   │   ├── raw    
+    |   │   |    ├── 1 title.txt    
+    |   │   |    ├── 1.1 category.txt
+
+> It is a laborious work and hard to find a better way than manually splitting the given document
+
+> You can jump over this step and directly run the *report_example* case
+
+Step 3. Modify the arguments in *doc2knowledge.py* script and run the script:
+
+```bash
+python doc2knowledge.py
+```
+
+> The summary for the same document sections is cached. You can delete this file if do not like to reuse the previous caches.
 
 
 <span id="-tools"></span>
 
-#### 2. Tool Preparation
+### 2. Tool Preparation
 
 - Tool APIs (for optimization)
 
@@ -378,25 +332,6 @@ python main.py --anomaly POOR_JOIN_PERFORMANCE,CPU_CONTENTION
     ```
 
     > History messages may take up many tokens, and so carefully decide the *turn number*.
-
-
-<!-- ## Prompt Template Generation (optional)
-
-Derive *high-quality prompt templates* from a small number of collected samples (splitting into training and evaluation sets), e.g.,
-
-1. Prompts for index tuning optimization
-
-```bash
-cd prompt_template_scripts/index_tuning
-./run.sh
-```
-
-2. Prompts for query rewrite optimization
-
-```bash
-cd prompt_template_scripts/query_rewrite
-./run.sh
-``` -->
 
 
 <span id="-FAQ"></span>
@@ -429,11 +364,10 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 - ~~Project cleaning~~
 - ~~Support more anomalies~~
 - Strictly constrain the llm outputs (excessive irrelevant information) based on the matched knowledge 
-- Query log option (potential to take up disk space and we need to consider it carefully)
-- Add more communication mechanisms
-- Support more knowledge sources
-- Support localized private models (e.g., llama/vicuna/luca)
-- Release training datasets
+- ~~Query log option (potential to take up disk space and we need to consider it carefully)~~
+- ~~Add more communication mechanisms~~
+- ~~Support more knowledge sources~~
+- Localized model that reaches D-bot(gpt4)'s capability
 - Support other databases (e.g., mysql/redis)
 
 
@@ -444,20 +378,19 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 - [Tsinghua University](https://www.tsinghua.edu.cn/en/)
 - [ModelBest](https://modelbest.cn/)
 
+
 <span id="-projects"></span>
 
-## Relevant Projects
+## 🤗 Relevant Projects
 
 https://github.com/OpenBMB/AgentVerse
 
 https://github.com/Vonng/pigsty
 
-https://github.com/OpenBMB/BMTools
-
 
 <span id="-citation"></span>
 
-## Citation
+## 📒 Citation
 Feel free to cite us if you like this project.
 ```bibtex
 @misc{zhou2023llm4diag,
@@ -479,7 +412,6 @@ Feel free to cite us if you like this project.
 }
 ```
 
-
 <span id="-contributors"></span>
 
 ## 📧 Contributors
@@ -493,3 +425,7 @@ Feel free to cite us if you like this project.
 Other Collaborators: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](https://github.com/LikyThu).
 
 We thank all the contributors to this project. Do not hesitate if you would like to get involved or contribute!
+
+## ⭐️ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=TsinghuaDatabaseGroup/DB-GPT&type=Date)](https://star-history.com/#TsinghuaDatabaseGroup/DB-GPT&Date)

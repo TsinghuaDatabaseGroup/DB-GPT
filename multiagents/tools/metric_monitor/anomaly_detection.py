@@ -1,8 +1,6 @@
 import numpy as np
 import requests
-from multiagents.utils.core import read_yaml
-import pdb
-import json
+from multiagents.utils.yaml_utils import read_yaml
 
 
 def prometheus(url, params):
@@ -14,7 +12,6 @@ def prometheus(url, params):
 
 
 def detect_anomalies(data, significance_level=0.2):
-
     # assume the workload is steadily running 
 
     """
@@ -63,4 +60,4 @@ def detect_anomalies(data, significance_level=0.2):
     
     '''
     
-    return anomalies
+    return ks_statistic, anomalies
