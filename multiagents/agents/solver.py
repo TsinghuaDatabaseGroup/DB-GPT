@@ -191,7 +191,7 @@ class SolverAgent(BaseAgent):
         
         chain = UCT_vote_function(diag_id=self.diag_id, start_time=self.start_time, end_time=self.end_time, agent_name=self.name, role_description=self.role_description, prompt_template=self.prompt_template, llm=self.llm,env=tasksolving_env, output_parser=self.output_parser, alert_dict=self.alert_dict, alert_str=self.alert_str, agent=self)
 
-        result_node, top_abnormal_metric_values  = chain.start(simulation_count=1,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=4)
+        result_node, top_abnormal_metric_values  = chain.start(simulation_count=1,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=11)
 
         if result_node is None:
             return {}
@@ -216,8 +216,6 @@ class SolverAgent(BaseAgent):
             solutions = solutions["content"]
         else:
             solutions = solutions.content
-
-        import pdb; pdb.set_trace()
 
         # thought = ""
         # solutions = ""

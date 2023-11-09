@@ -13,7 +13,8 @@ doc2knowledge/docs/overall_diagnosis_knowledge/raw/raw.txt
 
 openai_keys.txt
 others/customllm_test.py
-alert_results
+alert_results/2023*
+alert_results/logs
 
 # Distribution / packaging
 .Python

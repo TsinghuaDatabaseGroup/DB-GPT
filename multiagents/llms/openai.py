@@ -99,6 +99,7 @@ class OpenAIChat(BaseChatModel):
 
     def __init__(self, max_retry: int = 100, **kwargs):
         super().__init__(**kwargs)  # Call the constructor of the base class
+        
         args = OpenAIChatArgs()
         args = args.dict()
 
@@ -162,7 +163,7 @@ class OpenAIChat(BaseChatModel):
                 # end = time.time()
                 # with open("gpt4_latency.txt", "a") as f:
                 #     f.write(str(end-start)+"s\n")
-
+                self.args.model = "gpt-4-0613"
                 response = openai.ChatCompletion.create(
                     messages=messages,
                     **self.args.dict(),

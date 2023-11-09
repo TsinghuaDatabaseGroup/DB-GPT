@@ -2,6 +2,16 @@
     <h1> <img src="imgs/dbagent.png" width="100px"> LLM As Database Administrator</h1>
 </div>
 
+<!-- <p align="center">
+    <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/blob/main/LICENSE">
+        <img alt="License: Apache2" src="https://img.shields.io/badge/License-Apache_2.0-green.svg">
+    </a>
+    <a href="https://github.com/OpenBMB/AgentVerse/blob/main/LICENSE">
+        <img alt="License: Apache2" src="https://img.shields.io/badge/License-Apache_2.0-green.svg">
+    </a>
+</p> -->
+
+
 <p align="center">
   <!-- <a href="#-features">Features</a> • -->
   <a href="#-demo">Demo</a> •
@@ -17,13 +27,14 @@
     【English | <a href="README_Chinese11-7_update.md">中文</a>】
 </p>
 
-🦾 Build your personal database administrator (D-Bot)🧑‍💻, which is good at *reading documents, using various tools, writing analysis reports!* 
-
-<!-- >Besides, to extend the database maintenance capability, we are also finetuning LLMs to support localized diagnosis, *query rewriting* and *anomaly simulation* (comming soon). -->
 
 <p align="center">
     <img src="imgs/overview_v3.png" width="800px">
 </p>
+
+🦾 Build your personal database administrator (D-Bot)🧑‍💻, which is good at *reading documents, using various tools, writing analysis reports!* 
+
+<!-- >Besides, to extend the database maintenance capability, we are also finetuning LLMs to support localized diagnosis, *query rewriting* and *anomaly simulation* (comming soon). -->
 
 
 <span id="-demo"></span>
