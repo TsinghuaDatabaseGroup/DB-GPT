@@ -3,7 +3,7 @@ export const lineChartOption = {
   grid: {
     left: 80,
     top: 60,
-    bottom: 30,
+    bottom: 0,
     right: 80
   },
   tooltip: {
@@ -17,7 +17,7 @@ export const lineChartOption = {
       type: 'shadow'
     }
   },
-  color: ['#1890FF', '#FFFF00', '#975FE4', ['#FE2E2E', '#01DF01', '#FFFF00']],
+  color: ['#1890FF', '#975FE4', '#FE2E2E', '#01DF01', '#3B94EF', '#1DED12'],
   legend: {
     data: [],
     bottom: 0,
