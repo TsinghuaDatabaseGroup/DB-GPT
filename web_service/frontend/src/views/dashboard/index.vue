@@ -51,7 +51,7 @@
           v-for="(item, index) in historyMessages"
           :key="index"
           class="diagnose-item c-flex-column"
-          style="background: RGBA(245, 246, 249, 1.00);"
+          style="background: RGBA(255, 255, 255, 1.00);"
         >
           <div class="c-flex-row c-align-items-center c-justify-content-between">
             <div class="c-flex-row c-align-items-center c-justify-content-left">
@@ -98,7 +98,7 @@
     <div
       v-loading="openReportLoading"
       class="c-relative c-flex-column"
-      style="overflow-y: scroll; height: 100vh; overflow-x: hidden; width: 45%; background: RGBA(245, 246, 249, 1.00);"
+      style="overflow-y: scroll; height: 100vh; overflow-x: hidden; width: 45%; background: RGBA(255, 255, 255, 1.00);"
     >
       <div
         style="background-color: white; padding: 10px; margin: 10px; border-radius: 8px;"
