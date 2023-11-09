@@ -12,7 +12,7 @@
 </p> -->
 
 <div align="center">
-  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/llama2">
+  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/diagllama">
     <em style="color: red;">DiagLlama</em> 
   </a> 🔥
 </div>
