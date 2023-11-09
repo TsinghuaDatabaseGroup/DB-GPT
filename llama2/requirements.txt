@@ -1,0 +1,13 @@
+bmtrain
+einops
+flash_attn
+msgspec
+numpy
+pydantic
+pytrie
+setuptools
+torch
+tqdm
+transformers
+triton
+typing_extensions
