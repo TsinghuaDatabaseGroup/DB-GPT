@@ -52,9 +52,10 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you ca
 
 <p align="center">
   <a href="http://dbgpt.dbmind.cn">
-    <img src="imgs/frontend_v2_1.png" width="800px" alt="frontend_v2">
+    <img src="./assets/dbot.gif" width="800px">
   </a>
 </p>
+
 
 <p align="center">
   <a href="http://dbgpt.dbmind.cn">
