@@ -234,9 +234,9 @@ class LlamaInference:
         return output
 
 class DiagLlamaArgs(BaseModel):
-    load: str = Field(default="/yinxr/xuanhe/diag-llama/data/checkpoints/llama2/llama2_checkpoint-epoch-2.pt")
-    model_config: str = Field(default="/yinxr/xuanhe/diag-llama/apps/llama/config/13b/config.json")
-    vocab: str = Field(default="/yinxr/llama2/llama-13b")
+    load: str = Field(default="xxxx/DiagLlama.pt")
+    model_config: str = Field(default="xxxx/llama2-13b/config.json")
+    vocab: str = Field(default="xxxx/llama2-13b")
     seed: int = Field(default=1234)
     flash: str = Field(default="none")
 
