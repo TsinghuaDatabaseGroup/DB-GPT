@@ -2,6 +2,12 @@
     <h1> <img src="imgs/dbagent.png" width="100px">数字运维员工</h1>
 </div>
 
+<div align="center">
+  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/diagllama">
+    <em style="color: red;">本地模型</em> 
+  </a> 🔥
+</div>
+
 <p align="center">
   <a href="#-demo">演示</a> •
   <a href="#-quickstart">快速开始</a> •
@@ -26,7 +32,7 @@
 
 <p align="center">
   <a href="http://dbgpt.dbmind.cn">
-    <img src="imgs/frontend_v2_1.png" width="800px" alt="frontend_v2">
+    <img src="./assets/dbot2.gif" width="800px">
   </a>
 </p>
 
