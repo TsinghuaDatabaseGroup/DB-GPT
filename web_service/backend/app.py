@@ -31,11 +31,17 @@ async def histories(request: Request):
     args = await request.json()
     start = args.get("start", None)
     end = args.get("end", None)
+    model = args.get("model", None)
+    # 未获取到参数或参数不存在
+    if not args or not model:
+        return {
+            "code": 40002,
+            "msg": "参数无效",
+            "data": {}
+        }
 
-    #文件名称为时间戳，获取文件名称在start和end时间之间的文件
 
-
-    folder_path = "../../alert_results/examples"
+    folder_path = f"../../alert_results/{model}"
     file_list = os.listdir(folder_path)
     file_list = sorted(file_list, reverse=True)
     json_list = []
@@ -81,16 +87,17 @@ async def history_detail(request: Request):
     """
     args = await request.json()
     file_name = args.get("file", None)
+    model = args.get("model", None)
 
     # 未获取到参数或参数不存在
-    if not args or not file_name:
+    if not args or not file_name or not model:
         return {
             "code": 40002,
             "msg": "参数无效",
             "data": {}
         }
     # 拼接文件路径
-    file_path = "../../alert_results/examples/" + file_name
+    file_path = f"../../alert_results/{model}/{file_name}"
     if file_path.endswith(".json") or file_path.endswith(".jsonl"):
         # 打开文件并读取JSON数据
         with open(file_path, "r") as file:

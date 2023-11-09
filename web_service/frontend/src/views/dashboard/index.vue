@@ -3,7 +3,7 @@
     <div class="c-flex-column" style=" width: 55%;">
       <div
         class="c-flex-row c-align-items-center c-justify-content-between c-shaow-card"
-        style="padding: 10px 20px; margin: 20px 20px 0; border-radius: 80px!important;"
+        style="padding: 10px 20px; margin: 20px 20px 0 ; border-radius: 80px!important;"
       >
         <el-form
           ref="form"
@@ -42,6 +42,11 @@
 
       </div>
       <div class="c-flex c-flex-column" style="height: calc(100vh - 100px); overflow-y: auto; margin: 10px 0; padding-left: 20px">
+        <span style="font-size: 12px; color: #666666; margin-bottom: 10px; width: calc(100% - 20px); text-align: right;">
+          {{ $t('modelUsePrefixTip') }}
+          <span style="color: #009688; font-size: 14px; cursor: pointer" @click="onClickModel">{{ model }}</span>
+          {{ $t('modelUseSuffixTip') }}
+        </span>
         <div
           v-for="(item, index) in historyMessages"
           :key="index"
@@ -276,7 +281,22 @@ export default {
       charts: []
     }
   },
-  watch: {},
+  computed: {
+    model() {
+      return this.$store.getters.model
+    }
+  },
+  watch: {
+    model: {
+      handler: function(val, oldVal) {
+        if (val) {
+          console.log('model changed:', this.model)
+          this.getAlertHistories()
+        }
+      },
+      deep: true
+    }
+  },
   mounted() {
     this.getAlertHistories()
   },
@@ -285,12 +305,22 @@ export default {
       const highlightedCode = hljs.highlight(lang, code).value
       return `<pre class="hljs"><code>${highlightedCode}</code></pre>`
     },
+    onClickModel() {
+      var url = ''
+      if (this.model === 'GPT4-0613') {
+        url = 'https://github.com/TsinghuaDatabaseGroup/DB-GPT#diagnosis-side'
+      } else if (this.model === 'Llama2-13b') {
+        url = 'https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/llama2'
+      }
+      window.open(url)
+    },
     getAlertHistories() {
       this.historyMessages = []
       var data = {}
       if (this.timeRange && this.timeRange.length > 1) {
         data = { start: this.timeRange[0] / 1000, end: this.timeRange[1] / 1000 }
       }
+      data.model = this.model
       alertHistories(data).then(res => {
         this.historyMessages = res.data
         this.onReportClick(this.historyMessages[0], 0)
@@ -337,7 +367,7 @@ export default {
       this.memoryExpertMessages = []
       this.networkExpertMessages = []
       this.brainstormingMessages = []
-      alertHistoryDetail({ file: item.file_name }).then(res => {
+      alertHistoryDetail({ file: item.file_name, model: this.model }).then(res => {
         this.reviewItem = res.data
         this.roleAssignerMessages = this.reviewItem.anomalyAnalysis.RoleAssigner.messages || []
         if (callback) {
@@ -348,9 +378,6 @@ export default {
       })
     },
     onReportClick(item, index) {
-      if (index === this.openIndex) {
-        return
-      }
       const that = this
       that.openReportLoading = true
       that.openIndex = index

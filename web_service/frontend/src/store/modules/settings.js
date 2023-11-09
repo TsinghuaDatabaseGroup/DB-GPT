@@ -5,7 +5,8 @@ const { showSettings, fixedHeader, sidebarLogo } = defaultSettings
 const state = {
   showSettings: showSettings,
   fixedHeader: fixedHeader,
-  sidebarLogo: sidebarLogo
+  sidebarLogo: sidebarLogo,
+  model: sessionStorage.getItem('UseModel') || 'GPT4-0613'
 }
 
 const mutations = {
@@ -14,12 +15,19 @@ const mutations = {
     if (state.hasOwnProperty(key)) {
       state[key] = value
     }
+  },
+  SET_MODEL: (state, model) => {
+    state.model = model
   }
 }
 
 const actions = {
   changeSetting({ commit }, data) {
     commit('CHANGE_SETTING', data)
+  },
+  model({ commit }, data) {
+    sessionStorage.setItem('UseModel', data)
+    commit('SET_MODEL', data)
   }
 }
 
