@@ -18,10 +18,16 @@
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-anomalies">Alerts And Anomalies</a> •  
   <a href="#-customize">Knowledge And Tools</a> • 
+  <span style="color: red; font-style: italic;">DiagLlama</span>
+</p>
+
+<p align="center">
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-contributors">Contributors</a>
 </p>
+
+
 
 <p align="center">
     【English | <a href="README_Chinese11-7_update.md">中文</a>】
@@ -185,6 +191,8 @@ Step 1: Install python packages.
 ```bash
 pip install -r requirements.txt
 ```
+
+> You can comment *"from .diag_llama import DiagLlamaChat"* in ./llms/__init__.py if trying the openai models only
 
 Step 2: Configure environment variables.
 

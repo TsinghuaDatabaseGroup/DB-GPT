@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field
 from pprint import pprint
 import datetime
 import time
+from tqdm import tqdm
 
 def node_to_chain(node):
     chain = {
@@ -152,7 +153,6 @@ class UCT_vote_function(base_search_method):
 
         while self.now_simulation_count < simulation_count:
             
-            print(colored(f"{self.name} analysis start!","yellow"))
             '''
             执行一次模拟，从根节点出发
             '''
@@ -289,7 +289,12 @@ class UCT_vote_function(base_search_method):
                 多次投票
                 '''
                 self.llm.change_messages("", messages)
-                message = self.llm.parse()
+
+                print(colored(f"- Voting ...","grey"))
+                with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
+                    message = self.llm.parse()
+                    pbar.update(1)
+
                 vote = message["content"]
                 # print(vote)
                 best_candiate_line = vote.split("\n")[-1]
@@ -377,7 +382,12 @@ class UCT_vote_function(base_search_method):
         message_list.append(new_message)
 
         self.llm.change_messages(self.role_description, message_list)
-        new_message = self.llm.parse()
+
+        print(colored(f"- Reflecting ...","grey"))
+        with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
+            new_message = self.llm.parse()
+            pbar.update(1)
+
         reflection = new_message['content']
         print(colored(f"Reflexion: {reflection}","green"))
 
@@ -454,7 +464,12 @@ class UCT_vote_function(base_search_method):
             
             self.llm.change_messages(self.role_description, now_node.messages)
             # self.llm.display_conversation()
-            new_message = self.llm.parse() # execute llm inference
+
+            print(colored(f"- Analyzing with tools ...","grey"))
+            with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
+                new_message = self.llm.parse()
+                pbar.update(1)
+
             # print(f"New message:\t{new_message['content']}")
             assert new_message["role"] == "assistant"
             if new_message not in now_node.messages:
@@ -479,8 +494,12 @@ class UCT_vote_function(base_search_method):
                     
                     if parsed_response != None:
                         break
-                    # import pdb; pdb.set_trace()
-                    new_message = self.llm.parse() # execute llm inference
+
+                    print(colored(f"- Analyzing with tools ...","grey"))
+                    with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
+                        new_message = self.llm.parse()
+                        pbar.update(1)
+
                     time.sleep(0.5)
 
                 # action --> temp_node

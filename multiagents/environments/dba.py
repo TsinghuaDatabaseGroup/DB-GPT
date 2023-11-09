@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 import time
 import ast
 from termcolor import colored
+from tqdm import tqdm
 
 from multiagents.utils.utils import AGENT_TYPES
 from multiagents.agents.conversation_agent import BaseAgent
@@ -165,7 +166,11 @@ class DBAEnvironment(BaseModel):
         self.reporter.start_time = args.start_at_seconds
         self.reporter.alert_str = alert_str
         self.reporter.alert_dict = alert_dict
-        self.reporter.initialize_report()
+
+        print(colored(f"Report Initialization!","black"))
+        with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
+            self.reporter.initialize_report()
+            pbar.update(1)        
 
         # ================== vanilla model ==================
         # self.reporter.report["anomaly description"]
@@ -185,8 +190,11 @@ class DBAEnvironment(BaseModel):
         self.role_assigner.alert_dict = self.reporter.alert_dict
 
         # ================== Expert Assignment ==================
-        print(colored(f"Role Assignment start!","yellow"))
-        selected_experts = self.role_assign(advice=advice, alert_info=self.role_assigner.alert_str)
+        print(colored(f"\nRole Assignment!","green"))
+
+        with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
+            selected_experts = self.role_assign(advice=advice, alert_info=self.role_assigner.alert_str)
+            pbar.update(1)
 
         # append the names of selected_experts (e.g., selected_experts[0].name) to the task description by \n
         if len(selected_experts) > args.max_hired_experts:
@@ -207,29 +215,34 @@ class DBAEnvironment(BaseModel):
         # count on these experts to diagnose for the alert        
         report = await self.decision_making(selected_experts, None, previous_plan, advice) # plans: the list of diagnosis messages
 
-        # add "anomaly date", "anomaly description", "root cause", "solutions" of self.reporter in a markdown table format into the string report_markdown
-        report_markdown = f"# {self.reporter.report['title']}\n\n"
-        # do not add any space in front of the first '|' of each row!!
-        self.reporter.report['anomaly date'] = self.reporter.report['anomaly date'].replace('\n', '<br>')
-        self.reporter.report['anomaly description'] = self.reporter.report['anomaly description'].replace('\n', '<br>')
-        self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('\n', '<br>')
-        self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('# ', '')
-        self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('#', '')
+        print(colored(f"Report Generation!","blue"))
         
-        self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('\n', '<br>')
-        self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('# ', '')
-        self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('#', '')
+        with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
 
-        report_markdown = report_markdown + \
-        f"""|                     |       |
+            # add "anomaly date", "anomaly description", "root cause", "solutions" of self.reporter in a markdown table format into the string report_markdown
+            report_markdown = f"# {self.reporter.report['title']}\n\n"
+            # do not add any space in front of the first '|' of each row!!
+            self.reporter.report['anomaly date'] = self.reporter.report['anomaly date'].replace('\n', '<br>')
+            self.reporter.report['anomaly description'] = self.reporter.report['anomaly description'].replace('\n', '<br>')
+            self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('\n', '<br>')
+            self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('# ', '')
+            self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('#', '')
+            
+            self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('\n', '<br>')
+            self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('# ', '')
+            self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('#', '')
+
+            report_markdown = report_markdown + \
+            f"""|                     |       |
 |---------------------|-------|
 | Anomaly Date        | {self.reporter.report['anomaly date']}  |
 | Anomaly Description | {self.reporter.report['anomaly description']}  |
 | Root Cause          | {self.reporter.report['root cause']}  |
 | Solutions           | {self.reporter.report['solutions']}  |\n\n"""
-        report_markdown = report_markdown + f"## Diagnosis Process\n" + self.reporter.report['diagnosis process'].strip()
+            report_markdown = report_markdown + f"## Diagnosis Process\n" + self.reporter.report['diagnosis process'].strip()
+            self.reporter.record["report"] = report_markdown
 
-        self.reporter.record["report"] = report_markdown
+            pbar.update(1)
 
         return report, self.reporter.record
 
@@ -266,7 +279,7 @@ class DBAEnvironment(BaseModel):
             previous_plan=previous_plan,
             advice=advice)
 
-        print("============= Finish the initial diagnosis =============")
+        print("\n============= Finish the initial diagnosis =============")
         
         for i,diag in enumerate(initial_diags):
             
@@ -388,7 +401,6 @@ class DBAEnvironment(BaseModel):
                         diag_process = diag_process + diag['content'].strip() + '\n'
                     pre_content = diag['content']
 
-
             prompt = prompt.replace("{diagnosis_messages}", diag_process)
             message = self.reporter.llm._construct_messages(prompt)
             self.reporter.llm.change_messages(self.reporter.role_description, message)
@@ -405,9 +417,14 @@ class DBAEnvironment(BaseModel):
             for agent in agents:
                 agent.messages.append(diag_message)
         
+        print(colored(f"Cross Review!","yellow"))
+        
         # discuss over the summarized initial_diags results
         for agent in agents:
-            review = await agent.review_step()
+            with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
+                review = await agent.review_step()
+                pbar.update(1)        
+
             if isinstance(review, dict) and "content" in review and review["content"] != "":
                 for agent2 in agents:
                     agent2.messages.append(review)
@@ -427,6 +444,7 @@ class DBAEnvironment(BaseModel):
         # review the diagnosis results by the reporter
         self.reporter.update_diagnosis()
         self.reporter.update_solutions()
+
 
         return self.reporter.report
 
