@@ -15,6 +15,7 @@ openai_keys.txt
 others/customllm_test.py
 alert_results/2023*
 alert_results/logs
+multiagents/llms/openai.py
 
 # Distribution / packaging
 .Python
