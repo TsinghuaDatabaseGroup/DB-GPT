@@ -103,7 +103,7 @@ prompts:
     Action: optimize_index_selection
     Action Input: {"start_time": ${start_time},"end_time": ${end_time}}
 
-    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to the chief DBA, and use the following format:
+    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
     Thought: I now know the root cause of the anomaly.
     Action: Speak
     Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
@@ -145,7 +145,7 @@ prompts:
     Action: match_diagnose_knowledge
     Action Input: {"start_time": ${start_time},"end_time": ${end_time}, "metric_name": "memory"}
 
-    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to the chief DBA, and use the following format:
+    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
     Thought: I now know the root cause of the anomaly.
     Action: Speak
     Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
@@ -182,7 +182,7 @@ prompts:
     Action: match_diagnose_knowledge
     Action Input: {"start_time": ${start_time},"end_time": ${end_time}, "metric_name": "io"}
 
-    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to the chief DBA, and use the following format:
+    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
     Thought: I now know the root cause of the anomaly.
     Action: Speak
     Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
@@ -219,7 +219,7 @@ prompts:
     Action: match_diagnose_knowledge
     Action Input: {"start_time": ${start_time},"end_time": ${end_time}, "metric_name": "network"}
 
-    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to the chief DBA, and use the following format:
+    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
     Thought: I now know the root cause of the anomaly.
     Action: Speak
     Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
@@ -305,7 +305,7 @@ agents:
       llm_type: gpt-4
       model: gpt-4
       temperature: 0.7
-      max_tokens: 1024
+      max_tokens: 2048
     tools: *monitor_tools
     verbose: true
   -
@@ -326,7 +326,7 @@ agents:
       llm_type: gpt-4
       model: gpt-4
       temperature: 0.7
-      max_tokens: 1024
+      max_tokens: 2048
     tools: *optimization_tools
     verbose: true
   -
@@ -347,7 +347,7 @@ agents:
       llm_type: gpt-4
       model: gpt-4
       temperature: 0.7
-      max_tokens: 1024
+      max_tokens: 2048
     tools: *optimization_tools
     verbose: true
   -
@@ -368,7 +368,7 @@ agents:
       llm_type: gpt-4
       model: gpt-4
       temperature: 0.7
-      max_tokens: 1024
+      max_tokens: 2048
     tools: *optimization_tools
     verbose: true
   -
@@ -389,6 +389,6 @@ agents:
       llm_type: gpt-4
       model: gpt-4
       temperature: 0.7
-      max_tokens: 1024
+      max_tokens: 2048
     tools: *optimization_tools
     verbose: true

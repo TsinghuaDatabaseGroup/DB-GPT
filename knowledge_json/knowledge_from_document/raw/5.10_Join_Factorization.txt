@@ -1,1 +1,0 @@
-In the cost-based transformation known as join factorization, the optimizer can factorize common computations from branches of a UNION ALL query.

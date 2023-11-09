@@ -14,6 +14,7 @@ import json
 from pydantic import BaseModel, Field
 from pprint import pprint
 import datetime
+import time
 
 def node_to_chain(node):
     chain = {
@@ -458,7 +459,7 @@ class UCT_vote_function(base_search_method):
             assert new_message["role"] == "assistant"
             if new_message not in now_node.messages:
                 now_node.messages.append(new_message)
-
+            
             if first_time:
                 first_time = False
                 '''
@@ -480,6 +481,7 @@ class UCT_vote_function(base_search_method):
                         break
                     # import pdb; pdb.set_trace()
                     new_message = self.llm.parse() # execute llm inference
+                    time.sleep(0.5)
 
                 # action --> temp_node
                 temp_node = tree_node()
@@ -599,7 +601,7 @@ class UCT_vote_function(base_search_method):
 
                     now_time = datetime.datetime.now()
                     now_time = now_time.strftime("%H:%M:%S")
-                    temp_message = {"role": "assistant", "content": f'The observation of {parsed_response.tool}: {observation}', "time": str(now_time)}
+                    temp_message = {"role": "assistant", "content": f'{observation}', "time": str(now_time)}
                     if temp_message not in temp_node.messages:
                         temp_node.messages.append(temp_message)
                     
@@ -607,7 +609,9 @@ class UCT_vote_function(base_search_method):
                     now_node.children.append(temp_node)
                     now_node = temp_node
                     this_simulation.append({"choice":0,"new_generated":True,"score":now_node.env.get_score()})
-                        
+                else:
+                    pass
+
             # if now_node.node_type == "Action Input":
 
             #     now_time = datetime.datetime.now()

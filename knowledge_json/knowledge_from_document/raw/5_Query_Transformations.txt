@@ -1,3 +1,0 @@
-This chapter describes the most important optimizer techniques for transforming queries.
-
-The optimizer decides whether to use an available transformation based on cost. Transformations may not be available to the optimizer for a variety of reasons, including hints or lack of constraints. For example, transformations such as subquery unnesting are not available for hybrid partitioned tables, which contain external partitions that do not support constraints.

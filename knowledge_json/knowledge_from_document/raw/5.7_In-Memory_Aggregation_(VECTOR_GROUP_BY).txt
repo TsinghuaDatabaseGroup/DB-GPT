@@ -1,8 +1,0 @@
-The key optimization of in-memory aggregation is to aggregate while scanning.
-
-To optimize query blocks involving aggregation and joins from a single large table to multiple small tables, such as in a typical star query, the transformation uses KEY VECTOR and VECTOR GROUP BY operations. These operations use efficient in-memory arrays for joins and aggregation, and are especially effective when the underlying tables are in-memory columnar tables.
-
-See Also:
-
-Oracle Database In-Memory Guide to learn more about in-memory aggregation
-
