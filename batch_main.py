@@ -9,7 +9,7 @@ import asyncio
 
 from multiagents.multiagents import MultiAgents
 from multiagents.tools.metrics import database_server_conf, db
-from multiagents.tools.metrics import get_workload_statistics, get_slow_queries, WORKLOAD_FILE_NAME, ANOMALY_FILE_NAME
+from multiagents.tools.metrics import get_workload_statistics, get_slow_queries, WORKLOAD_FILE_NAME, BATCH_ANOMALY_FILE_NAME
 from multiagents.utils.server import obtain_slow_queries
 
 
@@ -71,7 +71,7 @@ async def main(process_id):
             with open(reports_log_dir_name + "/diag_"+diag_id+".jsonl", "w") as f:
                 json.dump(report, f, indent=4)
 
-            with open(reports_log_dir_name + "/record_"+diag_id+".jsonl", "w") as f:
+            with open(reports_log_dir_name + f"{str(new_args.start_at_seconds)}.jsonl", "w") as f:
                 json.dump(records, f, indent=4)
 
             # result logs
@@ -94,9 +94,9 @@ log_dir_name = result_log_prefix + "2023-11-09-12-10-11"
 reports_log_dir_name = log_dir_name + "/reports"
 
 method = "d_bot_gpt4"
-finished_diag_ids = [] # finished_diag_ids = ['0', '14', '2', '25', '30', '36', '41', '49', '54', '6', '1', '15', '20', '26', '31', '37', '42', '5', '55', '60', '10', '16', '21', '27', '32', '38', '45', '50', '56', '61', '11', '17', '22', '28', '33', '39', '46', '51', '57', '7', '12', '18', '23', '29', '34', '4', '47', '52', '58', '8', '13', '19', '24', '3', '35', '40', '48', '53', '59', '9']
+finished_diag_ids = [] #["6","9","10"] # finished_diag_ids = ['0', '14', '2', '25', '30', '36', '41', '49', '54', '6', '1', '15', '20', '26', '31', '37', '42', '5', '55', '60', '10', '16', '21', '27', '32', '38', '45', '50', '56', '61', '11', '17', '22', '28', '33', '39', '46', '51', '57', '7', '12', '18', '23', '29', '34', '4', '47', '52', '58', '8', '13', '19', '24', '3', '35', '40', '48', '53', '59', '9']
 
-with open(ANOMALY_FILE_NAME, "r") as f:
+with open(BATCH_ANOMALY_FILE_NAME, "r") as f:
     anomaly_jsons = json.load(f)
 
 result_jsons = {}

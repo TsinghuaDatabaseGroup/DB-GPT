@@ -40,7 +40,8 @@ db = Database(dbargs, timeout=-1)
 
 
 WORKLOAD_FILE_NAME = "workload_info.json"
-ANOMALY_FILE_NAME = "anomalies/public_testing_set/testing_cases.json"
+# ANOMALY_FILE_NAME = "anomalies/public_testing_set/testing_cases.json"
+BATCH_ANOMALY_FILE_NAME = "anomalies/public_testing_set/batch_testing_set.json"
 # with open(WORKLOAD_FILE_NAME, 'w') as f:
 #     json.dump({'workload_statistics': '[]', 'slow_queries': '[]'}, f)
 
@@ -61,7 +62,7 @@ def get_workload_statistics():
 #             json.dump({'workload_statistics': stats, 'slow_queries': '[]'}, f)
 
 def get_slow_queries(diag_id):
-    with open(ANOMALY_FILE_NAME, 'r') as f:
+    with open(BATCH_ANOMALY_FILE_NAME, 'r') as f:
         info = json.load(f)
     return info[diag_id]["slow_queries"]
 
@@ -77,7 +78,7 @@ def get_slow_queries(diag_id):
 #             json.dump({'workload_statistics': '[]', 'slow_queries': stats}, f)
 
 def get_workload_sqls(diag_id):
-    with open(ANOMALY_FILE_NAME, 'r') as f:
+    with open(BATCH_ANOMALY_FILE_NAME, 'r') as f:
         info = json.load(f)
     return info[diag_id]["workload"]
 

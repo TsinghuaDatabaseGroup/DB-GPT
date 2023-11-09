@@ -215,11 +215,10 @@ class DBAEnvironment(BaseModel):
         self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('\n', '<br>')
         self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('# ', '')
         self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('#', '')
-
+        
         self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('\n', '<br>')
         self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('# ', '')
         self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('#', '')
-
 
         report_markdown = report_markdown + \
         f"""|                     |       |
