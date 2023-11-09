@@ -47,7 +47,6 @@ class OpenAICompletionArgs(OpenAIChatArgs):
     best_of: int = Field(default=1)
 
 
-
 @llm_registry.register("llama2")
 class llama2Completion(BaseCompletionModel):
     args: OpenAICompletionArgs = Field(default_factory=OpenAICompletionArgs)

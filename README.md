@@ -13,8 +13,8 @@
 
 <div align="center">
   <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/llama2">
-    <em style="color: red;">DiagLlama 🔥</em> 
-  </a>
+    <em style="color: red;">DiagLlama</em> 
+  </a> 🔥
 </div>
 
 <p align="center">
