@@ -1,9 +1,0 @@
-A materialized view is a query result stored in a table.
-
-When the optimizer finds a user query compatible with the query associated with a materialized view, the database can rewrite the query in terms of the materialized view. This technique improves query execution because the database has precomputed most of the query result.
-
-The optimizer looks for materialized views that are compatible with the user query, and then uses a cost-based algorithm to select materialized views to rewrite the query. The optimizer does not rewrite the query when the plan generated unless the materialized views has a lower cost than the plan generated with the materialized views.
-
-See Also:
-
-Oracle Database Data Warehousing Guide to learn more about query rewrite
