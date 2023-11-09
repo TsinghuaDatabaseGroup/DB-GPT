@@ -90,13 +90,11 @@ def wrapper(i):
 process_num = 4
 output_answer_file = "batch_testing_answers.jsonl"
 result_log_prefix = "./alert_results/logs/diagnosis_results/"
-log_dir_name = result_log_prefix + "2023-11-05-18-55-22-5-cases"
+log_dir_name = result_log_prefix + "2023-11-09-12-10-11"
 reports_log_dir_name = log_dir_name + "/reports"
 
 method = "d_bot_gpt4"
 finished_diag_ids = [] # finished_diag_ids = ['0', '14', '2', '25', '30', '36', '41', '49', '54', '6', '1', '15', '20', '26', '31', '37', '42', '5', '55', '60', '10', '16', '21', '27', '32', '38', '45', '50', '56', '61', '11', '17', '22', '28', '33', '39', '46', '51', '57', '7', '12', '18', '23', '29', '34', '4', '47', '52', '58', '8', '13', '19', '24', '3', '35', '40', '48', '53', '59', '9']
-
-
 
 with open(ANOMALY_FILE_NAME, "r") as f:
     anomaly_jsons = json.load(f)
