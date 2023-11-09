@@ -18,7 +18,7 @@ if not os.path.exists(f"./alert_results/{str(current_diag_time)}"):
     except:
         pass
 
-diag_start_time, diag_end_time = obtain_anomaly_time()
+# diag_start_time, diag_end_time = obtain_anomaly_time()
 
 promethest_conf = read_yaml('PROMETHEUS', 'config/tool_config.yaml')
 benchserver_conf = read_yaml('BENCHSERVER', 'config/tool_config.yaml')

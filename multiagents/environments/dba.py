@@ -9,6 +9,7 @@ from dateutil import parser, tz
 from datetime import datetime, timedelta
 import time
 import ast
+from termcolor import colored
 
 from multiagents.utils.utils import AGENT_TYPES
 from multiagents.agents.conversation_agent import BaseAgent
@@ -184,6 +185,7 @@ class DBAEnvironment(BaseModel):
         self.role_assigner.alert_dict = self.reporter.alert_dict
 
         # ================== Expert Assignment ==================
+        print(colored(f"role assignment start!","yellow"))
         selected_experts = self.role_assign(advice=advice, alert_info=self.role_assigner.alert_str)
 
         # append the names of selected_experts (e.g., selected_experts[0].name) to the task description by \n
