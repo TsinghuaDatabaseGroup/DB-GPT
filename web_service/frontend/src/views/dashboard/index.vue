@@ -52,7 +52,7 @@
             <div class="c-flex-row c-align-items-center c-justify-content-left">
               <div v-for="(alert_item, alert_index) in item.alerts" :key="alert_index" class="c-flex-row c-justify-content-left" style="margin-right: 10px">
                 <div :style="severityStyle[alert_item.alert_level]">
-                  [{{ alert_item.alert_level }}🔥]
+                  [{{ alert_item.alert_level }}{{ alert_item.alert_level !== 'INFO' ? '🔥' : '' }}]
                 </div>
                 <div style="color: #666666; margin-left: 5px">{{ alert_item.alert_name }}</div>
               </div>
