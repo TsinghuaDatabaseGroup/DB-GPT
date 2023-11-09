@@ -11,6 +11,11 @@
     </a>
 </p> -->
 
+<div style="text-align: center;">
+  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/llama2">
+    <em style="color: red;">DiagLlama</em>
+  </a>
+</div>
 
 <p align="center">
   <!-- <a href="#-features">Features</a> • -->
@@ -18,10 +23,6 @@
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-anomalies">Alerts And Anomalies</a> •  
   <a href="#-customize">Knowledge And Tools</a> • 
-  <span style="color: red; font-style: italic;">DiagLlama</span>
-</p>
-
-<p align="center">
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-contributors">Contributors</a>
