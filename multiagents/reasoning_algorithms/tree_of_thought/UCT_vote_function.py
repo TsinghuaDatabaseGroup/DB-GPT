@@ -601,7 +601,7 @@ class UCT_vote_function(base_search_method):
 
                     now_time = datetime.datetime.now()
                     now_time = now_time.strftime("%H:%M:%S")
-                    temp_message = {"role": "assistant", "content": f'{observation}', "time": str(now_time)}
+                    temp_message = {"role": "function", "content": f'{observation}', "time": str(now_time)}
                     if temp_message not in temp_node.messages:
                         temp_node.messages.append(temp_message)
                     

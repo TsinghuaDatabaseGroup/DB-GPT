@@ -1,7 +1,7 @@
 from our_argparse import args
 from multiagents.multiagents import MultiAgents
 from multiagents.tools.metrics import database_server_conf, db
-from multiagents.tools.metrics import get_workload_statistics, get_slow_queries, WORKLOAD_FILE_NAME
+from multiagents.tools.metrics import get_workload_statistics, get_slow_queries, WORKLOAD_FILE_NAME, BATCH_ANOMALY_FILE_NAME
 from multiagents.utils.server import obtain_slow_queries
 import json
 import os
@@ -22,7 +22,8 @@ async def main(args):
 if __name__ == "__main__":
 
     # read from the anomalies with alerts. for each anomaly, 
-    with open("./anomalies/public_testing_set/testing_cases.json", "r") as f:
+    # "anomalies/public_testing_set/batch_testing_set.json"
+    with open(BATCH_ANOMALY_FILE_NAME, "r") as f:
         anomaly_jsons = json.load(f)
 
     diag_id, content = next(iter(anomaly_jsons.items()))

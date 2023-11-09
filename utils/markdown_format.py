@@ -46,7 +46,6 @@ def plot(title, x_values, y_values, size=(400, 225)):
     plt.xticks([])
     # plot the values of y_values in 10 intervals
     #y_ticks = np.arange(0, float(max(y_values)), float(max(y_values))/10)
-    # import pdb; pdb.set_trace()
     #plt.yticks(y_ticks)
     ax = plt.gca()
     ax.spines['top'].set_color('#999999')

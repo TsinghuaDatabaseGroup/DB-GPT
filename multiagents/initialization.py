@@ -18,7 +18,6 @@ import multiagents.tools.query_advisor.api as query_advisor
 import multiagents.tools.index_advisor.api as index_advisor
 
 import importlib
-import pdb
 
 if TYPE_CHECKING:
     from agents import BaseAgent

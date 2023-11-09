@@ -215,11 +215,10 @@ class DBAEnvironment(BaseModel):
         self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('\n', '<br>')
         self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('# ', '')
         self.reporter.report['root cause'] = self.reporter.report['root cause'].replace('#', '')
-
+        
         self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('\n', '<br>')
         self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('# ', '')
         self.reporter.report['solutions'] = self.reporter.report['solutions'].replace('#', '')
-
 
         report_markdown = report_markdown + \
         f"""|                     |       |
@@ -309,7 +308,7 @@ class DBAEnvironment(BaseModel):
             solutions = str(diag["solutions"]).replace('\n','<br>')
 
             self.reporter.report["solutions"] = str(self.reporter.report["solutions"]) + f"<br>The solutions recommended by {diag['sender']}:<br>" + solutions + "<br>"
-            
+
             self.reporter.report["diagnosis process"] = str(self.reporter.report["diagnosis process"]) + f"<br>{i+1}. The diagnosis process of {diag['sender']}:<br>"
 
             for i, m_response in enumerate(diag["diagnosis process"]):
@@ -358,6 +357,7 @@ class DBAEnvironment(BaseModel):
                         m_message = m_message.replace(match.group(0), markdown_str)
 
                     m_message = m_message.replace("\n", "<br>")
+                    m_message = re.sub(r'(?:<br>){2,}', '<br><br>', m_message)
 
                     self.reporter.report["diagnosis process"] = str(self.reporter.report["diagnosis process"]) + m_message + "\n"
                     if 'time' not in m_response:
