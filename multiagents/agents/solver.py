@@ -207,7 +207,7 @@ class SolverAgent(BaseAgent):
             root_causes = root_causes.content
 
 
-        prompt = "Give the optimization solutions based on above discussions in details. Note give the optimization solutions only and do not mention anything about the root causes!!! The solutions should be in markdown format."
+        prompt = "Give the optimization solutions only based on above discussions in details. Note do not mention anything about **root causes**!!! The solutions (not root causes) should be in markdown format."
         solution_message = self.llm._construct_messages(prompt)
         solution_messages = result_node.messages + solution_message
         self.llm.change_messages("You are a database expert", solution_messages)

@@ -62,7 +62,7 @@ class DBDiag(OutputParser):
             try:
                 action_input = json.loads(action_input)
             except:
-                print("error in json.loads")
+                print("Eerror in parsing diagnosis results from 'speak' action")
                 # import pdb; pdb.set_trace()
                 return None
 

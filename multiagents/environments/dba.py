@@ -185,7 +185,7 @@ class DBAEnvironment(BaseModel):
         self.role_assigner.alert_dict = self.reporter.alert_dict
 
         # ================== Expert Assignment ==================
-        print(colored(f"role assignment start!","yellow"))
+        print(colored(f"Role Assignment start!","yellow"))
         selected_experts = self.role_assign(advice=advice, alert_info=self.role_assigner.alert_str)
 
         # append the names of selected_experts (e.g., selected_experts[0].name) to the task description by \n
@@ -274,38 +274,42 @@ class DBAEnvironment(BaseModel):
             self.reporter.record["topMetrics"] = self.reporter.record["topMetrics"] + diag["topMetrics"]
             # diag["root cause"] for diag in initial_diags
 
-            prompt = DIAGNOSIS_SUMMARYY_PROMPT
-            prompt = prompt.replace("{diagnosis_messages}", str(diag["root cause"]))
-            message = self.reporter.llm._construct_messages(prompt)
-            self.reporter.llm.change_messages(self.reporter.role_description, message)
-            summarized_diags = self.reporter.llm.parse()            
+            # prompt = DIAGNOSIS_SUMMARYY_PROMPT
+            # prompt = prompt.replace("{diagnosis_messages}", str(diag["root cause"]))
+            # message = self.reporter.llm._construct_messages(prompt)
+            # self.reporter.llm.change_messages(self.reporter.role_description, message)
+            # summarized_diags = self.reporter.llm.parse()            
             
-            # if summarized_diags is of dict type
-            if isinstance(summarized_diags, dict):
-                diag_message = summarized_diags["content"]
-            else:
-                diag_message = summarized_diags.content
+            # # if summarized_diags is of dict type
+            # if isinstance(summarized_diags, dict):
+            #     diag_message = summarized_diags["content"]
+            # else:
+            #     diag_message = summarized_diags.content
 
-            self.reporter.report["root cause"] = str(self.reporter.report["root cause"]) + f"<br>The root causes identified by {diag['sender']}:<br>" + str(diag_message) + "<br>"
+            root_causes = str(diag["root cause"]).replace('\n','<br>')
 
-            # solution = str(diag["solutions"]).replace("\"","")
-            # solution = solution.replace("\\n", "\n")
-            solution = str(diag["solutions"])
+            self.reporter.report["root cause"] = str(self.reporter.report["root cause"]) + f"<br>The root causes identified by {diag['sender']}:<br>" + root_causes + "<br>"
 
-            prompt = DIAGNOSIS_SUMMARYY_PROMPT
-            prompt = prompt.replace("{diagnosis_messages}", str(solution))
-            message = self.reporter.llm._construct_messages(prompt)
-            self.reporter.llm.change_messages(self.reporter.role_description, message)
-            summarized_solutions = self.reporter.llm.parse()            
+            # # solution = str(diag["solutions"]).replace("\"","")
+            # # solution = solution.replace("\\n", "\n")
+            # solution = str(diag["solutions"])
+
+            # prompt = DIAGNOSIS_SUMMARYY_PROMPT
+            # prompt = prompt.replace("{diagnosis_messages}", str(solution))
+            # message = self.reporter.llm._construct_messages(prompt)
+            # self.reporter.llm.change_messages(self.reporter.role_description, message)
+            # summarized_solutions = self.reporter.llm.parse()            
             
-            # if summarized_diags is of dict type
-            if isinstance(summarized_diags, dict):
-                summarized_solutions = summarized_solutions["content"]
-            else:
-                summarized_solutions = summarized_solutions.content
+            # # if summarized_diags is of dict type
+            # if isinstance(summarized_diags, dict):
+            #     summarized_solutions = summarized_solutions["content"]
+            # else:
+            #     summarized_solutions = summarized_solutions.content
 
-            self.reporter.report["solutions"] = str(self.reporter.report["solutions"]) + f"<br>The solutions recommended by {diag['sender']}:<br>" + summarized_solutions + "<br>"
+            solutions = str(diag["solutions"]).replace('\n','<br>')
 
+            self.reporter.report["solutions"] = str(self.reporter.report["solutions"]) + f"<br>The solutions recommended by {diag['sender']}:<br>" + solutions + "<br>"
+            
             self.reporter.report["diagnosis process"] = str(self.reporter.report["diagnosis process"]) + f"<br>{i+1}. The diagnosis process of {diag['sender']}:<br>"
 
             for i, m_response in enumerate(diag["diagnosis process"]):
