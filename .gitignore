@@ -176,3 +176,4 @@ chat_history.json
 openai_keys.txt
 others/customllm_test.py
 multiagents/llms/openai.py
+environment.yml

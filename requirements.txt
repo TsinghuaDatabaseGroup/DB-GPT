@@ -1,5 +1,4 @@
 pyyaml
-langchain>=0.0.155
 fastapi
 uvicorn
 py3langid
@@ -26,8 +25,6 @@ steamship
 IPython
 google-search-results
 amadeus
-gradio
-gradio_tools
 peft
 numpy==1.24.2
 PyYAML==6.0
@@ -45,3 +42,6 @@ tiktoken
 requests
 jpype1==1.4.1
 rapidfuzz
+aiohttp
+werkzeug==2.0.2
+flask

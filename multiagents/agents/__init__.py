@@ -3,7 +3,7 @@ agent_registry = Registry(name="AgentRegistry")
 
 from .base import BaseAgent
 from .conversation_agent import ConversationAgent
-from .tool_agent import ToolAgent
+# from .tool_agent import ToolAgent
 
 from .role_assigner import RoleAssignerAgent
 # from .critic import CriticAgent

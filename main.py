@@ -26,8 +26,9 @@ if __name__ == "__main__":
     with open(BATCH_ANOMALY_FILE_NAME, "r") as f:
         anomaly_jsons = json.load(f)
 
-    diag_id, content = next(iter(anomaly_jsons.items()))
-
+    # diag_id, content = next(iter(anomaly_jsons.items()))
+    diag_id = "10"
+    content = anomaly_jsons[diag_id]
     
     args.start_at_seconds = content["start_time"]
     args.end_at_seconds = content["end_time"]
