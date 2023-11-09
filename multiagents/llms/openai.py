@@ -137,10 +137,13 @@ class OpenAIChat(BaseChatModel):
 
         new_messages = []
         for message in messages:
+            new_message = message
             # pop the time key-value from the message
-            if "time" in message:
-                message.pop("time")
-            new_messages.append(message)
+            if "time" in new_message:
+                new_message.pop("time")
+            if new_message["role"] == "function":
+                new_message["role"] = "assistant"
+            new_messages.append(new_message)
         messages = new_messages
 
         for i in range(self.TRY_TIME):
