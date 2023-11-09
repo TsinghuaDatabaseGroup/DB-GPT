@@ -1,5 +1,5 @@
 <template>
-  <div class="c-flex-row" style="width: 100%; font-size: 1rem">
+  <div class="c-flex-row" style="width: 100%; font-size: 1rem; line-height: 1.6!important;">
     <div class="c-flex-column" style=" width: 55%;">
       <div
         class="c-flex-row c-align-items-center c-justify-content-between c-shaow-card"
@@ -96,7 +96,7 @@
       style="overflow-y: scroll; height: 100vh; overflow-x: hidden; width: 45%; background: RGBA(245, 246, 249, 1.00);"
     >
       <div
-        style="background-color: white; padding: 10px; margin: 10px; border-radius: 8px"
+        style="background-color: white; padding: 10px; margin: 10px; border-radius: 8px;"
         v-html="md.render(openReport)"
       />
     </div>
@@ -443,7 +443,7 @@ table {
 table th,
 table td {
   padding: 8px;
-  line-height: 20px;
+  line-height: 1.5;
   text-align: left;
   vertical-align: top;
   border: 1px solid #e1e1e1;
