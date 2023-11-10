@@ -45,3 +45,4 @@ rapidfuzz
 aiohttp
 werkzeug==2.0.2
 flask
+jsonlines

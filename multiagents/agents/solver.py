@@ -201,7 +201,7 @@ class SolverAgent(BaseAgent):
 
         prompt = "Analyze the diagnosed root causes based on above discussions in details. Note the analysis should be only about root causes in markdown format!!! And do not mention anything about the solutions!!!"
         diag_message = self.llm._construct_messages(prompt)
-        diag_messages = result_node.messages + diag_message
+        diag_messages = [result_node.messages[-1]] + diag_message
         self.llm.change_messages("You are a database expert", diag_messages)
         root_causes = self.llm.parse()        
         if isinstance(root_causes, dict):
@@ -210,10 +210,9 @@ class SolverAgent(BaseAgent):
             root_causes = root_causes.content
         print(colored(f"\nDetected Root Causes: {root_causes}","blue"))
 
-
-        prompt = "Give the optimization solutions only based on above discussions in details. Note do not mention anything about **root causes**!!! The solutions (not root causes) should be in markdown format."
+        prompt = "Give the solutions only based on above messages in details. Note do not mention anything about **root causes**!!! The solutions (not root causes) should be in markdown format. If there are no solutions in above messages, please answer 'No solution available'"
         solution_message = self.llm._construct_messages(prompt)
-        solution_messages = result_node.messages + solution_message
+        solution_messages = [result_node.messages[-1]] + solution_message
         self.llm.change_messages("You are a database expert", solution_messages)
         solutions = self.llm.parse()
         if isinstance(solutions, dict):
