@@ -92,13 +92,13 @@ class ReporterAgent(BaseAgent):
         self.record["alerts"] = alert_names
 
     def update_diagnosis(self):
-        prompt = "You are writing a report. Please summarize the refined anomaly diagnosis based on the above review adice. The anomaly diagnosis is as follows:\n" + self.report["root cause"] + "\n ===== \n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the anomaly diagnosis description based on the above advice.'\n"
+        prompt = "You are writing a report. Please give the refined root cause analysis based on the above review adice. The root cause analysis is as follows:\n" + self.report["root cause"] + "\n ===== \n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the anomaly diagnosis description based on the above advice. 3. Do not add anything about solutions!!!'\n"
 
         prompt_message = {"role": "user", "content": prompt, "time": time.strftime("%H:%M:%S", time.localtime())}
 
-        self.messages.append(prompt_message)
+        # self.messages.append(prompt_message)
 
-        self.llm.change_messages(self.role_description, self.messages)
+        self.llm.change_messages(self.role_description, self.messages + [prompt_message])
         new_message = self.llm.parse()
         
         if isinstance(new_message, dict):
@@ -108,13 +108,13 @@ class ReporterAgent(BaseAgent):
 
 
     def update_solutions(self):
-        prompt = "You are writing a report. Please summarize the refined solutions based on the above review adice. The solutions are as follows:\n" + self.report["solutions"] + "\n ===== \n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the solutions based on the above advice.'\n"
+        prompt = "You are writing a report. Please optimize the following solutions based on the above review adice. The solutions are:\n" + self.report["solutions"] + "\n ===== \n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the solutions based on the above advice'. 3. Do not add anything about root causes!!!\n"
 
         prompt_message = {"role": "user", "content": prompt, "time": time.strftime("%H:%M:%S", time.localtime())}
 
-        self.messages.append(prompt_message)
+        # self.messages.append(prompt_message)
 
-        self.llm.change_messages(self.role_description, self.messages)
+        self.llm.change_messages(self.role_description, self.messages + [prompt_message])
         new_message = self.llm.parse()
 
         if isinstance(new_message, dict):
