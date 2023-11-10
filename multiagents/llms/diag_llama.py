@@ -15,7 +15,7 @@ import re
 from termcolor import colored
 import sys
 sys.path.append("../../../")
-from llama2.inference import llama_inference
+from diagllama.inference import llama_inference
 
 def remove_charts(text):
     pattern = r'\[chart\].*?\.html'

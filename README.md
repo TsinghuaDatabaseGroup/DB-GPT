@@ -11,6 +11,11 @@
     </a>
 </p> -->
 
+<div align="center">
+  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/diagllama">
+    <em style="color: red;">DiagLlama</em> 
+  </a> 🔥
+</div>
 
 <p align="center">
   <!-- <a href="#-features">Features</a> • -->
@@ -18,10 +23,6 @@
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-anomalies">Alerts And Anomalies</a> •  
   <a href="#-customize">Knowledge And Tools</a> • 
-  <span style="color: red; font-style: italic;">DiagLlama</span>
-</p>
-
-<p align="center">
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-contributors">Contributors</a>
@@ -51,9 +52,10 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you ca
 
 <p align="center">
   <a href="http://dbgpt.dbmind.cn">
-    <img src="imgs/frontend_v2_1.png" width="800px" alt="frontend_v2">
+    <img src="./assets/dbot2.gif" width="800px">
   </a>
 </p>
+
 
 <p align="center">
   <a href="http://dbgpt.dbmind.cn">
