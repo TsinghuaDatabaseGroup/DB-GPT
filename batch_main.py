@@ -71,7 +71,7 @@ async def main(process_id):
             with open(reports_log_dir_name + "/diag_"+diag_id+".jsonl", "w") as f:
                 json.dump(report, f, indent=4)
 
-            with open(reports_log_dir_name + f"{str(new_args.start_at_seconds)}.jsonl", "w") as f:
+            with open(reports_log_dir_name + f"/{str(new_args.start_at_seconds)}.jsonl", "w") as f:
                 json.dump(records, f, indent=4)
 
             # result logs

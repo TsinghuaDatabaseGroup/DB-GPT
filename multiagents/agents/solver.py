@@ -11,6 +11,7 @@ from string import Template
 from pydantic import Field
 from typing import TYPE_CHECKING, List, Tuple
 from termcolor import colored
+from tqdm import tqdm
 
 # from multiagents.environments import PipelineEnvironment
 from multiagents.message import SolverMessage, Message, CriticMessage
@@ -191,6 +192,8 @@ class SolverAgent(BaseAgent):
         
         chain = UCT_vote_function(diag_id=self.diag_id, start_time=self.start_time, end_time=self.end_time, agent_name=self.name, role_description=self.role_description, prompt_template=self.prompt_template, llm=self.llm,env=tasksolving_env, output_parser=self.output_parser, alert_dict=self.alert_dict, alert_str=self.alert_str, agent=self)
 
+        print(colored(f"\n{self.name} Diagnosis!","red"))
+
         result_node, top_abnormal_metric_values  = chain.start(simulation_count=1,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=11)
 
         if result_node is None:
@@ -205,17 +208,19 @@ class SolverAgent(BaseAgent):
             root_causes = root_causes["content"]
         else:
             root_causes = root_causes.content
+        print(colored(f"\nDetected Root Causes: {root_causes}","blue"))
 
 
         prompt = "Give the optimization solutions only based on above discussions in details. Note do not mention anything about **root causes**!!! The solutions (not root causes) should be in markdown format."
         solution_message = self.llm._construct_messages(prompt)
         solution_messages = result_node.messages + solution_message
         self.llm.change_messages("You are a database expert", solution_messages)
-        solutions = self.llm.parse()        
+        solutions = self.llm.parse()
         if isinstance(solutions, dict):
             solutions = solutions["content"]
         else:
             solutions = solutions.content
+        print(colored(f"\nRecommended Solutions: {solutions}","white"))
 
         # thought = ""
         # solutions = ""
