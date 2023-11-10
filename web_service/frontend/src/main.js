@@ -13,8 +13,10 @@ import '@/styles/common.css'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/lib/codemirror'
+import VueDeviceDetector from 'vue-device-detector';
 
 Vue.use(codemirror)
+Vue.use(VueDeviceDetector)
 
 import App from './App'
 import store from './store'
