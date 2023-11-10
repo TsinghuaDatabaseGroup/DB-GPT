@@ -10,8 +10,12 @@
       </div>
     </template>
     <template v-else>
-      <div class="exception-mobile">
-        <h1>Please visit and try out on PC</h1>
+      <div class="exception-mobile c-flex-column c-justify-content-center c-align-items-center" style="background: RGBA(240, 170, 150, 1.00)">
+        <img src="@/assets/only_desk.png" style="width: 80%; border-radius: 8px; margin-bottom: 20px">
+        <span
+          style="color: #ffffff; width: 80%; font-size: 16px; text-align: left; line-height: 2; font-weight: bolder;"
+        >
+          Please visit and try out on PC. <br> We will adapt the mobile page soon.<br> Thanks for your support! ❤️️❤️️</span>
       </div>
     </template>
   </div>
@@ -106,6 +110,6 @@ export default {
   width: 100vw;
   height: 100vh;
   text-align: center;
-  line-height: 100vh;
+  background: white;
 }
 </style>
