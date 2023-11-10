@@ -36,7 +36,6 @@
         <img src="@/assets/ch_to_en.png" style="width: 30px; height: 30px;">
       </div>
     </div>
-
   </div>
 </template>
 
@@ -95,4 +94,5 @@ export default {
   width: 100%;
   margin-bottom: 30px;
 }
+
 </style>

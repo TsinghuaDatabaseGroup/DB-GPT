@@ -1,12 +1,19 @@
 <template>
   <div :class="classObj" class="app-wrapper">
-    <sidebar class="sidebar-container" />
-    <div
-      class="main-container"
-      style="width: calc(100vw - 65px); margin-left: 65px; padding: 0 0; height: 100%; overflow: hidden;"
-    >
-      <app-main style="width: 100%" />
-    </div>
+    <template v-if="!($device.mobile || $device.ipad)">
+      <sidebar class="sidebar-container" />
+      <div
+        class="main-container"
+        style="width: calc(100vw - 65px); margin-left: 65px; padding: 0 0; height: 100%; overflow: hidden;"
+      >
+        <app-main style="width: 100%" />
+      </div>
+    </template>
+    <template v-else>
+      <div class="exception-mobile">
+        <h1>Please visit and try out on PC</h1>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -39,6 +46,9 @@ export default {
         mobile: this.device === 'mobile'
       }
     }
+  },
+  mounted() {
+    console.log('=========:', this.$device)
   },
   methods: {
     handleClickOutside() {
@@ -90,5 +100,12 @@ export default {
 
 .mobile .fixed-header {
   width: 100%;
+}
+
+.exception-mobile {
+  width: 100vw;
+  height: 100vh;
+  text-align: center;
+  line-height: 100vh;
 }
 </style>

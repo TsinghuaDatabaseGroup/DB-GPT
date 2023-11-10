@@ -32,6 +32,7 @@
     "vue-clipboard2": "^0.3.1",
     "vue-codemirror": "4.0.6",
     "vue-demi": "^0.7.0",
+    "vue-device-detector": "^1.1.6",
     "vue-echarts": "^6.0.0",
     "vue-i18n": "^8.28.2",
     "vue-router": "3.0.6",
