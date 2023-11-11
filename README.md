@@ -67,6 +67,8 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you ca
   <a href="./assets/dbot2_v2.gif">Demo Video</a>
 </p>
 
+Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/old_version) of D-Bot.
+
 <span id="-news"></span>
 
 ## 📰 Updates
