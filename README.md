@@ -52,7 +52,7 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you ca
 
 <p align="center">
   <a href="http://dbgpt.dbmind.cn">
-    <img src="./assets/dbot2.gif" width="800px">
+    <img src="imgs/frontend_v2_1.png" width="800px" alt="frontend_v2">
   </a>
 </p>
 
@@ -61,6 +61,10 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you ca
   <a href="http://dbgpt.dbmind.cn">
     <img src="imgs/frontend_v2_2.png" width="800px" alt="frontend_v2">
   </a>
+</p>
+
+<p align="center">
+  <a href="./assets/dbot2_v2.gif">Demo Video</a>
 </p>
 
 <span id="-news"></span>
