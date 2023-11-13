@@ -161,7 +161,7 @@ cd web_service
 sh run_service.sh
 ```
 
-> Modify the "python app.py" command within *run_service.sh* if there are multiple Python versions (e.g., "python3.5 app.py").
+> Modify the "python app.py" command within *run_service.sh* if there are multiple Python versions (e.g., "python3.9 app.py").
 
 After successfully launching the local server, visit [http://127.0.0.1:8025/](http://127.0.0.1:8025/) to browse the diagnosis reports.
 
