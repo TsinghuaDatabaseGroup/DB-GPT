@@ -132,7 +132,7 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 
 ### Website Side
 
-We provide a local website to browse historical diagnosis reports and procedures. You can easily launch it with
+We provide a local website to browse historical diagnosis reports and procedures. You can launch it in three steps:
 
 * install nodejs (16.13.1 and above is recommended)
 
@@ -161,7 +161,7 @@ cd web_service
 sh run_service.sh
 ```
 
-> Modify the "python app.py" command within *run_service.sh* if multiple versions of Python are installed (e.g., ).
+> Modify the "python app.py" command within *run_service.sh* if there are multiple Python versions (e.g., "python3.5 app.py").
 
 After successfully launching the local server, visit [http://127.0.0.1:8025/](http://127.0.0.1:8025/) to browse the diagnosis reports.
 
