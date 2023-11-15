@@ -451,6 +451,6 @@ Other Collaborators: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](http
 
 We thank all the contributors to this project. Do not hesitate if you would like to get involved or contribute!
 
-## ⭐️ Star History
+<!-- ## ⭐️ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=TsinghuaDatabaseGroup/DB-GPT&type=Date)](https://star-history.com/#TsinghuaDatabaseGroup/DB-GPT&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=TsinghuaDatabaseGroup/DB-GPT&type=Date)](https://star-history.com/#TsinghuaDatabaseGroup/DB-GPT&Date) -->
