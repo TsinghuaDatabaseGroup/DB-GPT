@@ -2,8 +2,11 @@ import argparse
 import anomaly
 
 
+
+
 parser = argparse.ArgumentParser(description='Anomaly simulation tool')
-parser.add_argument('--anomaly', type=str, required=True, choices=['INSERT_LARGE_DATA', 'MISSING_INDEXES','LOCK_CONTENTION','VACUUM','REDUNDANT_INDEX','INSERT_LARGE_DATA,IO_CONTENTION','FETCH_LARGE_DATA,CORRELATED_SUBQUERY','POOR_JOIN_PERFORMANCE,CPU_CONTENTION'],
+parser.add_argument('--anomaly', type=str, required=True, choices=['INSERT_LARGE_DATA', 'MISSING_INDEXES','LOCK_CONTENTION','VACUUM','REDUNDANT_INDEX','INSERT_LARGE_DATA,IO_CONTENTION',
+                                                                   'FETCH_LARGE_DATA,CORRELATED_SUBQUERY','POOR_JOIN_PERFORMANCE,CPU_CONTENTION'],
                         help='Specify the type of anomaly to simulate')
 parser.add_argument('--threads',type=int,default=0,help='threads')
 parser.add_argument('--duration', type=int, default=60, help='duration')
@@ -51,3 +54,5 @@ elif args.anomaly == 'POOR_JOIN_PERFORMANCE,CPU_CONTENTION':
                        
 else:
         print("Invalid --anomaly option.")
+
+
