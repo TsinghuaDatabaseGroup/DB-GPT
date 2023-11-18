@@ -1,0 +1,6 @@
+{
+    "source_sections": "['1 title.txt', '1.4 root_cause.txt']",
+    "id": -1,
+    "rule": "{\n\"name\": \"high_cpu_usage\",\n\"content\": \"High CPU usage can be caused by the execution of specific SQL statements, which can be identified through the analysis of kernel performance views and WDR reports.\",\n\"metrics\": [\"user_cpu_usage\", \"system_cpu_usage\", \"nice_cpu_usage\", \"iowait_cpu_usage\", \"sql_execution_time\"],\n\"steps\": \"Identify the SQL statement causing high CPU usage. This can be done by analyzing kernel performance views and WDR reports. If the SQL statement is found to be consuming a significant amount of CPU resources, it is considered a root cause. The solution would be to optimize the SQL statement to reduce CPU consumption.\"\n}"
+}
+====================

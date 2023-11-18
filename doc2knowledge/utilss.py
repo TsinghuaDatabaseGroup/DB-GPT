@@ -2,7 +2,7 @@ from pyheaven import *
 from prompts import *
 
 import time
-import openai
+from openai import OpenAI
 import itertools
 
 # config utils
@@ -73,34 +73,43 @@ class LLMCore(object):
         self.backend = backend
         if self.backend.startswith("openai_"):
             self.config = get_config('openai-api')
-            openai.api_key = self.config['api_key']
-            openai.organization = self.config['organization']
+            self.client = OpenAI(
+                api_key=self.config['api_key'],
+                organization = self.config['organization']
+            )
+
             self.model = backend.split('_')[-1]
         else:
             pass
         
     def Query(self, messages, temperature=0, functions=list(), retry_gap=0.1, timeout=3):
+        
+        
         identifier = "|".join([self.backend, str(messages)] + ([str(functions)] if functions else []))
-        response = get_cache(identifier)
+        
+        #response = get_cache(identifier)
+        response = None
         if response is not None:
             return response
         while timeout>0:
             try:
                 if functions:
                     assert (self.model=='gpt-4'), f"Functions are only supported in 'gpt-4'!"
-                    response = openai.ChatCompletion.create(
+                    response = self.client.chat.completions.create(
                         model = self.model,
                         messages = messages,
                         functions = functions,
                         temperature = temperature,
-                    ).choices[0]['message']
+                    )
                 else:
-                    response = openai.ChatCompletion.create(
+                    response = self.client.chat.completions.create(
                         model = self.model,
                         messages = messages,
                         temperature = temperature,
-                    ).choices[0]['message']
-                update_cache(identifier, response)
+                    )
+                response = response.choices[0].message
+
+                # update_cache(identifier, response)
                 return response
             except KeyboardInterrupt as e:
                 exit(0)
