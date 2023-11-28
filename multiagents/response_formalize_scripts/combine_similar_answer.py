@@ -60,8 +60,8 @@ def combine_similar_answers(text, output_format='str'):
                     else:
                         time.sleep(0.01)
                         k += 1
-                except OpenAIError as e:
-                    print("OpenAI API error: {}".format(e))
+                except:
+                    print("OpenAI API error")
                     time.sleep(0.01)
                     pass
 
