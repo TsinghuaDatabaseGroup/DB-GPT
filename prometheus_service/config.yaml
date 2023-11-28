@@ -1,0 +1,4 @@
+PROMETHEUS:
+  api_url: http://8.131.229.55:9090/
+  postgresql_exporter_instance: 172.27.58.65:9187
+  node_exporter_instance: 172.27.58.65:9100
