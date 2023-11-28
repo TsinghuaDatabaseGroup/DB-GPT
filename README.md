@@ -52,7 +52,7 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you ca
 
 <p align="center">
   <a href="http://dbgpt.dbmind.cn">
-    <img src="./assets/dbot2.gif" width="800px">
+    <img src="imgs/frontend_v2_1.png" width="800px" alt="frontend_v2">
   </a>
 </p>
 
@@ -62,6 +62,12 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you ca
     <img src="imgs/frontend_v2_2.png" width="800px" alt="frontend_v2">
   </a>
 </p>
+
+<p align="center">
+  <a href="./assets/dbot2_v2.gif">Demo Video</a>
+</p>
+
+Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/old_version) of D-Bot.
 
 <span id="-news"></span>
 
@@ -126,7 +132,7 @@ In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you ca
 
 ### Website Side
 
-We provide a local website to browse historical diagnosis reports and procedures. You can easily launch it with
+We provide a local website to browse historical diagnosis reports and procedures. You can launch it in three steps:
 
 * install nodejs (16.13.1 and above is recommended)
 
@@ -155,7 +161,7 @@ cd web_service
 sh run_service.sh
 ```
 
-> Modify the "python app.py" command within *run_service.sh* if multiple versions of Python are installed (e.g., ).
+> Modify the "python app.py" command within *run_service.sh* if there are multiple Python versions (e.g., "python3.9 app.py").
 
 After successfully launching the local server, visit [http://127.0.0.1:8025/](http://127.0.0.1:8025/) to browse the diagnosis reports.
 
@@ -445,6 +451,6 @@ Other Collaborators: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](http
 
 We thank all the contributors to this project. Do not hesitate if you would like to get involved or contribute!
 
-## ⭐️ Star History
+<!-- ## ⭐️ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=TsinghuaDatabaseGroup/DB-GPT&type=Date)](https://star-history.com/#TsinghuaDatabaseGroup/DB-GPT&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=TsinghuaDatabaseGroup/DB-GPT&type=Date)](https://star-history.com/#TsinghuaDatabaseGroup/DB-GPT&Date) -->

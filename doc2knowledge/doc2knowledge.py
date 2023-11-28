@@ -7,7 +7,8 @@ def Initialize(doc, target_dir):
     CreateFolder(pjoin(doc_path, target_dir))
 
 def Summarize(idx, title, content, summary_min_length=400):
-    return llm.Query(SUMMARIZE_PROMPT_MSG + MSG(CONTENT_TEMPLATE.format(idx=idx,title=title,content=content)))['content'] if len(content)>=summary_min_length else content
+    
+    return llm.Query(SUMMARIZE_PROMPT_MSG + MSG(CONTENT_TEMPLATE.format(idx=idx,title=title,content=content))).content if len(content)>=summary_min_length else content
 
 def CascadingSummary(args):
     doc_path = pjoin("./docs/", args.doc)
@@ -76,18 +77,28 @@ def ExtractKnowledge(nodes_mapping, root_index, iteration=2, iteration_gap=1, so
 
     new_source_sections = source_sections
     while iteration:
-        response = llm.Query(messages, functions=[LOOKUP_FUNCTION, SUBMIT_RULE_FUNCTION])
+
+        function_response = llm.Query(messages, functions=[LOOKUP_FUNCTION, SUBMIT_RULE_FUNCTION])
         #print("========================================")
         #print("Extraction Thought:\n" + COLOR1("```\n{0}\n```".format(response['content'])))
-        if "function_call" in response:
+
+        
+        response = {"function_call": {}}
+        if function_response != None:
+            response["function_call"]["name"] = function_response.function_call.name
+            response["function_call"]["arguments"] = function_response.function_call.arguments
+
+        if response["function_call"] != {}:
             if response["function_call"]["name"] == "submit_rule":
                 print("Extraction Action:", SUCCESS("Submitting a rule..."))
                 try:
                     rule = response["function_call"]["arguments"]
                     # assert (rule.startswith('{\n  "rules": "') and rule.endswith('"\n}'))
+
                     rule = rule[len('{\n  "rules": '):-len('\n}')]
                     rule = rule.replace('"{','{')
                     rule = rule.replace('"}','}')
+                    rule = rule.replace('}"','}')
                     rule = rule.replace('\\"', '"')
 
                     # evaluate redundancy
@@ -97,7 +108,7 @@ def ExtractKnowledge(nodes_mapping, root_index, iteration=2, iteration_gap=1, so
                     not_exist = 1
                     for idx, exist_knowledge in enumerate(knowledge_strs):
                         prompt = LOGICAL_VERIFICATION_PROMPT.format(exist_knowledge=exist_knowledge, new_knowledge=str(new_knowledge))
-                        judgment = llm.Query(MSG(prompt))['content'].split('Answer:')[-1].strip().strip('.').lower().strip()
+                        judgment = llm.Query(MSG(prompt)).content.split('Answer:')[-1].strip().strip('.').lower().strip()
                         if "yes" in judgment.lower():
                             not_exist = 0
                             break
@@ -120,7 +131,7 @@ def ExtractKnowledge(nodes_mapping, root_index, iteration=2, iteration_gap=1, so
                 except:
                     message = "Invaid Rule."
                     print(ERROR(message))
-                messages += [response, {'role': "function", "name":"submit_rule", 'content': message}]
+                messages += [{'role': "function", "name":"submit_rule", 'content': message}]
             else:
                 idx = json.loads(response["function_call"]["arguments"])["index"]
                 print("Extraction Action:", SUCCESS(f"Looking up '{idx}'..."))
@@ -132,7 +143,7 @@ def ExtractKnowledge(nodes_mapping, root_index, iteration=2, iteration_gap=1, so
                 except:
                     message = "Invalid Index."
                     print(ERROR(message))
-                messages += [response, {'role': "function", "name":"look_up", 'content': message}]
+                messages += [{'role': "function", "name":"look_up", 'content': message}]
             num_tokens = count_num_tokens(messages)
             print("num_tokens:", num_tokens)
             if num_tokens > 1200:
@@ -142,6 +153,7 @@ def ExtractKnowledge(nodes_mapping, root_index, iteration=2, iteration_gap=1, so
             if iteration:
                 print(WARNING("Waiting for next iteration..."))
                 time.sleep(1)
+        
     return extracted_rules
 
 if __name__=="__main__":
@@ -174,5 +186,5 @@ if __name__=="__main__":
 
     assert (args.root_index) in nodes_mapping, f"Invalid root index: {args.root_index}"
 
-    target_file = "./docs/" + args.doc + '/' + target_dir + '/' + "extracted_knowledge_4.jsonl"
+    target_file = "./docs/" + args.doc + '/' + target_dir + '/' + "extracted_knowledge_test.jsonl"
     extracted_rules = ExtractKnowledge(nodes_mapping, root_index=args.root_index, iteration=args.num_iteration, iteration_gap=args.iteration_gap, source_file=args.doc,target_file=target_file)
