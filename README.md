@@ -268,10 +268,10 @@ python batch_main.py
 
 We support AlertManager for Prometheus. You can find more information about how to configure alertmanager here: [alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/).
 
-- We provide AlertManager-related configuration files, including [alertmanager.yml](./config/alertmanager.yml), [node_rules.yml](./config/node_rules.yml), and [pgsql_rules.yml](./config/pgsql_rules.yml). The path is in the [config folder](./config/) in the root directory, which you can deploy to your Prometheus server to retrieve the associated exceptions.
+- We provide AlertManager-related configuration files, including [alertmanager.yml](./config/alertmanager.yml), [node_rules.yml](prometheus_service/node_rules.yml), and [pgsql_rules.yml](prometheus_service/pgsql_rules.yml). The path is in the [config folder](./config/) in the root directory, which you can deploy to your Prometheus server to retrieve the associated exceptions.
 - We also provide webhook server that supports getting alerts. The path is a webhook folder in the root directory that you can deploy to your server to get and store Prometheus's alerts in files. 
 - Currently, the alert file is obtained using SSh. You need to configure your server information in the [tool_config.yaml](./config/tool_config_example.yaml) in the config folder.
-- [node_rules.yml](./config/node_rules.yml) and [pgsql_rules.yml](./config/pgsql_rules.yml) is a reference https://github.com/Vonng/pigsty code in this open source project, their monitoring do very well, thank them for their effort.
+- [node_rules.yml](prometheus_service/node_rules.yml) and [pgsql_rules.yml](prometheus_service/pgsql_rules.yml) is a reference https://github.com/Vonng/pigsty code in this open source project, their monitoring do very well, thank them for their effort.
 
 
 ### Anomaly Simulation

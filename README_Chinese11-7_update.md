@@ -229,9 +229,9 @@ python batch_main.py
 
 我们支持 Prometheus 的 AlertManager。您可以在这里找到有关如何配置 alertmanager 的更多信息：[alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/)。
 
-- 我们提供与 AlertManager 相关的配置文件，包括[alertmanager.yml](./config/alertmanager.yml)、[node_rules.yml](./config/node_rules.yml)和[pgsql_rules.yml](./config/pgsql_rules.yml)。路径位于根目录的[config folder](./config/)中，您可以将其部署到您的 Prometheus 服务器以检索相关的异常。
+- 我们提供与 AlertManager 相关的配置文件，包括[alertmanager.yml](./config/alertmanager.yml)、[node_rules.yml](prometheus_service/node_rules.yml)和[pgsql_rules.yml](prometheus_service/pgsql_rules.yml)。路径位于根目录的[config folder](./config/)中，您可以将其部署到您的 Prometheus 服务器以检索相关的异常。
 - 我们还提供支持获取警报的 webhook 服务器。路径是根目录中的 webhook 文件夹，您可以将其部署到您的服务器以获取和存储 Prometheus 的警报。这个文件是使用 SSH 获取的。您需要在 config 文件夹中的[tool_config.yaml](./config/tool_config_example.yaml)中配置您的服务器信息。
-- [node_rules.yml](./config/node_rules.yml)和[pgsql_rules.yml](./config/pgsql_rules.yml)是引用[https://github.com/Vonng/pigsty](https://github.com/Vonng/pigsty)开源项目，他们的监控做得非常好，感谢他们的努力。
+- [node_rules.yml](prometheus_service/node_rules.yml)和[pgsql_rules.yml](prometheus_service/pgsql_rules.yml)是引用[https://github.com/Vonng/pigsty](https://github.com/Vonng/pigsty)开源项目，他们的监控做得非常好，感谢他们的努力。
 
 ### 异常模拟
 
