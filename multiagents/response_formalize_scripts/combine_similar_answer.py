@@ -7,25 +7,7 @@ import pdb
 import time
 import logging
 
-try:
-    import openai
-    from openai.error import OpenAIError
-except ImportError:
-    is_openai_available = False
-    logging.warning("openai package is not installed")
-else:
-    openai.api_key = os.environ.get("OPENAI_API_KEY")
-    openai.proxy = os.environ.get("http_proxy")
-    if openai.proxy is None:
-        openai.proxy = os.environ.get("HTTP_PROXY")
-    if openai.api_key is None:
-        logging.warning(
-            "OpenAI API key is not set. Please set the environment variable OPENAI_API_KEY"
-        )
-        is_openai_available = False
-    else:
-        is_openai_available = True
-
+from openai import OpenAI
 
 similarity = lambda x, y: 1 - spatial.distance.cosine(x, y)
 
@@ -47,20 +29,24 @@ def combine_similar_answers(text, output_format='str'):
         if sentence != '':
             is_embedded = False
             k = 0
+
+            client = OpenAI( api_key=os.environ['OPENAI_API_KEY'],  # this is also the default, it can be omitted
+                    )
             while not is_embedded and k < 10:
                 try:
-                    response = openai.Embedding.create(
+                    
+                    response = client.embeddings.create(
                         input=sentence,
                         model="text-embedding-ada-002"
                     )
                     
                     if "data" in response:
-                        embedding = response['data'][0]['embedding']
+                        embedding = response.data[0].embedding
                         is_embedded = True
                     else:
                         time.sleep(0.01)
                         k += 1
-                except:
+                except :
                     print("OpenAI API error")
                     time.sleep(0.01)
                     pass
