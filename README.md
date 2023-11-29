@@ -449,7 +449,13 @@ Feel free to cite us if you like this project.
 
 Other Collaborators: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](https://github.com/LikyThu).
 
-We thank all the contributors to this project. Do not hesitate if you would like to get involved or contribute!
+We thank all the contributors to this project. Do not hesitate if you would like to get involved or contribute! 
+
+## Contact Information
+👏🏻Welcome to our wechat group!
+<div align= "center">
+<img src="imgs/group.jpg" width="400px">
+</div>
 
 <!-- ## ⭐️ Star History
 
