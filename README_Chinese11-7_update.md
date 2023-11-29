@@ -397,6 +397,12 @@ https://github.com/Vonng/pigsty
 
 我们感谢所有对这个项目的贡献者。如果你想参与或贡献，不要犹豫！
 
+## 联系我们
+👏🏻欢迎加入我们的微信群
+<div align= "center">
+<img src="imgs/group.jpg" width="400px">
+</div>
+
 ## ⭐️ 星标历史
 
 [![星标历史图表](https://api.star-history.com/svg?repos=Tsing

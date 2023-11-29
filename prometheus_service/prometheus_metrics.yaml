@@ -133,4 +133,4 @@ io_metrics:
   - query: irate(node_disk_write_time_seconds_total{instance=~"$instance"}[1m])
     instance_from: node
   - query: irate(node_disk_io_time_seconds_total{instance=~"$instance"}[1m])
-    instance_from: nodeå
+    instance_from: node

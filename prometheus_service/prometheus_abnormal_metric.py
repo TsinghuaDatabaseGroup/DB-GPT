@@ -11,9 +11,9 @@ import requests
 from yaml_utils import read_yaml, read_prometheus_metrics_yaml
 from termcolor import colored
 
-promethest_conf = read_yaml('PROMETHEUS', 'config.yaml')
-node_exporter_instance = promethest_conf.get('node_exporter_instance')
-postgresql_exporter_instance = promethest_conf.get(
+prometheus_conf = read_yaml('PROMETHEUS', 'config.yaml')
+node_exporter_instance = prometheus_conf.get('node_exporter_instance')
+postgresql_exporter_instance = prometheus_conf.get(
     'postgresql_exporter_instance')
 prometheus_metrics = read_prometheus_metrics_yaml(
     config_path='./prometheus_metrics.yaml',
