@@ -9,7 +9,10 @@
         <img v-if="sender === 'CpuExpert'" src="@/assets/cpu_robot.webp" class="face">
         <img v-if="sender === 'MemoryExpert'" src="@/assets/mem_robot.webp" class="face">
         <img v-if="sender === 'IoExpert'" src="@/assets/io_robot.webp" class="face">
-        <img v-if="sender === 'NetworkExpert'" src="@/assets/net_robot.webp" class="face">
+        <img v-if="sender === 'IndexExpert'" src="@/assets/index_robot.webp" class="face">
+        <img v-if="sender === 'ConfigurationExpert'" src="@/assets/configuration_robot.webp" class="face">
+        <img v-if="sender === 'QueryExpert'" src="@/assets/query_robot.webp" class="face">
+        <img v-if="sender === 'WorkloadExpert'" src="@/assets/workload_robot.webp" class="face">
         <span style="font-size: 16px; color: #FFFFFF; margin-left: 10px">{{ sender }}</span>
       </div>
     </div>
@@ -53,7 +56,10 @@ export default {
         'CpuExpert': 'background-color: #0F2F5F;',
         'MemoryExpert': 'background-color: #FB9996;',
         'IoExpert': 'background-color: #7649af;',
-        'NetworkExpert': 'background-color: #ecb42b;'
+        'IndexExpert': 'background-color: #ecb42b;',
+        'ConfigurationExpert': 'background-color: #67C23A;',
+        'QueryExpert': 'background-color: #FFC2E3;',
+        'WorkloadExpert': 'background-color: #D51374;'
       },
       typedObjs: [],
       componentId: Math.random().toString(36).substr(2, 9),
