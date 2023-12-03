@@ -183,14 +183,50 @@
                     @playbackComplete="onPlaybackComplete(1)"
                   />
                   <OneChat
-                    v-if="networkExpertMessages.length > 0"
-                    id="NetworkExpert"
-                    key="NetworkExpert"
-                    sender="NetworkExpert"
+                    v-if="indexExpertMessages.length > 0"
+                    id="IndexExpert"
+                    key="IndexExpert"
+                    sender="IndexExpert"
                     :type-speed="typeSpeed"
                     :skip-typed="skipTyped"
                     class="chat-container"
-                    :messages="networkExpertMessages"
+                    :messages="indexExpertMessages"
+                    style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
+                    @playbackComplete="onPlaybackComplete(1)"
+                  />
+                  <OneChat
+                    v-if="configurationExpertMessages.length > 0"
+                    id="ConfigurationExpert"
+                    key="ConfigurationExpert"
+                    sender="ConfigurationExpert"
+                    :type-speed="typeSpeed"
+                    :skip-typed="skipTyped"
+                    class="chat-container"
+                    :messages="configurationExpertMessages"
+                    style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
+                    @playbackComplete="onPlaybackComplete(1)"
+                  />
+                  <OneChat
+                    v-if="queryExpertMessages.length > 0"
+                    id="QueryExpert"
+                    key="QueryExpert"
+                    sender="QueryExpert"
+                    :type-speed="typeSpeed"
+                    :skip-typed="skipTyped"
+                    class="chat-container"
+                    :messages="queryExpertMessages"
+                    style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
+                    @playbackComplete="onPlaybackComplete(1)"
+                  />
+                  <OneChat
+                    v-if="workloadExpertMessages.length > 0"
+                    id="WorkloadExpert"
+                    key="WorkloadExpert"
+                    sender="WorkloadExpert"
+                    :type-speed="typeSpeed"
+                    :skip-typed="skipTyped"
+                    class="chat-container"
+                    :messages="workloadExpertMessages"
                     style="height: 100%; margin-left: 20px; flex: 1 1 50%;"
                     @playbackComplete="onPlaybackComplete(1)"
                   />
@@ -263,7 +299,10 @@ export default {
       cpuExpertMessages: [],
       ioExpertMessages: [],
       memoryExpertMessages: [],
-      networkExpertMessages: [],
+      indexExpertMessages: [],
+      configurationExpertMessages: [],
+      queryExpertMessages: [],
+      workloadExpertMessages: [],
       brainstormingMessages: [],
       tableMessages: [],
       report: '',
@@ -343,11 +382,18 @@ export default {
       this.cpuExpertMessages = this.reviewItem.anomalyAnalysis?.CpuExpert?.messages || []
       this.ioExpertMessages = this.reviewItem.anomalyAnalysis?.IoExpert?.messages || []
       this.memoryExpertMessages = this.reviewItem.anomalyAnalysis?.MemoryExpert?.messages || []
-      this.networkExpertMessages = this.reviewItem.anomalyAnalysis?.NetworkExpert?.messages || []
+      this.indexExpertMessages = this.reviewItem.anomalyAnalysis?.IndexExpert?.messages || []
+      this.configurationExpertMessages = this.reviewItem.anomalyAnalysis?.ConfigurationExpert?.messages || []
+      this.queryExpertMessages = this.reviewItem.anomalyAnalysis?.QueryExpert?.messages || []
+      this.workloadExpertMessages = this.reviewItem.anomalyAnalysis?.WorkloadExpert?.messages || []
+
       this.expertCount += this.cpuExpertMessages.length > 0 ? 1 : 0
       this.expertCount += this.ioExpertMessages.length > 0 ? 1 : 0
       this.expertCount += this.memoryExpertMessages.length > 0 ? 1 : 0
-      this.expertCount += this.networkExpertMessages.length > 0 ? 1 : 0
+      this.expertCount += this.indexExpertMessages.length > 0 ? 1 : 0
+      this.expertCount += this.configurationExpertMessages.length > 0 ? 1 : 0
+      this.expertCount += this.queryExpertMessages.length > 0 ? 1 : 0
+      this.expertCount += this.workloadExpertMessages.length > 0 ? 1 : 0
     },
     onPlaybackComplete(value) {
       this.expertCount -= value
@@ -365,7 +411,10 @@ export default {
       this.cpuExpertMessages = []
       this.ioExpertMessages = []
       this.memoryExpertMessages = []
-      this.networkExpertMessages = []
+      this.indexExpertMessages = []
+      this.configurationExpertMessages = []
+      this.queryExpertMessages = []
+      this.workloadExpertMessages = []
       this.brainstormingMessages = []
       alertHistoryDetail({ file: item.file_name, model: this.model }).then(res => {
         this.reviewItem = res.data
