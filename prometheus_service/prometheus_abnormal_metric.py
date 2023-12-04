@@ -1,18 +1,22 @@
 import json
+import threading
+import time
 import warnings
-
+import os
+from datetime import datetime
 import numpy as np
 import requests
+
 
 from yaml_utils import read_yaml, read_prometheus_metrics_yaml
 from termcolor import colored
 
-promethest_conf = read_yaml('PROMETHEUS', '../config/tool_config.yaml')
-node_exporter_instance = promethest_conf.get('node_exporter_instance')
-postgresql_exporter_instance = promethest_conf.get(
+prometheus_conf = read_yaml('PROMETHEUS', 'config.yaml')
+node_exporter_instance = prometheus_conf.get('node_exporter_instance')
+postgresql_exporter_instance = prometheus_conf.get(
     'postgresql_exporter_instance')
 prometheus_metrics = read_prometheus_metrics_yaml(
-    config_path='../config/prometheus_metrics.yaml',
+    config_path='./prometheus_metrics.yaml',
     node_exporter_instance=node_exporter_instance,
     postgresql_exporter_instance=postgresql_exporter_instance)
 TOP_N_METRICS = 5
@@ -80,7 +84,7 @@ def processed_values(data):
 
 
 def prometheus(url, params):
-    conf = read_yaml('PROMETHEUS', '../config/tool_config.yaml')
+    conf = read_yaml('PROMETHEUS', 'config.yaml')
     res = requests.get(url=conf.get('api_url') + url, params=params)
 
     return res.json()
@@ -142,7 +146,8 @@ def detect_anomalies(data, significance_level=0.2):
 def obtain_exceptions_in_times(start_time: int, end_time: int):
     exceptions_map = {}
     for i, value in enumerate(['cpu', 'io', 'memory', 'network']):
-        exceptions = obtain_exceptions_in_times_with_metric_name(start_time, end_time, value)
+        exceptions = obtain_exceptions_in_times_with_metric_name(
+            start_time, end_time, value)
         exceptions_map[value] = exceptions
     return exceptions_map
 
@@ -187,7 +192,6 @@ def obtain_exceptions_in_times_with_metric_name(
 
     exceptions = {}
 
-
     for i, metric_name in enumerate(top5_abnormal_metrics):
         if metric_name in detailed_metrics:
             metric_values = detailed_metrics[metric_name]
@@ -195,23 +199,67 @@ def obtain_exceptions_in_times_with_metric_name(
     return exceptions
 
 
+def fetch_prometheus_metrics(args):
+    """
+    获取异常时间内的prometheus指标，并保存到新文件中，文件名为时间戳
+    :param args:
+    :return:
+    """
+
+    alerts = args.get("alerts", [])
+
+    for alert in alerts:
+        # 获取alert的startsAt属性，并将其转换为UTC时间格式
+        start_time = alert.get("startsAt")
+        start_time = start_time[:-4] + 'Z'
+        end_time = alert.get("endsAt")
+        end_time = end_time[:-4] + 'Z'
+
+        start_time = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()
+        end_time = datetime.strptime(end_time, "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()
+
+        # 调用obtain_exceptions_in_times函数获取在指定时间范围内的异常，并返回结果
+        exceptions = obtain_exceptions_in_times(start_time, end_time)
+
+        # 将获取到的异常结果赋值给alert字典中的exceptions键
+        alert["exceptions"] = exceptions
+
+    args.update({"alerts": alerts})
+
+    # 将获取到的数据写入到一个新的文件中，文件名为当前的时间戳
+    # 检查文件夹是否存在，不存在则创建
+    path = './alert_results'
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    filename = str(int(time.time())) + '.json'
+    with open(os.path.join(path, filename), 'w') as f:
+        json.dump(args, f)
+
+
+
 if __name__ == '__main__':
 
-    results = {}
+    test_data = {"receiver": "web\\.hook", "status": "resolved", "alerts": [{"status": "resolved", "labels": {"alertname": "NodeLoadHigh", "category": "node", "instance": "172.27.58.65:9100", "job": "node", "level": "1", "severity": "WARN"}, "annotations": {"description": "node:ins:stdload1[ins=] = 2.10 > 100%\n", "summary": "WARN NodeLoadHigh @172.27.58.65:9100 2.10"}, "startsAt": "2023-09-19T15:28:49.467858611Z", "endsAt": "2023-09-19T15:30:49.467858611Z", "generatorURL": "http://iZ2ze0ree1kf7ccu4p1vcyZ:9090/graph?g0.expr=node%3Ains%3Astdload1+%3E+1&g0.tab=1", "fingerprint": "ab4787213c7dd319"}], "groupLabels": {"alertname": "NodeLoadHigh"}, "commonLabels": {"alertname": "NodeLoadHigh", "category": "node", "instance": "172.27.58.65:9100", "job": "node", "level": "1", "severity": "WARN"}, "commonAnnotations": {"description": "node:ins:stdload1[ins=] = 2.10 > 100%\n", "summary": "WARN NodeLoadHigh @172.27.58.65:9100 2.10"}, "externalURL": "http://iZ2ze0ree1kf7ccu4p1vcyZ:9093", "version": "4", "groupKey": "{}:{alertname=\"NodeLoadHigh\"}", "truncatedAlerts": 0}
 
-    # 读取json文件
-    with open("/Users/Four/Desktop/testing_set_with_workload.json", 'r') as f:
-        json_data = json.load(f)
-
-        # 遍历字典的key,value
-        for key, value in json_data.items():
-            start_time = value['start_time']
-            end_time = value['end_time']
-            exceptions = obtain_exceptions_in_times(start_time, end_time)
-            value['exceptions'] = exceptions
-            results[key] = value
-
-
-    # 写入json文件
-    with open("/Users/Four/Desktop/testing_set_with_workload_new.json", 'w') as f:
-        f.write(json.dumps(results))
+    thread = threading.Thread(target=fetch_prometheus_metrics, args=(test_data, ))
+    thread.start()
+    print('========END=======')
+    # results = {}
+    #
+    # # 读取json文件
+    # with open("/Users/testing_set_with_workload.json", 'r') as f:
+    #     json_data = json.load(f)
+    #
+    #     # 遍历字典的key,value
+    #     for key, value in json_data.items():
+    #         start_time = value['start_time']
+    #         end_time = value['end_time']
+    #         exceptions = obtain_exceptions_in_times(start_time, end_time)
+    #         value['exceptions'] = exceptions
+    #         results[key] = value
+    #
+    #
+    # # 写入json文件
+    # with open("/Users/testing_set_with_workload_new.json", 'w') as f:
+    #     f.write(json.dumps(results))

@@ -38,7 +38,10 @@ export default {
         'CpuExpert': require('@/assets/cpu_robot.webp'),
         'MemoryExpert': require('@/assets/mem_robot.webp'),
         'IoExpert': require('@/assets/io_robot.webp'),
-        'NetworkExpert': require('@/assets/net_robot.webp')
+        'IndexExpert': require('@/assets/index_robot.webp'),
+        'ConfigurationExpert': require('@/assets/configuration_robot.webp'),
+        'QueryExpert': require('@/assets/query_robot.webp'),
+        'WorkloadExpert': require('@/assets/workload_robot.webp')
       },
       scrollObserver: undefined,
       phraseVisible: false,
