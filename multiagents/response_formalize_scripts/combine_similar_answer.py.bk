@@ -43,26 +43,38 @@ def combine_similar_answers(text, output_format='str'):
     for sentence in tmp_sentences:
         
         sentence = sentence.strip()
-        
+        api_key = os.environ.get("OPENAI_API_KEY")
+
         if sentence != '':
             is_embedded = False
             k = 0
             while not is_embedded and k < 10:
                 try:
-                    response = openai.Embedding.create(
-                        input=sentence,
-                        model="text-embedding-ada-002"
-                    )
+
+                    headers = {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + api_key
+                    }
+                    url = "https://api.aiaiapi.com/v1/embeddings"
                     
+                    payload = {
+                        "input": sentence,
+                        "model": "text-embedding-ada-002"
+                    }
+
+                    # start = time.time()
+                    response = requests.post(url, json=payload, headers=headers)
+
+
                     if "data" in response:
                         embedding = response['data'][0]['embedding']
                         is_embedded = True
                     else:
                         time.sleep(0.01)
                         k += 1
-                except OpenAIError as e:
-                    print("OpenAI API error: {}".format(e))
-                    time.sleep(0.01)
+                except:
+                    # print("OpenAI Embedding Fails")
+                    time.sleep(0.1)
                     pass
 
             if is_embedded == True:
