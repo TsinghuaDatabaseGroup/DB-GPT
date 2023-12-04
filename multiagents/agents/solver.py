@@ -194,7 +194,7 @@ class SolverAgent(BaseAgent):
 
         print(colored(f"\n{self.name} Diagnosis!","red"))
 
-        result_node, top_abnormal_metric_values  = chain.start(simulation_count=1,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=14)
+        result_node, top_abnormal_metric_values  = chain.start(simulation_count=1,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=24)
 
         if result_node is None:
             return {}

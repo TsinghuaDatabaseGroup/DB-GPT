@@ -39,8 +39,8 @@ def register_functions_from_module(module, caller, max_api_num, agent_name):
     api_cnt = 0
     necessary_names = ["match_diagnose_knowledge", "whether_is_abnormal_metric"]
     agent_name = agent_name.lower()
-    if "expert" in agent_name:
-        necessary_names[0] = agent_name.split('expert')[0] + '_' + necessary_names[0]
+    # if "expert" in agent_name:
+    #     necessary_names[0] = agent_name.split('expert')[0] + '_' + necessary_names[0]
 
     for member in members:
         if len(member) == 2:
@@ -54,8 +54,8 @@ def register_functions_from_module(module, caller, max_api_num, agent_name):
                 caller.register_function(name, params, func)
             elif name not in necessary_names and api_cnt < max_api_num:
 
-                if "match_diagnose_knowledge" in name:
-                    continue
+                # if "match_diagnose_knowledge" in name:
+                #     continue
 
                 api_cnt = api_cnt + 1
                         

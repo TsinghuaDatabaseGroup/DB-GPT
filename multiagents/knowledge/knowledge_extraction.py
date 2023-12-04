@@ -15,11 +15,15 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet, stopwords
 from nltk.tokenize import word_tokenize
 import nltk
+nltk.data.path.append('/path/to/nltk_data')
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.tag import pos_tag
+from nltk.corpus import wordnet
 
 from multiagents.knowledge.info_retrieval_algorithm import bm25
 
 # match with external knowledge for in-context learning
-
 class KnowledgeExtraction():
 
     def __init__(self, file_path, topk=1, keyword_matching_func=bm25):
@@ -28,10 +32,12 @@ class KnowledgeExtraction():
         self.names = {"matched_attr": "cause_name"}
         self.cause_name = self.names["matched_attr"]
 
-        nltk.download('stopwords')
-        nltk.download('punkt')
-        nltk.download('averaged_perceptron_tagger')
-        nltk.download('wordnet')
+        # nltk.download('stopwords')
+        # nltk.download('stopwords')
+        # nltk.download('punkt')
+        # nltk.download('averaged_perceptron_tagger')
+        # nltk.download('wordnet')
+
         self.wnl = WordNetLemmatizer()
         self.keyword_matching_func = keyword_matching_func
 
@@ -59,6 +65,7 @@ class KnowledgeExtraction():
     def match(self, detailed_metrics):
 
         metrics_str = []
+
         for metrics in detailed_metrics.keys():
             metrics = metrics.replace("_"," ") 
             word_tokens = word_tokenize(metrics)
@@ -67,13 +74,17 @@ class KnowledgeExtraction():
 
         best_index = self.keyword_matching_func(self.topk, metrics_str, self.preprocessed_corpus)
 
+        if best_index != []:
+            import pdb; pdb.set_trace()
+
         best_docs = [self.corpus[b] for b in best_index]
         best_names = [self.matched_attr[b] for b in best_index]
         docs_str = ""
-        # print("Best docs: ", best_docs)
+
         for i, docs in enumerate(best_docs):
             docs_str = docs_str + "{}: ".format(best_names[i]) + docs + "\n\n"
-        # print("docs_str: ", docs_str)
+
+        print("best_docs: ", best_docs)
 
         return docs_str
     

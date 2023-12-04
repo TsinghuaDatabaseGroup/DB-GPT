@@ -20,14 +20,14 @@ async def main(args):
     return report, records
 
 if __name__ == "__main__":
-
+    
     # read from the anomalies with alerts. for each anomaly, 
     # "anomalies/public_testing_set/batch_testing_set.json"
     with open(BATCH_ANOMALY_FILE_NAME, "r") as f:
         anomaly_jsons = json.load(f)
 
     # diag_id, content = next(iter(anomaly_jsons.items()))
-    diag_id = "10"
+    # diag_id = "10"
 
     for diag_id in anomaly_jsons:
 
