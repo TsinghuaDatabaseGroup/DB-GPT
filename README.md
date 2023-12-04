@@ -73,6 +73,8 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 
 ## 📰 Updates
 
+- [x] 8 new expert roles by the clustering of extracted *Knowledge*
+
 - [x] Upgrade the LLM-based diagnosis mechanism: 
 
     * [x] *Task Dispatching -> Concurrent Diagnosis -> Cross Review -> Report Generation*
