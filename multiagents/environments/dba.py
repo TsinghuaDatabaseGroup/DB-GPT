@@ -172,6 +172,8 @@ class DBAEnvironment(BaseModel):
             self.reporter.initialize_report()
             pbar.update(1)        
 
+        # import pdb; pdb.set_trace()
+
         # ================== vanilla model ==================
         # self.reporter.report["anomaly description"]
         # solver = self.agents[AGENT_TYPES.SOLVER][0]
@@ -180,8 +182,43 @@ class DBAEnvironment(BaseModel):
         # prompt = solver._fill_prompt_template("",[])
         # message = solver.llm._construct_messages(prompt)
         # system_prompt = solver.llm._construct_system_messages(solver.role_description)
-        # solver.llm.change_messages(system_prompt+message)
-        # summarized_diags = solver.llm.parse()
+
+        # solver.llm.change_messages(solver.role_description,system_prompt+message)
+        # summarized_diags = solver.llm.parse()['content']
+
+        # # add label
+
+        # root_causes = {
+        #     "INSERT_LARGE_DATA": ["highly concurrent commits or highly concurrent inserts"],
+        #     "LOCK_CONTENTION": ["highly concurrent updates"],
+        #     "VACUUM": ["highly deletes"],
+        #     "REDUNDANT_INDEX": ["too many indexes"],
+        #     "MISSING_INDEXES": ["missing indexes"],
+        #     "INSERT_LARGE_DATA,IO_CONTENTION": ["INSERT_LARGE_DATA","IO_CONTENTION"],
+        #     "FETCH_LARGE_DATA,CORRELATED_SUBQUERY": ["FETCH_LARGE_DATA","CORRELATED SUBQUERY"],
+        #     "POOR_JOIN_PERFORMANCE,CPU_CONTENTION": ["POOR JOIN PERFORMANCE","CPU CONTENTION"],
+        # }
+
+        # labels = []
+
+        # for cause in root_causes:
+        #     labels += root_causes[cause]
+
+        # prompt = "Based on the description\n" + summarized_diags + "\n\n Output labels mentioned in the description. The available labels are  \n" + str(labels) + "===== \n Note 1. the output should be in list format. And do not output any additional information (output \"None\" if no label mentioned in the description)\n2. the output should strictly exclude lables not mentioned in the description."
+
+        # # prompt = solver._fill_prompt_template("",[])
+        # message = solver.llm._construct_messages(prompt)
+
+        # solver.llm.change_messages(solver.role_description, message)
+        # new_message = solver.llm.parse()
+        
+        # if isinstance(new_message, dict):
+        #     labels = new_message["content"]
+        # else:
+        #     labels = new_message.content
+        
+        # return summarized_diags, labels
+
         # ===================================================
 
         self.reporter.record["anomalyAnalysis"]["RoleAssigner"]["messages"].append({"data": self.reporter.report["anomaly description"], "time": time.strftime("%H:%M:%S", time.localtime())})
@@ -259,8 +296,9 @@ class DBAEnvironment(BaseModel):
         # random a value from 0 to len(self.agents[AGENT_TYPES.SOLVER]) - 1
         # import random
         # solver_idx = random.randint(0, len(self.agents[AGENT_TYPES.SOLVER]) - 1)
-        # agents= [self.agents[AGENT_TYPES.SOLVER][solver_idx]]
-        
+        # agents= [self.agents[AGENT_TYPES.SOLVER][0]]
+
+
         return agents
 
     async def decision_making(
@@ -378,6 +416,11 @@ class DBAEnvironment(BaseModel):
 
                     self.reporter.record["anomalyAnalysis"][diag['sender']]["messages"].append({"data": m_message, "time": m_response['time']})
 
+        # # single llm
+        # self.reporter.add_diagnosis_labels()
+
+        # return self.reporter.report, self.reporter.record
+        
         # brainstorm over the initial_diags results
         ## summarize to avoid exceeding length limit
         ## incremental summary
@@ -421,9 +464,9 @@ class DBAEnvironment(BaseModel):
         
         # discuss over the summarized initial_diags results
         for agent in agents:
-            with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-                review = await agent.review_step()
-                pbar.update(1)        
+            # with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
+            review = await agent.review_step()
+                # pbar.update(1)        
 
             if isinstance(review, dict) and "content" in review and review["content"] != "":
                 for agent2 in agents:
@@ -443,6 +486,7 @@ class DBAEnvironment(BaseModel):
 
         # review the diagnosis results by the reporter
         self.reporter.update_diagnosis()
+        self.reporter.add_diagnosis_labels()
         self.reporter.update_solutions()
 
 

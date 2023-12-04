@@ -14,7 +14,7 @@ prompts:
     # Response Format Guidance
     You should respond with a list of expert names. For example:
     1. CpuExpert
-    2. MemoryExpert
+    2. QueryExpert
     ...
     
     Only respond with the names of selected experts (separated by spaces). Do not include your reason.
@@ -62,7 +62,6 @@ prompts:
     Remember to pay attention to the response format instructions, and strictly follow the rules specified above! And do not easily give root causes if there is no clear evidence or responses from other agents.
     Based on the above history, what will you, ${agent_name}, do next?
 
-
   # - During diagnosis, you can listen to the chief dba by responding:
   # Thought: (your thought)
   # Action: Listen
@@ -80,7 +79,7 @@ prompts:
 
     - You can respond as follows to use tool:
     Thought: (your thought)
-    Action: (an action name, it can be one of [whether_is_abnormal_metric, match_diagnose_knowledge, optimize_index_selection, Speak], pay attention to the capitalization)
+    Action: (an action name, it can be one of [whether_is_abnormal_metric, cpu_match_diagnose_knowledge, optimize_index_selection, Speak], pay attention to the capitalization)
     Action Input: (argument for the action)
 
     - You can give optimization solutions as follows to use tool:
@@ -94,8 +93,8 @@ prompts:
     Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu_usage"}
 
     Next you must diagnose root causes by using the tools, and must use the following format (any other choice is not allowed):
-    Thought: No matter cpu usage is abnormal or normal, I must to diagnose the cause of the anomaly using the metrics, queries and knowledge gained from match_diagnose_knowledge.
-    Action: match_diagnose_knowledge
+    Thought: No matter cpu usage is abnormal or normal, I must to diagnose the cause of the anomaly using the metrics, queries and knowledge gained from cpu_match_diagnose_knowledge.
+    Action: cpu_match_diagnose_knowledge
     Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu"}
 
     Besides, if you find that the indexes are missing, you need to call the optimize_index_selection API to obtain the recommended indexes.
@@ -103,7 +102,7 @@ prompts:
     Action: optimize_index_selection
     Action Input: {"start_time": ${start_time},"end_time": ${end_time}}
 
-    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
+    After you have got the observation from cpu_match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
     Thought: I now know the root cause of the anomaly.
     Action: Speak
     Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
@@ -119,7 +118,11 @@ prompts:
     Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
     Based on the above history, what will you, ${agent_name}, do next?
 
-  mem_agent_format_prompt: &mem_agent_format_prompt |-
+  # - During diagnosis, you can listen to the chief dba by responding:
+  # Thought: (your thought)
+  # Action: Listen
+  # Action Input: "None"
+  memory_agent_format_prompt: &memory_agent_format_prompt |-
     You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. The anomaly alert is:
     ${alert_info}
 
@@ -132,20 +135,30 @@ prompts:
 
     - You can respond as follows to use tool:
     Thought: (your thought)
-    Action: (an action name, it can be one of [whether_is_abnormal_metric, match_diagnose_knowledge, Speak], pay attention to the capitalization)
+    Action: (an action name, it can be one of [whether_is_abnormal_metric, memory_match_diagnose_knowledge, optimize_index_selection, Speak], pay attention to the capitalization)
     Action Input: (argument for the action)
 
+    - You can give optimization solutions as follows to use tool:
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time":"xxxx","end_time":"xxxx"}
+
     You can first determine abnormal metrics by using the tools, and use the following format:
-    Thought: Now that I have obtained the start and end time of the anomaly, check whether the memory usage is abnormal during that time period.
+    Thought: Now that I have obtained the start and end time of the anomaly, check whether the CPU usage is abnormal during that time period.
     Action: whether_is_abnormal_metric
-    Action Input: {"start_time": ${start_time},"end_time": ${end_time}, "metric_name": "memory_usage"}
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu_usage"}
 
-    Next you must diagnose root causes by using the tools, and use the following format:
-    Thought: No matter memory usage is abnormal or normal, I must diagnose the cause of the anomaly with the metrics, queries and knowledge gained from match_diagnose_knowledge.
-    Action: match_diagnose_knowledge
-    Action Input: {"start_time": ${start_time},"end_time": ${end_time}, "metric_name": "memory"}
+    Next you must diagnose root causes by using the tools, and must use the following format (any other choice is not allowed):
+    Thought: No matter cpu usage is abnormal or normal, I must to diagnose the cause of the anomaly using the metrics, queries and knowledge gained from memory_match_diagnose_knowledge.
+    Action: memory_match_diagnose_knowledge
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu"}
 
-    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
+    Besides, if you find that the indexes are missing, you need to call the optimize_index_selection API to obtain the recommended indexes.
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time": ${start_time},"end_time": ${end_time}}
+
+    After you have got the observation from memory_match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
     Thought: I now know the root cause of the anomaly.
     Action: Speak
     Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
@@ -158,9 +171,13 @@ prompts:
     Here is the execution log of tools
     ${tool_observation}
 
-    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! And do not easily give root causes if there is no clear evidence.
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
     Based on the above history, what will you, ${agent_name}, do next?
 
+  # - During diagnosis, you can listen to the chief dba by responding:
+  # Thought: (your thought)
+  # Action: Listen
+  # Action Input: "None"
   io_agent_format_prompt: &io_agent_format_prompt |-
     You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. The anomaly alert is:
     ${alert_info}
@@ -174,15 +191,30 @@ prompts:
 
     - You can respond as follows to use tool:
     Thought: (your thought)
-    Action: (an action name, it can be one of [match_diagnose_knowledge, Speak], pay attention to the capitalization)
+    Action: (an action name, it can be one of [whether_is_abnormal_metric, io_match_diagnose_knowledge, optimize_index_selection, Speak], pay attention to the capitalization)
     Action Input: (argument for the action)
 
-    You can first determine abnormal I/O metrics by using the tools, and use the following format:
-    Thought: I must diagnose the cause of the anomaly with the I/O metrics, queries and knowledge gained from match_diagnose_knowledge.
-    Action: match_diagnose_knowledge
-    Action Input: {"start_time": ${start_time},"end_time": ${end_time}, "metric_name": "io"}
+    - You can give optimization solutions as follows to use tool:
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time":"xxxx","end_time":"xxxx"}
 
-    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
+    You can first determine abnormal metrics by using the tools, and use the following format:
+    Thought: Now that I have obtained the start and end time of the anomaly, check whether the CPU usage is abnormal during that time period.
+    Action: whether_is_abnormal_metric
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu_usage"}
+
+    Next you must diagnose root causes by using the tools, and must use the following format (any other choice is not allowed):
+    Thought: No matter cpu usage is abnormal or normal, I must to diagnose the cause of the anomaly using the metrics, queries and knowledge gained from io_match_diagnose_knowledge.
+    Action: io_match_diagnose_knowledge
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu"}
+
+    Besides, if you find that the indexes are missing, you need to call the optimize_index_selection API to obtain the recommended indexes.
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time": ${start_time},"end_time": ${end_time}}
+
+    After you have got the observation from io_match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
     Thought: I now know the root cause of the anomaly.
     Action: Speak
     Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
@@ -194,11 +226,15 @@ prompts:
 
     Here is the execution log of tools
     ${tool_observation}
-    
-    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! And do not easily give root causes if there is no clear evidence.
+
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
     Based on the above history, what will you, ${agent_name}, do next?
 
-  network_agent_format_prompt: &network_agent_format_prompt |-
+  # - During diagnosis, you can listen to the chief dba by responding:
+  # Thought: (your thought)
+  # Action: Listen
+  # Action Input: "None"
+  workload_agent_format_prompt: &workload_agent_format_prompt |-
     You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. The anomaly alert is:
     ${alert_info}
 
@@ -211,15 +247,30 @@ prompts:
 
     - You can respond as follows to use tool:
     Thought: (your thought)
-    Action: (an action name, it can be one of [match_diagnose_knowledge, Speak], pay attention to the capitalization)
+    Action: (an action name, it can be one of [whether_is_abnormal_metric, workload_match_diagnose_knowledge, optimize_index_selection, Speak], pay attention to the capitalization)
     Action Input: (argument for the action)
 
-    You can first determine abnormal network metrics by using the tools, and use the following format:
-    Thought: I must diagnose the cause of the anomaly with the network metrics, queries and knowledge gained from match_diagnose_knowledge.
-    Action: match_diagnose_knowledge
-    Action Input: {"start_time": ${start_time},"end_time": ${end_time}, "metric_name": "network"}
+    - You can give optimization solutions as follows to use tool:
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time":"xxxx","end_time":"xxxx"}
 
-    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
+    You can first determine abnormal metrics by using the tools, and use the following format:
+    Thought: Now that I have obtained the start and end time of the anomaly, check whether the CPU usage is abnormal during that time period.
+    Action: whether_is_abnormal_metric
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu_usage"}
+
+    Next you must diagnose root causes by using the tools, and must use the following format (any other choice is not allowed):
+    Thought: No matter cpu usage is abnormal or normal, I must to diagnose the cause of the anomaly using the metrics, queries and knowledge gained from workload_match_diagnose_knowledge.
+    Action: workload_match_diagnose_knowledge
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu"}
+
+    Besides, if you find that the indexes are missing, you need to call the optimize_index_selection API to obtain the recommended indexes.
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time": ${start_time},"end_time": ${end_time}}
+
+    After you have got the observation from workload_match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
     Thought: I now know the root cause of the anomaly.
     Action: Speak
     Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
@@ -232,14 +283,239 @@ prompts:
     Here is the execution log of tools
     ${tool_observation}
 
-    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! And do not easily give root causes if there is no clear evidence.
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
     Based on the above history, what will you, ${agent_name}, do next?
+
+  # - During diagnosis, you can listen to the chief dba by responding:
+  # Thought: (your thought)
+  # Action: Listen
+  # Action Input: "None"
+  configuration_agent_format_prompt: &configuration_agent_format_prompt |-
+    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. The anomaly alert is:
+    ${alert_info}
+
+    # Rules and Format Instructions for Response
+
+    - During diagnosis, you have access to the following tools:
+    ${tools}
+
+    ===============
+
+    - You can respond as follows to use tool:
+    Thought: (your thought)
+    Action: (an action name, it can be one of [whether_is_abnormal_metric, configuration_match_diagnose_knowledge, optimize_index_selection, Speak], pay attention to the capitalization)
+    Action Input: (argument for the action)
+
+    - You can give optimization solutions as follows to use tool:
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time":"xxxx","end_time":"xxxx"}
+
+    You can first determine abnormal metrics by using the tools, and use the following format:
+    Thought: Now that I have obtained the start and end time of the anomaly, check whether the CPU usage is abnormal during that time period.
+    Action: whether_is_abnormal_metric
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu_usage"}
+
+    Next you must diagnose root causes by using the tools, and must use the following format (any other choice is not allowed):
+    Thought: No matter cpu usage is abnormal or normal, I must to diagnose the cause of the anomaly using the metrics, queries and knowledge gained from configuration_match_diagnose_knowledge.
+    Action: configuration_match_diagnose_knowledge
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu"}
+
+    Besides, if you find that the indexes are missing, you need to call the optimize_index_selection API to obtain the recommended indexes.
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time": ${start_time},"end_time": ${end_time}}
+
+    After you have got the observation from configuration_match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
+    Thought: I now know the root cause of the anomaly.
+    Action: Speak
+    Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
+
+    ===============
+
+    Here is the conversation history
+    ${chat_history}
+
+    Here is the execution log of tools
+    ${tool_observation}
+
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
+    Based on the above history, what will you, ${agent_name}, do next?
+
+  # - During diagnosis, you can listen to the chief dba by responding:
+  # Thought: (your thought)
+  # Action: Listen
+  # Action Input: "None"
+  index_agent_format_prompt: &index_agent_format_prompt |-
+    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. The anomaly alert is:
+    ${alert_info}
+
+    # Rules and Format Instructions for Response
+
+    - During diagnosis, you have access to the following tools:
+    ${tools}
+
+    ===============
+
+    - You can respond as follows to use tool:
+    Thought: (your thought)
+    Action: (an action name, it can be one of [whether_is_abnormal_metric, index_match_diagnose_knowledge, optimize_index_selection, Speak], pay attention to the capitalization)
+    Action Input: (argument for the action)
+
+    - You can give optimization solutions as follows to use tool:
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time":"xxxx","end_time":"xxxx"}
+
+    You can first determine abnormal metrics by using the tools, and use the following format:
+    Thought: Now that I have obtained the start and end time of the anomaly, check whether the CPU usage is abnormal during that time period.
+    Action: whether_is_abnormal_metric
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu_usage"}
+
+    Next you must diagnose root causes by using the tools, and must use the following format (any other choice is not allowed):
+    Thought: No matter cpu usage is abnormal or normal, I must to diagnose the cause of the anomaly using the metrics, queries and knowledge gained from index_match_diagnose_knowledge.
+    Action: index_match_diagnose_knowledge
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu"}
+
+    Besides, if you find that the indexes are missing, you need to call the optimize_index_selection API to obtain the recommended indexes.
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time": ${start_time},"end_time": ${end_time}}
+
+    After you have got the observation from index_match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
+    Thought: I now know the root cause of the anomaly.
+    Action: Speak
+    Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
+
+    ===============
+
+    Here is the conversation history
+    ${chat_history}
+
+    Here is the execution log of tools
+    ${tool_observation}
+
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
+    Based on the above history, what will you, ${agent_name}, do next?
+
+  # - During diagnosis, you can listen to the chief dba by responding:
+  # Thought: (your thought)
+  # Action: Listen
+  # Action Input: "None"
+  write_agent_format_prompt: &write_agent_format_prompt |-
+    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. The anomaly alert is:
+    ${alert_info}
+
+    # Rules and Format Instructions for Response
+
+    - During diagnosis, you have access to the following tools:
+    ${tools}
+
+    ===============
+
+    - You can respond as follows to use tool:
+    Thought: (your thought)
+    Action: (an action name, it can be one of [whether_is_abnormal_metric, write_match_diagnose_knowledge, optimize_index_selection, Speak], pay attention to the capitalization)
+    Action Input: (argument for the action)
+
+    - You can give optimization solutions as follows to use tool:
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time":"xxxx","end_time":"xxxx"}
+
+    You can first determine abnormal metrics by using the tools, and use the following format:
+    Thought: Now that I have obtained the start and end time of the anomaly, check whether the CPU usage is abnormal during that time period.
+    Action: whether_is_abnormal_metric
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu_usage"}
+
+    Next you must diagnose root causes by using the tools, and must use the following format (any other choice is not allowed):
+    Thought: No matter cpu usage is abnormal or normal, I must to diagnose the cause of the anomaly using the metrics, queries and knowledge gained from write_match_diagnose_knowledge.
+    Action: write_match_diagnose_knowledge
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu"}
+
+    Besides, if you find that the indexes are missing, you need to call the optimize_index_selection API to obtain the recommended indexes.
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time": ${start_time},"end_time": ${end_time}}
+
+    After you have got the observation from write_match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
+    Thought: I now know the root cause of the anomaly.
+    Action: Speak
+    Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
+
+    ===============
+
+    Here is the conversation history
+    ${chat_history}
+
+    Here is the execution log of tools
+    ${tool_observation}
+
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
+    Based on the above history, what will you, ${agent_name}, do next?
+
+  # - During diagnosis, you can listen to the chief dba by responding:
+  # Thought: (your thought)
+  # Action: Listen
+  # Action Input: "None"
+  query_agent_format_prompt: &query_agent_format_prompt |-
+    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. The anomaly alert is:
+    ${alert_info}
+
+    # Rules and Format Instructions for Response
+
+    - During diagnosis, you have access to the following tools:
+    ${tools}
+
+    ===============
+
+    - You can respond as follows to use tool:
+    Thought: (your thought)
+    Action: (an action name, it can be one of [whether_is_abnormal_metric, query_match_diagnose_knowledge, optimize_index_selection, Speak], pay attention to the capitalization)
+    Action Input: (argument for the action)
+
+    - You can give optimization solutions as follows to use tool:
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time":"xxxx","end_time":"xxxx"}
+
+    You can first determine abnormal metrics by using the tools, and use the following format:
+    Thought: Now that I have obtained the start and end time of the anomaly, check whether the CPU usage is abnormal during that time period.
+    Action: whether_is_abnormal_metric
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu_usage"}
+
+    Next you must diagnose root causes by using the tools, and must use the following format (any other choice is not allowed):
+    Thought: No matter cpu usage is abnormal or normal, I must to diagnose the cause of the anomaly using the metrics, queries and knowledge gained from query_match_diagnose_knowledge.
+    Action: query_match_diagnose_knowledge
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu"}
+
+    Besides, if you find that the indexes are missing, you need to call the optimize_index_selection API to obtain the recommended indexes.
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time": ${start_time},"end_time": ${end_time}}
+
+    After you have got the observation from query_match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
+    Thought: I now know the root cause of the anomaly.
+    Action: Speak
+    Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
+
+    ===============
+
+    Here is the conversation history
+    ${chat_history}
+
+    Here is the execution log of tools
+    ${tool_observation}
+
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
+    Based on the above history, what will you, ${agent_name}, do next?
+
 
 monitor_tools: &monitor_tools
 -
   tool_name: metric_monitor
 
-optimization_tools: &optimization_tools
+expert_tools: &expert_tools
 -
   tool_name: metric_monitor
 -  
@@ -248,7 +524,7 @@ optimization_tools: &optimization_tools
   tool_name: query_advisor
 
 
-name: Company 3 DBAs with Tools
+name: 8 DBAs with Tools
 
 environment:
   env_type: dba
@@ -311,7 +587,7 @@ agents:
   -
     agent_type: solver
     name: CpuExpert
-    role_description: You are a CPU agent that can use the tool apis to check CPU usage (whether_is_abnormal_metric), analyze the root causes of high CPU usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection, enable_or_disable_nestloop_operator). Note the response should be in markdown format.
+    role_description: You are a CPU agent that can use the tool apis to check CPU usage (whether_is_abnormal_metric), analyze the root causes of high CPU usage using the metrics, queries and knowledge gained from (cpu_match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection, enable_or_disable_nestloop_operator). Note the response should be in markdown format.
     prompt_template: *cpu_agent_format_prompt
     memory:
       memory_type: chat_history
@@ -327,13 +603,13 @@ agents:
       model: gpt-4
       temperature: 0.7
       max_tokens: 2048
-    tools: *optimization_tools
+    tools: *expert_tools
     verbose: true
   -
     agent_type: solver
     name: MemoryExpert
-    role_description: You are a memory agent that can use the db_diag tool to check memory usage (whether_is_abnormal_metric) and analyze the root causes of high memory usage the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions by calling relevant apis. Note the response should be in markdown format.
-    prompt_template: *mem_agent_format_prompt
+    role_description: You are a memory agent that can use the db_diag tool to check memory usage (whether_is_abnormal_metric) and analyze the root causes of high memory usage the metrics, queries and knowledge gained from (memory_match_diagnose_knowledge), and give optimization solutions by calling relevant apis. Note the response should be in markdown format.
+    prompt_template: *memory_agent_format_prompt
     memory:
       memory_type: chat_history
     tool_memory:
@@ -348,12 +624,12 @@ agents:
       model: gpt-4
       temperature: 0.7
       max_tokens: 2048
-    tools: *optimization_tools
+    tools: *expert_tools
     verbose: true
   -
     agent_type: solver
     name: IoExpert
-    role_description: You are a IO agent that can analyze the root causes of high I/O bandwidth usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection), and give optimization solutions by calling relevant apis. Note the response should be in markdown format.
+    role_description: You are a IO agent that can analyze the root causes of high I/O bandwidth usage using the metrics, queries and knowledge gained from (io_match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection), and give optimization solutions by calling relevant apis. Note the response should be in markdown format.
     prompt_template: *io_agent_format_prompt
     memory:
       memory_type: chat_history
@@ -369,13 +645,13 @@ agents:
       model: gpt-4
       temperature: 0.7
       max_tokens: 2048
-    tools: *optimization_tools
+    tools: *expert_tools
     verbose: true
   -
     agent_type: solver
-    name: NetworkExpert
-    role_description: You are a network agent that can analyze the root causes of slow network using the metrics and knowledge gained from (match_diagnose_knowledge), and give solving advice. Note the response should be in markdown format.
-    prompt_template: *network_agent_format_prompt
+    name: WorkloadExpert
+    role_description: You are a workload expert that can analyze the root causes of bad performance of concurrent workloads using metrics, queries and knowledge gained from (workload_match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection), and give optimization solutions by calling relevant apis. Note the response should be in markdown format.
+    prompt_template: *workload_agent_format_prompt
     memory:
       memory_type: chat_history
     tool_memory:
@@ -390,5 +666,89 @@ agents:
       model: gpt-4
       temperature: 0.7
       max_tokens: 2048
-    tools: *optimization_tools
+    tools: *expert_tools
+    verbose: true
+  -
+    agent_type: solver
+    name: QueryExpert
+    role_description: You are a slow query expert that can analyze the root causes of bad performance of single queries using metrics, SQL statements and knowledge gained from (query_match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection), and give optimization solutions by calling relevant apis. Note the response should be in markdown format.
+    prompt_template: *query_agent_format_prompt
+    memory:
+      memory_type: chat_history
+    tool_memory:
+      memory_type: chat_history
+      llm:
+        llm_type: gpt-4
+        model: gpt-4
+        temperature: 0.7
+      recursive: true
+    llm:
+      llm_type: gpt-4
+      model: gpt-4
+      temperature: 0.7
+      max_tokens: 2048
+    tools: *expert_tools
+    verbose: true
+  -
+    agent_type: solver
+    name: WriteExpert
+    role_description: You are a write expert that can analyze write operations using metrics, SQL statements and knowledge gained from (write_match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection), and give optimization solutions by calling relevant apis. Note the response should be in markdown format.
+    prompt_template: *write_agent_format_prompt
+    memory:
+      memory_type: chat_history
+    tool_memory:
+      memory_type: chat_history
+      llm:
+        llm_type: gpt-4
+        model: gpt-4
+        temperature: 0.7
+      recursive: true
+    llm:
+      llm_type: gpt-4
+      model: gpt-4
+      temperature: 0.7
+      max_tokens: 2048
+    tools: *expert_tools
+    verbose: true
+  -
+    agent_type: solver
+    name: IndexExpert
+    role_description: You are an index expert that can analyze index relevant issues using metrics, SQL statements and knowledge gained from (io_match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection), and give optimization solutions by calling relevant apis. Note the response should be in markdown format.
+    prompt_template: *index_agent_format_prompt
+    memory:
+      memory_type: chat_history
+    tool_memory:
+      memory_type: chat_history
+      llm:
+        llm_type: gpt-4
+        model: gpt-4
+        temperature: 0.7
+      recursive: true
+    llm:
+      llm_type: gpt-4
+      model: gpt-4
+      temperature: 0.7
+      max_tokens: 2048
+    tools: *expert_tools
+    verbose: true
+  -
+    agent_type: solver
+    name: ConfigurationExpert
+    role_description: You are a database configuration expert that can analyze configuration (parameters) relevant issues using metrics, SQL statements and knowledge gained from (configuration_match_diagnose_knowledge). Note the response should be in markdown format.
+    prompt_template: *configuration_agent_format_prompt
+    memory:
+      memory_type: chat_history
+    tool_memory:
+      memory_type: chat_history
+      llm:
+        llm_type: gpt-4
+        model: gpt-4
+        temperature: 0.7
+      recursive: true
+    llm:
+      llm_type: gpt-4
+      model: gpt-4
+      temperature: 0.7
+      max_tokens: 2048
+    tools: *expert_tools
     verbose: true

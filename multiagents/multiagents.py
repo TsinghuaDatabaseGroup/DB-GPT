@@ -23,8 +23,7 @@ class MultiAgents:
 
     @classmethod
     def from_task(cls, task, args):
-
-
+        
         # Prepare the config of the task
         task_config = prepare_task_config(task, args)
         
@@ -65,7 +64,7 @@ class MultiAgents:
         
         #while not self.environment.is_done():
         report, records = await self.environment.step(args)
-
+        
         return report, records
 
     def reset(self):

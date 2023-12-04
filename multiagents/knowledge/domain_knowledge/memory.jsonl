@@ -1,0 +1,138 @@
+[
+    {
+        "cause_name": "memory_accumulation",
+        "desc": "If temporary memory is not released in a timely manner during the execution of SQL statements, it can lead to memory accumulation.",
+        "steps": "Check if temporary memory is not released in a timely manner during the execution of SQL statements. This can be observed by monitoring the memory usage and checking if it continues to increase during SQL statement execution.",
+        "metrics": "['memory_usage', 'temporary_memory']"
+    },
+    {
+        "cause_name": "memory_accumulation",
+        "desc": "If temporary memory is not released in a timely manner during the execution of SQL statements, it can lead to memory accumulation.",
+        "steps": "Check if temporary memory is not released in a timely manner during the execution of SQL statements. This can be observed by monitoring the memory usage and checking if it continues to increase during SQL statement execution.",
+        "metrics": "['memory_usage', 'temporary_memory']"
+    },
+    {
+        "cause_name": "memory_accumulation",
+        "desc": "High memory usage in the database process can be caused by memory accumulation, such as temporary memory not being released in a timely manner or frequent memory allocation and deallocation",
+        "steps": "1. Query the memory statistics information to get an overview of the memory usage.\n2. Determine the memory usage classification based on the memory statistics.\n3. Determine the cause of memory accumulation based on the memory usage classification.\n4. If there is no evidence of temporary memory not being released, consider factors such as high concurrency or complex SQL statements in the business operations.",
+        "metrics": "['process_used_memory', 'dynamic_used_memory', 'dynamic_used_shrctx', 'shared_used_memory', 'other_used_memory']"
+    },
+    {
+        "cause_name": "memory_resource_contention",
+        "desc": "This function checks whether there is contention for memory resources by other processes outside the database. If the maximum system memory usage exceeds the detection threshold specified in the variable \"mem_usage_threshold\", the function sets the \"system_mem_contention\" key in the \"detail\" dictionary to indicate that the current system memory usage is significant. If the \"system_mem_contention\" key exists in the \"detail\" dictionary, the function suggests checking for external processes that may be consuming resources. If the function returns True, it indicates that memory resource contention is a root cause of the problem. If the function returns False, it means that memory resource contention is not a root cause.",
+        "metrics": "- system_mem_usage\n- system_mem_contention"
+    },
+    {
+        "cause_name": "Memory_usage_analysis_diagnosis",
+        "desc": "The code lines are analyzing and diagnosing the memory usage of a system. The code first retrieves the memory information using the \"getmem\" function. Then, it fetches the long-term memory information using the \"getltmem\" function with specific parameters. \n\nNext, the code initializes variables to store information about memory and swap usage. There are also flag variables that indicate whether there are any memory or swap issues.\n\nThe code then constructs a SQL query to retrieve specific memory information for each record obtained from the \"getmem\" function. Based on the retrieved information, the code analyzes the memory usage and assigns appropriate diagnostic messages to the \"mem_info\" variable. \n\nIf the physical memory usage exceeds 90% and the free memory is below 200M and above 100M, it indicates that the physical memory usage is high and the available memory is low, which may pose performance risks. Similarly, if the physical memory usage exceeds 90% and the free memory is below 100M, it suggests a high memory usage and a significant performance risk.\n\nIf the physical memory usage exceeds 20% of the recent average, it is recommended to perform further checks. \n\nThe code also checks the swap usage. If the swap usage is above 50% and below 80%, it indicates a high swap usage and suggests further investigation. If the swap usage exceeds 80%, it suggests a high swap usage and recommends immediate investigation.\n\nAfter analyzing each record, the code appends the diagnostic messages for memory and swap usage to the respective variables.\n\nFinally, the code removes the last \"union all\" from the constructed SQL query.\n\nIn conclusion, the code analyzes the memory and swap usage of a system and generates diagnostic messages based on the specific threshold values and recent average usage. These messages provide insights into any potential memory and swap issues that may affect the system's performance.",
+        "metrics": "1. Physical memory usage\n2. Free memory\n3. Recent average physical memory usage\n4. Swap usage"
+    },
+    {
+        "cause_name": "memory_full",
+        "desc": "If the memory is full, it can cause slow program execution. To diagnose this issue, we need to identify the process with abnormal memory usage. In this case, we only consider the abnormal memory usage of the database process. For other processes, they are not representative and will not be described in detail here. To analyze the high memory usage of the database process, please refer to the relevant chapter on overall performance analysis.",
+        "steps": "Check the memory usage of the database process. If it is significantly higher than normal, it may be the root cause of the slow program execution. Further analysis is needed to identify the specific reason for the abnormal memory usage.",
+        "metrics": "['memory_usage']"
+    },
+    {
+        "cause_name": "high_memory",
+        "desc": "If the memory usage is high, it can cause overall performance slowdown",
+        "steps": "Check the memory usage. If it exceeds the threshold (80%), it is considered a root cause. Possible solutions include optimizing queries, adding indexes, or upgrading hardware.",
+        "metrics": "['memory_usage']"
+    },
+    {
+        "cause_name": "high_memory_usage",
+        "desc": "High memory usage in the database can lead to performance issues. It is important to analyze and identify the specific areas of memory consumption.",
+        "steps": "1. Query the perf.memory node.detail view to determine the memory usage points, such as the maximum process memory, process used memory, maximum dynamic memory, dynamic used memory, and dynamic used shared memory. Pay attention to the difference between max dynamic memory and dynamic used memory. If the dynamic memory is insufficient, it can cause query errors. The dynamic used memory includes memory consumption on user sessions and memory consumption by kernel modules.\n2. If dynamic used shared memory is small, query the perf.session memory detail view to get the memory consumption of different sessions. The number of user sessions and the memory usage per session can cause dynamic memory issues.\n3. If dynamic used shared memory is large, query the perf.shared memory detail view to identify the context of abnormal memory consumption. In most cases, it is caused by abnormal memory consumption on user sessions.",
+        "metrics": "['max_process_memory', 'process_used_memory', 'max_dynamic_memory', 'dynamic_used_memory', 'dynamic_used_shared_memory']"
+    },
+    {
+        "cause_name": "high_memory_usage",
+        "desc": "If the database process memory usage is consistently high, it can indicate memory overload.",
+        "steps": "1. Observe the memory usage trend of the database process on the monitoring platform. If the memory usage remains high for a long time, regardless of whether there is any business running, it may indicate memory overload.\n2. Check if the memory usage increases significantly during the execution of jobs. If the memory usage spikes during job execution and then returns to a lower level after the job finishes, it may indicate memory overload.\n3. Check if the memory usage continues to increase during the execution of SQL statements and does not decrease afterwards. This may indicate memory accumulation.\n4. If SQL statements report out-of-memory errors, it may indicate memory shortage.",
+        "metrics": "['memory_usage']"
+    },
+    {
+        "cause_name": "high_concurrency_memory_usage",
+        "desc": "If the number of connections to the server is too high, it can lead to high memory usage.",
+        "steps": "Check if the server has a high number of connections, which can be observed by monitoring the memory usage and checking if it increases significantly when there are many connections.",
+        "metrics": "['memory_usage', 'connection_count']"
+    },
+    {
+        "cause_name": "high_memory_usage_sql",
+        "desc": "Some SQL statements may have high memory usage, leading to temporary memory spikes.",
+        "steps": "Check if certain SQL statements have high memory usage. This can be observed by monitoring the memory usage and checking if it spikes during the execution of specific SQL statements.",
+        "metrics": "['memory_usage', 'sql_memory_usage']"
+    },
+    {
+        "cause_name": "high_memory_usage",
+        "desc": "If the database process memory usage is consistently high, it can indicate memory overload.",
+        "steps": "1. Observe the memory usage trend of the database process on the monitoring platform. If the memory usage remains high for a long time, regardless of whether there is any business running, it may indicate memory overload.\n2. Check if the memory usage increases significantly during the execution of jobs. If the memory usage spikes during job execution and then returns to a lower level after the job finishes, it may indicate memory overload.\n3. Check if the memory usage continues to increase during the execution of SQL statements and does not decrease afterwards. This may indicate memory accumulation.\n4. If SQL statements report out-of-memory errors, it may indicate memory shortage.",
+        "metrics": "['memory_usage']"
+    },
+    {
+        "cause_name": "memory_overload",
+        "desc": "If the memory usage of the database process is high, it can be caused by memory accumulation or other reasons",
+        "steps": "1. Query the memory statistics information to get an overview of the memory usage.\n2. Determine the memory usage classification based on the memory statistics.\n3. Determine the cause of memory accumulation based on the memory usage classification.",
+        "metrics": "['process_used_memory', 'dynamic_used_memory', 'dynamic_used_shrctx', 'shared_used_memory', 'other_used_memory']"
+    },
+    {
+        "cause_name": "memory_overload",
+        "desc": "In some cases, memory overload can cause cluster restarts, making it difficult to locate the cause of memory overload in real-time. In such cases, the following steps can be used to identify the cause of memory overload that has occurred in the past.",
+        "steps": "1. Check the historical memory usage curve to identify the time point of memory overload. 2. Analyze the historical memory statistics to find the memory context with high usage. 3. Contact engineers for assistance in resolving the memory overload issue.",
+        "metrics": "['memory_usage', 'memory_context']"
+    },
+    {
+        "cause_name": "memory_usage_classification",
+        "desc": "Based on the memory usage information obtained from the query, the memory usage can be classified as follows: If dynamic used memory is large and dynamic used shared memory is small, it indicates that there is a high memory usage on threads and sessions. If dynamic used memory is large and dynamic used shared memory is similar, it indicates that there is a large dynamic memory usage on the global memory context. If only shared used memory is large, it indicates that there is a high usage of shared memory, which can be ignored. If other used memory is large, it is usually due to frequent memory allocation and deallocation during business execution, leading to excessive memory fragmentation.",
+        "steps": "For each memory usage scenario, analyze the values of the relevant metrics. If the conditions mentioned in the content are met, it can be confirmed that the corresponding memory context is causing high memory usage. Further steps are provided for each scenario to locate the specific code or snapshot causing the memory accumulation.",
+        "metrics": "['dynamic_used_memory', 'dynamic_used_shared_memory', 'shared_used_memory', 'other_used_memory']"
+    },
+    {
+        "cause_name": "high_memory",
+        "desc": "If the memory usage is high, it can cause overall performance degradation",
+        "steps": "Check the memory usage. If it exceeds the threshold (80%), it is considered a root cause. Possible solutions include optimizing queries, adding indexes, or upgrading hardware.",
+        "metrics": "['memory_usage']"
+    },
+    {
+        "cause_name": "high_memory_usage",
+        "desc": "If the database process memory usage is consistently high, it can indicate memory overload.",
+        "steps": "1. Observe the memory usage trend of the database process on the monitoring platform. If the memory usage remains high for a long time, regardless of whether there is any business running, it may indicate memory overload.\n2. Check if the memory usage increases significantly during the execution of jobs. If the memory usage spikes during job execution and then returns to a lower level after the job finishes, it may indicate memory overload.\n3. Check if the memory usage continues to increase during the execution of SQL statements and does not decrease afterwards. This may indicate memory accumulation.\n4. If SQL statements report out-of-memory errors, it may indicate memory shortage.",
+        "metrics": "['memory_usage']"
+    },
+    {
+        "cause_name": "memory_overload",
+        "desc": "In some cases, memory overload can cause cluster environment restart, making it difficult to locate the cause of memory overload in real-time. In such cases, the following steps can be used to locate the cause of memory overload that has occurred in the past.",
+        "steps": "1. Check the historical memory usage curve to identify the time point of memory overload. 2. Analyze the historical memory statistics information to find the memory context with high usage. 3. Contact engineers for assistance in resolving the memory overload issue.",
+        "metrics": "['memory_usage', 'memory_context']"
+    },
+    {
+        "cause_name": "high_memory_usage",
+        "desc": "High memory usage can be caused by various reasons, including excessive memory fragmentation, delayed memory release, and other factors.",
+        "steps": "1. Check if there is excessive memory fragmentation, which can be caused by frequent allocation and deallocation of memory, such as creating a large number of cache plans. If so, consider optimizing the memory allocation and deallocation process.\n2. Investigate if there are any third-party open-source software that is not releasing memory in a timely manner. If found, contact the engineer for assistance.\n3. If the high memory usage is not solely caused by memory fragmentation, it could be due to other reasons. For example, there may be business logic that directly uses memory without proper management, or there may be other factors causing delayed memory release. In such cases, contact the engineer for further investigation and resolution.",
+        "metrics": "['other_used_memory']"
+    },
+    {
+        "cause_name": "high_memory_usage",
+        "desc": "In the scenario of parallel decoding, if the reading log thread or decoding thread consumes too much memory, it can lead to insufficient memory and trigger memory error. The memory usage of ParallelDeeokeoispatcher or ParallelDecodelog is found to be relatively high.",
+        "steps": "For the reading log thread, it is recommended to increase the number of decoding threads. For the decoding thread, it is suggested to set the 'r-tm-in aeory' parameter to adjust the buffer size and refer to the 'Parallel Decoding Options' section in the 'Feature Guide' for more details.",
+        "metrics": "['memory_usage']"
+    },
+    {
+        "cause_name": "high_memory_usage",
+        "desc": "In the scenario of parallel decoding, if the reading log thread or decoding thread consumes too much memory, it can lead to insufficient memory and trigger memory error. The memory usage of ParallelDeeokeoispatcher or ParallelDecodelog is found to be relatively high.",
+        "steps": "For the reading log thread, it is recommended to increase the number of decoding threads. For the decoding thread, it is suggested to set the 'r-tm-in aeory' parameter to adjust the buffer size and refer to the 'Parallel Decoding Options' section in the 'Feature Guide' for more details.",
+        "metrics": "['memory_usage']"
+    },
+    {
+        "cause_name": "high_memory_usage",
+        "desc": "If the memory usage of the database system is high, it can cause slow program execution.",
+        "steps": "First, identify the process with abnormal memory usage. In this case, we only consider the gaussdb process. Refer to the 'SQL ordered by CPU Time' section in the WDR report to analyze and optimize the relevant statements. Alternatively, refer to Chapter 1.3 for short-term CPU abnormalities.",
+        "metrics": "['memory_usage']"
+    },
+    {
+        "cause_name": "high_memory_usage",
+        "desc": "If the database kernel has high memory usage, it can lead to various issues such as query errors and abnormal memory consumption on user sessions.",
+        "steps": "1. Check the 'dbe_perf.memory_nodedetail' view to determine the memory usage points, including 'max_process_memory' (maximum memory used by the process), 'process_used_memory' (memory already used by the process), 'max_dynamic_memory' (maximum dynamically usable memory), 'dynamic_used_memory' (used dynamic memory), and 'dynamic_used_shrctx' (used shared dynamic memory). Focus on the difference between 'max_dynamic_memory' and 'dynamic_used_memory'. If the dynamic memory is insufficient, it can cause query errors. 'dynamic_used_memory' includes memory consumption on user sessions and memory consumption by kernel modules.\n2. If 'dynamic_used_shrctx' is relatively small, query the 'dbe_perf.session_memory_detail' view to get the memory consumption of different sessions. Usually, the number of user sessions and the memory usage per session can cause dynamic memory issues.\n3. If 'dynamic_used_shrctx' is relatively large, query the 'dbe_perf.shared_memory_detail' view to identify the context of abnormal memory consumption. In most cases, it is due to abnormal memory consumption on user sessions.",
+        "metrics": "['max_process_memory', 'process_used_memory', 'max_dynamic_memory', 'dynamic_used_memory', 'dynamic_used_shrctx']"
+    }
+]

@@ -39,9 +39,9 @@ class ReporterAgent(BaseAgent):
     anomaly_title_prompt: str = ANOMALY_TITLE_PROMPT
     messages: List[dict] = []
 
-    report: dict = {"title": "", "anomaly date": "", "anomaly description": "", "root cause": "", "diagnosis process": "", "solutions": ""}
-
-    record: dict = {"anomalyAnalysis": {"RoleAssigner":{"messages":[]},"CpuExpert":{"messages":[]},"MemoryExpert":{"messages":[]},"IoExpert":{"messages":[]},"NetworkExpert":{"messages":[]}}, "brainstorming": {"messages":[]}, "report":{}, "title":"alert name", "time":"alert time", "topMetrics": []} # type: bar / line
+    report: dict = {"title": "", "anomaly date": "", "anomaly description": "", "root cause": "", "labels": "", "diagnosis process": "", "solutions": ""}
+    
+    record: dict = {"anomalyAnalysis": {"RoleAssigner":{"messages":[]},"Solver":{"messages":[]},"CpuExpert":{"messages":[]},"MemoryExpert":{"messages":[]},"IoExpert":{"messages":[]},"WorkloadExpert":{"messages":[]},"QueryExpert":{"messages":[]},"WriteExpert":{"messages":[]},"IndexExpert":{"messages":[]},"ConfigurationExpert":{"messages":[]}}, "brainstorming": {"messages":[]}, "report":{}, "title":"alert name", "time":"alert time", "topMetrics": []} # type: bar / line
 
     def initialize_report(self):
         
@@ -53,6 +53,7 @@ class ReporterAgent(BaseAgent):
         if self.alert_str == "":
             return
 
+        
         anomaly_desc_prompt = self.anomaly_desc_prompt.replace("{anomaly_str}", self.alert_str)
         anomaly_desc_message = self.llm._construct_messages(anomaly_desc_prompt)
         
@@ -106,9 +107,40 @@ class ReporterAgent(BaseAgent):
         else:
             self.report["root cause"] = new_message.content
 
+    def add_diagnosis_labels(self):
+        root_causes = {
+            "INSERT_LARGE_DATA": ["highly concurrent commits or highly concurrent inserts"],
+            "LOCK_CONTENTION": ["highly concurrent updates"],
+            "VACUUM": ["highly deletes"],
+            "REDUNDANT_INDEX": ["too many indexes"],
+            "MISSING_INDEXES": ["missing indexes"],
+            "INSERT_LARGE_DATA,IO_CONTENTION": ["INSERT_LARGE_DATA","IO_CONTENTION"],
+            "FETCH_LARGE_DATA,CORRELATED_SUBQUERY": ["FETCH_LARGE_DATA","CORRELATED SUBQUERY"],
+            "POOR_JOIN_PERFORMANCE,CPU_CONTENTION": ["POOR JOIN PERFORMANCE","CPU CONTENTION"],
+        }
+
+        labels = []
+
+        for cause in root_causes:
+            labels += root_causes[cause]
+
+        prompt = "Based on the description\n" + self.report["root cause"] + "\n\n Output all the labels mentioned in the description. The available labels are  \n" + str(labels) + "===== \n Note 1. the output should be in list format. And do not output any additional information (output \"None\" if no label mentioned in the description)\n2. the output should strictly exclude lables not mentioned in the description."
+
+        prompt_message = {"role": "user", "content": prompt, "time": time.strftime("%H:%M:%S", time.localtime())}
+
+        self.llm.change_messages(self.role_description, self.messages + [prompt_message])
+        new_message = self.llm.parse()
+        
+        if isinstance(new_message, dict):
+            self.report["labels"] = new_message["content"]
+        else:
+            self.report["labels"] = new_message.content
+
+        # import pdb; pdb.set_trace()
+
 
     def update_solutions(self):
-        prompt = "You are writing a report. Please optimize the following solutions based on the above review adice. The solutions are:\n" + self.report["solutions"] + "\n ===== \n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the solutions based on the above advice'. 3. Do not add anything about root causes!!!\n"
+        prompt = "You are writing a report. Please optimize the following solutions based on the above review advice. The solutions are:\n" + self.report["solutions"] + "\n ===== \n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the solutions based on the above advice'. 3. Do not add anything about root causes!!!\n"
 
         prompt_message = {"role": "user", "content": prompt, "time": time.strftime("%H:%M:%S", time.localtime())}
 
@@ -135,7 +167,6 @@ class ReporterAgent(BaseAgent):
     def _fill_prompt_template(
         self, env_description: str = "", tool_observation: List[str] = []):
         pass
-
     
     def add_message_to_memory(self, messages: List[Message]) -> None:
         self.memory.add_message(messages)

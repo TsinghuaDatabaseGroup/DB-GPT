@@ -34,7 +34,7 @@ def load_memory(memory_config: Dict):
     return memory_registry.build(memory_type, **memory_config)
 
 
-def load_tools(tool_config: List[Dict], max_api_num):
+def load_tools(tool_config: List[Dict], max_api_num, agent_name):
     
     if len(tool_config) == 0:
         return []
@@ -44,7 +44,7 @@ def load_tools(tool_config: List[Dict], max_api_num):
     for tool in tool_config:
 
         api_module = importlib.import_module(f"""multiagents.tools.{tool["tool_name"]}.api""")
-        register_functions_from_module(api_module, caller, max_api_num) # functions
+        register_functions_from_module(api_module, caller, max_api_num, agent_name) # functions
         
 
     return caller
@@ -90,8 +90,8 @@ def prepare_task_config(task, args):
             agent_configs["tool_memory"] = load_memory(agent_configs["tool_memory"])
         llm = load_llm(agent_configs.get("llm", "xxxx"))
         agent_configs["llm"] = llm
-
-        agent_configs["tools"] = load_tools(agent_configs.get("tools", []), args.max_api_num)
+        
+        agent_configs["tools"] = load_tools(agent_configs.get("tools", []), args.max_api_num, agent_configs['name'])
 
         agent_configs["name"] = agent_configs['name']
 

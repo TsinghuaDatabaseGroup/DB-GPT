@@ -28,38 +28,48 @@ if __name__ == "__main__":
 
     # diag_id, content = next(iter(anomaly_jsons.items()))
     diag_id = "10"
-    content = anomaly_jsons[diag_id]
-    
-    args.start_at_seconds = content["start_time"]
-    args.end_at_seconds = content["end_time"]
 
-    slow_queries = []
-    workload_statistics = []
-    workload_sqls = ""
-    if args.enable_slow_query_log == True:
-        # [slow queries] read from query logs
-        # /var/lib/pgsql/12/data/pg_log/postgresql-Mon.log
-        # slow_queries = obtain_slow_queries(database_server_conf)
-        slow_queries = content["slow_queries"]
-    if args.enable_workload_statistics_view == True:
-        workload_statistics = db.obtain_historical_queries_statistics(topn = 50)
-    if args.enable_workload_sqls == True:
-        workload_sqls = content["workload"]
+    for diag_id in anomaly_jsons:
 
-    with open(WORKLOAD_FILE_NAME, 'w') as f:
-        json.dump({'slow_queries': slow_queries, 'workload_statistics': workload_statistics, 'workload_sqls': workload_sqls}, f)
+        content = anomaly_jsons[diag_id]
+        
+        args.start_at_seconds = content["start_time"]
+        args.end_at_seconds = content["end_time"]
 
-    if "alerts" in content and content["alerts"] != []:
-        args.alerts = content["alerts"] # possibly multiple alerts for a single anomaly
-    else:
-        args.alerts = []
-    
-    if "labels" in content and content["labels"] != []:
-        args.labels = content["labels"]
-    else:
-        args.labels = []
-    args.start_at_seconds = content["start_time"]
-    args.end_at_seconds = content["end_time"]        
-    args.diag_id = str(diag_id)
-    
-    asyncio.run(main(args))
+        slow_queries = []
+        workload_statistics = []
+        workload_sqls = ""
+        if args.enable_slow_query_log == True:
+            # [slow queries] read from query logs
+            # /var/lib/pgsql/12/data/pg_log/postgresql-Mon.log
+            # slow_queries = obtain_slow_queries(database_server_conf)
+            slow_queries = content["slow_queries"]
+        if args.enable_workload_statistics_view == True:
+            workload_statistics = db.obtain_historical_queries_statistics(topn = 50)
+        if args.enable_workload_sqls == True:
+            workload_sqls = content["workload"]
+
+        with open(WORKLOAD_FILE_NAME, 'w') as f:
+            json.dump({'slow_queries': slow_queries, 'workload_statistics': workload_statistics, 'workload_sqls': workload_sqls}, f)
+
+        if "alerts" in content and content["alerts"] != []:
+            args.alerts = content["alerts"] # possibly multiple alerts for a single anomaly
+        else:
+            args.alerts = []
+        
+        if "labels" in content and content["labels"] != []:
+            args.labels = content["labels"]
+        else:
+            args.labels = []
+        args.start_at_seconds = content["start_time"]
+        args.end_at_seconds = content["end_time"]        
+        args.diag_id = str(diag_id)
+        
+        # 77.27
+        # 75.47
+        # count the time to run main function
+        start_time = time.time()
+        asyncio.run(main(args))
+        end_time = time.time()
+        print("time: ", end_time - start_time)
+        import pdb; pdb.set_trace()

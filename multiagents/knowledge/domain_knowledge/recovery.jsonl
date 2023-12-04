@@ -1,0 +1,61 @@
+[
+    {
+        "cause_name": "abnormal_network_status",
+        "desc": "This piece of code checks for abnormal network status by analyzing packet loss rate and bandwidth usage. It first checks the receive and transmit drop rates for each device and appends any abnormal rates to a list of details. It then checks the bandwidth usage for each device and appends any abnormal rates to the same list of details. If any abnormal rates are found, the function sets the detail and suggestion attributes accordingly and returns True, indicating that abnormal network status is a root cause. If no abnormal rates are found, the function returns False, indicating that abnormal network status is not a root cause. The thresholds for abnormal packet loss rate and network bandwidth usage are obtained from the monitoring module.",
+        "metrics": "- package_drop_rate_threshold\n- network_bandwidth_usage_threshold"
+    },
+    {
+        "cause_name": "network_unreachable",
+        "desc": "One common cause of network issues is when the database server is unable to establish a connection with the application server.",
+        "steps": "To diagnose this issue, you can query the `pg_stat_activity` view to check for client IP information. If there is no record of the application server's IP connecting to the database, it indicates that the application server has not sent any SQL requests to the database.",
+        "metrics": "['client_addr', 'client_hostname', 'client_port']"
+    },
+    {
+        "cause_name": "network_unreachable",
+        "desc": "One common cause of network issues is when the database server is unable to establish a connection with the application server.",
+        "steps": "To diagnose this issue, you can query the `pg_stat_activity` view to check for client IP information. If there is no record of the application server's IP connecting to the database, it indicates that the application server has not sent any SQL requests to the database.",
+        "metrics": "['client_addr', 'client_hostname', 'client_port']"
+    },
+    {
+        "cause_name": "abnormal_disaster_recovery_setup_process",
+        "desc": "The disaster recovery setup process is abnormal, which may cause issues in cross-region disaster recovery",
+        "steps": "Check the disaster recovery setup process and compare it with the standard process. Identify any deviations or abnormalities in the process and rectify them accordingly.",
+        "metrics": "['disaster_recovery_setup_process']"
+    },
+    {
+        "cause_name": "abnormal_failover_process",
+        "desc": "The failover process from standby to primary in a disaster recovery setup is abnormal",
+        "steps": "Review the failover process from standby to primary and compare it with the standard process. Identify any deviations or abnormalities in the process and rectify them accordingly.",
+        "metrics": "['failover_process']"
+    },
+    {
+        "cause_name": "abnormal_wltchover_process",
+        "desc": "The planned wltchover process is abnormal",
+        "steps": "Review the planned wltchover process and compare it with the standard process. Identify any deviations or abnormalities in the process and rectify them accordingly.",
+        "metrics": "['wltchover_process']"
+    },
+    {
+        "cause_name": "abnormal_disaster_recovery_performance_metrics",
+        "desc": "The performance metrics of the disaster recovery setup are abnormal",
+        "steps": "Analyze the performance metrics of the disaster recovery setup and compare them with the expected values. Identify any deviations or abnormalities in the metrics and take appropriate actions to improve the performance.",
+        "metrics": "['disaster_recovery_performance_metrics']"
+    },
+    {
+        "cause_name": "disaster_recovery_process_abnormal",
+        "desc": "The disaster recovery setup process returns failure or times out",
+        "steps": "1. Check the OM logs on the standby cluster execution node to see if there are any errors or exceptions during the prepare disaster info and streaming disaster recovery start processes. \n2. For the prepare disaster info process, check if there are any issues with connecting to the remote IP and port. Use the ping command to check the IP and the curl command to check the port. If there are network issues, resolve them first. \n3. For the streaming disaster recovery start process, check if there are any issues with the disaster recovery user information. Login to the primary cluster database and use the 'select * from pg_user' command to check if the disaster recovery user exists. Also, use the 'show default_transaction_read_only' command to check if the primary cluster is in read-only mode. \n4. If the main cluster reports a timeout error, you can retry the disaster recovery setup process. If possible, adjust the timeout parameter based on the size of the main cluster data and the bandwidth of the remote network.",
+        "metrics": "['network_exception', 'user_info_exception', 'timeout']"
+    },
+    {
+        "cause_name": "failover_abnormal",
+        "desc": "The failover process of the disaster recovery to the primary cluster is abnormal, with some nodes not participating in the failover",
+        "steps": "1. Check if any nodes in the disaster recovery cluster are not participating in the failover due to server downtime or network interruption. If so, perform hardware maintenance and rejoin the cluster. After rejoining, check if the cluster status and instance status are normal. If not, proceed to step 2.\n2. Access any node and modify the cluster disaster recovery mode parameters in cm server and ca agent to switch back to the primary cluster configuration. If in sandbox mode, use the command '/usr/sbin/chroot /var/chroot' to enter the sandbox and load the environment variables. Use the following commands to modify the parameters:\n   gs guc set -Z cmserver -N all -I all -c 'backup open 0'\n   gs gue set -Z cmagent -N all -I all -c 'agent backup open=0'\n   gs gu set -Z cnagent -N all -I all -c 'disaster recovery type=0'\n3. Access the faulty node and query the process ID of cm server and cm agent. Use the 'kill -9' command to terminate the processes. The processes will be restarted by om monitor, and the parameter modifications of cm server and cm agent will take effect. Use the following commands to query and terminate the processes:\n   ps -ef | grep cm agent\n   ps -ef | grep ca server\n4. Use 'cm ctl query -Crd' to get the nodeld of the faulty node and the corresponding instances (coordinator and datanode) that did not participate in the failover\n5. Use 'ca stl stop -n NOOEID -D DATADIR' to stop the instances on the faulty node that did not participate in the failover\n6. Use the om agent's HTTPS REST API to manipulate the cluster for node repair. Refer to the 'Server Tools > gs replace' section in the 'Tool Reference' for detailed repair steps.",
+        "metrics": "['cluster_status', 'instance_status']"
+    },
+    {
+        "cause_name": "abnormal_disaster_recovery_status",
+        "desc": "The cluster-level PO value keeps increasing during the low business period, indicating abnormal disaster recovery. The ON status of the disaster recovery cluster shows 'Need repair (Disconnected)'. The QLACBT node in the disaster recovery cluster is faulty, and the instance status on this node shows 'Deleted' for CX, 'Unknown' for DN and CTU, and 'Main Standby Need repair (Connecting)' for some primary standby instances.",
+        "steps": "1. Check the details of the 'ALULAI StreaningDisasterkecoveryCnDisconnected' alarm to understand the information of all CN instances in the main cluster that have a disaster recovery relationship with the CX instance in the disaster recovery cluster. Verify if there are any faults in the corresponding CN instances in the main cluster and if there are any network abnormalities between the CX instance in the disaster recovery cluster and the CN instances in the main cluster. Fix any faults in the CX instances in the main cluster, and the CX instance in the disaster recovery cluster will reconnect automatically. \n2. If the CN instances in the main cluster that have a disaster recovery relationship with the CX instance in the disaster recovery cluster cannot be repaired in time, you can manually stop the relevant CX instances in the disaster recovery cluster using the 'caetl stop n NODEID -D DATADIR' command to restore the PO value. After the CN instances in the main cluster are repaired, you can use the 'caetl start n NODEID -D DATADIR' command to restart the CN instances in the disaster recovery cluster.",
+        "metrics": "['PO_value', 'ON_status', 'instance_status']"
+    }
+]

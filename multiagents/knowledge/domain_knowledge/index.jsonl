@@ -1,0 +1,35 @@
+[
+    {
+        "cause_name": "unused_and_redundant_index",
+        "desc": "This function checks for the presence of unused or redundant indexes in a table that is related to a query. Unused indexes are those that have not been used for a long time, while redundant indexes are those that are not needed for the query. If the table is not large or there are no unused or redundant indexes, or if the query involves a select operation, then the function is not a root cause. Otherwise, the function identifies the unused and redundant indexes and provides suggestions to clean them up. The threshold for identifying unused indexes is not specified in the code.",
+        "metrics": "- Large table\n- Unused index info\n- Redundant index info\n- Select type"
+    },
+    {
+        "cause_name": "too_many_index",
+        "desc": "This function checks for the presence of too many indexes in a table, which can negatively impact the performance of insert and update operations. If the table structure is not available or the select type is not appropriate, this is not a root cause. If there are a large number of indexes in the table, the function identifies the related tables and provides details on the number of indexes. In this case, the function is a root cause and suggests that too many indexes can slow down insert, delete, and update statements. The threshold for the number of indexes is determined by the variable \"index_number_threshold\".",
+        "metrics": "- index_number_threshold\n- len(table.index)"
+    },
+    {
+        "cause_name": "missing_index",
+        "desc": "This function checks for the presence of a required index using a workload-index-recommend interface. If the recommended index information is available, it indicates that a required index is missing and provides a suggestion for the recommended index. If the information is not available, it is not a root cause for the issue.",
+        "metrics": ""
+    },
+    {
+        "cause_name": "index_not_used",
+        "desc": "If the query plan does not utilize an index, it may indicate a performance issue",
+        "steps": "Check if the query plan includes index scans or index only scans. If not, it may indicate that the index is not being used. Analyze the query and the table statistics to determine the reason for the index not being used, such as invalid statistics or mismatched data types.",
+        "metrics": "['index_usage']"
+    },
+    {
+        "cause_name": "index_not_used",
+        "desc": "If the index plan is not used, it may be due to invalid statistics, index invalidation, implicit type conversion, or pattern matching filter conditions.",
+        "steps": "1. Check if the statistics are invalid. If so, optimize the statistics to solve the problem.\n2. Check if the index is invalidated. If so, rebuild the index using the REINDEX syntax.\n3. Check if there is implicit type conversion between parameters and fields. If so, it may cause the index plan to not be generated.\n4. Check if there are pattern matching filter conditions. For prefix matching conditions, optimize the index using collate='C'. For prefix and suffix matching conditions, optimize the index using a Gin index.\n5. If none of the above scenarios apply, refer to the hot query plan optimization chapter for further troubleshooting.",
+        "metrics": "['statistics', 'index_invalidation', 'implicit_type_conversion', 'pattern_matching_filter_conditions']"
+    },
+    {
+        "cause_name": "index_not_used",
+        "desc": "If the index plan is not used, it may be caused by invalid statistics, index invalidation, implicit type conversion, or pattern matching filter conditions.",
+        "steps": "1. Check if the statistics are invalid. If so, optimize the statistics to solve the problem.\n2. Check if the index is invalidated. If so, rebuild the index using the REINDEX syntax.\n3. Check if there is implicit type conversion between parameters and fields. If so, it may cause the index plan to not be generated.\n4. Check if there are pattern matching filter conditions. For prefix matching conditions, optimize the index using collate='C'. For prefix and suffix matching conditions, optimize the index using a Gin index.\n5. If none of the above scenarios apply, refer to the hot query plan optimization chapter for further troubleshooting.",
+        "metrics": "['statistics', 'index_invalidation', 'implicit_type_conversion', 'pattern_matching_filter_conditions']"
+    }
+]

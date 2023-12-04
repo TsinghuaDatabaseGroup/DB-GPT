@@ -41,7 +41,7 @@ db = Database(dbargs, timeout=-1)
 
 WORKLOAD_FILE_NAME = "workload_info.json"
 # ANOMALY_FILE_NAME = "anomalies/public_testing_set/testing_cases.json"
-BATCH_ANOMALY_FILE_NAME = "anomalies/public_testing_set/batch_testing_set.json"
+BATCH_ANOMALY_FILE_NAME = "anomalies/public_testing_set/testing_cases_5.json"
 # with open(WORKLOAD_FILE_NAME, 'w') as f:
 #     json.dump({'workload_statistics': '[]', 'slow_queries': '[]'}, f)
 
@@ -85,6 +85,30 @@ def get_workload_sqls(diag_id):
 # [diagnosis knowledge]
 knowledge_matcher = KnowledgeExtraction(
     "/multiagents/knowledge/root_causes_dbmind.jsonl")
+
+cpu_knowledge_matcher = KnowledgeExtraction(
+    "/multiagents/knowledge/domain_knowledge/cpu.jsonl")
+
+io_knowledge_matcher = KnowledgeExtraction(
+    "/multiagents/knowledge/domain_knowledge/io.jsonl")
+
+memory_knowledge_matcher = KnowledgeExtraction(
+    "/multiagents/knowledge/domain_knowledge/memory.jsonl")
+
+workload_knowledge_matcher = KnowledgeExtraction(
+    "/multiagents/knowledge/domain_knowledge/workload.jsonl")
+
+query_knowledge_matcher = KnowledgeExtraction(
+    "/multiagents/knowledge/domain_knowledge/query.jsonl")
+
+write_knowledge_matcher = KnowledgeExtraction(
+    "/multiagents/knowledge/domain_knowledge/write.jsonl")
+
+index_knowledge_matcher = KnowledgeExtraction(
+    "/multiagents/knowledge/domain_knowledge/index.jsonl")
+
+configuration_knowledge_matcher = KnowledgeExtraction(
+    "/multiagents/knowledge/domain_knowledge/configuration.jsonl")
 
 
 def obtain_values_of_metrics(start_time, end_time, metrics):

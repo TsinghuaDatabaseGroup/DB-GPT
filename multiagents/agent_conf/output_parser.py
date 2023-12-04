@@ -54,11 +54,11 @@ class DBDiag(OutputParser):
             action_input = action_input.replace("\\\"", "\"")
 
             #action_input = action_input.split("\n")
-            if action_input[0] == '(':
-                action_input = action_input[1:]
-            if action_input[-1] == ')':
-                action_input = action_input[:-1]
             try:
+                if action_input[0] == '(':
+                    action_input = action_input[1:]
+                if action_input[-1] == ')':
+                    action_input = action_input[:-1]
                 action_input = json.loads(action_input)
             except:
                 print("Eerror in parsing diagnosis results from 'speak' action")

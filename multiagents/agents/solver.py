@@ -194,7 +194,7 @@ class SolverAgent(BaseAgent):
 
         print(colored(f"\n{self.name} Diagnosis!","red"))
 
-        result_node, top_abnormal_metric_values  = chain.start(simulation_count=1,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=11)
+        result_node, top_abnormal_metric_values  = chain.start(simulation_count=1,epsilon_new_node=0.3,choice_count=1,vote_candidates=2,vote_count=1,single_chain_max_step=14)
 
         if result_node is None:
             return {}
@@ -208,7 +208,8 @@ class SolverAgent(BaseAgent):
             root_causes = root_causes["content"]
         else:
             root_causes = root_causes.content
-        print(colored(f"\nDetected Root Causes: {root_causes}","blue"))
+        
+        # print(colored(f"\nDetected Root Causes: {root_causes}","blue"))
 
         prompt = "Give the solutions only based on above messages in details. Note do not mention anything about **root causes**!!! The solutions (not root causes) should be in markdown format. If there are no solutions in above messages, please answer 'No solution available'"
         solution_message = self.llm._construct_messages(prompt)
@@ -219,7 +220,8 @@ class SolverAgent(BaseAgent):
             solutions = solutions["content"]
         else:
             solutions = solutions.content
-        print(colored(f"\nRecommended Solutions: {solutions}","white"))
+        
+        # print(colored(f"\nRecommended Solutions: {solutions}","white"))
 
         # thought = ""
         # solutions = ""
