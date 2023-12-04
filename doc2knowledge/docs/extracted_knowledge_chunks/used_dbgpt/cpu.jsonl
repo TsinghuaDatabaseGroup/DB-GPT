@@ -1,0 +1,83 @@
+[
+    {
+        "cause_name": "cpu_resource_contention",
+        "desc": "This function checks whether there is contention for CPU resources by other processes outside the database. If the maximum CPU usage of these processes exceeds the threshold specified in the variable \"cpu_usage_threshold\", the function sets the \"system_cpu_contention\" key in the \"detail\" dictionary to indicate the current user CPU usage. If this key is set, the function suggests handling exception processes in the system as a solution. If the \"system_cpu_contention\" key is not set, this issue is not a root cause.",
+        "metrics": "- user_cpu_usage\n- system_cpu_contention"
+    },
+    {
+        "cause_name": "os_resource_contention",
+        "desc": "This function checks for a potential issue where other processes outside the database may be occupying too many handle resources. If the system file descriptor (fds) occupation rate exceeds the detection threshold, it is considered a root cause and the function returns a boolean value of True. The system fds occupation rate is recorded in the diagnosis report along with a suggestion to determine whether the handle resource is occupied by the database or other processes. If the system fds occupation rate is below the tuple_number_threshold, it is not a root cause and the function returns a boolean value of False.",
+        "metrics": "- process_fds_rate\n- handler_occupation_threshold"
+    },
+    {
+        "cause_name": "CPU_workload_analysis_and_diagnostics",
+        "desc": "The code provided is analyzing the CPU workload and providing diagnostics based on certain conditions. \n\nFirst, the code retrieves CPU information using the \"getcpu\" function. It initializes variables \"sql_cpu\", \"flag_cpu\", and \"cpuinfo\". \n\nThen, it enters a loop to process each CPU resource. It concatenates SQL queries using the values from each resource, which will be used for further analysis. \n\nThe code then checks the value of the \"r\" attribute in each resource. If it is less than or equal to the variable \"cpun\" (representing the number of CPU threads), it indicates that the CPU load is not high. However, if it is greater than \"cpun\" but less than or equal to \"cpun\" multiplied by 2, it suggests that the CPU load is relatively high. If the value of \"r\" exceeds \"cpun\" multiplied by 2, it indicates a high CPU load with potential risks. The variable \"flag_cpu\" is incremented accordingly to keep track of the CPU load status.\n\nThe code then examines the value of the \"us\" attribute (representing CPU usage). If it is less than 20, it suggests that the CPU usage is not high. If it is between 20 and 80 (inclusive), it indicates normal CPU usage. If it is between 80 and 95 (inclusive), it suggests relatively high CPU usage. If the value exceeds 95 and the \"r\" value is greater than \"cpun\" multiplied by 2, it indicates a high CPU usage with a potential bottleneck. Otherwise, it concludes that the CPU is currently not experiencing performance bottlenecks.\n\nNext, the code evaluates the value of the \"sys\" attribute (representing system CPU usage). If it is less than 15, it suggests normal system CPU usage. If it is between 15 and 30 (inclusive), it indicates relatively high usage and requires attention to potential system issues. If it exceeds 30, it suggests significantly high system CPU usage, indicating the presence of serious vulnerabilities.\n\nBy analyzing the CPU information and applying various conditions, the code provides diagnostic information in the variable \"cpuinfo\". The variable \"flag_cpu\" keeps track of the number of identified CPU load issues.",
+        "metrics": "- CPU workload\n- CPU information\n- CPU threads\n- CPU load\n- CPU usage\n- System CPU usage"
+    },
+    {
+        "cause_name": "high_cpu_usage",
+        "desc": "High CPU usage can cause slow SL execution and impact overall system performance",
+        "steps": "1. Check the processes with high CPU usage using the 'top' command\n2. Use the 'perf' command to analyze the performance of the CPU\n3. Use the 'stackcollapse-perf.pl' tool to parse the perf data\n4. Fold the symbols in the 'perf.unfold' file using the 'stackcollapse-perf.pl' tool\n5. Generate a flame graph using the 'flamegraph.pl' tool\n6. Analyze the flame graph to identify functions with high width, indicating potential performance issues\n7. Contact technical support for further analysis",
+        "metrics": "['CPU_utilization']"
+    },
+    {
+        "cause_name": "high_cpu_usage_flame_graph",
+        "desc": "Flame graph analysis can be used to identify functions with high CPU usage and potential performance issues",
+        "steps": "1. Log in to the main DN node and check the processes with high CPU usage using the 'top' command\n2. Execute the 'perf' command to analyze the performance of the CPU\n3. Use the 'stackcollapse-perf.pl' tool to parse the perf data\n4. Fold the symbols in the 'perf.unfold' file using the 'stackcollapse-perf.pl' tool\n5. Generate a flame graph using the 'flamegraph.pl' tool\n6. Analyze the flame graph to identify functions with high width, indicating potential performance issues\n7. Contact technical support for further analysis",
+        "metrics": "['CPU_utilization']"
+    },
+    {
+        "cause_name": "high_cpu_usage",
+        "desc": "High CPU usage can cause performance issues in the database system",
+        "steps": "1. Login to the operation and maintenance management platform and check the CPU usage through instance monitoring or using the top command in the operating system on the database host. You can also use the sar command to view historical CPU usage.\n2. Identify the process with high CPU usage. If it is caused by the database, the expectation is that the database process will have a high usage.\n3. If the CPU is consistently high, analyze the SQL statements in the SQL ordered by CPU Time section of the WDR report for optimization.\n4. If the CPU usage is high for a short period of time, refer to the relevant sections in the overall performance slow query analysis.\n5. If the cause of CPU consumption cannot be determined, generate a flame graph for the abnormal time period and analyze the kernel code functions.",
+        "metrics": "['cpu_usage']"
+    },
+    {
+        "cause_name": "high_cpu",
+        "desc": "If the CPU usage is high, it can cause overall performance slowdown",
+        "steps": "Check the CPU usage. If it exceeds the threshold (80%), it is considered a root cause. Possible solutions include optimizing queries, adding indexes, or upgrading hardware.",
+        "metrics": "['cpu_usage']"
+    },
+    {
+        "cause_name": "high_cpu",
+        "desc": "High CPU usage in the database can be caused by poorly optimized SQL queries.",
+        "steps": "1. Check the historical statement information for distributed or centralized databases using the 'dho pert.statemant' or 'dhbe pert.sumary statenent' query. Sort the results by CPU time to identify the queries with high CPU usage.\n2. If the CPU usage is currently high, use the 'pt stat activlty' query to get the query ID of the running SQL. Then use the query ID to query the 'pa threadwait status' to get the lvtid of the running SQL.\n3. Use the 'top -Hp gaussdh\u8fdb\u7a0b\u53f7' command to check the CPU usage of the corresponding lvtid.\n4. If the CPU usage is confirmed to be high, the identified SQL query is the target. If the SQL query has been running for a long time, check the performance fluctuations section to identify the target SQL.\n5. Query the statement history table or use the 'dbe perf.get global full sql by tisestamp' query to find slow SQL queries with high CPU usage.\n6. If the high CPU usage is intermittent, use the dynamic interface to capture detailed information of the subsequent execution of the query. Use the 'dynanic fune control' query to capture and cancel the capture of specific SQL queries.\n7. After using the dynamic interface, check the statement history table for the captured SQL queries.",
+        "metrics": "['cpu_usage', 'query_id', 'lvtid']"
+    },
+    {
+        "cause_name": "high_cpu_usage",
+        "desc": "High CPU usage can cause performance issues in the database system.",
+        "steps": "1. Login to the operation and maintenance management platform and check the CPU usage through instance monitoring or use the top command in the operating system to check the CPU usage on the database host. You can also use the sar command to view historical CPU usage.\n2. Identify the process with high CPU usage. If it is caused by the database, the expectation is that the database process will have a higher usage.\n3. If the CPU is consistently high, analyze the SQL statements in the SQL ordered by CPU Time section of the WDR report for optimization.\n4. If the CPU usage is high for a short period of time, refer to the relevant sections in the overall performance slow query analysis.\n5. If the cause of CPU consumption cannot be determined, generate a flame graph for the abnormal time period and analyze the kernel code functions.",
+        "metrics": "['cpu_usage']"
+    },
+    {
+        "cause_name": "high_cpu",
+        "desc": "If the CPU usage is high, it can cause overall performance degradation",
+        "steps": "Check the CPU usage. If it exceeds the threshold (80%), it is considered a root cause. Possible solutions include optimizing queries, adding indexes, or upgrading hardware.",
+        "metrics": "['cpu_usage']"
+    },
+    {
+        "cause_name": "high_cpu",
+        "desc": "High CPU usage in the database can be caused by poorly optimized SQL queries.",
+        "steps": "1. Check the historical statement information for distributed or centralized databases using the 'dho pert.statemant' or 'dhbe pert.sumary statenent' query. Sort the results by CPU time to identify the queries with high CPU usage.\n2. If the CPU usage is currently high, use the 'pt stat activlty' query to get the query ID of the running SQL. Then use the query ID to query the 'pa threadwait status' to get the lvtid of the running SQL.\n3. Use the 'top -Hp gaussdh\u8fdb\u7a0b\u53f7' command to check the CPU usage of the corresponding lvtid.\n4. If the CPU usage is confirmed to be high, the identified SQL query is the target. If the SQL query has been running for a long time, check the performance fluctuations section to identify the target SQL.\n5. Query the statement history table or use the 'dbe perf.get global full sql by tisestamp' query to find slow SQL queries with high CPU usage.\n6. If the high CPU usage is intermittent, use the dynamic interface to capture detailed information of the subsequent execution of the query. Use the 'dynanic fune control' query to capture and cancel the capture of specific SQL queries.\n7. After using the dynamic interface, check the statement history table for the captured SQL queries.",
+        "metrics": "['cpu_usage', 'query_id', 'lvtid']"
+    },
+    {
+        "cause_name": "high_cpu_user_statement",
+        "desc": "High CPU usage in the database can be caused by poorly optimized user SQL statements.",
+        "steps": "1. Check the historical statement information for distributed or centralized databases using the 'dho pert.statemant' or 'dhbe pert.sumary statenent' queries. Sort the results by CPU time to identify the queries with high CPU usage.\n2. If the CPU usage is currently high, use the 'pt stat activlty' query to get the query ID of the running SQL. Then use the query ID to query the 'pa threadwait status' to get the lvtid of the running SQL.\n3. Use the 'top -Hp gaussdh\u8fdb\u7a0b\u53f7' command to check the CPU usage of the corresponding lvtid.\n4. If the CPU usage is confirmed to be high, the identified SQL query is the target. If the SQL query has been running for a long time, the thread ID will remain the same.\n5. If there is a high CPU usage in the past, refer to the performance jitter section to identify the target SQL.\n6. Query the statement history table or use the 'dbe perf.get global full sql by tisestamp' query to find slow SQL queries with high CPU usage.\n7. If the identified SQL query has intermittent high CPU usage, use the dynamic interface to capture detailed information about subsequent executions of the query.\n8. Use the dynamic interface commands to cancel the capture of specific SQL queries or all SQL queries.\n9. After using the dynamic interface, check the statement history table for any recorded SQL queries.\n10. Evaluate the execution frequency of the target SQL query before enabling the dynamic interface. Clean up all SQL queries in the dynamic interface after use.",
+        "metrics": "['cpu_usage', 'query_id', 'lvtid']"
+    },
+    {
+        "cause_name": "high_cpu_usage",
+        "desc": "High CPU usage can be caused by the gaussdb process or certain SQL statements. It can be diagnosed by checking the CPU usage of the system and analyzing the WDR report.",
+        "steps": "1. Check the CPU usage of the system using tools like OPSCPU, top command, or sar command to identify the high CPU usage process. If it is caused by the database, the gaussdb process is expected to have a high usage.\n2. Compare the WDR report of normal time periods and abnormal time periods to analyze the SQL statements in the 'Top SQL order by CPU' section.\n3. If the CPU usage is consistently high, try optimizing the SQL statements mentioned in the 'SQL ordered by CPU Time' section of the WDR report. Alternatively, refer to Chapter 1.3 for further analysis.\n4. If the cause of high CPU usage is still unclear, generate a flame graph for the database code functions during the abnormal time period and identify the bottleneck points. Refer to flame graph analysis for guidance.",
+        "metrics": "['cpu_usage', 'gaussdb_process', 'top_sql_cpu']"
+    },
+    {
+        "cause_name": "high_cpu_user_sql",
+        "desc": "If the high CPU usage is caused by the database process, it is usually due to poorly optimized SQL statements. This section focuses on CPU abnormalities caused by user statements.",
+        "steps": "Step 1: If the CPU usage is consistently high, query the dbe_perf.statement and dbe_perf.summarystatement views to identify the statements with high CPU time.\nStep 2: If the CPU usage is currently high, use the pg_stat_activity view to get the query_id of the running SQL statement. Then use the query_id to query the pg_thread_wait_status view to get the Iwtid of the running SQL. Finally, use the 'top -Hp gaussdb_process_id' command to check the CPU usage of the corresponding lwtid (PID).\nStep 3: If the CPU usage was high in the past, refer to the performance jitter section of this chapter to identify the target SQL.\nStep 4: Query the statement history table on each CN/DN node to find slow SQL statements with high CPU consumption. Compare the cpu_time and db_time of the statements to identify the ones with high CPU consumption.\nStep 5: If the SQL statements found in the previous steps have intermittent high CPU consumption, use the dynamic interface to capture detailed information about the subsequent execution of the queries.",
+        "metrics": "['cputime', 'query_id', 'Iwtid', 'cpu_usage', 'cpu_time', 'db_time']"
+    }
+]

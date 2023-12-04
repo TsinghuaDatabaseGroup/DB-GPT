@@ -1,0 +1,20 @@
+[
+    {
+        "cause_name": "database_bottleneck",
+        "desc": "To determine if the bottleneck is on the database side, check the CPU usage of the host where the database is located, relevant views in the database, or related metrics on OPS. If there are very few active sessions in the database, it is highly likely that the database throughput cannot increase.",
+        "steps": "Check the state of sessions in pg_stat_activity and pgxc_stat_activity views. Pay attention to sessions with a state other than idle. Also, check the session_info field in dbe_perf.local_threadpool_status and dbe_perfglobal_threadpool_status views. Monitor the CPU usage and the number of active sessions on OPS.",
+        "metrics": "['pg_stat_activity', 'pgxc_stat_activity', 'dbe_perf.local_threadpool_status', 'dbe_perfglobal_threadpool_status', 'CPU_usage', 'active_sessions']"
+    },
+    {
+        "cause_name": "business_bottleneck",
+        "desc": "If the database side does not perceive obvious business pressure, or the pressure is not large enough and resource consumption is very low (e.g., CPU usage is less than IO%, the number of active sessions is single-digit), it is recommended to investigate on the business side. Common causes may include: application server resource exhaustion (insufficient CPU/IO/memory), high network latency between application server and database, slow processing of query results on the application server, resulting in slow transmission of SQL statements within transactions to the database, etc.",
+        "steps": "Check the CPU usage and the number of active sessions on the database side. If the CPU usage is low and the number of active sessions is very small, investigate the business side for potential bottlenecks.",
+        "metrics": "['CPU_usage', 'active_sessions']"
+    },
+    {
+        "cause_name": "database_throttling",
+        "desc": "This event indicates that the database has flow control enabled to ensure RTO (Recovery Time Objective). It is recommended to consider disabling flow control during performance testing if it significantly affects performance.",
+        "steps": "Check if the database has flow control enabled. If so, consider disabling flow control during performance testing if it significantly affects performance.",
+        "metrics": "['IO EVENT/LOGCTRL SLEEP']"
+    }
+]

@@ -1,0 +1,20 @@
+{'name': 'abnormal_network_status', 'content': 'This piece of code checks for abnormal network status by analyzing packet loss rate and bandwidth usage. It first checks the receive and transmit drop rates for each device and appends any abnormal rates to a list of details. It then checks the bandwidth usage for each device and appends any abnormal rates to the same list of details. If any abnormal rates are found, the function sets the detail and suggestion attributes accordingly and returns True, indicating that abnormal network status is a root cause. If no abnormal rates are found, the function returns False, indicating that abnormal network status is not a root cause. The thresholds for abnormal packet loss rate and network bandwidth usage are obtained from the monitoring module.'}
+
+{'name': 'network_unreachable', 'content': 'One common cause of network issues is when the database server is unable to establish a connection with the application server.'}
+
+{'name': 'network_unreachable', 'content': 'One common cause of network issues is when the database server is unable to establish a connection with the application server'}
+
+{'name': 'abnormal_disaster_recovery_setup_process', 'content': 'The disaster recovery setup process is abnormal, which may cause issues in cross-region disaster recovery'}
+
+{'name': 'abnormal_failover_process', 'content': 'The failover process from standby to primary in a disaster recovery setup is abnormal'}
+
+{'name': 'abnormal_wltchover_process', 'content': 'The planned wltchover process is abnormal'}
+
+{'name': 'abnormal_disaster_recovery_performance_metrics', 'content': 'The performance metrics of the disaster recovery setup are abnormal'}
+
+{'name': 'disaster_recovery_process_abnormal', 'content': 'The disaster recovery setup process returns failure or times out'}
+
+{'name': 'failover_abnormal', 'content': 'The failover process of the disaster recovery to the primary cluster is abnormal, with some nodes not participating in the failover'}
+
+{'name': 'abnormal_disaster_recovery_status', 'content': "The cluster-level PO value keeps increasing during the low business period, indicating abnormal disaster recovery. The ON status of the disaster recovery cluster shows 'Need repair (Disconnected)'. The QLACBT node in the disaster recovery cluster is faulty, and the instance status on this node shows 'Deleted' for CX, 'Unknown' for DN and CTU, and 'Main Standby Need repair (Connecting)' for some primary standby instances."}
+

@@ -1,0 +1,95 @@
+[
+    {
+        "cause_name": "io_resource_contention",
+        "desc": "This piece of code checks for IO resource contention in the system. It does so by iterating through the IO utils of each device and checking if the maximum IO utils exceed the disk_ioutils_threshold. If there is contention, the function provides details on the device and the IO utils that exceed the threshold. It also suggests two possible causes of contention: competing processes outside the database and long transactions within the database. If there is contention, it is considered a root cause of the issue. If there is no contention, it is not a root cause.",
+        "metrics": "- IO utilization (IO-Utils)"
+    },
+    {
+        "cause_name": "file_system_diagnostic_analysis",
+        "desc": "The code provided is diagnosing the usage and availability of file systems. \n\nThe variable `fs` stores the file systems retrieved using the `getfs()` function. \n`fs_info` is an empty string that will be used to store diagnostic information about the file systems. \n`flag_fs` is an integer variable initialized to 0 and will be used to count the number of file systems with issues. \n\nThe code then enters a loop where it iterates over each file system in `fs`. Within the loop, the code appends SQL queries to the `sql_fs` string. These queries collect information about the file system, such as its name (`fsmp`) and percentage of disk space used (`fspct`).\n\nThe code then proceeds to analyze each file system individually. If the file system's disk usage is between 80% and 95% and the amount of free space (`fsres`) is less than 500MB, a diagnostic message is added to `fs_info` indicating that the file system's usage is high and its free space is low. The `flag_fs` variable is incremented to indicate that an issue has been detected.\n\nSimilarly, if the file system's usage is between 80% and 95% and the free space is greater than 5GB, another diagnostic message is added to `fs_info` indicating that the file system's usage is high but its free space is sufficient. `flag_fs` is incremented again in this case.\n\nIf the file system's usage is equal to or greater than 95%, a diagnostic message is added to `fs_info` indicating that the file system's usage exceeds the critical threshold.\n\nFinally, if none of the above conditions are true, which means the file system's usage is below 80%, a diagnostic message is added to `fs_info` stating that the file system's usage is normal.\n\nIn summary, this code diagnoses the usage and availability of file systems and provides relevant diagnostic information based on pre-defined thresholds. The `sql_fs` and `fs_info` variables store information for further analysis and reporting. The `flag_fs` variable keeps track of the number of file systems with issues identified.",
+        "metrics": "1. File systems (fs)\n2. Disk space used (fspct)\n3. Free space (fsres)"
+    },
+    {
+        "cause_name": "disk_group_usage_diagnostic_analysis",
+        "desc": "The provided code appears to be a diagnostic script related to monitoring the usage of disk groups. The code iterates over a list called 'dg' and dynamically constructs a SQL query called 'sql_dg' by concatenating strings. The constructed query combines the names and percentages of disk groups ('dgname' and 'dgpct') using the \"union all\" clause.\n\nAfter constructing the SQL query, the code includes a series of conditional statements to analyze the disk group usage. If the percentage ('dgpct') is greater than 80 and less than 95, and the free space ('dgfree') is less than 2048, a diagnostic message is appended to the 'dg_info' string indicating that the disk group usage is high and the available space is low. The 'flag_dg' variable is incremented to indicate that a disk group exceeding the threshold has been identified.\n\nSimilarly, if the percentage is greater than 80 and less than 95, but the free space is greater than 10240, another diagnostic message is appended, indicating that the disk group usage is relatively high but the available space is sufficient. Again, 'flag_dg' is incremented.\n\nIf the percentage is equal to or greater than 95, a diagnostic message is appended to 'dg_info' indicating that the disk group usage is significantly exceeding the warning limit. 'flag_dg' is incremented accordingly.\n\nIf none of the above conditions are met, a message indicating normal disk group usage is appended to 'dg_info'.\n\nThe final line of the code trims off the trailing \"union all\" from the constructed SQL query.\n\nIn summary, this code analyzes the usage of disk groups and provides diagnostic messages based on defined thresholds and conditions. It iterates over a list of disk group information, constructs a SQL query, and appends diagnostic messages based on the calculated values.",
+        "metrics": "- Percentage (dgpct): Represents the percentage usage of a disk group.\n- Free space (dgfree): Represents the amount of available free space in a disk group."
+    },
+    {
+        "cause_name": "high_IO",
+        "desc": "If the IO utilization is high or there are abnormal IO metrics such as high r await or high Vawalt, it may indicate IO issues. Possible causes include cache/RAID configuration problems or disk throttling. To analyze the IO consumption of threads, you can use tools like pidstat or iotop. If the IO consumption is mainly caused by TPLworker threads, it means that user SQL queries are consuming a lot of IO. You can use the lwtid from pg_thread_wait_status to find the corresponding tid and sessionid, and then use the tid/sessionid to find the session information and specific queries from pg_stat_activity. To optimize the queries and reduce IO consumption, refer to the performance tuning chapter.",
+        "steps": "Check if the IO utilization is high or if there are abnormal IO metrics such as high r await or high Vawalt. If so, analyze the IO consumption of threads using tools like pidstat or iotop. If the IO consumption is mainly caused by TPLworker threads, use the lwtid from pg_thread_wait_status to find the corresponding tid and sessionid, and then use the tid/sessionid to find the session information and specific queries from pg_stat_activity. Optimize the queries to reduce IO consumption.",
+        "metrics": "['IO_utilization', 'r_await', 'Vawalt']"
+    },
+    {
+        "cause_name": "high_IO",
+        "desc": "If the IO utilization is high or there are abnormal IO metrics such as high r await or high Vawalt, it may indicate IO issues. Possible causes include cache/RAID configuration problems or disk throttling. To analyze the IO consumption of threads, you can use tools like pidstat or iotop. If the IO consumption is mainly caused by TPLworker threads, it means that user SQL queries are consuming a lot of IO. You can use the lwtid from pg_thread_wait_status to find the corresponding tid and sessionid, and then use the tid/sessionid to find the session information and specific queries from pg_stat_activity. To optimize the queries and reduce IO consumption, refer to the performance tuning chapter.",
+        "steps": "Check if the IO utilization is high or if there are abnormal IO metrics such as high r await or high Vawalt. If so, analyze the IO consumption of threads using tools like pidstat or iotop. If the IO consumption is mainly caused by TPLworker threads, use the lwtid from pg_thread_wait_status to find the corresponding tid and sessionid, and then use the tid/sessionid to find the session information and specific queries from pg_stat_activity. Optimize the queries to reduce IO consumption.",
+        "metrics": "['IO_utilization', 'r_await', 'Vawalt']"
+    },
+    {
+        "cause_name": "abnormal_persistent_events",
+        "desc": "Abnormal persistent events in the database can impact overall performance. These events can be categorized as STATS, UNUCX EVENT, LOXXEVENT, and IO BVENT.",
+        "steps": "Identifying abnormal persistent events can be an effective diagnostic method for overall performance issues. Refer to the chapter on persistent events in the overall performance slow analysis for detailed information on how to identify and address these events.",
+        "metrics": "['persistent_events']"
+    },
+    {
+        "cause_name": "high_io",
+        "desc": "If the IO usage is high, it can cause overall performance slowdown",
+        "steps": "Check the IO usage. If it exceeds the threshold (80%), it is considered a root cause. Possible solutions include optimizing queries, adding indexes, or upgrading hardware.",
+        "metrics": "['io_usage']"
+    },
+    {
+        "cause_name": "high_io",
+        "desc": "High IO can be caused by user statements that result in excessive physical reads. It can be identified by checking the 'n blocks fetched' and 'n blocks hit' fields in the dbe_pert_statement/dhe_pert_summary_statement views. If the difference between these two fields is high, it indicates a high number of physical reads. Additionally, the 'wait status' and 'wait event' fields in the pg_thread_wait_status view can be checked to see if there are any IO-related events or data file reads. The dhe_perf_local_active_session/gs_asp views can also be queried to check for records with Query events related to 'IO EVENT/DataFileRead' during a specific time period. Slow SQL queries with a high difference in 'n blocks fetched' and 'n blocks hit' fields or high data IO time can also indicate high IO. In the case of slow SQL, the 'details' field may contain information about the events causing the high IO.",
+        "steps": "1. Check the 'n blocks fetched' and 'n blocks hit' fields in the dbe_pert_statement/dhe_pert_summary_statement views. If the difference between these two fields is high, it indicates a high number of physical reads. 2. Check the 'wait status' and 'wait event' fields in the pg_thread_wait_status view to see if there are any IO-related events or data file reads. 3. Query the dhe_perf_local_active_session/gs_asp views to check for records with Query events related to 'IO EVENT/DataFileRead' during a specific time period. 4. Check for slow SQL queries with a high difference in 'n blocks fetched' and 'n blocks hit' fields or high data IO time. If available, check the 'details' field for information about the events causing the high IO.",
+        "metrics": "['n_blocks_fetched', 'n_blocks_hit', 'wait_status', 'wait_event', 'data_io_time']"
+    },
+    {
+        "cause_name": "high_IO",
+        "desc": "If the IO utilization is high or there are abnormal IO metrics such as high r await or high Vawalt, it may indicate IO issues. Possible causes include cache/raid configuration problems or disk throttling. To analyze the IO consumption of threads, you can use tools like pidstat or iotop. If the IO consumption is abnormal for TPLworker threads, it means that user SQL queries are consuming a lot of IO. You can use the lwtid from pg_thread_wait_status view to find the corresponding session information and optimize the queries to reduce IO consumption.",
+        "steps": "1. Check if the IO utilization is high or if there are abnormal IO metrics such as high r await or high Vawalt. If yes, proceed to the next step. Otherwise, it is not a root cause.\n2. Analyze the IO consumption of threads using tools like pidstat or iotop.\n3. If the IO consumption is abnormal for TPLworker threads, use the lwtid from pg_thread_wait_status view to find the corresponding session information.\n4. Optimize the queries to reduce IO consumption.",
+        "metrics": "['IO_utilization', 'r_await', 'Vawalt']"
+    },
+    {
+        "cause_name": "abnormal_persistent_events",
+        "desc": "Abnormal persistent events in the database can be categorized as STATS, UNUCX EVENT, LOXXEVENT, and IO BVENT. Identifying abnormal persistent events can be an effective way to diagnose overall performance slow query issues.",
+        "steps": "Refer to the chapter on analyzing persistent events in the overall performance slow query analysis section for detailed information.",
+        "metrics": "['STATS', 'UNUCX_EVENT', 'LOXXEVENT', 'IO_BVENT']"
+    },
+    {
+        "cause_name": "high_io",
+        "desc": "If the IO usage is high, it can cause overall performance degradation",
+        "steps": "Check the IO usage. If it exceeds the threshold (80%), it is considered a root cause. Possible solutions include optimizing queries, adding indexes, or upgrading hardware.",
+        "metrics": "['io_usage']"
+    },
+    {
+        "cause_name": "high_io",
+        "desc": "High IO can be caused by user statements that result in excessive physical reads. It can be identified by checking the 'n blocks fetched' and 'n blocks hit' fields in the dbe_pert_statement/dhe_pert_summary_statement views. If the difference between these two fields is high, it indicates a high number of physical reads. Additionally, the 'wait status' and 'wait event' fields in the pg_thread_wait_status view can be checked to see if there are any IO-related events or data file reads. The dhe_perf_local_active_session/gs_asp views can also be queried to check for records with Query events related to 'IO EVENT/DataFileRead' during a specific time period. Slow SQL queries with a high difference in 'n blocks fetched' and 'n blocks hit' fields or high data IO time can also indicate high IO. In the case of slow SQL, the 'details' field may contain information about the events causing the high IO.",
+        "steps": "1. Check the 'n blocks fetched' and 'n blocks hit' fields in the dbe_pert_statement/dhe_pert_summary_statement views. If the difference between these two fields is high, it indicates a high number of physical reads. 2. Check the 'wait status' and 'wait event' fields in the pg_thread_wait_status view to see if there are any IO-related events or data file reads. 3. Query the dhe_perf_local_active_session/gs_asp views to check for records with Query events related to 'IO EVENT/DataFileRead' during a specific time period. 4. Check for slow SQL queries with a high difference in 'n blocks fetched' and 'n blocks hit' fields or high data IO time. If available, check the 'details' field for information about the events causing the high IO.",
+        "metrics": "['n_blocks_fetched', 'n_blocks_hit', 'wait_status', 'wait_event', 'data_io_time']"
+    },
+    {
+        "cause_name": "high_IO",
+        "desc": "If the system shows high IO utilization, it can indicate potential performance issues. This can be observed through metrics such as %util in iostat, high r_await (usually greater than 3ms), or high w_await (usually greater than 3ms).",
+        "steps": "If the above IO metrics show abnormalities, such as low read/write throughput or high latency, it is recommended to contact the operating system team for further analysis. Possible causes may include: (1) misconfiguration of disk cache/RAID write strategy, (2) disk bandwidth throttling (OBS itself has flow control). Additionally, if the IO volume is high, tools like pidstat or iotop can be used to analyze the threads consuming IO. Specifically, the TPLworker thread often indicates excessive IO caused by user SQL queries. To identify the SQL statements causing high IO, follow these steps: (1) Identify the TID (Thread ID) using pidstat/iotop, (2) Query the pg_thread_wait_status view with the lwtid obtained in the previous step to get the corresponding tid and sessionid, (3) Query the pg_stat_activity view with the tid and sessionid obtained in the previous step to find the session information causing high IO, including the specific SQL statement. Once identified, optimize the related queries to reduce IO volume, referring to Chapter 1.4 for guidance. Additionally, the SQL ordered by Physical Reads section in the WDR report can help identify queries causing high IO during specific time periods. If the IO volume remains consistently high and is caused by user statements, refer to the IO-related content in Chapter 1.3 for further assistance.",
+        "metrics": "['%util', 'r_await', 'w_await']"
+    },
+    {
+        "cause_name": "io_abnormality",
+        "desc": "This event indicates an IO abnormality. Possible causes include IO issues or inefficient IO usage due to business operations. Investigate and analyze further.",
+        "steps": "Check if there is a large number of IO events. Investigate possible causes such as IO issues or inefficient IO usage due to business operations.",
+        "metrics": "['IO_EVENT/DataFileRead', 'IO_EVENT/DataFileWrite']"
+    },
+    {
+        "cause_name": "high_io",
+        "desc": "High IO can be caused by user statements that result in excessive physical reads. It can be identified by checking the 'nblocks_fetched' and 'nblockshit' fields in the dbe_perf.statement/dbeperfsummary statement tables. If the difference between these two fields is high, it indicates a high number of physical reads.",
+        "steps": "1. Check the 'nblocks_fetched' and 'nblockshit' fields in the dbe_perf.statement/dbeperfsummary statement tables. If the difference between these two fields is high, it indicates a high number of physical reads.\n2. Query the pg_thread_waitstatus view and check the 'waitstatus' and 'wait_event' fields. If the query status is 'IO_EVENT' or 'DataFileRead', it indicates the presence of physical reads.\n3. Query the dbe_perf.local_activesession/qsasp view or table for records where the query wait event is 'IO_EVENT' or 'DataFileRead'. Refer to the performance jitter section for more details.\n4. Query the slow SQL records with a high difference in 'n_blocks_fetched' and 'n_block_shit' fields, or high 'dataio_time' records. If the slow SQL has the 'L2details' field enabled, check the corresponding events (such as 'DataFileRead') in the 'events' field. Note: This capability is only available in kernel version 503.\n5. Use the dynamic interface (refer to the high CPU section in this chapter) along with step 4 to identify abnormal SQL.",
+        "metrics": "['nblocks_fetched', 'nblockshit']"
+    },
+    {
+        "cause_name": "high_io",
+        "desc": "High IO can cause performance degradation. It is important to identify the tables or queries that are causing high IO and optimize them.",
+        "steps": "Step 1: Check the IO statistics of user tables by querying 'pg_stat_user_tables' and 'pg_stat_user_indexes'.\nStep 2: Check the IO statistics of user tables and indexes by querying 'pg_statio_user_tables' and 'pg_statio_user_indexes'.\nStep 3: Identify the tables or indexes with high IO and analyze the queries that are causing the high IO.\nStep 4: Optimize the queries or consider adding indexes to improve IO performance.",
+        "metrics": "['pg_stat_user_tables', 'pg_stat_user_indexes', 'pg_statio_user_tables', 'pg_statio_user_indexes']"
+    }
+]

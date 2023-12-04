@@ -1,0 +1,17 @@
+[
+    {
+        "cause_name": "update_large_data",
+        "desc": "This function checks whether a table has a large number of tuples updated. If the number of updated tuples is greater than or equal to the specified threshold, it is considered a root cause. The function then provides details on the number of updated tuples and suggests making adjustments to the business. If the number of updated tuples is not above the threshold or if there is no plan parse information available, it is not a root cause.",
+        "metrics": "- n_tuples_updated\n- updated_tuples_threshold\n- live_tuples\n- rows"
+    },
+    {
+        "cause_name": "insert_large_data",
+        "desc": "This function checks whether a query related table has a large number of inserted tuples. If the number of inserted tuples is greater than or equal to the specified threshold (stored in the variable \"inserted_tuples_threshold\"), it is considered a root cause. The function then calculates the ratio of inserted tuples to live tuples and provides a suggestion to make adjustments to the business. If the number of inserted tuples is less than the threshold, the function checks for insert operators and if any of them have a large number of rows inserted (greater than the threshold), it is considered a root cause and a suggestion is provided. If neither of these conditions are met, it is not a root cause.",
+        "metrics": "- n_tuples_inserted\n- inserted_tuples_threshold\n- live_tuples\n- table_structure\n- plan_parse_info\n- rows"
+    },
+    {
+        "cause_name": "delete_large_data",
+        "desc": "This function checks whether a table has too many tuples to be deleted. If the number of deleted tuples is greater than or equal to the specified threshold, it is considered a root cause and will be deleted in the future. If the number of deleted tuples is less than the threshold, the function checks whether there is a delete operation on a table with a large number of tuples. If so, it is also considered a root cause and the suggestion is to make adjustments to the business. If neither condition is met, it is not a root cause.",
+        "metrics": "- n_tuples_deleted\n- deleted_tuples_threshold\n- live_tuples\n- deleted_tuples_rate\n- rows"
+    }
+]
