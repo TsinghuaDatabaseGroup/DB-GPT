@@ -29,7 +29,7 @@
         @click="onModelClick('Llama2-13b')"
       >
         <img src="@/assets/llama_logo.png" style="width: 30px; height: 30px;">
-        <span style="font-size: 12px; color: #333333;">Llama</span>
+        <span style="font-size: 12px; color: #333333;">Llama2</span>
         <span v-if="model === 'Llama2-13b'" style="padding: 4px 8px; background: #41b584; border-radius: 4px; margin-top: 4px" />
       </div>
       <div
@@ -37,7 +37,7 @@
         @click="onModelClick('CodeLlama2-13b')"
       >
         <img src="@/assets/codellama_logo.png" style="width: 30px; height: 30px;">
-        <span style="font-size: 12px; color: #333333;">CodeLlama</span>
+        <span style="font-size: 12px; color: #333333;">CodeLlama2</span>
         <span v-if="model === 'CodeLlama2-13b'" style="padding: 4px 8px; background: #41b584; border-radius: 4px; margin-top: 4px" />
       </div>
       <div
