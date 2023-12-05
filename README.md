@@ -25,6 +25,7 @@
   <a href="#-customize">Knowledge And Tools</a> • 
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
+  <a href="#-citation">Citation</a> •    
   <a href="#-contributors">Contributors</a>
 </p>
 
@@ -344,6 +345,13 @@ python doc2knowledge.py
 
 > The summary for the same document sections is cached. You can delete this file if do not like to reuse the previous caches.
 
+Step 4. With the extracted knowledge, you can visualize their clustering results:
+
+```bash
+cd doc2knowledge/
+python knowledge_clustering.py
+```
+
 
 <span id="-tools"></span>
 
@@ -391,11 +399,11 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 - ~~Project cleaning~~
 - ~~Support more anomalies~~
-- Strictly constrain the llm outputs (excessive irrelevant information) based on the matched knowledge 
+- ~~Support more knowledge sources~~
 - ~~Query log option (potential to take up disk space and we need to consider it carefully)~~
 - ~~Add more communication mechanisms~~
-- ~~Support more knowledge sources~~
-- Localized model that reaches D-bot(gpt4)'s capability
+- ~~Localized model that reaches D-bot(gpt4)'s capability~~
+- Localized llms that are tailored with domain knolwedge and can generate precise and straigtforward analysis.
 - Prometheus-as-a-Service
 - Support other databases (e.g., mysql/redis)
 
