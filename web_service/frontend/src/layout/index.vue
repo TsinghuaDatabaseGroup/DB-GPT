@@ -4,7 +4,7 @@
       <sidebar class="sidebar-container" />
       <div
         class="main-container"
-        style="width: calc(100vw - 65px); margin-left: 65px; padding: 0 0; height: 100%; overflow: hidden;"
+        style="width: calc(100vw - 84px); margin-left: 84px; padding: 0 0; height: 100%; overflow: hidden;"
       >
         <app-main style="width: 100%" />
       </div>
@@ -94,12 +94,12 @@ export default {
   top: 0;
   right: 0;
   z-index: 9;
-  width: calc(100% - 54px);
+  width: calc(100% - 74px);
   transition: width 0.28s;
 }
 
 .hideSidebar .fixed-header {
-  width: calc(100% - 54px)
+  width: calc(100% - 74px)
 }
 
 .mobile .fixed-header {

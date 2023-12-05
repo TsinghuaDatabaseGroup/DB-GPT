@@ -29,8 +29,24 @@
         @click="onModelClick('Llama2-13b')"
       >
         <img src="@/assets/llama_logo.png" style="width: 30px; height: 30px;">
-        <span style="font-size: 12px; color: #333333;">Llama</span>
+        <span style="font-size: 12px; color: #333333;">Llama2</span>
         <span v-if="model === 'Llama2-13b'" style="padding: 4px 8px; background: #41b584; border-radius: 4px; margin-top: 4px" />
+      </div>
+      <div
+        class="bottom-logo-container c-align-items-center c-flex-column"
+        @click="onModelClick('CodeLlama2-13b')"
+      >
+        <img src="@/assets/codellama_logo.png" style="width: 30px; height: 30px;">
+        <span style="font-size: 12px; color: #333333;">CodeLlama2</span>
+        <span v-if="model === 'CodeLlama2-13b'" style="padding: 4px 8px; background: #41b584; border-radius: 4px; margin-top: 4px" />
+      </div>
+      <div
+        class="bottom-logo-container c-align-items-center c-flex-column"
+        @click="onModelClick('BaiChuan-13b')"
+      >
+        <img src="@/assets/baichuan_logo.png" style="width: 30px; height: 30px;">
+        <span style="font-size: 12px; color: #333333;">BaiChuan</span>
+        <span v-if="model === 'BaiChuan-13b'" style="padding: 4px 8px; background: #41b584; border-radius: 4px; margin-top: 4px" />
       </div>
       <div class="bottom-logo-container c-justify-content-center c-flex-row" @click="onEnClick">
         <img src="@/assets/ch_to_en.png" style="width: 30px; height: 30px;">
