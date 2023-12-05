@@ -8,7 +8,7 @@
 
   .sidebar-container {
     transition: width 0.28s;
-    width: 54px !important;
+    width: 64px !important;
     background-color: $menuBg;
     height: calc(100% - 20px);
     position: fixed;
@@ -93,7 +93,7 @@
 
     & .nest-menu .el-submenu>.el-submenu__title,
     & .el-submenu .el-menu-item {
-      min-width: 54px !important;
+      min-width: 64px !important;
       background-color: $subMenuBg !important;
 
       &:hover {
@@ -104,7 +104,7 @@
 
   .hideSidebar {
     .sidebar-container {
-      width: 54px !important;
+      width: 64px !important;
     }
 
     .submenu-title-noDropdown {
@@ -160,7 +160,7 @@
   }
 
   .el-menu--collapse .el-menu .el-submenu {
-    min-width: 54px !important;
+    min-width: 64px !important;
   }
 
   .withoutAnimation {

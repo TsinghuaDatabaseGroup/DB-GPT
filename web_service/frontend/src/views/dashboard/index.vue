@@ -77,7 +77,7 @@
           </div>
           <el-collapse-transition>
             <el-carousel
-              v-if="openIndex === index"
+              v-if="openIndex === index && charts.length > 0"
               v-loading="openReportLoading"
               :interval="3000"
               arrow="always"
@@ -350,6 +350,10 @@ export default {
         url = 'https://github.com/TsinghuaDatabaseGroup/DB-GPT#diagnosis-side'
       } else if (this.model === 'Llama2-13b') {
         url = 'https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/llama2'
+      } else if (this.model === 'CodeLlama2-13b') {
+        url = 'https://github.com/facebookresearch/codellama'
+      } else if (this.model === 'BaiChuan-13b') {
+        url = 'https://www.baichuan-ai.com/home'
       }
       window.open(url)
     },
