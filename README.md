@@ -427,7 +427,7 @@ Feel free to cite us ([paper link](https://arxiv.org/pdf/2312.01454.pdf)) if you
       title={D-Bot: Database Diagnosis System using Large Language Models}, 
       author={Xuanhe Zhou, Guoliang Li, Zhaoyan Sun, Zhiyuan Liu, Weize Chen, Jianming Wu, Jiesi Liu, Ruohang Feng, Guoyang Zeng},
       year={2023},
-      eprint={/2312.01454},
+      eprint={2312.01454},
       archivePrefix={arXiv},
       primaryClass={cs.DB}
 }
