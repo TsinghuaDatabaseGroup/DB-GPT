@@ -97,7 +97,9 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 
 - [x] Our vision papers are released (continuously update) 
 
-    * *LLM As DBA.* [[paper]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[slides]](materials/slides)
+    * *D-Bot: Database Diagnosis System using Large Language Models.* [[paper]](https://arxiv.org/pdf/2312.01454.pdf)
+
+    * *LLM As DBA.* [[vision]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[slides]](materials/slides)
 
     * *DB-GPT: Large Language Model Meets Database.* [[paper]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
 
@@ -418,17 +420,19 @@ https://github.com/Vonng/pigsty
 <span id="-citation"></span>
 
 ## 📒 Citation
-Feel free to cite us if you like this project.
+Feel free to cite us ([paper link](https://arxiv.org/pdf/2312.01454.pdf)) if you like this project.
+
 ```bibtex
 @misc{zhou2023llm4diag,
-      title={LLM As DBA}, 
-      author={Xuanhe Zhou, Guoliang Li, Zhiyuan Liu},
+      title={D-Bot: Database Diagnosis System using Large Language Models}, 
+      author={Xuanhe Zhou, Guoliang Li, Zhaoyan Sun, Zhiyuan Liu, Weize Chen, Jianming Wu, Jiesi Liu, Ruohang Feng, Guoyang Zeng},
       year={2023},
-      eprint={2308.05481},
+      eprint={/2312.01454},
       archivePrefix={arXiv},
       primaryClass={cs.DB}
 }
 ```
+
 
 ```bibtex
 @misc{zhou2023dbgpt,
