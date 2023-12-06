@@ -96,13 +96,13 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
     * [ ] Backup and Point-in-time Recovery (Pigsty)
 
 
-- [x] Our vision papers are released (continuously update) 
+- [x] Papers and experimental reports are continuously updated
 
     * *D-Bot: Database Diagnosis System using Large Language Models.* [[paper]](https://arxiv.org/pdf/2312.01454.pdf)
 
     * *LLM As DBA.* [[vision]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[slides]](materials/slides)
 
-    * *DB-GPT: Large Language Model Meets Database.* [[paper]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
+    * *DB-GPT: Large Language Model Meets Database.* [[vision]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
 
 > This project is evolving with new features 👫👫<br/> 
 > Don't forget to star ⭐ and watch 👀 to stay up to date :)
