@@ -6,4 +6,4 @@
 python run_classifier_for_diagnosis.py
 ```
 
-> Note it cosumes much memory for DNN and we suggest run this script on server
+> Note it cosumes much memory for DNN and we suggest to run this script on server
