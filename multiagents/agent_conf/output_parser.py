@@ -62,7 +62,7 @@ class DBDiag(OutputParser):
                 action_input = json.loads(action_input)
             except:
                 print("Eerror in parsing diagnosis results from 'speak' action")
-                # import pdb; pdb.set_trace()
+                
                 return None
 
             action_json = {"diagnose": "", "solution": [], "knowledge": ""}

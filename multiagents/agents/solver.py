@@ -295,7 +295,6 @@ class SolverAgent(BaseAgent):
         
         self.tool_matcher.add_tool(self.tools)
 
-        import pdb; pdb.set_trace()
         relevant_tools = self.tool_matcher.query(Template(self.prompt_template).safe_substitute({"chat_history": self.memory.to_string(add_sender_prefix=True)}))
 
         tools = "\n".join([f"> {tool}: {relevant_tools[tool]}" for tool in relevant_tools])

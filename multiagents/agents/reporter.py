@@ -136,7 +136,7 @@ class ReporterAgent(BaseAgent):
         else:
             self.report["labels"] = new_message.content
 
-        # import pdb; pdb.set_trace()
+        
 
 
     def update_solutions(self):

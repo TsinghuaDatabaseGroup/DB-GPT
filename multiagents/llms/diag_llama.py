@@ -84,7 +84,7 @@ class DiagLlamaChat(BaseChatModel):
 
         output = remove_charts(output)
         
-        # import pdb; pdb.set_trace()
+        
         return {"role": "assistant", "content": output, "time": time.strftime("%H:%M:%S", time.localtime())}
     
     def generate_response(self, prompt: str) -> LLMResult:
