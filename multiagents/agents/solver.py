@@ -24,6 +24,8 @@ from multiagents.reasoning_algorithms import UCT_vote_function, node_to_chain
 from multiagents.utils.utils import AgentAction, AgentFinish
 from multiagents.reasoning_algorithms import base_env
 
+from multiagents.tools.retriever import api_matcher
+
 class ToolNotExistError(BaseException):
 
     """Exception raised when parsing output from a command fails."""
@@ -157,6 +159,7 @@ class SolverAgent(BaseAgent):
     diag_id: str = ""
     tools: APICaller = Field(default_factory=APICaller)
     tool_memory: BaseMemory = Field(default_factory=ChatHistoryMemory)
+    tool_matcher: api_matcher = Field(default_factory=api_matcher)
     verbose: bool = Field(default=False)
     name: str = Field(default="CpuExpert")
     max_history: int = 3
@@ -165,7 +168,6 @@ class SolverAgent(BaseAgent):
     alert_str: str = ""
     alert_dict: List[dict] = []
     messages: List[dict] = []
-
 
     async def step(
         self, former_solution: str, advice: str, task_description: str = "", **kwargs
@@ -290,13 +292,18 @@ class SolverAgent(BaseAgent):
         - ${tool_names}: the list of tool names
         - ${tool_observations}: the observation of the tool in this turn
         """
-        #retriever = api_retriever()        
-        #relevant_tools = retriever.query(Template(self.prompt_template).safe_substitute({"chat_history": self.memory.to_string(add_sender_prefix=True)}), self.tools)
         
-        tools = "\n".join([f"> {tool}: {self.tools.functions[tool]['desc']}" for tool in self.tools.functions])
-        tools = tools.replace("{{", "{").replace("}}", "}")
-        tool_names = ", ".join([tool for tool in self.tools.functions])
+        self.tool_matcher.add_tool(self.tools)
 
+        import pdb; pdb.set_trace()
+        relevant_tools = self.tool_matcher.query(Template(self.prompt_template).safe_substitute({"chat_history": self.memory.to_string(add_sender_prefix=True)}))
+
+        tools = "\n".join([f"> {tool}: {relevant_tools[tool]}" for tool in relevant_tools])
+
+        tools = tools.replace("{{", "{").replace("}}", "}")
+
+        tool_names = ", ".join([tool for tool in relevant_tools])
+                
         input_arguments = {
             "alert_info": self.alert_str,
             "agent_name": self.name,

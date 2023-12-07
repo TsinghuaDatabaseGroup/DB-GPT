@@ -59,10 +59,9 @@ class MultiAgents:
         return cls(agents, environment)
 
     async def run(self, args):
-        """Run the environment from scratch until it is done."""
+        """Run the environment from scratch"""
         self.environment.reset()
-        
-        #while not self.environment.is_done():
+
         report, records = await self.environment.step(args)
         
         return report, records

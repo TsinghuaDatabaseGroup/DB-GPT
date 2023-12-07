@@ -44,9 +44,8 @@ def load_tools(tool_config: List[Dict], max_api_num, agent_name):
     for tool in tool_config:
 
         api_module = importlib.import_module(f"""multiagents.tools.{tool["tool_name"]}.api""")
-        register_functions_from_module(api_module, caller, max_api_num, agent_name) # functions
-        
-
+        register_functions_from_module(api_module, caller, max_api_num, agent_name)
+    
     return caller
 
 

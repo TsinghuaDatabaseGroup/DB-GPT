@@ -1,6 +1,10 @@
+from multiagents.llms.sentence_embedding import sentence_embedding
+import numpy as np
 import inspect
 import random
 import sys
+import os
+
 
 class APICaller:
 
@@ -8,7 +12,17 @@ class APICaller:
         self.functions = {}
     
     def register_function(self, func_name, params, func):
-        self.functions[func_name] = {"func": func, "desc": params}
+
+        query = func_name + " " + " ".join(params)
+
+        embedding_file_name = f"./multiagents/tools/embeddings/openai/{func_name}.npy"
+        if os.path.exists(embedding_file_name):
+            api_embedding = list(np.load(embedding_file_name))
+        else:
+            api_embedding  = sentence_embedding(query)
+            np.save(embedding_file_name, api_embedding)
+
+        self.functions[func_name] = {"func": func, "desc": params, "embedding": api_embedding}
     
     def call_function(self, func_name, *args, **kwargs):
         if func_name in self.functions:
@@ -53,9 +67,6 @@ def register_functions_from_module(module, caller, max_api_num, agent_name):
                 params = get_function_parameters(func)
                 caller.register_function(name, params, func)
             elif name not in necessary_names and api_cnt < max_api_num:
-
-                # if "match_diagnose_knowledge" in name:
-                #     continue
 
                 api_cnt = api_cnt + 1
                         

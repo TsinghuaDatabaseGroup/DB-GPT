@@ -1,3 +1,5 @@
+from multiagents.llms.sentence_embedding import sentence_embedding
+
 from openai import OpenAI
 import numpy as np
 import json
@@ -57,27 +59,7 @@ if not os.path.exists(embedding_file_name):
 
     embeddings = []
     for i,text in enumerate(texts):
-
-        payload = {
-            "input": [text["name"]],
-            "model": "text-embedding-ada-002"        
-        }
-
-        timeout=10
-        ok = 0
-        while timeout>0:
-            try:
-                response = requests.post(url, json=payload, headers=headers)
-                ok = 1
-                break
-            except Exception as e:
-                time.sleep(.01)
-                timeout -= 1
-        
-        if ok == 0:
-            raise Exception("Failed to get response from API!")
-
-        embedding = json.loads(response.text)['data'][0]['embedding']
+        embedding = sentence_embedding(text["name"])
         embeddings.append(embedding)
         print(f"embedded {i} text")
 

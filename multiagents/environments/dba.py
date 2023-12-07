@@ -172,8 +172,6 @@ class DBAEnvironment(BaseModel):
             self.reporter.initialize_report()
             pbar.update(1)        
 
-        # import pdb; pdb.set_trace()
-
         # ================== vanilla model ==================
         # self.reporter.report["anomaly description"]
         # solver = self.agents[AGENT_TYPES.SOLVER][0]
@@ -298,7 +296,6 @@ class DBAEnvironment(BaseModel):
         # solver_idx = random.randint(0, len(self.agents[AGENT_TYPES.SOLVER]) - 1)
         # agents= [self.agents[AGENT_TYPES.SOLVER][0]]
 
-
         return agents
 
     async def decision_making(
@@ -316,7 +313,7 @@ class DBAEnvironment(BaseModel):
             task_description=self.task_description,
             previous_plan=previous_plan,
             advice=advice)
-
+        
         print("\n============= Finish the initial diagnosis =============")
         
         for i,diag in enumerate(initial_diags):

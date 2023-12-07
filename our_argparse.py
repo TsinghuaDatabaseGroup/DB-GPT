@@ -5,7 +5,7 @@ def main_parse_args():
     parser.add_argument('--latest_alert_file', type=str, default="", required=False, help='the file name of latest alert information')
     parser.add_argument('--agent_conf_name', type=str, default="agent_conf", required=False, help='the file name of llm agent settings')
     parser.add_argument('--max_hired_experts', type=int, default=2, required=False, help='the maximum number of hired experts')
-    parser.add_argument('--max_api_num', type=int, default=3, required=False, help='the maximum number of tool apis passed to single llm')
+    parser.add_argument('--max_api_num', type=int, default=20, required=False, help='the maximum number of tool apis for single llm at initialization stage')
     # parser.add_argument('--max_abnormal_metric_num', type=int, default=5, required=False, help='the maximum number of abnormal metrics (after detectiion) passed to single llm')
     parser.add_argument('--enable_slow_query_log', type=bool, default=True, required=False, help='True for enabling the collection of slow queries from database logs')
     parser.add_argument('--enable_workload_statistics_view', type=bool, default=True, required=False, help='True for enabling the collection of query template information from database view')
