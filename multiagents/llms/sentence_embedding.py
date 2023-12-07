@@ -20,7 +20,7 @@ def sentence_embedding(sentence: str, model: str = "text-embedding-ada-002"):
     
     api_key = os.environ.get("OPENAI_API_KEY")
 
-    client = OpenAI( api_key=api_key)
+    client = OpenAI(api_key=api_key)
     timeout=10
     ok = 0
     while timeout>0:
@@ -34,7 +34,7 @@ def sentence_embedding(sentence: str, model: str = "text-embedding-ada-002"):
 
     if ok == 0:
         raise Exception("Failed to get response from API!")
-
+    
     embedding = response.data[0].embedding
     return embedding
 
