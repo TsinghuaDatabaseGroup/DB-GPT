@@ -74,9 +74,6 @@ class KnowledgeExtraction():
 
         best_index = self.keyword_matching_func(self.topk, metrics_str, self.preprocessed_corpus)
 
-        if best_index != []:
-            import pdb; pdb.set_trace()
-
         best_docs = [self.corpus[b] for b in best_index]
         best_names = [self.matched_attr[b] for b in best_index]
         docs_str = ""

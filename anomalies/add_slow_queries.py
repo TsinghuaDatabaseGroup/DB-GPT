@@ -89,7 +89,7 @@ for anomaly_id in anomaly_blocks:
 
     slow_queries = obtain_slow_queries(diag_start_time, diag_end_time)
     if slow_queries != []:
-        # import pdb; pdb.set_trace()
+        
         anomaly_blocks[anomaly_id]['slow_queries'].append(slow_queries)
 
 with open("testing_set_without_scripts.json", 'w') as f:
