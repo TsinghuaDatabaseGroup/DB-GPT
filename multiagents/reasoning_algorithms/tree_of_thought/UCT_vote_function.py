@@ -456,7 +456,7 @@ class UCT_vote_function(base_search_method):
 
                         now_time = datetime.datetime.now()
                         now_time = now_time.strftime("%H:%M:%S")
-
+                        
                         now_node.messages.append({"role":"user", "content":diverse_prompt, "time": str(now_time)})
 
                         self.llm.change_messages(self.role_description, now_node.messages)
@@ -526,11 +526,19 @@ class UCT_vote_function(base_search_method):
                     if "whether_is_abnormal_metric" in parsed_response.tool:
 
                         metric_name = self.name.lower()
-                        metric_name = metric_name.replace("expert","") + "_" + "usage"
+                        metric_name = metric_name.replace("expert","")
+
+                        if "workload" in metric_name or "configuration" in metric_name or "index" in metric_name or "query" in metric_name:
+                            metric_name = "cpu"
+                        elif "write" in metric_name:
+                            metric_name = "memory"
+                            
+                        metric_name = metric_name + "_" + "usage"
 
                         parameters = {"start_time": self.start_time,      
                                     "end_time": self.end_time,
                                     "metric_name": metric_name}
+                        
                     elif "match_diagnose_knowledge" in parsed_response.tool and self.alert_dict != None:
                         # node_load1{instance="$instance"}
                         for alert in self.alert_dict:
@@ -650,53 +658,3 @@ class UCT_vote_function(base_search_method):
             # evaluate whether optimization solutions are proposed in the now_node (terminal status)
         
         return now_node, top_abnormal_metric_values
-
-    # def _fill_prompt_template(
-    #     self, node_tools, env_description: str = "", tool_observation: List[str] = [], messages: List[dict] = []
-    # ) -> str:
-        
-    #     """Fill the placeholders in the prompt template
-
-    #     In the tool agent, these placeholders are supported:
-    #     - ${agent_name}: the name of the agent
-    #     - ${env_description}: the description of the environment
-    #     - ${role_description}: the description of the role of the agent
-    #     - ${chat_history}: the chat history of the agent
-    #     - ${tools}: the list of tools and their usage
-    #     - ${tool_names}: the list of tool names
-    #     - ${tool_observations}: the observation of the tool in this turn
-    #     """
-    #     #retriever = api_retriever()
-        
-    #     #relevant_tools = retriever.query(Template(self.prompt_template).safe_substitute({"chat_history": self.memory.to_string(add_sender_prefix=True)}), self.tools)
-
-    #     tools = "\n".join([f"> {api}: {node_tools.functions[api]['desc']}" for api in node_tools.functions])
-    #     tools = tools.replace("{{", "{").replace("}}", "}")
-    #     tool_names = ", ".join([api for api in node_tools.functions])
-        
-    #     if self.start_time != "":
-    #         input_arguments = {
-    #             "start_time": self.start_time,
-    #             "end_time": self.end_time,
-    #             "agent_name": self.name,
-    #             "env_description": env_description,                                 
-    #             #"role_description": self.role_description,
-    #             "chat_history": self.memory.to_string(add_sender_prefix=True),
-    #             "tools": tools,
-    #             "tool_names": tool_names,
-    #             "tool_observation": "\n".join(tool_observation),
-    #         }
-    #     else:
-    #         input_arguments = {
-    #             "agent_name": self.name,
-    #             "env_description": env_description,                                 
-    #             #"role_description": self.role_description,
-    #             "chat_history": self.memory.to_string(add_sender_prefix=True),
-    #             "tools": tools,
-    #             "tool_names": tool_names,
-    #             "tool_observation": "\n".join(tool_observation),
-    #         }
-
-    #     import pdb; pdb.set_trace()
-
-    #     return Template(self.prompt_template).safe_substitute(input_arguments)
