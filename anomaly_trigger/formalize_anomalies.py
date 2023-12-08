@@ -77,7 +77,7 @@ def dataset_statistics():
                 # match anomalies
 
                 command = commands[i]
-                #import pdb; pdb.set_trace()
+                
 
                 # command_words = command.split()[3]
                 # command_words = command_words.split(',')
@@ -150,7 +150,7 @@ import"""
 
             content = {"start_time": "111233","end_time": "111433", "start_timestamp": "111233","end_timestamp": "111433", "alerts": [], "labels":[], "command": "", "script": "", "description": ""}
 
-            #import pdb; pdb.set_trace()
+            
 
             timestamp = line1.split()[-1]
             command = line1.split()[0:4]

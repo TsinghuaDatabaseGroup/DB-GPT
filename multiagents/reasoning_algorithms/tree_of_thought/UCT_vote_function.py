@@ -431,7 +431,7 @@ class UCT_vote_function(base_search_method):
                         # child_des = self.get_former_trice(child,temp_node)
                         # former_candidates_des = former_candidates_des + f"<candidate_{k+1}>\n{child_des}"
                         if temp_node.node_type == "Action Input":
-                            # import pdb; pdb.set_trace()
+                            
 
                             # if temp_node.description is str:
                             if isinstance(temp_node.description, str):
@@ -551,7 +551,7 @@ class UCT_vote_function(base_search_method):
 
                             parameters.append({"start_time": self.start_time, "end_time": self.end_time, "metric_name": metric_name, "alert_metric": alert_metric, "diag_id": self.diag_id})
                     else:
-                        # import pdb; pdb.set_trace()
+                        
                         try:
                             parameters = json.loads(parsed_response.tool_input)
                         except:

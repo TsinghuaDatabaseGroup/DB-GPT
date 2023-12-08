@@ -71,5 +71,4 @@ if __name__ == "__main__":
         start_time = time.time()
         asyncio.run(main(args))
         end_time = time.time()
-        print("time: ", end_time - start_time)
-        import pdb; pdb.set_trace()
+        print("============diag end time==========: ", end_time - start_time)

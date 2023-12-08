@@ -89,7 +89,7 @@ def exp_comparison(random_data = False):
     y_test = testing_samples[:, -11:]
 
     # 测试普通的DNN方法
-    # import pdb; pdb.set_trace()
+    
     # Convert to PyTorch tensors
     X_tensor = torch.tensor(X, dtype=torch.float32)
     y_tensor = torch.tensor(y, dtype=torch.long) # assuming y contains class labels
@@ -142,10 +142,10 @@ def exp_comparison(random_data = False):
             # Count how many probabilities are above the threshold
             count_above_threshold = torch.sum(probabilities[k] > threshold).item()
 
-            #import pdb; pdb.set_trace()
+            
 
             # Keep at most top 3 probabilities above the threshold
-            # import pdb; pdb.set_trace()
+            
             max_ones = min(count_above_threshold, 5)
             # Set the first 'max_ones' indices to 1, rest to 0
             binary_labels[k] = torch.zeros_like(binary_labels[k])

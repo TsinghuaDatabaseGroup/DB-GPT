@@ -84,7 +84,6 @@ ax.zaxis.pane.fill = False
 ax.grid(True, linestyle='dotted', linewidth=0.5, color='black')
 
 
-import pdb; pdb.set_trace()
 scatter = ax.scatter(reduced_embeddings[:, 0], reduced_embeddings[:, 1], reduced_embeddings[:, 2], c=labels, cmap='viridis')
 
 # plt.title("Knowledge Clustering (Ada-002)")
@@ -112,7 +111,6 @@ ax.set_zlim(-0.3, 0.2)
 
 # for label in unique_labels:
 #     centroid = np.mean(reduced_embeddings[labels == label], axis=0)
-#     import pdb; pdb.set_trace()
 #     ax.text(centroid[0], centroid[1], centroid[2], str(label_names[int(label)]), fontsize=12, weight='bold', ha='center', va='center')
 
 plt.savefig('./knowledge_clustering_3d.png')
