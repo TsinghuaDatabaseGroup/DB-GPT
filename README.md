@@ -12,10 +12,19 @@
 </p> -->
 
 <div align="center">
-  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/diagllama">
-    <em style="color: red;">DiagLlama</em> 
-  </a> 🔥
+
+![Dialogues](https://img.shields.io/badge/Anomaly\_Num-539-red?style=flat-square)
+![Dialogues](https://img.shields.io/badge/Tool\_APIs-60+-red?style=flat-square)
+![Dialogues](https://img.shields.io/badge/Training\_Data\_Num-2813-red?style=flat-square)
+![Dialogues](https://img.shields.io/badge/Localized\_LLMs-3-red?style=flat-square)
+
 </div>
+
+<!-- <div align="center">
+  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/diagllama">
+    <em style="color: red;">DiagLLM</em> 
+  </a> 🔥
+</div> -->
 
 <p align="center">
   <!-- <a href="#-features">Features</a> • -->
