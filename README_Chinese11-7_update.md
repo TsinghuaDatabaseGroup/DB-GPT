@@ -171,9 +171,7 @@ set OPENAI_API_KEY="your_api_key_here"
 步骤 3：将 database/anomaly/prometheus 设置添加到[tool_config_example.yaml](config/tool_config_example.yaml) 并重命名为 _tool_config.yaml_ ：
 
 ```bash
-POST
-
-GRESQL:
+POSTGRESQL:
   host: 182.92.xxx.x
   port: 5432
   user: xxxx
