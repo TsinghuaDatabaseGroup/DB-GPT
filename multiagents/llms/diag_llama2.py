@@ -15,7 +15,7 @@ import re
 from termcolor import colored
 import sys
 sys.path.append("../../../")
-from diagllama.inference import llama_inference
+from diagllama.inference import llama2_inference
 
 def remove_charts(text):
     pattern = r'\[chart\].*?\.html'
@@ -23,19 +23,19 @@ def remove_charts(text):
 
     return output
 
-class DiagLlamaChatArgs(BaseModelArgs):
+class DiagLlama2ChatArgs(BaseModelArgs):
     max_in_len: int = Field(default=3072)
     beam_size: int = Field(default=2)
     max_length: int = Field(default=1000)
 
-@llm_registry.register("diag-llama")
-class DiagLlamaChat(BaseChatModel):
-    args: DiagLlamaChatArgs = Field(default_factory=DiagLlamaChatArgs)
+@llm_registry.register("diag-llama2")
+class DiagLlama2Chat(BaseChatModel):
+    args: DiagLlama2ChatArgs = Field(default_factory=DiagLlama2ChatArgs)
     conversation_history: List = []
 
     def __init__(self, max_retry: int = 100, **kwargs):
         super().__init__(**kwargs)  # Call the constructor of the base class
-        args = DiagLlamaChatArgs()
+        args = DiagLlama2ChatArgs()
         args = args.dict()
 
         self.conversation_history = []
@@ -69,22 +69,18 @@ class DiagLlamaChat(BaseChatModel):
             # pop the time key-value from the message
             if "time" in message:
                 message.pop("time")
-            new_messages.append({"role": message["role"], "content": llama_inference.preprocess(message["content"])})
+            role = message["role"]
+            if role == "function":
+                role = "assistant"
+            new_messages.append({"role": role, "content": llama2_inference.preprocess(message["content"])})
         
-        mark_idx = llama_inference.classify(new_messages)
-        if len(new_messages) > 2:
-            if mark_idx == 5:
-                new_messages = llama_inference.process_review(new_messages)
-            elif mark_idx == 6:
-                new_messages = llama_inference.process_solution(new_messages)
-            elif mark_idx == 7:
-                new_messages = llama_inference.process_refine(new_messages)
+        mark_idx = llama2_inference.classify(new_messages)
+        new_messages = llama2_inference.refine_messages(new_messages, mark_idx)
 
-        output = llama_inference.inference(new_messages, max_in_len=self.args.max_in_len, max_length=self.args.max_length, beam_size=self.args.beam_size)
+        output = llama2_inference.inference(new_messages, self.args.max_in_len, self.args.max_length, self.args.beam_size)
 
         output = remove_charts(output)
-        
-        
+        # import pdb; pdb.set_trace()
         return {"role": "assistant", "content": output, "time": time.strftime("%H:%M:%S", time.localtime())}
     
     def generate_response(self, prompt: str) -> LLMResult:

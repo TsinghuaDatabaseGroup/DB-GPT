@@ -7,6 +7,7 @@ import bmtrain as bmt
 import numpy as np
 import torch
 import torch.nn.functional as F
+import logging
 
 from ...generation import apply_repetition_penalty
 from ...generation import BeamHypotheses
@@ -17,6 +18,29 @@ from ...utils import pad, allgather_objects
 from ..models import LlamaTorch
 from ..tokenizers.llama import LlamaTokenizer
 
+def build_chat_input(tokenizer, messages):
+    """set your data format"""
+    assert messages[0]["role"] == "system"
+    instruction = "<s>[INST] <<SYS>>\n {sys_message} \n<</SYS>>\n\n ".format(sys_message=messages[0]["content"])
+    state = 0
+    loop_messages = messages[1:]
+    for i,message in enumerate(loop_messages):
+        if state == 0:
+            assert message["role"] == "user", messages
+            instruction += message["content"] + " [/INST] "
+            state = 1
+        elif state == 1:
+            assert message["role"] == "assistant"
+            instruction += message["content"] 
+            if i < len(loop_messages) - 1:
+                assert loop_messages[i + 1]["role"] == "user", messages
+                instruction += " </s><s>[INST] "
+                state = 0
+            else:
+                instruction += "\n\n"
+
+    return tokenizer.encode(instruction)
+
 
 class LlamaGeneration:
     def __init__(self, model: LlamaTorch, tokenizer: LlamaTokenizer, max_in_len=1024, use_nbce: bool = False):
@@ -26,7 +50,10 @@ class LlamaGeneration:
         self.max_in_len = max_in_len
 
     def _convert_to_tensors(self, data: Any):
-        input_ids = self.tokenizer.encode(data["input"])
+        input_ids = build_chat_input(self.tokenizer, data["input"])
+        if len(input_ids) > self.max_in_len:
+            logging.warn(f"Token indices sequence length is longer than the specified maximum sequence length for this generation ({len(input_ids)} > {self.max_in_len}).")
+        
         model_input = {}
 
         model_input["input_ids"] = torch.tensor(input_ids[: self.max_in_len], dtype=torch.int32).unsqueeze(0)
