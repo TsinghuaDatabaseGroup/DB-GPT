@@ -81,7 +81,7 @@ class KnowledgeExtraction():
         for i, docs in enumerate(best_docs):
             docs_str = docs_str + "{}: ".format(best_names[i]) + docs + "\n\n"
 
-        print("best_docs: ", best_docs)
+        # print("best_docs: ", best_docs)
 
         return docs_str
     

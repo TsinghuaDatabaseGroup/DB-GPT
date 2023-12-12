@@ -10,6 +10,7 @@ def main_parse_args():
     parser.add_argument('--enable_slow_query_log', type=bool, default=True, required=False, help='True for enabling the collection of slow queries from database logs')
     parser.add_argument('--enable_workload_statistics_view', type=bool, default=True, required=False, help='True for enabling the collection of query template information from database view')
     parser.add_argument('--enable_workload_sqls', type=bool, default=True, required=False, help='True for fetching the sql queries during the anomaly')
+    parser.add_argument('--enable_prometheus', type=bool, default=False, required=False, help='True for fetching monitoring metrics from prometheus; False for fetching monitoring metrics from anomaly files')
     # parser.add_argument('--process_num', type=int, default=10, required=False, help='Parallel level for batching diagnosis')
     parser.add_argument('--start_at_seconds', type=int, default=1696841344, required=False, help='the starting time of an anomaly')
     parser.add_argument('--end_at_seconds', type=int, default=1696841415, required=False, help='the end time of an anomaly')
