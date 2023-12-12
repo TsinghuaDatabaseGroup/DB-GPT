@@ -15,7 +15,7 @@ class APICaller:
 
         query = func_name + " " + " ".join(params)
 
-        embedding_file_name = f"./multiagents/tools/embeddings/openai/{func_name}.npy"
+        embedding_file_name = f"./multiagents/tools/embeddings/local/{func_name}.npy"
         if os.path.exists(embedding_file_name):
             api_embedding = list(np.load(embedding_file_name))
         else:

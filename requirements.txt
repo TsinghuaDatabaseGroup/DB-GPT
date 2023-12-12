@@ -47,3 +47,7 @@ werkzeug==2.0.2
 flask
 jsonlines
 pyheaven
+install 
+sentence_transformers
+transformers
+google-colab

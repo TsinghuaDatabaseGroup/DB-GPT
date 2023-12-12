@@ -218,6 +218,8 @@ pip install -r requirements.txt
 
 > You can comment the Llama2Chat/CodeLlamaChat/Baichuan2Chat imports in ./llms/__init__.py if using openai models only
 
+> If fail to install google-colab, try *conda install -c conda-forge google-colab*
+
 Step 2: Configure environment variables.
 
 - Export your OpenAI API key
