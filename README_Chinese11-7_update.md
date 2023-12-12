@@ -3,7 +3,7 @@
 </div>
 
 <div align="center">
-  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/diagllama">
+  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms">
     <em style="color: red;">本地模型</em> 
   </a> 🔥
 </div>

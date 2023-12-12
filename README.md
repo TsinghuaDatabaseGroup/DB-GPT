@@ -21,7 +21,7 @@
 </div>
 
 <!-- <div align="center">
-  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/diagllama">
+  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms">
     <em style="color: red;">DiagLLM</em> 
   </a> 🔥
 </div> -->
@@ -214,7 +214,7 @@ Step 1: Install python packages.
 pip install -r requirements.txt
 ```
 
-> You can comment *"from .diag_llama import DiagLlamaChat"* in ./llms/__init__.py if trying the openai models only
+> You can comment the Llama2Chat/CodeLlamaChat/Baichuan2Chat imports in ./llms/__init__.py if using openai models only
 
 Step 2: Configure environment variables.
 
