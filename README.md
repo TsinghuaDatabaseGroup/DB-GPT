@@ -13,12 +13,14 @@
 
 <div align="center">
 
-![Dialogues](https://img.shields.io/badge/Anomaly\_Num-539-red?style=flat-square)
-![Dialogues](https://img.shields.io/badge/Tool\_APIs-60+-red?style=flat-square)
-![Dialogues](https://img.shields.io/badge/Training\_Data\_Num-2813-red?style=flat-square)
-![Dialogues](https://img.shields.io/badge/Localized\_LLMs-3-red?style=flat-square)
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/anomalies/public_testing_set/all_anomalies.jsonl">![Dialogues](https://img.shields.io/badge/Anomaly\_Num-539-red?style=flat-square)</a>
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/multiagents/tools">![Dialogues](https://img.shields.io/badge/Tool\_APIs-60+-red?style=flat-square)</a>
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms/training_data">![Dialogues](https://img.shields.io/badge/Training\_Data\_Num-2813-red?style=flat-square)</a>
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/multiagents/llms">![Dialogues](https://img.shields.io/badge/Localized\_LLMs-3-red?style=flat-square)</a>
 
 </div>
+
+
 
 <!-- <div align="center">
   <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms">
