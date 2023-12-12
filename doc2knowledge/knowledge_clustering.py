@@ -50,13 +50,6 @@ for i,file_name in enumerate(file_names):
 if not os.path.exists(embedding_file_name):
 
     # Get embeddings for each text
-    api_key = os.environ.get("OPENAI_API_KEY")
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + api_key
-    }
-    url = "https://api.aiaiapi.com/v1/embeddings"
-
     embeddings = []
     for i,text in enumerate(texts):
         embedding = sentence_embedding(text["name"])
