@@ -4,56 +4,62 @@ import ast
 from multiagents.tools.metric_monitor.anomaly_detection import prometheus
 from multiagents.tools.metric_monitor.anomaly_detection import detect_anomalies
 from multiagents.tools.metrics import *
-# from multiagents.tools.metrics import prometheus_metrics, postgresql_conf, obtain_values_of_metrics, processed_values
-# from multiagents.tools.metrics import current_diag_time, diag_start_time, diag_end_time
-# from multiagents.tools.metrics import current_diag_time
-# from multiagents.tools.metrics import get_workload_statistics, get_slow_queries, get_workload_sqls
-# from multiagents.tools.metrics import knowledge_matcher
 from utils.markdown_format import generate_prometheus_chart_content
 from multiagents.tools.index_advisor.api import optimize_index_selection
-
-
-# def obtain_start_and_end_time_of_anomaly(input: str = 'json dict string'):
-#     return {"start_time": diag_start_time, "end_time": diag_end_time}
 
 def whether_is_abnormal_metric(
         start_time: int,
         end_time: int,
-        metric_name: str = "cpu_usage"):
+        metric_name: str = "cpu_usage",
+        diag_id: str = "",
+        enable_prometheus: bool = True):
 
     if metric_name not in prometheus_metrics:
         # print(f"{metric_name} is unknown")
         return f"The metric {metric_name} is unknown \n {metric_name}"
 
-    metric_values = prometheus('api/v1/query_range',
-                                {'query': prometheus_metrics[metric_name],
-                                'start': start_time,
-                                'end': end_time,
-                                'step': '3'})
+    if enable_prometheus == True:
+        # read metric values from prometheus
+        metric_values = prometheus('api/v1/query_range',
+                                    {'query': prometheus_metrics[metric_name],
+                                    'start': start_time,
+                                    'end': end_time,
+                                    'step': '3'})
 
-    if "data" not in metric_values:
-        raise Exception("The metric name could be wrong!")
-    if "result" in metric_values["data"] and metric_values["data"]["result"] != []:
-        metric_values = metric_values["data"]["result"][0]["values"]
+        if "data" not in metric_values:
+            raise Exception("The metric name could be wrong!")
+        if "result" in metric_values["data"] and metric_values["data"]["result"] != []:
+            metric_values = metric_values["data"]["result"][0]["values"]
+        else:
+            raise Exception("No metric values found for the given time range")
+
+        is_abnormal = detect_anomalies(
+            np.array([float(value) for _, value in metric_values]))
     else:
-        raise Exception("No metric values found for the given time range")
+        # read metric values from the anomaly file
+        metric_values = obtain_values_of_metrics(diag_id, [prometheus_metrics[metric_name]], -1, -1)
+        
+        if len(metric_values) > 0:
+            metric_values = next(iter(metric_values.values()))
+            is_abnormal = detect_anomalies(
+                np.array(metric_values))
+        else:
+            is_abnormal = False
+
 
     # draw the metric chart
     chart_metric_values = [[i, str(value)] for i, value in metric_values]
 
     chart_content = generate_prometheus_chart_content(metric_name, chart_metric_values, x_label_format="%H:%M", size=(400, 225))
     with open(f"./alert_results/{current_diag_time}/{metric_name}.html", "w") as f:
-        f.write(chart_content)
-
-    is_abnormal = detect_anomalies(
-        np.array([float(value) for _, value in metric_values]))
+        f.write(chart_content)        
 
     if is_abnormal:
         # print(f"{metric_name} is abnormal")
         return f"The metric {metric_name} is abnormal \n " + f"[chart] ./alert_results/{current_diag_time}/{metric_name}.html"
     else:
         # print(f"{metric_name} is normal")
-        return f"The metric {metric_name} is normal \n " + f"[chart] ./alert_results/{current_diag_time}/{metric_name}.html"
+        return f"Cannot decide whether the metric {metric_name} is abnormal.\n" # + f"[chart] ./alert_results/{current_diag_time}/{metric_name}.html"
     
 
 def match_diagnose_knowledge(
@@ -61,22 +67,14 @@ def match_diagnose_knowledge(
         end_time: int,
         metric_name: str = "cpu",
         alert_metric: str = "",
-        diag_id: str = ""):
+        diag_id: str = "",
+        enable_prometheus: bool = True):
 
+    # get the slow queries from the anomaly file
     slow_queries = get_slow_queries(diag_id)
 
     if not isinstance(slow_queries, list):
         slow_queries = []
-
-    # if slow_queries != [] and slow_queries != "[]" and slow_queries != "":
-    #     try:
-
-    #         slow_queries = ast.literal_eval(slow_queries)
-    #     except:
-    #         print("fail to parse slow queries:", slow_queries)
-    #         slow_queries = []
-    # else:
-    #     slow_queries = []
 
     if "cpu" in metric_name.lower() or "workload" in metric_name.lower() or "index" in metric_name.lower() or "query" in metric_name.lower():
         metric_prefix = "cpu"
@@ -85,23 +83,28 @@ def match_diagnose_knowledge(
     elif "mem" in metric_name.lower() or "write" in metric_name.lower():
         metric_prefix = "memory"
     else:
-        metric_prefix = "network"
+        metric_prefix = "cpu"
 
-    metrics_list = prometheus_metrics[f"{metric_prefix}_metrics"]
-    
+    metrics_list = prometheus_metrics[f"{metric_prefix}_metrics"]    
     alert_metric_list = []
     alert_metric_list.append(alert_metric)
-    detailed_alert_metric = obtain_values_of_metrics(
-        int(start_time), int(end_time), alert_metric_list)
+    if enable_prometheus == True:
+        detailed_alert_metric = obtain_values_of_metrics(-1, 
+            alert_metric_list, int(start_time), int(end_time))
 
-    detailed_metrics = obtain_values_of_metrics(
-        int(start_time), int(end_time), metrics_list)
-    
+        detailed_metrics = obtain_values_of_metrics(-1, 
+            metrics_list, int(start_time), int(end_time))
+        
+    else:
+        detailed_alert_metric = obtain_values_of_metrics(diag_id, 
+            alert_metric_list, -1, 1)
+
+        detailed_metrics = obtain_values_of_metrics(diag_id, 
+            metrics_list, -1, 1)
+
     # identify the abnormal metrics
-    # detailed_abnormal_metrics = {}
     top5_abnormal_metrics = {}
-    top5_abnormal_metrics_map = {}
-    
+    top5_abnormal_metrics_map = {}    
     for metric_name, metric_values in detailed_metrics.items():
         anomaly_value, is_abnormal = detect_anomalies(np.array(metric_values))
         if is_abnormal:
@@ -231,7 +234,7 @@ def match_diagnose_knowledge(
     {}
 """.format(docs_str)
     
-    knowledge_str= alert_metric_str + metric_str + workload_str + slow_queries_str + docs_str
+    knowledge_str = alert_metric_str + metric_str + workload_str + slow_queries_str + docs_str
     #knowledge_str= alert_metric_str + metric_str + workload_str + slow_queries_str # no_knowledge
 
     return knowledge_str, abnormal_metric_detailed_values

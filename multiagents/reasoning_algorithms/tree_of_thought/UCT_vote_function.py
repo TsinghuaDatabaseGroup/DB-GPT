@@ -53,7 +53,7 @@ class UCT_vote_function(base_search_method):
         arbitrary_types_allowed = True
     memory: BaseMemory = Field
 
-    def __init__(self, diag_id, start_time, end_time, agent_name, role_description, prompt_template, llm,env, output_parser, alert_dict, alert_str, agent):
+    def __init__(self, diag_id, enable_prometheus, start_time, end_time, agent_name, role_description, prompt_template, llm,env, output_parser, alert_dict, alert_str, agent):
         super(UCT_vote_function, self).__init__()
         '''
         偏序驱动的信心上限树算法:
@@ -61,6 +61,7 @@ class UCT_vote_function(base_search_method):
         2.回传反思，同时做偏序 
         '''
         self.diag_id = diag_id
+        self.enable_prometheus = enable_prometheus
         self.name = agent_name
         self.role_description = role_description
         self.prompt_template = prompt_template
@@ -522,9 +523,10 @@ class UCT_vote_function(base_search_method):
                 if isinstance(parsed_response, AgentAction):
                     # If the response is an action, call the tool
                     # and append the observation to tool_observation
-                    parameters = []                    
+                    parameters = []
+                    # import pdb; pdb.set_trace()
                     if "whether_is_abnormal_metric" in parsed_response.tool:
-
+                        
                         metric_name = self.name.lower()
                         metric_name = metric_name.replace("expert","")
 
@@ -537,7 +539,9 @@ class UCT_vote_function(base_search_method):
 
                         parameters = {"start_time": self.start_time,      
                                     "end_time": self.end_time,
-                                    "metric_name": metric_name}
+                                    "metric_name": metric_name, 
+                                    "diag_id": str(self.diag_id),
+                                    "enable_prometheus": self.enable_prometheus}
                         
                     elif "match_diagnose_knowledge" in parsed_response.tool and self.alert_dict != None:
                         # node_load1{instance="$instance"}
@@ -549,7 +553,7 @@ class UCT_vote_function(base_search_method):
                             metric_name = self.name.lower()
                             metric_name = metric_name.replace("expert","") + "_" + "usage"
 
-                            parameters.append({"start_time": self.start_time, "end_time": self.end_time, "metric_name": metric_name, "alert_metric": alert_metric, "diag_id": self.diag_id})
+                            parameters.append({"start_time": self.start_time, "end_time": self.end_time, "metric_name": metric_name, "alert_metric": alert_metric, "diag_id": str(self.diag_id), "enable_prometheus": self.enable_prometheus})
                     else:
                         
                         try:
@@ -569,11 +573,8 @@ class UCT_vote_function(base_search_method):
                                     observation.append(result[0])
                                     top_abnormal_metric_values = result[1]
                                 else:
-                                    observation.append(result)
-                                                        
-                        elif parameters == None:
-                            pass
-                        else:
+                                    observation.append(result)                               
+                        elif parameters != None:
                             # observation = temp_node.env.tool.call_function(parsed_response.tool, **parameters)
                             result = temp_node.env.tool.call_function(parsed_response.tool, **parameters)
 
@@ -588,11 +589,6 @@ class UCT_vote_function(base_search_method):
                     #     + f"\nObservation: {str(observation).strip()}"
                     # )
                     if observation == None:
-                        # 0代表正常返回
-                        # 1代表没有对应api名字
-                        # 2代表输入有错误
-                        # 3代表生成结束，出现final answer
-                        # 4代表模型自己决定剪枝
                         now_node.pruned = True
                         # now_node.messages.append(new_message)
                         return now_node, top_abnormal_metric_values
