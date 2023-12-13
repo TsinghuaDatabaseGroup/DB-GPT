@@ -208,6 +208,8 @@ python openai_test.py
 
 步骤4: 下载 [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1) 模型参数
 
+- 创建新目录./localized_llms/sentence_embedding/
+
 - 将下载的sentence-transformer.zip压缩包放置在./localized_llms/sentence_embedding/目录下；解压压缩包。
 
 #### 3. 诊断
