@@ -94,7 +94,7 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 
 - [x] Add typical anomalies and alerts (Pigsty) <a href="#-anomalies">🔗 link</a>
 
-- [x] An end-to-end framework is available! <a href="#-diagnosis">🚀 link</a>
+<!-- - [x] An end-to-end framework is available! <a href="#-diagnosis">🚀 link</a> -->
 
 <!-- - [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗 link</a> -->
 
@@ -331,7 +331,9 @@ We offer scripts that could incur typical anomalies. Check out different anomaly
 
 <span id="-doc2knowledge"></span>
 
-### 1. Knowledge Extraction (Zui Chen)
+### 1. Knowledge Extraction 
+
+(Basic version by [Zui Chen](https://scholar.google.com/citations?user=WJdZtGAAAAAJ&hl=en))
 
 Step 1. Rename *doc2knowledge/config_template.json* into *doc2knowledge/config.json*. And add the value for "api_key" ("organization" is optional)
 
@@ -437,6 +439,8 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 https://github.com/OpenBMB/AgentVerse
 
 https://github.com/Vonng/pigsty
+
+https://github.com/UKPLab/sentence-transformers
 
 
 <span id="-citation"></span>
