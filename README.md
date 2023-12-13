@@ -16,7 +16,7 @@
 <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/anomalies/public_testing_set/all_anomalies.jsonl">![Dialogues](https://img.shields.io/badge/Anomalies-539-red?style=flat-square)</a>
 <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/multiagents/tools">![Dialogues](https://img.shields.io/badge/Tool\_APIs-60+-red?style=flat-square)</a>
 <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms/training_data">![Dialogues](https://img.shields.io/badge/Training\_Data-2813-red?style=flat-square)</a>
-<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms/sentence_embedding/">![Dialogues](https://img.shields.io/badge/Local\_Text\_Embed-1-red?style=flat-square)</a>
+<a href="https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1">![Dialogues](https://img.shields.io/badge/Local\_Text\_Embed-1-red?style=flat-square)</a>
 <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/multiagents/llms">![Dialogues](https://img.shields.io/badge/Local\_LLMs-3-red?style=flat-square)</a>
 
 </div>
