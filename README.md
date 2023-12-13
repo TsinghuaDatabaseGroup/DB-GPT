@@ -271,6 +271,10 @@ cd others
 python openai_test.py
 ```
 
+Step 4: Download [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1) model parameters
+
+- Move the downloaded sentence-transformer.zip to *./localized_llms/sentence_embedding/* directory, and unzip it.
+
 #### 3. Generate New Diagnosis Report
 
 - Test single case
