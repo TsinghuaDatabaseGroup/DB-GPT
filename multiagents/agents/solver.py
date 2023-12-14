@@ -157,6 +157,7 @@ class SolverAgent(BaseAgent):
         arbitrary_types_allowed = True
 
     diag_id: str = ""
+    enable_prometheus: bool = True
     tools: APICaller = Field(default_factory=APICaller)
     tool_memory: BaseMemory = Field(default_factory=ChatHistoryMemory)
     tool_matcher: api_matcher = Field(default_factory=api_matcher)
@@ -192,7 +193,7 @@ class SolverAgent(BaseAgent):
         # Step1: configure attirbutes in the tasksolving environment
         tasksolving_env = wrap_tasksolving_env(task_description, self.tools, self.tool_memory)
         
-        chain = UCT_vote_function(diag_id=self.diag_id, start_time=self.start_time, end_time=self.end_time, agent_name=self.name, role_description=self.role_description, prompt_template=self.prompt_template, llm=self.llm,env=tasksolving_env, output_parser=self.output_parser, alert_dict=self.alert_dict, alert_str=self.alert_str, agent=self)
+        chain = UCT_vote_function(diag_id=self.diag_id, enable_prometheus=self.enable_prometheus, start_time=self.start_time, end_time=self.end_time, agent_name=self.name, role_description=self.role_description, prompt_template=self.prompt_template, llm=self.llm,env=tasksolving_env, output_parser=self.output_parser, alert_dict=self.alert_dict, alert_str=self.alert_str, agent=self)
 
         print(colored(f"\n{self.name} Diagnosis!","red"))
 

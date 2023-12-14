@@ -3,7 +3,7 @@
 </div>
 
 <div align="center">
-  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/diagllama">
+  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms">
     <em style="color: red;">本地模型</em> 
   </a> 🔥
 </div>
@@ -171,9 +171,7 @@ set OPENAI_API_KEY="your_api_key_here"
 步骤 3：将 database/anomaly/prometheus 设置添加到[tool_config_example.yaml](config/tool_config_example.yaml) 并重命名为 _tool_config.yaml_ ：
 
 ```bash
-POST
-
-GRESQL:
+POSTGRESQL:
   host: 182.92.xxx.x
   port: 5432
   user: xxxx
@@ -207,6 +205,12 @@ export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_pr
 cd others
 python openai_test.py
 ```
+
+步骤4: 下载 [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1) 模型参数
+
+- 创建新目录./localized_llms/sentence_embedding/
+
+- 将下载的sentence-transformer.zip压缩包放置在./localized_llms/sentence_embedding/目录下；解压压缩包。
 
 #### 3. 诊断
 

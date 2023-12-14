@@ -238,13 +238,14 @@ class DBAEnvironment(BaseModel):
         
         self.reporter.record["anomalyAnalysis"]["RoleAssigner"]["messages"].append({"data": expert_select_desc, "time": time.strftime("%H:%M:%S", time.localtime())})
 
-        # assign alert info to each agent (check)
+        # assign setting info to each agent (check)
         for agent in selected_experts:
             agent.start_time = args.start_at_seconds
             agent.end_time = args.end_at_seconds
             agent.alert_dict = alert_dict
             agent.alert_str = alert_str
             agent.diag_id = args.diag_id
+            agent.enable_prometheus = args.enable_prometheus
         
         # ================== Expert Diagnosis ==================
         # count on these experts to diagnose for the alert        

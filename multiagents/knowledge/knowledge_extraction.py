@@ -15,7 +15,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet, stopwords
 from nltk.tokenize import word_tokenize
 import nltk
-nltk.data.path.append('/path/to/nltk_data')
+nltk.data.path.append('./nltk_data')
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.tag import pos_tag
@@ -37,7 +37,7 @@ class KnowledgeExtraction():
         # nltk.download('punkt')
         # nltk.download('averaged_perceptron_tagger')
         # nltk.download('wordnet')
-
+        
         self.wnl = WordNetLemmatizer()
         self.keyword_matching_func = keyword_matching_func
 
@@ -81,7 +81,7 @@ class KnowledgeExtraction():
         for i, docs in enumerate(best_docs):
             docs_str = docs_str + "{}: ".format(best_names[i]) + docs + "\n\n"
 
-        print("best_docs: ", best_docs)
+        # print("best_docs: ", best_docs)
 
         return docs_str
     

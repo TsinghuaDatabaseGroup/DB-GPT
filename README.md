@@ -12,10 +12,22 @@
 </p> -->
 
 <div align="center">
-  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/diagllama">
-    <em style="color: red;">DiagLlama</em> 
-  </a> 🔥
+
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/anomalies/public_testing_set/all_anomalies.jsonl">![Dialogues](https://img.shields.io/badge/Anomalies-539-red?style=flat-square)</a>
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/multiagents/tools">![Dialogues](https://img.shields.io/badge/Tool\_APIs-60+-red?style=flat-square)</a>
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms/training_data">![Dialogues](https://img.shields.io/badge/Training\_Data-2813-red?style=flat-square)</a>
+<a href="https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1">![Dialogues](https://img.shields.io/badge/Local\_Text\_Embed-1-red?style=flat-square)</a>
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/multiagents/llms">![Dialogues](https://img.shields.io/badge/Local\_LLMs-3-red?style=flat-square)</a>
+
 </div>
+
+
+
+<!-- <div align="center">
+  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms">
+    <em style="color: red;">DiagLLM</em> 
+  </a> 🔥
+</div> -->
 
 <p align="center">
   <!-- <a href="#-features">Features</a> • -->
@@ -82,7 +94,7 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 
 - [x] Add typical anomalies and alerts (Pigsty) <a href="#-anomalies">🔗 link</a>
 
-- [x] An end-to-end framework is available! <a href="#-diagnosis">🚀 link</a>
+<!-- - [x] An end-to-end framework is available! <a href="#-diagnosis">🚀 link</a> -->
 
 <!-- - [x] **[2023/8/25]** Support vue-based website interface. More flexible and beautiful! <a href="#-frontend">🔗 link</a> -->
 
@@ -205,7 +217,9 @@ Step 1: Install python packages.
 pip install -r requirements.txt
 ```
 
-> You can comment *"from .diag_llama import DiagLlamaChat"* in ./llms/__init__.py if trying the openai models only
+> You can comment the Llama2Chat/CodeLlamaChat/Baichuan2Chat imports in ./llms/__init__.py if using openai models only
+
+> If fail to install google-colab, try *conda install -c conda-forge google-colab*
 
 Step 2: Configure environment variables.
 
@@ -256,6 +270,12 @@ export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_pr
 cd others
 python openai_test.py
 ```
+
+Step 4: Download [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1) model parameters
+
+- Create new directory *./localized_llms/sentence_embedding*
+
+- Move the downloaded sentence-transformer.zip to *./localized_llms/sentence_embedding/* directory, and unzip it.
 
 #### 3. Generate New Diagnosis Report
 
@@ -317,7 +337,9 @@ We offer scripts that could incur typical anomalies. Check out different anomaly
 
 <span id="-doc2knowledge"></span>
 
-### 1. Knowledge Extraction (Zui Chen)
+### 1. Knowledge Extraction 
+
+(Basic version by [Zui Chen](https://scholar.google.com/citations?user=WJdZtGAAAAAJ&hl=en))
 
 Step 1. Rename *doc2knowledge/config_template.json* into *doc2knowledge/config.json*. And add the value for "api_key" ("organization" is optional)
 
@@ -423,6 +445,8 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 https://github.com/OpenBMB/AgentVerse
 
 https://github.com/Vonng/pigsty
+
+https://github.com/UKPLab/sentence-transformers
 
 
 <span id="-citation"></span>

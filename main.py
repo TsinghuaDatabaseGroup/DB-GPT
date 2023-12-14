@@ -1,7 +1,7 @@
 from our_argparse import args
 from multiagents.multiagents import MultiAgents
 from multiagents.tools.metrics import database_server_conf, db
-from multiagents.tools.metrics import get_workload_statistics, get_slow_queries, WORKLOAD_FILE_NAME, BATCH_ANOMALY_FILE_NAME
+from multiagents.tools.metrics import current_diag_time, get_workload_statistics, get_slow_queries, WORKLOAD_FILE_NAME, BATCH_ANOMALY_FILE_NAME
 from multiagents.utils.server import obtain_slow_queries
 import json
 import os
@@ -17,6 +17,10 @@ async def main(args):
     with open(f"./alert_results/examples/{str(cur_time)}.jsonl", "w") as f:
         json.dump(records, f, indent=4)
 
+    if os.path.exists(f"./alert_results/{str(current_diag_time)}"):
+        # remove the folder
+        os.system(f"rm -rf ./alert_results/{str(current_diag_time)}")
+
     return report, records
 
 if __name__ == "__main__":
@@ -28,7 +32,7 @@ if __name__ == "__main__":
 
     # diag_id, content = next(iter(anomaly_jsons.items()))
     # diag_id = "10"
-
+    
     for diag_id in anomaly_jsons:
 
         content = anomaly_jsons[diag_id]
@@ -65,8 +69,6 @@ if __name__ == "__main__":
         args.end_at_seconds = content["end_time"]        
         args.diag_id = str(diag_id)
         
-        # 77.27
-        # 75.47
         # count the time to run main function
         start_time = time.time()
         asyncio.run(main(args))

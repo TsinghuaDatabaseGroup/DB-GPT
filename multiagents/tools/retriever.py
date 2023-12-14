@@ -10,10 +10,7 @@ import json
 
 
 class api_matcher:
-    def __init__(self,
-                 model: str = "text-embedding-ada-002"):
-
-        self.model = model
+    def __init__(self):
         self.apis = dict()
 
     def add_tool(self, apis: APICaller) -> None:
@@ -27,8 +24,8 @@ class api_matcher:
             }
 
     def query(self, query: str, topk: int = 5) -> List[str]:
-        query_embedding = sentence_embedding(sentence=query, model=self.model)
-
+        query_embedding = sentence_embedding(sentence=query)
+        
         queue = PriorityQueue()
         for api_name, api_info in self.apis.items():
             api_embedding = api_info["embedding"]
