@@ -51,3 +51,4 @@ install
 sentence_transformers
 transformers
 google-colab
+pathlib

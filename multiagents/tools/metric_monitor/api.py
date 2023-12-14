@@ -51,8 +51,9 @@ def whether_is_abnormal_metric(
     chart_metric_values = [[i, str(value)] for i, value in metric_values]
 
     chart_content = generate_prometheus_chart_content(metric_name, chart_metric_values, x_label_format="%H:%M", size=(400, 225))
+
     with open(f"./alert_results/{current_diag_time}/{metric_name}.html", "w") as f:
-        f.write(chart_content)        
+        f.write(chart_content)
 
     if is_abnormal:
         # print(f"{metric_name} is abnormal")

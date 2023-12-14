@@ -1,14 +1,25 @@
 from our_argparse import args
 from multiagents.multiagents import MultiAgents
 from multiagents.tools.metrics import database_server_conf, db
-from multiagents.tools.metrics import current_diag_time, get_workload_statistics, get_slow_queries, WORKLOAD_FILE_NAME, BATCH_ANOMALY_FILE_NAME
+from multiagents.tools.metrics import current_diag_time, update_current_time, get_workload_statistics, get_slow_queries, WORKLOAD_FILE_NAME, BATCH_ANOMALY_FILE_NAME
 from multiagents.utils.server import obtain_slow_queries
 import json
 import os
 import asyncio
 import time
+from pathlib import Path
 
 async def main(args):
+    global current_diag_time
+
+    if not os.path.exists(f"./alert_results/{str(current_diag_time)}"):
+
+        dir_path = Path(f"./alert_results/{str(current_diag_time)}")
+
+        try:
+            dir_path.mkdir(parents=True, exist_ok=True)
+        except Exception as e:
+            print(f"Failed to create directory {dir_path}: {e}")
 
     multi_agents = MultiAgents.from_task(args.agent_conf_name, args)
     report, records = await multi_agents.run(args)
@@ -33,7 +44,7 @@ if __name__ == "__main__":
     # diag_id, content = next(iter(anomaly_jsons.items()))
     # diag_id = "10"
     
-    for diag_id in anomaly_jsons:
+    for i,diag_id in enumerate(anomaly_jsons):
 
         content = anomaly_jsons[diag_id]
         
@@ -73,4 +84,4 @@ if __name__ == "__main__":
         start_time = time.time()
         asyncio.run(main(args))
         end_time = time.time()
-        print("============diag end time==========: ", end_time - start_time)
+        print("============diag during time==========: ", end_time - start_time)
