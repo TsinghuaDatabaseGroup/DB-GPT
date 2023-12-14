@@ -213,13 +213,11 @@ def fetch_prometheus_metrics(args):
 
     for alert in alerts:
         # 获取alert的startsAt属性，并将其转换为UTC时间格式
-        start_time = alert.get("startsAt")
-        start_time = start_time[:-4] + 'Z'
-        end_time = alert.get("endsAt")
-        end_time = end_time[:-4] + 'Z'
+        alert_time = alert.get("startsAt")
+        alert_time = alert_time[:-4] + 'Z'
 
-        start_time = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()
-        end_time = datetime.strptime(end_time, "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()
+        start_time = datetime.strptime(alert_time, "%Y-%m-%dT%H:%M:%S.%fZ").timestamp() - 60 * 5
+        end_time = datetime.strptime(alert_time, "%Y-%m-%dT%H:%M:%S.%fZ").timestamp() + 60
 
         # 调用obtain_exceptions_in_times函数获取在指定时间范围内的异常，并返回结果
         exceptions = obtain_exceptions_in_times(start_time, end_time)
