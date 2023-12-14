@@ -73,9 +73,6 @@ async def main(process_id):
             # result_jsons[diag_id]["diag_"+method] = diag
             # result_jsons[diag_id]["label_"+method] = labels
 
-            # out_file.write(str(diag_id))
-            # out_file.write(result_jsons[diag_id])
-            # out_file.write('==========================')
             # print(str(diag_id), '========== ok ================')
             # ===================================================
 
@@ -91,9 +88,6 @@ async def main(process_id):
             result_jsons[diag_id]["solution_"+method] = report["solutions"]
             result_jsons[diag_id]["label_"+method] = report["labels"]
 
-            out_file.write(str(diag_id))
-            out_file.write(result_jsons[diag_id])
-            out_file.write('==========================')
             print(str(diag_id), '========== ok ================')
 
 def wrapper(i):
@@ -126,11 +120,10 @@ for anomaly_id in anomaly_jsons:
                                 "solution_"+method: ""}
 
 split_size = int(floor(len(anomaly_jsons) / process_num))
-out_file = jsonlines.open(log_dir_name + "/overall_diag_results.json", "a")
-out_file._flush = True
+
 
 if __name__=='__main__':
-    
+
     if not os.path.exists(reports_log_dir_name):
         Path(reports_log_dir_name).mkdir(parents=True, exist_ok=True)
     
