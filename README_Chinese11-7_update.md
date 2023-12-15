@@ -9,6 +9,10 @@
 </div>
 
 <p align="center">
+<a href="#-contact">欢迎扫码加入微信群！</a>
+</p>
+
+<p align="center">
   <a href="#-demo">演示</a> •
   <a href="#-quickstart">快速开始</a> •
   <a href="#-anomalies">警报与异常</a> •  
@@ -411,6 +415,9 @@ https://github.com/Vonng/pigsty
 其他合作者: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](https://github.com/LikyThu)。
 
 我们感谢所有对这个项目的贡献者。如果你想参与或贡献，不要犹豫！
+
+
+<span id="-contact"></span>
 
 ## 联系我们
 👏🏻欢迎加入我们的微信群

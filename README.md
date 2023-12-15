@@ -21,6 +21,10 @@
 
 </div>
 
+<p align="center">
+<a href="#-contact">欢迎扫码加入微信群！</a>
+</p>
+
 
 
 <!-- <div align="center">
@@ -501,6 +505,8 @@ Feel free to cite us ([paper link](https://arxiv.org/pdf/2312.01454.pdf)) if you
 Other Collaborators: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](https://github.com/LikyThu).
 
 We thank all the contributors to this project. Do not hesitate if you would like to get involved or contribute! 
+
+<span id="-contact"></span>
 
 ## Contact Information
 👏🏻Welcome to our wechat group!
