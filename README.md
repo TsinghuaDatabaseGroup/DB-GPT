@@ -21,11 +21,6 @@
 
 </div>
 
-<p align="center">
-<a href="#-contact">👫 Join Us on WeChat!</a>
-</p>
-
-
 
 <!-- <div align="center">
   <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms">
@@ -45,6 +40,9 @@
   <a href="#-contributors">Contributors</a>
 </p>
 
+<p align="center">
+<a href="#-contact">👫 Join Us on WeChat!</a>
+</p>
 
 
 <p align="center">
