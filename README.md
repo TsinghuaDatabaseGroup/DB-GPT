@@ -86,6 +86,8 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 
 ## 📰 Updates
 
+- [ ] Extreme Speed Version for localized llms
+
 - [x] 8 new expert roles by the clustering of extracted *Knowledge*
 
 - [x] Upgrade the LLM-based diagnosis mechanism: 
@@ -101,6 +103,7 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 - [ ] Support monitoring and optimization tools in multiple levels [🔗 link](multiagents/tools)
 
     * [x] Monitoring metrics (Prometheus)
+    * [ ] Flame graph in code level
     * [x] Diagnosis knowledge retrieval (dbmind)
     * [x] Logical query transformations (Calcite)
     * [x] Index optimization algorithms (for PostgreSQL)
