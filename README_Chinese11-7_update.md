@@ -418,8 +418,3 @@ https://github.com/Vonng/pigsty
 <img src="imgs/group2.jpg" width="400px">
 </div>
 
-## ⭐️ 星标历史
-
-[![星标历史图表](https://api.star-history.com/svg?repos=Tsing
-
-huaDatabaseGroup/DB-GPT&type=Date)](https://star-history.com/#TsinghuaDatabaseGroup/DB-GPT&Date)
