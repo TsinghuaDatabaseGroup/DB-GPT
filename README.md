@@ -505,7 +505,7 @@ We thank all the contributors to this project. Do not hesitate if you would like
 ## Contact Information
 👏🏻Welcome to our wechat group!
 <div align= "center">
-<img src="imgs/group.jpg" width="400px">
+<img src="imgs/group2.jpg" width="400px">
 </div>
 
 <!-- ## ⭐️ Star History
