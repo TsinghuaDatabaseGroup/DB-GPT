@@ -19,12 +19,6 @@ cpu_metrics:
     instance_from: node
   - query: node_load15{instance="$instance"}
     instance_from: node
-  - query: pg_settings_random_page_cost{instance=~"$instance"}
-    instance_from: postgresql
-  - query: pg_settings_max_worker_processes{instance=~"$instance"}
-    instance_from: postgresql
-  - query: pg_settings_max_parallel_workers{instance=~"$instance"}
-    instance_from: postgresql
   - query: pg_stat_activity_count{instance=~"$instance", state="active"} !=0
     instance_from: postgresql
   - query: pg_locks_count{instance=~"$instance"} != 0
@@ -33,6 +27,36 @@ cpu_metrics:
     instance_from: postgresql
   - query: pg_stat_activity_count{instance=~"$instance", state=~"idle|idle in transaction|idle in transaction (aborted)"}
     instance_from: postgresql
+  - query: mysql_global_status_commands_total{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_delayed_insert_threads{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_handlers_total{handler="commit", instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_innodb_os_log_pending_writes{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_max_execution_time_exceeded{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_mysqlx_stmt_create_collection{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_mysqlx_stmt_create_collection_index{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_mysqlx_stmt_disable_notices{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_mysqlx_stmt_drop_collection{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_mysqlx_stmt_drop_collection_index{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_mysqlx_worker_threads{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_queries{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_questions{instance=~"$instance"}
+    instance_from: mysql
+  - query: process_cpu_seconds_total{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysqld_exporter_build_info{instance=~"$instance"}
+    instance_from: mysql
 memory_metrics:
   - query: irate(node_disk_write_time_seconds_total{instance=~"$instance"}[1m])
     instance_from: node
@@ -50,16 +74,6 @@ memory_metrics:
     instance_from: node
   - query: pg_stat_activity_count{instance=~"$instance", state="active"} !=0
     instance_from: postgresql
-  - query: pg_settings_shared_buffers_bytes{instance="$instance"}
-    instance_from: postgresql
-  - query: pg_settings_effective_cache_size_bytes{instance="$instance"}
-    instance_from: postgresql
-  - query: pg_settings_maintenance_work_mem_bytes{instance="$instance"}
-    instance_from: postgresql
-  - query: pg_settings_work_mem_bytes{instance="$instance"}
-    instance_from: postgresql
-  - query: pg_settings_max_wal_size_bytes{instance="$instance"}
-    instance_from: postgresql
   - query: irate(pg_stat_bgwriter_buffers_alloc{instance="$instance"}[5m])
     instance_from: postgresql
   - query: irate(pg_stat_bgwriter_buffers_backend_fsync{instance="$instance"}[5m])
@@ -72,6 +86,68 @@ memory_metrics:
     instance_from: postgresql
   - query: irate(pg_stat_database_deadlocks{instance="$instance"}[5m])
     instance_from: postgresql
+  - query: mysql_global_status_buffer_pool_dirty_pages{instance="$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_buffer_pool_page_changes_total{instance="$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_buffer_pool_pages{instance="$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_created_tmp_disk_tables{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_created_tmp_files{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_created_tmp_tables{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_innodb_buffer_pool_bytes_data{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_innodb_buffer_pool_bytes_dirty{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_innodb_data_pending_reads{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_innodb_data_pending_writes{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_key_blocks_unused{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_max_used_connections{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_mysqlx_bytes_received{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_mysqlx_bytes_received_compressed_payload{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_mysqlx_bytes_received_uncompressed_frame{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_mysqlx_bytes_sent{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_mysqlx_bytes_sent_compressed_payload{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_mysqlx_bytes_sent_uncompressed_frame{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_open_files{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_open_streams{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_open_table_definitions{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_open_tables{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_opened_files{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_opened_table_definitions{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_opened_tables{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_global_status_performance_schema_lost_total{instrumentation="accounts_lost", instance=~"$instance"}
+    instance_from: mysql
+  - query: process_resident_memory_bytes{instance=~"$instance"}
+    instance_from: mysql
+  - query: process_virtual_memory_bytes{instance=~"$instance"}
+    instance_from: mysql
+  - query: process_virtual_memory_max_bytes{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_info_schema_innodb_cmpmem_pages_free_total{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_info_schema_innodb_cmpmem_pages_used_total{instance=~"$instance"}
+    instance_from: mysql
 network_metrics:
   - query: node_sockstat_TCP_tw{instance="$instance"}
     instance_from: node
@@ -85,6 +161,10 @@ network_metrics:
     instance_from: node
   - query: node_sockstat_TCP_inuse{instance=~'$instance'}
     instance_from: node
+  - query: promhttp_metric_handler_requests_in_flight{instance=~"$instance"}
+    instance_from: mysql
+  - query: promhttp_metric_handler_requests_total{instance=~"$instance"}
+    instance_from: mysql
 io_metrics:
   - query: SUM(pg_stat_database_tup_fetched{instance=~"$instance"})
     instance_from: postgresql
@@ -134,3 +214,15 @@ io_metrics:
     instance_from: node
   - query: irate(node_disk_io_time_seconds_total{instance=~"$instance"}[1m])
     instance_from: node
+  - query: mysql_info_schema_innodb_cmp_compress_ops_ok_total{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_info_schema_innodb_cmp_compress_ops_total{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_info_schema_innodb_cmp_uncompress_ops_total{instance=~"$instance"}
+    instance_from: mysql
+  - query: mysql_info_schema_innodb_cmpmem_relocation_ops_total{instance=~"$instance"}
+    instance_from: mysql
+  - query: process_max_fds{instance=~"$instance"}
+    instance_from: mysql
+  - query: process_open_fds{instance=~"$instance"}
+    instance_from: mysql

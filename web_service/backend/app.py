@@ -57,7 +57,6 @@ async def histories(request: Request):
                 continue
             if end and timestamp > int(end):
                 continue
-            print('timestamp:', timestamp)
             # 打开文件并读取JSON数据
             with open(file_path, "r") as file:
                 json_data = json.load(file)

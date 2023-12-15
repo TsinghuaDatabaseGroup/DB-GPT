@@ -15,10 +15,13 @@ prometheus_conf = read_yaml('PROMETHEUS', 'config.yaml')
 node_exporter_instance = prometheus_conf.get('node_exporter_instance')
 postgresql_exporter_instance = prometheus_conf.get(
     'postgresql_exporter_instance')
+mysql_exporter_instance = prometheus_conf.get(
+    'mysql_exporter_instance')
 prometheus_metrics = read_prometheus_metrics_yaml(
     config_path='./prometheus_metrics.yaml',
     node_exporter_instance=node_exporter_instance,
-    postgresql_exporter_instance=postgresql_exporter_instance)
+    postgresql_exporter_instance=postgresql_exporter_instance,
+    mysql_exporter_instance=mysql_exporter_instance)
 TOP_N_METRICS = 5
 
 
@@ -210,13 +213,11 @@ def fetch_prometheus_metrics(args):
 
     for alert in alerts:
         # 获取alert的startsAt属性，并将其转换为UTC时间格式
-        start_time = alert.get("startsAt")
-        start_time = start_time[:-4] + 'Z'
-        end_time = alert.get("endsAt")
-        end_time = end_time[:-4] + 'Z'
+        alert_time = alert.get("startsAt")
+        alert_time = alert_time[:-4] + 'Z'
 
-        start_time = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()
-        end_time = datetime.strptime(end_time, "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()
+        start_time = datetime.strptime(alert_time, "%Y-%m-%dT%H:%M:%S.%fZ").timestamp() - 60 * 5
+        end_time = datetime.strptime(alert_time, "%Y-%m-%dT%H:%M:%S.%fZ").timestamp() + 60
 
         # 调用obtain_exceptions_in_times函数获取在指定时间范围内的异常，并返回结果
         exceptions = obtain_exceptions_in_times(start_time, end_time)

@@ -107,6 +107,14 @@ rm -r package-lock.json
 npm install  --legacy-peer-deps
 ```
 
+* 配置前端请求的后端地址
+
+```
+vim web_service/frontend/.env.development
+# 127.0.0.1修改为后端ID地址，对应的8024端口需要和后端的端口一致。
+VUE_APP_BASE_API = 'http://127.0.0.1:8024/'
+```
+
 - 运行
 
 ```shell
