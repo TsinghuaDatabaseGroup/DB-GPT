@@ -205,21 +205,21 @@ class BaichuanInference(Inference):
         return output
 
 class DiagLlama2Args(BaseModel):
-    load: str = Field(default="xxxx/llama2-13b/diagllama2.pt")
+    load: str = Field(default="xxxx/llama2-13b/diag-llama2.pt")
     model_config: str = Field(default="xxxx/llama2-13b/config.json")
     vocab: str = Field(default="xxxx/llama2/llama-13b")
     seed: int = Field(default=1234)
     flash: str = Field(default="none")
 
 class DiagCodeLlamaArgs(BaseModel):
-    load: str = Field(default="xxxx/codellama-13b/diagcodellama.pt")
+    load: str = Field(default="xxxx/codellama-13b/diag-codellama.pt")
     model_config: str = Field(default="xxxx/codellama-13b/config.json")
     vocab: str = Field(default="xxxx/codellama-13b")
     seed: int = Field(default=1234)
     flash: str = Field(default="none")
 
 class DiagBaichuan2Args(BaseModel):
-    load: str = Field(default="xxxx/baichuan2-13b/diagbaichuan2.pt")
+    load: str = Field(default="xxxx/baichuan2-13b/diag-baichuan2.pt")
     model_config: str = Field(default="xxxx/baichuan2-13b/config.json")
     vocab: str = Field(default="xxxx/baichuan2-13b")
     seed: int = Field(default=1234)

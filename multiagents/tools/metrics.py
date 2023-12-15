@@ -31,13 +31,15 @@ if args.enable_prometheus == False:
             anomalies_list[i]["exceptions"] = exceptions
 
 # [metric chart folder]
-current_diag_time = time.localtime()
-current_diag_time = time.strftime("%Y-%m-%d-%H:%M:%S", current_diag_time)
-if not os.path.exists(f"./alert_results/{str(current_diag_time)}"):
-    try:
-        os.makedirs(f"./alert_results/{str(current_diag_time)}")
-    except:
-        pass
+
+def update_current_time():
+    current_diag_time = time.localtime()
+    current_diag_time = time.strftime("%Y-%m-%d-%H:%M:%S", current_diag_time)
+
+    return current_diag_time
+
+current_diag_time = update_current_time()
+
 
 # [promehteus config]
 promethest_conf = read_yaml('PROMETHEUS', 'config/tool_config.yaml')
