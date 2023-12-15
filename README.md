@@ -169,6 +169,16 @@ rm -r package-lock.json
 npm install  --legacy-peer-deps
 ```
 
+* Configuring the Backend Address for Frontend Requests
+
+```
+vim web_service/frontend/.env.development
+# Replace 127.0.0.1 with the Backend ID address, the corresponding 8024 port needs to be consistent with the backend port.
+VUE_APP_BASE_API = 'http://127.0.0.1:8024/'
+```
+
+```
+
 * run
 
 ```shell
