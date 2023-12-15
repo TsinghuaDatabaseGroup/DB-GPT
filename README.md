@@ -22,7 +22,7 @@
 </div>
 
 <p align="center">
-<a href="#-contact">欢迎扫码加入微信群！</a>
+<a href="#-contact">👫 Join Us on WeChat!</a>
 </p>
 
 
