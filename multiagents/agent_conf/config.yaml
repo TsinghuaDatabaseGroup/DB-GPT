@@ -1,5 +1,7 @@
 max_turn: &max_turn 3
 
+llm_type: GPT4-0613
+
 prompts:
   role_assigner_prompt: &role_assigner_prompt |-
     # Role Description

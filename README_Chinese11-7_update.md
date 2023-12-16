@@ -9,6 +9,10 @@
 </div>
 
 <p align="center">
+<a href="#-contact">欢迎扫码加入微信群！</a>
+</p>
+
+<p align="center">
   <a href="#-demo">演示</a> •
   <a href="#-quickstart">快速开始</a> •
   <a href="#-anomalies">警报与异常</a> •  
@@ -46,6 +50,7 @@
 
 ## 📰 更新
 
+- [ ] 加速本地模型（极速版dbot）
 - [x] 根据 *知识聚类结果* 新增8种专家角色
 - [x] 升级基于 LLM 的诊断机制:
   - [x] _任务分派 -> 并行诊断 -> 交叉审查 -> 报告生成_
@@ -54,6 +59,7 @@
 - [ ] 在多个层次上支持监控和优化工具 [🔗 链接](multiagents/tools)
 
   - [x] 监控指标 (Prometheus)
+  - [ ] 代码级别的火焰图分析，定位算子、配置等问题
   - [x] 诊断知识检索 (dbmind)
   - [x] 逻辑查询转换 (Calcite)
   - [x] 索引优化算法 (适用于 PostgreSQL)
@@ -410,14 +416,12 @@ https://github.com/Vonng/pigsty
 
 我们感谢所有对这个项目的贡献者。如果你想参与或贡献，不要犹豫！
 
+
+<span id="-contact"></span>
+
 ## 联系我们
 👏🏻欢迎加入我们的微信群
 <div align= "center">
-<img src="imgs/group.jpg" width="400px">
+<img src="imgs/group2.jpg" width="400px">
 </div>
 
-## ⭐️ 星标历史
-
-[![星标历史图表](https://api.star-history.com/svg?repos=Tsing
-
-huaDatabaseGroup/DB-GPT&type=Date)](https://star-history.com/#TsinghuaDatabaseGroup/DB-GPT&Date)

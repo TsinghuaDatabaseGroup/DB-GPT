@@ -9,23 +9,31 @@ import asyncio
 import time
 from pathlib import Path
 
-async def main(args):
-    global current_diag_time
 
-    if not os.path.exists(f"./alert_results/{str(current_diag_time)}"):
-
-        dir_path = Path(f"./alert_results/{str(current_diag_time)}")
-
+def create_dir_if_not_exists(dir_path):
+    if not os.path.exists(dir_path):
+        path = Path(dir_path)
         try:
-            dir_path.mkdir(parents=True, exist_ok=True)
+            path.mkdir(parents=True, exist_ok=True)
         except Exception as e:
             print(f"Failed to create directory {dir_path}: {e}")
 
-    multi_agents = MultiAgents.from_task(args.agent_conf_name, args)
+
+async def main(args):
+    global current_diag_time
+
+    create_dir_if_not_exists(f"./alert_results/{str(current_diag_time)}")
+
+    multi_agents, model_type = MultiAgents.from_task(args.agent_conf_name, args)
+
+    create_dir_if_not_exists(f"./alert_results/{model_type}")
+    
     report, records = await multi_agents.run(args)
 
     cur_time = int(time.time())
-    with open(f"./alert_results/examples/{str(cur_time)}.jsonl", "w") as f:
+
+
+    with open(f"./alert_results/{model_type}/{str(cur_time)}.jsonl", "w") as f:
         json.dump(records, f, indent=4)
 
     if os.path.exists(f"./alert_results/{str(current_diag_time)}"):
@@ -33,6 +41,7 @@ async def main(args):
         os.system(f"rm -rf ./alert_results/{str(current_diag_time)}")
 
     return report, records
+
 
 if __name__ == "__main__":
     

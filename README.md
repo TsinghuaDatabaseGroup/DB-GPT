@@ -22,7 +22,6 @@
 </div>
 
 
-
 <!-- <div align="center">
   <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms">
     <em style="color: red;">DiagLLM</em> 
@@ -41,6 +40,9 @@
   <a href="#-contributors">Contributors</a>
 </p>
 
+<p align="center">
+<a href="#-contact">👫 Join Us on WeChat!</a>
+</p>
 
 
 <p align="center">
@@ -86,6 +88,8 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 
 ## 📰 Updates
 
+- [ ] Extreme Speed Version for localized llms
+
 - [x] 8 new expert roles by the clustering of extracted *Knowledge*
 
 - [x] Upgrade the LLM-based diagnosis mechanism: 
@@ -101,6 +105,7 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 - [ ] Support monitoring and optimization tools in multiple levels [🔗 link](multiagents/tools)
 
     * [x] Monitoring metrics (Prometheus)
+    * [ ] Flame graph in code level
     * [x] Diagnosis knowledge retrieval (dbmind)
     * [x] Logical query transformations (Calcite)
     * [x] Index optimization algorithms (for PostgreSQL)
@@ -499,10 +504,12 @@ Other Collaborators: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](http
 
 We thank all the contributors to this project. Do not hesitate if you would like to get involved or contribute! 
 
+<span id="-contact"></span>
+
 ## Contact Information
 👏🏻Welcome to our wechat group!
 <div align= "center">
-<img src="imgs/group.jpg" width="400px">
+<img src="imgs/group2.jpg" width="400px">
 </div>
 
 <!-- ## ⭐️ Star History
