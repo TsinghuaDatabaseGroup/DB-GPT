@@ -39,7 +39,8 @@ def read_prometheus_metrics_yaml(config_path, node_exporter_instance, postgresql
                         postgresql_exporter_instance if instance_from == 'postgresql' else None
                     )
                     if not instance:
-                        raise ValueError('请输入正确的instance_from')
+                        continue
+                        # raise ValueError('请输入正确的instance_from')
                     query_list.append(item['query'].replace('$instance', instance))
                 result_dict[key] = query_list
 

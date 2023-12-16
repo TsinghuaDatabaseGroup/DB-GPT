@@ -26,7 +26,8 @@ class MultiAgents:
         
         # Prepare the config of the task
         task_config = prepare_task_config(task, args)
-        
+        model_type = task_config['llm_type']
+
         # Build the agents
         reporter = None
         agents = {}
@@ -56,7 +57,7 @@ class MultiAgents:
 
         environment: DBAEnvironment = load_environment(env_config)
         
-        return cls(agents, environment)
+        return cls(agents, environment), model_type
 
     async def run(self, args):
         """Run the environment from scratch"""
