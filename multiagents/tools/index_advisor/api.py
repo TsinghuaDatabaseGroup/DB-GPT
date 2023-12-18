@@ -21,6 +21,7 @@ def optimize_index_selection(start_time: int, end_time: int):
                     "args": {"workload": "SELECT A.col1 from A join B where A.col2 = B.col2 and B.col3 > 2 group by A.col1"}}
         Result: Command optimize_index_selection returned: "A#col2; B#col2,col3"
     """
+
     # 1. Split the workloads by database names
     databases = {}
     workload_statistics = get_workload_statistics()
