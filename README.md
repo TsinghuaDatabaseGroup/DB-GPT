@@ -174,7 +174,7 @@ rm -r package-lock.json
 npm install  --legacy-peer-deps
 ```
 
-* Configuring the Backend Address for Frontend Requests
+* configuring the Backend Address for Frontend Requests
 
 ```
 vim web_service/frontend/.env.development

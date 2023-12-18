@@ -5,7 +5,7 @@ from typing import Union
 import json
 
 # from langchain.schema import AgentAction, AgentFinish
-from multiagents.utils.utils import AgentAction, AgentFinish
+from utils.utils import AgentAction, AgentFinish
 
 from multiagents.custom_parser import OutputParserError, output_parser_registry
 from multiagents.custom_parser import OutputParser

@@ -6,7 +6,7 @@ from multiagents.agents.conversation_agent import BaseAgent
 from multiagents.environments.base import BaseEnvironment
 from multiagents.environments import DBAEnvironment
 from multiagents.initialization import load_agent, load_environment, prepare_task_config
-from multiagents.utils.utils import AGENT_TYPES
+from utils.utils import AGENT_TYPES
 from multiagents.tools.metrics import get_workload_statistics
 
 logging.basicConfig(

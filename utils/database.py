@@ -43,21 +43,24 @@ def check_index_exist(cursor, index_name):
         except psycopg2.Error as e:
             print(f"Error checking index: {e}")
             return False
-def transfer_field_type(database_type, server):
+
+def transfer_field_type(column_type, server):
     data_type = list()
     if server == 'mysql':
         data_type = [['int', 'tinyint', 'smallint', 'mediumint', 'bigint', 'float', 'double', 'decimal'],
                      ['date', 'time', 'year', 'datetime', 'timestamp']]
-        database_type = database_type.lower().split('(')[0]
+        column_type = column_type.lower().split('(')[0]
     elif server == 'postgresql':
         data_type = [['integer', 'numeric'],
                      ['date']]
-    if database_type in data_type[0]:
+
+    if column_type in data_type[0]:
         return DataType.VALUE.value
-    elif database_type in data_type[1]:
+    elif column_type in data_type[1]:
         return DataType.TIME.value
     else:
         return DataType.CHAR.value
+
 
 class DBArgs(object):
 
@@ -85,8 +88,6 @@ class Database():
     def __init__(self, args, timeout=-1):
         self.args = args
         self.conn = self.resetConn(timeout)
-
-
         # self.schema = self.compute_table_schema()
 
     def resetConn(self, timeout=-1):
@@ -101,7 +102,7 @@ class Database():
                 connect_timeout=timeout,
                 read_timeout=timeout,
                 write_timeout=timeout)
-        else:
+        elif self.args.dbtype == 'postgresql':
             if timeout > 0:
                 conn = psycopg2.connect(database=self.args.dbname,
                                             user=self.args.user,
@@ -136,7 +137,7 @@ class Database():
         while fail == 1 and i < cnt:
             try:
                 fail = 0
-                print("========== start execution", i)
+                # print("========== start execution", i)
                 cur.execute(sql)
             except BaseException:
                 fail = 1
@@ -150,11 +151,11 @@ class Database():
         cur.close()
         self.conn.close()
 
-        print("========== finish time:", time.time())
+        # print("========== finish time:", time.time())
 
         if fail == 1:
             # raise RuntimeError("Database query failed")
-            print("SQL Execution Fatal!!")
+            # print("SQL Execution Fatal!!")
 
             return 0, ''
         elif fail == 0:
@@ -178,7 +179,15 @@ class Database():
     def pgsql_query_plan(self, sql):
         try:
             #success, res = self.execute_sql('explain (FORMAT JSON, analyze) ' + sql)
-            success, res = self.execute_sql('explain (FORMAT JSON) ' + sql)
+
+            # sql starts with "set"
+            if sql.startswith("set"): # hint query
+                sqls = sql.split(";")
+                sql = sqls[0] + ';' + ' explain (FORMAT JSON) ' + sqls[1]
+            else:
+                sql = 'explain (FORMAT JSON) ' + sql
+            
+            success, res = self.execute_sql(sql)
             if success == 1:
                 plan = res[0][0][0]['Plan']
                 return plan
@@ -329,7 +338,7 @@ class Database():
             if success == 1:
                 slow_queries = []
                 for sql_stat in res:
-                    print("===== loged slow query: ", sql_stat[0],sql_stat[1],sql_stat[2])
+                    # print("===== logged slow query: ", sql_stat[0],sql_stat[1],sql_stat[2])
                     slow_queries.append({"sql": sql_stat[0], "calls": sql_stat[1], "total_time": sql_stat[2]})
                 
                 return slow_queries

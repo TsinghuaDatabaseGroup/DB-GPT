@@ -12,7 +12,7 @@ import ast
 from termcolor import colored
 from tqdm import tqdm
 
-from multiagents.utils.utils import AGENT_TYPES
+from utils.utils import AGENT_TYPES
 from multiagents.agents.conversation_agent import BaseAgent
 from multiagents.message import Message, SolverMessage, CriticMessage
 from multiagents.tools.metrics import current_diag_time

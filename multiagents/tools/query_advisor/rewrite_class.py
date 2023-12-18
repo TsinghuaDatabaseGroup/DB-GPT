@@ -1,6 +1,6 @@
 import os
 
-from multiagents.utils.database import DBArgs, Database
+from utils.database import DBArgs, Database
 import jpype as jp
 import jpype.imports
 from multiagents.tools.metrics import postgresql_conf
