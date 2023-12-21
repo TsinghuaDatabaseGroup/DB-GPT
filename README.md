@@ -41,7 +41,7 @@
 </p>
 
 <p align="center">
-<a href="#-contact">👫 Join Us on WeChat!</a>
+<a href="#-contact">👫 Join Us on WeChat!</a> <bar> <a href="https://www.benchcouncil.org/evaluation/opencs/annual.html#Achievements">🏆 Top 100 Open Project!</a>
 </p>
 
 
