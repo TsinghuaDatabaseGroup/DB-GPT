@@ -9,7 +9,7 @@
 </div>
 
 <p align="center">
-<a href="#-contact">欢迎扫码加入微信群！</a>
+<a href="#-contact">👫 欢迎扫码加入微信群！</a> <bar> <a href="https://www.benchcouncil.org/evaluation/opencs/annual.html#Achievements">🏆 Top 100 开源项目!
 </p>
 
 <p align="center">
