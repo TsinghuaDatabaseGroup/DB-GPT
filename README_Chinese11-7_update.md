@@ -4,7 +4,7 @@
 
 <div align="center">
   <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms">
-    <em style="color: red;">本地模型</em> 
+    本地模型
   </a> 🔥
 </div>
 
@@ -22,11 +22,14 @@
   <a href="#-contributors">贡献者</a>
 </p>
 
-🦾 构建您的个人数据库管理员（D-Bot）🧑‍💻, 擅长*阅读文件，使用各种工具，编写分析报告！*
+<span style="color: red;"><u>*一个重要的主版本更新即将上传！敬请期待！*</u> 📣 🔜</span>
 
 <p align="center">
     <img src="imgs/overview_v3.png" width="800px">
 </p>
+
+🦾 构建您的个人数据库管理员（D-Bot）🧑‍💻, 擅长*阅读文件，使用各种工具，编写分析报告！*
+
 
 <span id="-demo"></span>
 

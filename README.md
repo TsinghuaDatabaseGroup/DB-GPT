@@ -44,6 +44,8 @@
 <a href="#-contact">👫 Join Us on WeChat!</a> <bar> <a href="https://www.benchcouncil.org/evaluation/opencs/annual.html#Achievements">🏆 Top 100 Open Project!</a>
 </p>
 
+<span style="color: red;"><u>*An important, major version update is coming soon, stay tuned!*</u> 📣 🔜</span>
+
 
 <p align="center">
     【English | <a href="README_Chinese11-7_update.md">中文</a>】
