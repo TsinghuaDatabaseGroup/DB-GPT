@@ -4,12 +4,12 @@
 
 <div align="center">
   <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms">
-    <em style="color: red;">本地模型</em> 
+    本地模型
   </a> 🔥
 </div>
 
 <p align="center">
-<a href="#-contact">欢迎扫码加入微信群！</a>
+<a href="#-contact">👫 欢迎扫码加入微信群！</a> <bar> <a href="https://www.benchcouncil.org/evaluation/opencs/annual.html#Achievements">🏆 Top 100 开源项目!
 </p>
 
 <p align="center">
@@ -22,11 +22,14 @@
   <a href="#-contributors">贡献者</a>
 </p>
 
-🦾 构建您的个人数据库管理员（D-Bot）🧑‍💻, 擅长*阅读文件，使用各种工具，编写分析报告！*
-
 <p align="center">
     <img src="imgs/overview_v3.png" width="800px">
 </p>
+
+🦾 构建您的个人数据库管理员（D-Bot）🧑‍💻, 擅长*阅读文件，使用各种工具，编写分析报告！*
+
+**一个重要的主版本更新即将上传！敬请期待！** 📣 🔜
+
 
 <span id="-demo"></span>
 
@@ -422,6 +425,6 @@ https://github.com/Vonng/pigsty
 ## 联系我们
 👏🏻欢迎加入我们的微信群
 <div align= "center">
-<img src="imgs/group2.jpg" width="400px">
+<img src="imgs/group.png" width="400px">
 </div>
 

@@ -41,9 +41,8 @@
 </p>
 
 <p align="center">
-<a href="#-contact">👫 Join Us on WeChat!</a>
+<a href="#-contact">👫 Join Us on WeChat!</a> <bar> <a href="https://www.benchcouncil.org/evaluation/opencs/annual.html#Achievements">🏆 Top 100 Open Project!</a>
 </p>
-
 
 <p align="center">
     【English | <a href="README_Chinese11-7_update.md">中文</a>】
@@ -55,6 +54,10 @@
 </p>
 
 🦾 Build your personal database administrator (D-Bot)🧑‍💻, which is good at *reading documents, using various tools, writing analysis reports!* 
+
+**An important, major version update is coming soon, stay tuned!** 📣 🔜
+
+
 
 <!-- >Besides, to extend the database maintenance capability, we are also finetuning LLMs to support localized diagnosis, *query rewriting* and *anomaly simulation* (comming soon). -->
 
@@ -174,7 +177,7 @@ rm -r package-lock.json
 npm install  --legacy-peer-deps
 ```
 
-* Configuring the Backend Address for Frontend Requests
+* configuring the Backend Address for Frontend Requests
 
 ```
 vim web_service/frontend/.env.development
@@ -509,7 +512,7 @@ We thank all the contributors to this project. Do not hesitate if you would like
 ## Contact Information
 👏🏻Welcome to our wechat group!
 <div align= "center">
-<img src="imgs/group2.jpg" width="400px">
+<img src="imgs/group.png" width="400px">
 </div>
 
 <!-- ## ⭐️ Star History

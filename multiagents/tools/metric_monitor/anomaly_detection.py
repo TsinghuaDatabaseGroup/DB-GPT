@@ -1,6 +1,6 @@
 import numpy as np
 import requests
-from multiagents.utils.yaml_utils import read_yaml
+from utils.yaml_utils import read_yaml
 
 
 def prometheus(url, params):

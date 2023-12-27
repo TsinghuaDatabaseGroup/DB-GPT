@@ -6,7 +6,7 @@ from prompt_templates.Reflexion_prompts import MAKE_REFLEXION_USER_PROMPT
 from typing import List, NamedTuple, Optional, Union
 from termcolor import colored
 from string import Template
-from multiagents.utils.utils import AgentAction, AgentFinish
+from utils.utils import AgentAction, AgentFinish
 from multiagents.memory import BaseMemory, ChatHistoryMemory
 import numpy as np
 import re

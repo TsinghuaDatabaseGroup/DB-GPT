@@ -1,11 +1,11 @@
-from multiagents.utils.yaml_utils import read_yaml, read_prometheus_metrics_yaml
-from multiagents.utils.server import obtain_slow_queries, obtain_anomaly_time
+from utils.yaml_utils import read_yaml, read_prometheus_metrics_yaml
+from utils.server import obtain_slow_queries, obtain_anomaly_time
 from our_argparse import args
 import warnings
 from multiagents.tools.metric_monitor.anomaly_detection import prometheus
 import numpy as np
 from termcolor import colored
-from multiagents.utils.database import DBArgs, Database
+from utils.database import DBArgs, Database
 from multiagents.knowledge.knowledge_extraction import KnowledgeExtraction
 import time
 import json
@@ -28,6 +28,7 @@ if args.enable_prometheus == False:
                 for k, v in anomalies_list[i]["exceptions"][c].items():
                     if k not in exceptions:
                         exceptions[k] = v
+
             anomalies_list[i]["exceptions"] = exceptions
 
 # [metric chart folder]

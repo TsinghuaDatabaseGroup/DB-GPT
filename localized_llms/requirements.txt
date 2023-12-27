@@ -3,6 +3,7 @@ einops
 flash_attn
 msgspec
 numpy
+protobuf
 pydantic
 pytrie
 setuptools

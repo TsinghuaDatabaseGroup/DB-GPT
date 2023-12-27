@@ -17,10 +17,10 @@ from multiagents.message import SolverMessage, Message, CriticMessage
 from multiagents.memory import BaseMemory, ChatHistoryMemory
 from multiagents.agents import agent_registry
 from multiagents.agents.base import BaseAgent
-from multiagents.utils.utils import AgentCriticism
+from utils.utils import AgentCriticism
 from multiagents.tools.api_retrieval import APICaller
 from multiagents.reasoning_algorithms import UCT_vote_function, node_to_chain
-from multiagents.utils.utils import AgentAction, AgentFinish
+from utils.utils import AgentAction, AgentFinish
 from multiagents.reasoning_algorithms import base_env
 from prompt_templates.Report_prompts import  ANOMALY_DESC_PROMPT, ANOMALY_TITLE_PROMPT
 

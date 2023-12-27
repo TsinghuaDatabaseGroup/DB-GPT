@@ -11,7 +11,7 @@ from pathlib import Path
 from multiagents.multiagents import MultiAgents
 from multiagents.tools.metrics import database_server_conf, db
 from multiagents.tools.metrics import get_workload_statistics, get_slow_queries, WORKLOAD_FILE_NAME, BATCH_ANOMALY_FILE_NAME
-from multiagents.utils.server import obtain_slow_queries
+from utils.server import obtain_slow_queries
 
 
 async def main(process_id):
