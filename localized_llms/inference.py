@@ -118,10 +118,10 @@ class BaichuanInference(Inference):
         return output
 
 class DiagBaichuan2Args(BaseModel):
-    load: str = Field(default="diag-baichuan2")
+    load: str = Field(default="curtis-sun/diag-baichuan2")
 
 class DiagBaichuan2_4bitArgs(BaseModel):
-    load: str = Field(default="diag-baichuan2-4bit")
+    load: str = Field(default="curtis-sun/diag-baichuan2-4bit")
 
 baichuan2_inference = BaichuanInference(DiagBaichuan2Args())
 
