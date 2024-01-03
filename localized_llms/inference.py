@@ -1,19 +1,10 @@
-import inspect
 import re
 import time
 import re
-import bmtrain as bmt
 import logging
 from pydantic import BaseModel, Field
-
-from .cpm.llama.models import Llama
-from .cpm.llama.models import LlamaConfig
-from .cpm.baichuan.models import Baichuan
-from .cpm.baichuan.models import BaichuanConfig
-from transformers import AutoTokenizer
-from .cpm.llama.generation import LlamaBeamSearch
-from .cpm.baichuan.generation.baichuan import BaichuanBeamSearch
-from .cpm.utils import logger
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers.generation.utils import GenerationConfig
 
 class Inference:
     def __init__(self, args):
@@ -21,21 +12,14 @@ class Inference:
         self.tokenizer = None
         self.model = None
 
-    def initialize(self):
-        if "checkpointing" in inspect.signature(bmt.init_distributed).parameters:
-            bmt.init_distributed(checkpointing=False, seed=self.args.seed)
-        else:
-            bmt.init_distributed(seed=self.args.seed)
-
     def setup_model(self):
         start = time.time()
         model = self.get_model()
-        logger.info("load model in {:.2f}s".format(time.time() - start))
+        logging.info("load model in {:.2f}s".format(time.time() - start))
 
         start = time.time()
         tokenizer = self.get_tokenizer()
-        bmt.synchronize()
-        logger.info("load tokenizer in {:.2f}s".format(time.time() - start))
+        logging.info("load tokenizer in {:.2f}s".format(time.time() - start))
 
         return tokenizer, model
 
@@ -106,125 +90,39 @@ class Inference:
     def get_tokenizer(self):
         raise NotImplementedError
     
-    def inference(self, messages, max_in_len, max_length, beam_size):
+    def inference(self, messages, generation_config=None):
         raise NotImplementedError
-    
-class LlamaInference(Inference):
-    def get_tokenizer(self):
-        tokenizer = AutoTokenizer.from_pretrained(self.args.vocab)
-        return tokenizer
-
-    def get_model(self):
-        config = LlamaConfig.from_json_file(self.args.model_config)
-        if self.args.flash == "none":
-            config.use_flash_attn = False
-        else:
-            config.use_flash_attn = True
-            if self.args.flash == "1d":
-                config.flash_attn_mask_shape = "1d"
-            else:
-                config.flash_attn_mask_shape = "2d"
-                if self.args.flash == "triton":
-                    config.flash_impl = "triton"
-                elif self.args.flash == "cuda":
-                    config.flash_impl = "cuda"
-        model = Llama(config)
-        if self.args.load is not None:
-            bmt.print_rank("args.load is not None, start to load checkpoints " + self.args.load)
-            bmt.load(model, self.args.load)
-        else:
-            bmt.print_rank("args.load is None, start to initialize parameters")
-            bmt.init_parameters(model)
-        return model
-
-    def inference(self, messages, max_in_len, max_length, beam_size):
-        if self.model is None:
-            self.initialize()
-            self.tokenizer, self.model = self.setup_model()
-            bmt.print_rank("finish loading")
-        
-        beam_search = LlamaBeamSearch(
-            model=self.model,
-            tokenizer=self.tokenizer,
-            max_in_len=max_in_len
-        )
-
-        input = {"input": messages}
-        logging.debug(str(messages))
-        output = beam_search.generate([input], max_length=max_length, beam_size=beam_size)[0]
-        output = output.replace("</s>", "").strip()
-        logging.debug(output)
-        return output
     
 class BaichuanInference(Inference):
     def get_tokenizer(self):
-        tokenizer = AutoTokenizer.from_pretrained(self.args.vocab, trust_remote_code=True)
+        tokenizer = AutoTokenizer.from_pretrained(self.args.load, trust_remote_code=True)
         return tokenizer
 
-
     def get_model(self):
-        config = BaichuanConfig.from_json_file(self.args.model_config)
-        if self.args.flash == "none":
-            config.use_flash_attn = False
-        else:
-            config.use_flash_attn = True
-            if self.args.flash == "1d":
-                config.flash_attn_mask_shape = "1d"
-            else:
-                config.flash_attn_mask_shape = "2d"
-                if self.args.flash == "triton":
-                    config.flash_impl = "triton"
-                elif self.args.flash == "cuda":
-                    config.flash_impl = "cuda"
-        model = Baichuan(config)
-        if self.args.load is not None:
-            bmt.print_rank("args.load is not None, start to load checkpoints" + self.args.load)
-            bmt.load(model, self.args.load)
-        else:
-            bmt.print_rank("args.load is None, start to initialize parameters")
-            bmt.init_parameters(model)
+        model = AutoModelForCausalLM.from_pretrained(self.args.load, device_map="auto",trust_remote_code=True)
+        model.generation_config = GenerationConfig.from_pretrained(self.args.load)
         return model
 
-    def inference(self, messages, max_in_len, max_length, beam_size):
+    def inference(self, messages, generation_config=None):
         if self.model is None:
-            self.initialize()
             self.tokenizer, self.model = self.setup_model()
-            bmt.print_rank("finish loading")
         
-        beam_search = BaichuanBeamSearch(
-            model=self.model,
-            tokenizer=self.tokenizer,
-            max_in_len=max_in_len
-        )
-
-        input = {"input": messages}
+        cur_generation_config = self.model.generation_config
+        if generation_config is not None:
+            for k, v in generation_config.items():
+                cur_generation_config[k] = v
+        
         logging.debug(str(messages))
-        output = beam_search.generate([input], max_length=max_length, beam_size=beam_size)[0]
-        output = output.replace("</s>", "").strip()
+        output = self.model.chat(self.tokenizer, messages, generation_config=cur_generation_config)
         logging.debug(output)
         return output
 
-class DiagLlama2Args(BaseModel):
-    load: str = Field(default="xxxx/llama2-13b/diag-llama2.pt")
-    model_config: str = Field(default="xxxx/llama2-13b/config.json")
-    vocab: str = Field(default="xxxx/llama2/llama-13b")
-    seed: int = Field(default=1234)
-    flash: str = Field(default="none")
-
-class DiagCodeLlamaArgs(BaseModel):
-    load: str = Field(default="xxxx/codellama-13b/diag-codellama.pt")
-    model_config: str = Field(default="xxxx/codellama-13b/config.json")
-    vocab: str = Field(default="xxxx/codellama-13b")
-    seed: int = Field(default=1234)
-    flash: str = Field(default="none")
-
 class DiagBaichuan2Args(BaseModel):
-    load: str = Field(default="xxxx/baichuan2-13b/diag-baichuan2.pt")
-    model_config: str = Field(default="xxxx/baichuan2-13b/config.json")
-    vocab: str = Field(default="xxxx/baichuan2-13b")
-    seed: int = Field(default=1234)
-    flash: str = Field(default="none")
+    load: str = Field(default="diag-baichuan2")
 
-llama2_inference = LlamaInference(DiagLlama2Args())
-codellama_inference = LlamaInference(DiagCodeLlamaArgs())
+class DiagBaichuan2_4bitArgs(BaseModel):
+    load: str = Field(default="diag-baichuan2-4bit")
+
 baichuan2_inference = BaichuanInference(DiagBaichuan2Args())
+
+baichuan2_4bit_inference = BaichuanInference(DiagBaichuan2_4bitArgs())
