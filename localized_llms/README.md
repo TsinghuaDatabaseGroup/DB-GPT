@@ -27,6 +27,6 @@ class DiagBaichuan2Args(BaseModel):
     load: str = Field(default="diag-baichuan2")
 ```
 
-Step 3: Configure Agents Equipped with localized LLM. Take [config_diag_baichuan2.yaml](../multiagents/agent_conf/config_diag_baichuan2.yaml) as example.
+Step 3: Configure Agents Equipped with localized LLM, e.g., rename [config_diag_baichuan2.yaml](../multiagents/agent_conf/config_diag_baichuan2.yaml) as config.yaml.
 
 Then run the project the same as with OpenAI APIs.
