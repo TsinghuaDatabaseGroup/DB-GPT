@@ -425,6 +425,6 @@ https://github.com/Vonng/pigsty
 ## 联系我们
 👏🏻欢迎加入我们的微信群
 <div align= "center">
-<img src="imgs/group.png" width="400px">
+<img src="imgs/group3.png" width="400px">
 </div>
 
