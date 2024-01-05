@@ -17,21 +17,16 @@ Step 1: Install python packages.
 pip install -r requirements.txt
 ```
 
-Step 2: Download Pretrained Model Parameters from https://huggingface.co/curtis-sun/D-Bot/tree/main.
+(Optional) Step 2: Download Pretrained Model Parameters: 
+* [diag-baichuan2](https://huggingface.co/curtis-sun/diag-baichuan2/tree/main), fine-tuned from Baichuan2-13B
+* [diag-baichuan2-4bit](https://huggingface.co/curtis-sun/diag-baichuan2-4bit/tree/main), a 4bit version of diag-baichuan2
 
-Step 3: Pass File Paths to [inference.py](inference.py):
-
+You may also require to replace the ``load'' argument in [inference.py](inference.py) with your download path, e.g., 
 ```Python
 class DiagBaichuan2Args(BaseModel):
-    load: str = Field(default="xxxx/baichuan2-13b/diag-baichuan2.pt")
-    model_config: str = Field(default="xxxx/baichuan2-13b/config.json")
-    vocab: str = Field(default="xxxx/baichuan2-13b")
+    load: str = Field(default="diag-baichuan2")
 ```
 
-Replace 'xxxx' with download path.
-
-Step 4: Configure Agents Equipped with diag-baichuan2:
-
-Rename [config_diag_baichuan2.yaml](../multiagents/agent_conf/config_diag_baichuan2.yaml) to be 'config.yaml'.
+Step 3: Configure Agents Equipped with localized LLM, e.g., rename [config_diag_baichuan2.yaml](../multiagents/agent_conf/config_diag_baichuan2.yaml) as config.yaml.
 
 Then run the project the same as with OpenAI APIs.

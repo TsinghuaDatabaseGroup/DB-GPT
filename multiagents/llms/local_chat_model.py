@@ -1,21 +1,8 @@
-import logging
-import os
-from typing import Dict, List, Optional, Union
-from pydantic import BaseModel, Field
+from typing import List
 from multiagents.llms.base import LLMResult
-from . import llm_registry
 from .base import BaseChatModel, BaseCompletionModel, BaseModelArgs
-import requests
-import json
-import aiohttp
-import asyncio
 import time
-import random
 import re
-from termcolor import colored
-import sys
-sys.path.append("../../../")
-from localized_llms.inference import codellama_inference
 
 def remove_charts(text):
     pattern = r'\[chart\].*?\.html'
@@ -23,28 +10,12 @@ def remove_charts(text):
 
     return output
 
-class DiagCodeLlamaChatArgs(BaseModelArgs):
-    max_in_len: int = Field(default=3072)
-    beam_size: int = Field(default=2)
-    max_length: int = Field(default=1000)
-
-@llm_registry.register("diag-codellama")
-class DiagCodeLlamaChat(BaseChatModel):
-    args: DiagCodeLlamaChatArgs = Field(default_factory=DiagCodeLlamaChatArgs)
+class LocalChatModel(BaseChatModel):
     conversation_history: List = []
+    inference: object
 
     def __init__(self, max_retry: int = 100, **kwargs):
-        super().__init__(**kwargs)  # Call the constructor of the base class
-        args = DiagCodeLlamaChatArgs()
-        args = args.dict()
-
-        self.conversation_history = []
-
-        for k, v in args.items():
-            args[k] = kwargs.pop(k, v)
-        if len(kwargs) > 0:
-            logging.warning(f"Unused arguments: {kwargs}")
-        super().__init__(args=args, max_retry=max_retry)
+        super().__init__(max_retry = max_retry, **kwargs)  # Call the constructor of the base class
         
 
     def _construct_system_messages(self, prompt: str):
@@ -72,12 +43,12 @@ class DiagCodeLlamaChat(BaseChatModel):
             role = message["role"]
             if role == "function":
                 role = "assistant"
-            new_messages.append({"role": role, "content": codellama_inference.preprocess(message["content"])})
+            new_messages.append({"role": role, "content": self.inference.preprocess(message["content"])})
         
-        mark_idx = codellama_inference.classify(new_messages)
-        new_messages = codellama_inference.refine_messages(new_messages, mark_idx)
-
-        output = codellama_inference.inference(new_messages, self.args.max_in_len, self.args.max_length, self.args.beam_size)
+        mark_idx = self.inference.classify(new_messages)
+        new_messages = self.inference.refine_messages(new_messages, mark_idx)
+        
+        output = self.inference.inference(new_messages)
 
         output = remove_charts(output)
         # import pdb; pdb.set_trace()
