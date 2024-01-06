@@ -50,7 +50,7 @@
 
 
 <p align="center">
-    <img src="imgs/overview_v3.png" width="800px">
+    <img src="imgs/tsinghua_dbgpt.png" width="800px">
 </p>
 
 🦾 Build your personal database administrator (D-Bot)🧑‍💻, which is good at *reading documents, using various tools, writing analysis reports!* 
