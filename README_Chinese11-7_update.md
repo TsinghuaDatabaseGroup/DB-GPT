@@ -23,7 +23,7 @@
 </p>
 
 <p align="center">
-    <img src="imgs/tsinghua_dbgpt.png" width="800px">
+    <img src="imgs/overview_v3.png" width="800px">
 </p>
 
 🦾 构建您的个人数据库管理员（D-Bot）🧑‍💻, 擅长*阅读文件，使用各种工具，编写分析报告！*
