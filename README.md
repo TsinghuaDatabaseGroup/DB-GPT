@@ -96,7 +96,7 @@ Python 3.10.12
 $ git clone https://github.com/TsinghuaDatabaseGroup/DB-GPT.git
 
 # 进入目录
-$ cd Langchain-Chatchat
+$ cd DB-GPT
 
 # 安装全部依赖
 $ pip3 install -r requirements.txt 
