@@ -1,9 +1,7 @@
 
 def remove_lines_with_prefix(filename, prefix):
 
-    new_lines = """
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
-    db = Database(dbargs, timeout=-1)"""
+    new_lines = ""
 
     with open(filename, 'r') as file:
         lines = file.readlines()

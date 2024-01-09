@@ -1,0 +1,82 @@
+·CPU高
+如果CPU高是数据库进程导致的，通常是由于不优SQL导致，本部分仅关注由于用户语句导致的CPU异常。
+
+【步骤一】如果是持续CPU高，可查询如下两个视图，对cputime字段进行逆序排序即可识别。
+·dbe_perf.statement-可查询分布式本CN/集中式DN发起的历史语句信息
+·dbe_perf.summarystatement-可查询分布式所有CN/集中式本DN发起的历史语句信息
+
+[步骤二]如果当前CPU高，表示正在执行的SQL语句CPU消耗较高·查询pg_stat_activity获取正在运行的SQL的query_id
+·使用上一步的query_id，查询pg_thread_wait_status获取正在运行的SQL的Iwtid·使用操作系统命令top-Hp gaussdb进程号，查看相应lwtid(PID)的CPU使用率
+·如果确实CPU占用较高，可能为目标SQL;但本步骤假设是SQL运行时间较久，几个查询对应的SQL在运行，线程号不变，具体使用中，可灵活运行。
+
+[步骤三]如果过去某段时间内CPU高，可参考本章节性能抖动部分识别目标SQL
+
+[步骤四]可查询慢SQL，通常如果说语句的CPU消耗较高，慢SQL语句的cpu_time和db_time差距就较小。
+·登录至各CN/DN结点查询相应时间段的statement history表
+·使用全局接口dbe_perf.get_global_full_sql_by_timestamp(开始时间”，“结束时间”)·注意:需要切换至postgres库
+
+[步骤五]如果上述步骤找到的语句，CPU消耗过高可能是间隔性的，可以使用动态接口，抓取后续执行 Query的详细信息
+·抓此SQL(unique sql id是3182919165)的FULL SQL L2:
+select * from dynamic_func_control(LOCAL’STMTTRACK“3182919165”，“L2" Y');
+·取消抓取SQL(unique sqlid是3182919165) select * from
+dynamic_func_control('LOCAL’STMTUNTRACK“3182919165Y);·查看所有在抓取的SQL状态
+select * from dynamic_func_control(LOCAL’'STMT，LISTO');·取消抓取所有SQL
+select*from dynamicfunc_control(LOCAL'STMT'CLEANO');
+·最终在动态接口命令下达后，后续有目标SQL运行的话，会记录到statement history表内，此处一定注意:动态接口一定要评估好目标SQL的执行次数，不可长开，否则会导致statement history表占用空间过高;使用后，记得清理动态接口内所有SQL语句。
+
+==========================================================================================
+
+·IO高
+通常可使用pidstat/iotop识别到导致IO高的线程，有可能是其它内核后台线程导致的IO高，比如刷WAL线程，这些场景不具有代表性，而且和特性业务场景强关，本部分仅关注由于用户语句导致的O异常。
+
+[步骤一]如果持续IO高，可查询dbe_perf.statement/dbeperfsummary statement内
+nblocks fetched/nblockshit字段，通常导致读高的情况，两个字段的差值会比较高，两者差值表示物理读的次数
+
+[步骤二]如果当前IO高，可查询pgthread_waitstatus视图，查询waitstatus/wait event字段，通常 Query两者状态为1OEVENT/DataFileRead表示有物理读产生
+
+[步骤三]如果过去某段时间1O高，可查询视图或者表dbeperflocal activesession/qsasp中Query等待事件为:IO_EVENT/DataFileRead的记录，具体细节可参考本章节性能抖动部分
+
+[步骤四]查询慢SQL内n_blocks_fetched/n_block_shit字段差值较高记录，或者查询dataio_time较高记录;如果慢SQL开启了L2details字段内相应events也会有相关events(DataFileRead)耗时显示，注意:仅在内核503版本有此能力。
+·解析details字段:pgcatalogstatement detail decode(details,'plaintext'true)[步骤五]使用动态接口(见本章CPU高部分)，结合步骤四也可识别异常SQL。
+
+==========================================================================================
+
+·内存高
+本节内容仅讨论数据库内核内部内存高分析定位。
+
+[步骤一]查询dbe_perf.memory_nodedetail视图，明确内存占用点·max_process_memory-进程最大使用内存
+·process used memory-进程已经使用的内存·max_dynamic_memory-最大可使用动态内存·dynamic used memory-已使用动态内存 dynamic used shrctx-已使用的共享动态内存
+通常我们仅需要关注maxdynamicmemory和dynamic_used_memory差距，如果dynamic内存不足，会导致用户查询报错，dynamic_usedmemory包含两部分内容:(1)用户session上的内存消耗，比如:计划缓存、排序等:(2)内核模块的内存消耗，如:Global Sys CacheUnique SQL等
+
+[步骤二]dynamic_usedshrctx较小，查询dbe_perf.session_memory_detail获取到不同Session的内存消耗，通常来讲:用户会话数和用户每个session上内存占用都会导致动态内存异常问题。
+
+[步骤三]dynamic used shrctx较大，查询dbe perf.shared memorydetail可获取到异常内存消耗的 context，通常此处有过多的异常消耗，多数情况下为用户session上的内存异常消耗。
+
+==========================================================================================
+
+·异常等待事件(包含并发更新)
+异常等待事件导致的整体慢，通常需要先识别到异常等待事件，分析此等待事件是否有可能导致性能慢，然后再去想办法消减异常等待事件，常见等待事件相关处理手段，可参考“整体性能慢-等待事件分析”章节（Chapter 1.2）。
+
+【步骤一】当前性能慢
+·查询pg thread wait status，获取当前多数会话正在等待的事件
+
+[步骤二]过去性能慢
+过去短时间内性能慢，查询dbe perf.local active session。两天内的性能慢，查询gsasp表(postgres库内)
+
+[步骤三]排查异常慢SQL
+·查询statement history表内details字段(内核需要503版本及以上)，需要切换至postgres库内
+·使用pgcatalogstatement detaildecode(details,plaintext’true)函数解析异常events
+
+[步骤四]一直慢
+·可排查dbe_perfwaitevents，按total_waittime或者avg_waittime进行逆序排序
+·识别top events，可参考“整体性能慢-等待事件分析章节（Chapter 1.2）
+
+==========================================================================================
+
+·性能抖动
+小时级性能抖动，可使用WDR分析;分钟级性能抖动，可通过ASP(Active Session Profile)的相关视图和表进行分析识别。
+·ASP默认每秒采样活跃会话信息，然后存入内存(dbe_perf.local_active_session)，默认内存存储10W条记录，满后按十分之一采样率下盘(gs_asp)。所以理想情况下，ASP内存视图存储每秒的会话数据，物理表存储以10秒为间隔存储会话数据
+[步骤一]对于短时间秒级性能抖动，分析相应时间点的dbe_perf.local_active_session,可排查点如下
+·异常等待事件-当时SQL的异常等待事件，可参考"整体性能慢-等待事件分析章节（Chapter 1.2）。异常SQL-分析某些SQL出现的频率变化，以及执行速度，如多次采样均被采集到，即可反向分析到 SQL执行时间
+·异常连接数变化-比如业务突然连接增加
+[步骤二]对于两天内秒级性能抖动，分析相应时间点的gs_asp表，排查点参考上一步。

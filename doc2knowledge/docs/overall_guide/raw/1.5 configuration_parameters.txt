@@ -1,0 +1,109 @@
+
+关键参数调优
+描述
+本文档主要推述现网中需要重点关注的参数
+
+步骤
+1. 查看数据库中参数取值。
+ 
+2. 内存相关参数。
+· mmx_process_memory
+	参数说明：设置一个数据库节点可用的最大物理内存，
+	当该值设置不合理，即大于服务器物理内存，可能导致操作系统QOW问题，设置时根据业务的实际情况和服务器的配置进行适当的调整。
+· shared_buffers
+	参数说明：共享内存大小。
+· work mem
+	参数说明：内部排序操作和Hash表在开始写入临时疆盘文件之前使用的内存大小，ORDER BY,DISTINCT和merge joins等用到排序操作，Hash表在散列连接，散列为基 础的聚集、散列为基础的IN子查询处理中用到。
+	设置建议：依据查询特点和并发来确定，若vork mcm限定的物理内存不够，算子运算数据将写入临时表空间，性能穷化。
+	在有大量排序落盘的场景下，调大此参数，具体值可以根据实际需要内存的情况和内存剩余情况调整。
+ 
+	该参数是session级别的参数，若调大此参数，建议只调整需要调整的session,不要全局修改，否则并发大的场景下，容易导致内存不足。
+
+· maintenance_work_mem
+	参数说明：维护性操作，比如VACULM、CREATE INOEX等，可使用的最大的内存。该参数的设置公影响维护性操作的执行效率。
+	设置建议：在执行维护性操作的时候，根据需要内存情况和内存剩余情况，适当调大此参数。
+
+3. 流控相关参数。
+· recovery_time_target
+	参数说明：可以保证主机与备机切换时能够在recovery time target秒完成日志写入和回放，保证备机能够快速升主。0是指不开启日流控。
+	设置建议：云上集群安装后默认值为60,保证TO时间为805。如果估算出TO时间无法侯证605时，会通过流拉，来限制性能。在大并发日志写入量大的场最下，会影 响性能，
+	当业务并发大，对性能要求高，对RTO要求不高，可以将此参数设置为0,设置为0之后，提升性能，但是RT0无法保证。
+	参数范围为0.1“3600.根据RTO和性能要求，调整适当的值。
+· recovery_parse_workers + recovery_redo_sorkers
+	两个参数配合使用，用于开始和关闭极致RT0,降低主备差异，保证RT0,开启极致RTO需要关闭备机读。
+	recvery_parse_workers: 极致RTO特性中Parsekedokecord线程的数量。
+	recovery_redo_vorkers: 极致RTO特性中每个ParseRedoRecord线程对应的PageRedoforker数量。
+	这两个参数消EN 的CN,  当 CU 充足的情况下，可以调大造参数，均设置为1表示关闭极政0。
+
+4. 线程池相关参数
+· enable_thread_pool
+	参数说明：控制是否使用线程池功能。 om表示开启线程池功能， of 表示不开启线程池功能。
+	设置建议：生产环境，保证性能，建议开自。
+· thread_pool_attr
+	参数设明：用于拉制线程地功能的评细属性，该参数仅在enable_thread_pool打开后生效，仅sysamin用户可以访问。
+	该参数分为3个部分， 'thread_num,group_num,cpubind_into’,这3个部分的具体含义如下：
+	thread_num,线程池中的线程总数，取值范围是0～4096。其中0的含义是数部库根据系统CPU cores的数量来白动配置线程地的线程数，如果参数值大于0,线程池中的
+线程数等于thread_num, 线程池大小推荐根据硬件配置设置，计算公式如下： thread_num = CPU核数*[3~5],thread_num最大值为4096。
+	group_num线程池中的线程分组个数，取做配围是0～64,其中0的含义是数据库根据系统NUMA组的个数来自动配置线程池的线程分组个数，如果参查值大于0,线程
+池中的线程组个数等于group_num.
+	cpubind_info; 线程池是否绑核的配置参数。可选择的配置方式有以下几种：
+	1.  ‘(nobind)’; 线程不做绑核。
+	2   ‘(allbind)’,利用当前系统所有能查询到的CPU core做线程绑核。
+	3.'(nodebind:1.2)';	利用NA 组1,2中的CPU core进行佛核。
+	4.'(cpubind:0-30)';	利用0-30号CPU core进行绑核。
+	5. ‘(nuabind:0-30)';	在NUA 组内利用0-30号CPU core进行绑核。该参数不区分大小写。
+
+	设置建议：
+	thresd_num:CU核数*[3~5],最大值为4096。如果资源充足，可适当调大
+	group_num:  2
+	cpubind_info: nobind
+
+5. 连接相关参数。
+· max_connections
+	参数说明：允许和数据库连接的最大并发连接数。
+	设置建议：调整同时需要关注内存相关参数的值。
+	未开启GPC的计算公式
+	max_connections_dn = (max_process_memory_dn - shared_buffers_dn) * 0.8 * IO24 / 每个session占用内存
+	max_connections_cn = max_connections_dn/3 ~ max_connections_dn/4
+	(max_process_memory_dn - shared_buffers_dn) * 0.8 近似于动态内存大小
+	开息GPC: 根据实际需要，设置参数，注意避免内存不足。
+
+说 明
+存在max_connections相关和联动的参数，调整之前，请确定相关参数是否需要同步修改。
+
+7. 自动清理相关参数。
+可以根据实际需要，调整如下参数来控制自动清理的。
+如果更新操作多，础查影账适速，可以调整如下参数，使得自动消理频累。
+频累自动消理，会带来IO的开销，词整的时候需要监控IO的开销。
+ 
+根据实际情况，调整到上述两种情况的合理值。
+·autovacuum_vacuum_scale_factor	
+	参数说明：设置触发一个VACUM时增加到autovacuum_vacuum_thresho1d的表大小的缩放系数。
+·autovacuum_analyze_scale_factor
+	参数说明：设置触发一个ANALYE时增加Hautovacoun_analyze_threshold的表大小的缩放系数，
+·vacuun_freeze_table_age
+	参数说明：指定VACUUM对全表的扫描冻结元组的时间，如果当前事务号与表ps_class.relfrozenx1d64字段的差值已经大于参数指定的时间时，VACUU对全表进行扫 描。
+· vacuun_freeze_min_age
+	参数说明：指定VACUN在扫描一个表时用于判断是否用FrozenXID普换记录的min字段(在同一个事务中)。
+· vacum_cost_limit
+	参数设明：设置清理进程休眠的开销限制，
+
+8. 集群只读相关参数。
+· enable_transaction_read_only
+	参数说明：控制是否打开cm_server世盘自动阈值检测功能，该功能打开后，当磁盘使用率大于datastorage_threshold_value_check值时，cm_server会自动将数据库 设置为只读模式
+	设置建议：on
+· datastorage_threshold_valwe)check
+	参数说明：设置数据库只读模式的磁盘占用阈值，当数据目录所在础盘占用超过这个阈值，自动将数据库设置为只读模式。
+	设置建议：默认值85,根据实际业务需要来调整。
+
+9. 脏页相关参数。
+· pagewriter_sleep
+	参数说明：设置用于增量检查点打开后，pageariter线程每隔pugeriter sleep的时间别一批脏页下盘。当脏页占据stared buffers的比例达到dirty_page_percent_max时，每批页面数量以设定的max_io_capacity计算出的值刷页，其余情况每批页面数量按比例相对减少。
+· dirty_page_percent_max
+	参数说明：设置用于增量检查点打开后脏页数量占shared_buffers的百分比，达到这个设定值时，后台刷页线程将以设置的max_io_cancity计算出的最大值刷脏页。 
+· max_io_capacity
+	参数说明，设置后端写进程批量别页每秒的IO上限，需要根据具体业务场最和机器磁盘IO能力进行设置，要求RTO很短时间或者数据量比共享内存大多倍的情况，业务访问数据量又是随机访问时，读值不宜过小，设置较小的max_io_capacity会减小后端写进程剧页个数，如果业务验发页面淘汰多时，该值设置小会影响业务。
+
+	当业务场景使得日志写入量大，未落盘脏页多，数量接近shared_baffers/8KB时，并持续不降，存在影响性能的可能，可以通过联动调整上述三个参数来提高刷页速 度。
+
+	需要边调整边观察业务和IO,防止使用IO过多导致业务的影响。

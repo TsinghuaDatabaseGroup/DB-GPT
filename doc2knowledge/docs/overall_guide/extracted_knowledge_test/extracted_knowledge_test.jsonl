@@ -1,0 +1,151 @@
+{
+    "0": {
+        "source_sections": "['1 title.txt', '1.1.1 overall_performance.txt']",
+        "rule": {
+            "blocks": [
+                {
+                    "name": "overall_performance",
+                    "content": "This document provides an overview of how to diagnose and analyze overall performance issues in a database. It suggests steps to understand the background of the performance issue, determine if the bottleneck is in the database kernel, check for system resource issues such as CPU, IO, and memory, analyze network anomalies, investigate concurrency problems, examine database configuration, identify abnormal wait events, and optimize slow SQL queries. The document also mentions that there is no fixed method for quick recovery and it depends on the specific problem.",
+                    "metrics": [
+                        "CPU_usage",
+                        "IO_usage",
+                        "memory_usage",
+                        "network_anomalies",
+                        "concurrency_problems",
+                        "database_configuration",
+                        "abnormal_wait_events",
+                        "slow_SQL_queries"
+                    ],
+                    "steps": "1. Understand the background of the performance issue\n2. Determine if the bottleneck is in the database kernel\n3. Check for system resource issues such as CPU, IO, and memory\n4. Analyze network anomalies\n5. Investigate concurrency problems\n6. Examine database configuration\n7. Identify abnormal wait events\n8. Optimize slow SQL queries"
+                },
+                {
+                    "name": "waiting_events",
+                    "content": "This document provides an analysis of waiting events in database performance. It describes common waiting events and how to analyze and handle them. The document lists various types of waiting events, such as waiting for data to be sent, executing sort operations, waiting for WAL log synchronization, and waiting for other nodes. It also provides steps for analyzing and addressing these waiting events.",
+                    "metrics": [
+                        "waiting_events"
+                    ],
+                    "steps": "1. Identify the types of waiting events\n2. Analyze the impact of waiting events on performance\n3. Determine the root cause of waiting events\n4. Take appropriate actions to address the waiting events"
+                },
+                {
+                    "name": "view_analysis",
+                    "content": "This document provides a guide for analyzing and diagnosing performance issues in a database. It focuses on three main causes of slow performance: high CPU usage, high IO usage, and high memory usage. The document provides step-by-step instructions for identifying and analyzing the SQL queries that are causing these performance issues. It also discusses how to analyze and diagnose performance fluctuations and abnormal wait events.",
+                    "metrics": [
+                        "CPU_usage",
+                        "IO_usage",
+                        "memory_usage",
+                        "SQL_queries",
+                        "performance_fluctuations",
+                        "abnormal_wait_events"
+                    ],
+                    "steps": "1. Identify the causes of slow performance: high CPU usage, high IO usage, and high memory usage\n2. Identify the SQL queries that are causing the performance issues\n3. Analyze and diagnose performance fluctuations\n4. Analyze and diagnose abnormal wait events"
+                },
+                {
+                    "name": "single_slow_queries",
+                    "content": "The document discusses the problem of single slow queries in GaussDB (openGauss) and provides steps to diagnose and optimize these queries. The document suggests identifying the target SQL query, collecting statistics and information related to the query and the database configuration, and analyzing the performance bottlenecks of the query. It also provides different approaches to analyze and troubleshoot slow queries based on their characteristics (e.g., long-running, consistently slow, or intermittent).",
+                    "metrics": [
+                        "slow_queries",
+                        "target_SQL_query",
+                        "statistics",
+                        "database_configuration",
+                        "performance_bottlenecks"
+                    ],
+                    "steps": "1. Identify the target SQL query\n2. Collect statistics and information related to the query and the database configuration\n3. Analyze the performance bottlenecks of the query\n4. Use different approaches to analyze and troubleshoot slow queries based on their characteristics"
+                },
+                {
+                    "name": "configuration_parameters",
+                    "content": "This document provides guidance on optimizing key configuration parameters in a production database. It covers parameters related to memory, flow control, thread pool, connections, automatic cleanup, cluster read-only mode, and dirty pages. It includes explanations of each parameter and recommended settings based on different scenarios. The document emphasizes the importance of considering related parameters and monitoring the impact of changes on performance.",
+                    "metrics": [
+                        "configuration_parameters",
+                        "memory",
+                        "flow_control",
+                        "thread_pool",
+                        "connections",
+                        "automatic_cleanup",
+                        "cluster_read_only_mode",
+                        "dirty_pages"
+                    ],
+                    "steps": "1. Understand the key configuration parameters\n2. Determine the recommended settings based on different scenarios\n3. Consider related parameters\n4. Monitor the impact of changes on performance"
+                }
+            ]
+        }
+    },
+    "1": {
+        "source_sections": "['1 title.txt', '1.1.1 overall_performance.txt']",
+        "rule": {
+            "name": "view_analysis",
+            "content": "The document provides a guide for analyzing and diagnosing performance issues in a database. It focuses on three main causes of slow performance: high CPU usage, high IO usage, and high memory usage. The document provides step-by-step instructions for identifying and analyzing the SQL queries that are causing these performance issues. It also discusses how to analyze and diagnose performance fluctuations and abnormal wait events.",
+            "metrics": [
+                "performance_issues",
+                "cpu_usage",
+                "io_usage",
+                "memory_usage",
+                "sql_queries",
+                "performance_fluctuations",
+                "abnormal_wait_events"
+            ],
+            "steps": "1. Identify the performance issues\n2. Analyze high CPU usage, high IO usage, and high memory usage\n3. Identify and analyze the SQL queries causing the performance issues\n4. Analyze and diagnose performance fluctuations\n5. Analyze abnormal wait events"
+        }
+    },
+    "2": {
+        "source_sections": "['1 title.txt', '1.1.1 overall_performance.txt']",
+        "rule": {
+            "name": "single_slow_queries",
+            "content": "The document discusses the diagnosis and optimization of single slow queries in GaussDB (openGauss). It provides a description of the problem, the symptoms, and the potential causes of slow queries. It then outlines the steps to analyze and identify the performance bottlenecks in the queries, including collecting statistics, analyzing SQL performance, and identifying wait events. The document also suggests various tools and views that can be used for analysis, such as pg_stat_all_tables and pg_stat_all_indexes.",
+            "metrics": [
+                "slow_queries",
+                "symptoms",
+                "potential_causes",
+                "performance_bottlenecks",
+                "collecting_statistics",
+                "sql_performance",
+                "wait_events",
+                "tools_views"
+            ],
+            "steps": "1. Understand the problem and symptoms of slow queries\n2. Identify the potential causes of slow queries\n3. Analyze and identify the performance bottlenecks in the queries\n4. Collect statistics and analyze SQL performance\n5. Identify wait events\n6. Use tools and views such as pg_stat_all_tables and pg_stat_all_indexes for analysis"
+        }
+    },
+    "3": {
+        "source_sections": "['1 title.txt', '1.1.1 overall_performance.txt']",
+        "rule": {
+            "name": "configuration_parameters",
+            "content": "This document provides guidance on optimizing key configuration parameters in a production database. It covers parameters related to memory, flow control, thread pool, connections, automatic cleanup, cluster read-only mode, and dirty pages. It includes explanations of each parameter and recommended settings based on different scenarios. The document emphasizes the importance of considering related parameters and monitoring the impact of changes on performance.",
+            "metrics": [
+                "configuration_parameters",
+                "memory",
+                "flow_control",
+                "thread_pool",
+                "connections",
+                "automatic_cleanup",
+                "cluster_read_only_mode",
+                "dirty_pages",
+                "recommended_settings",
+                "related_parameters",
+                "performance_impact"
+            ],
+            "steps": "1. Understand the key configuration parameters\n2. Optimize parameters related to memory, flow control, thread pool, connections, automatic cleanup, cluster read-only mode, and dirty pages\n3. Consider related parameters and their impact on performance\n4. Monitor the impact of changes on performance"
+        }
+    },
+    "4": {
+        "source_sections": "['1 title.txt', '1.1 overall_performance.txt']",
+        "rule": "{"
+    },
+    "5": {
+        "source_sections": "['1 title.txt', '1.1 overall_performance.txt']",
+        "rule": {
+            "blocks": {
+                "name": "overall_performance_slow",
+                "content": "The overall performance of the database is slow, not meeting the latency requirements of the customer's job or the customer's expectations. This could be due to various reasons such as issues on the business side, insufficient system resources, inefficient use of database kernel resources, concurrency issues, suboptimal database configuration, or inefficient SQL queries.",
+                "metrics": [
+                    "CPU_usage",
+                    "IO_usage",
+                    "active_sessions",
+                    "network_latency",
+                    "memory_usage",
+                    "database_configuration",
+                    "SQL_queries"
+                ],
+                "steps": "Step 1: Understand the background of the overall performance slowdown, such as customer expectations, business type, recent business changes, system changes, etc. Step 2: Determine whether the pressure is transmitted to the kernel, or whether the bottleneck is on the kernel side. Step 3: If the database side does not perceive significant business pressure, or the pressure is not large enough, and resource consumption is extremely low, it is recommended to investigate on the business side. Step 4: Check whether there are anomalies in the system resources where the database is located. Step 5: Check whether the use of the database kernel is suboptimal."
+            }
+        }
+    }
+}
