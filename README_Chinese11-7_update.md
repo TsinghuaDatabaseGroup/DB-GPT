@@ -55,7 +55,7 @@
 
 - [ ] 前端
     
-    * [ ] 知识库 + 诊断 + 报告回放
+    * [ ] 知识库 + 诊断 + 报告回放  [新分支](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat)
 
 - [ ] 加速本地模型（极速版dbot）
 
@@ -65,11 +65,11 @@
 
     * [ ] 文档知识压缩与匹配
 
-      - [x] 向量数据库 (ChromaDB)
+      - [x] 向量数据库 (ChromaDB)  [新分支](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat)
 
       - [ ] RESTful风格的搜索引擎 (Elasticsearch)
 
-- [x] 根据 *知识聚类结果* 自动生成专家描述
+- [x] 根据 *知识聚类结果* 自动生成专家描述  [新分支](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat) 
 - [x] 升级基于 LLM 的诊断机制:
   - [x] _任务分派 -> 并行诊断 -> 交叉审查 -> 报告生成_
 - [x] 添加典型异常和警报 (Pigsty) <a href="#-anomalies">🔗 链接</a>
