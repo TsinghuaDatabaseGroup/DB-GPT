@@ -28,7 +28,7 @@
 
 🦾 构建您的个人数据库管理员（D-Bot）🧑‍💻, 擅长*阅读文件，使用各种工具，编写分析报告！*
 
-**一个重要的主版本更新即将上传！敬请期待！** 📣 🔜
+**一个重要的 [主版本更新](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat) 即将上传！敬请期待！** 📣 🔜
 
 
 <span id="-demo"></span>
@@ -53,8 +53,23 @@
 
 ## 📰 更新
 
+- [ ] 前端
+    
+    * [ ] 知识库 + 诊断 + 报告回放
+
 - [ ] 加速本地模型（极速版dbot）
-- [x] 根据 *知识聚类结果* 新增8种专家角色
+
+    * [x] [*4-bit* 量化LLM](https://huggingface.co/curtis-sun/diag-baichuan2-4bit/tree/main) (推理时间减少1/3)
+
+    * [ ] 增加模型推理阶段的 *异步并发机制*
+
+    * [ ] 文档知识压缩与匹配
+
+      - [x] 向量数据库 (ChromaDB)
+
+      - [ ] RESTful风格的搜索引擎 (Elasticsearch)
+
+- [x] 根据 *知识聚类结果* 自动生成专家描述
 - [x] 升级基于 LLM 的诊断机制:
   - [x] _任务分派 -> 并行诊断 -> 交叉审查 -> 报告生成_
 - [x] 添加典型异常和警报 (Pigsty) <a href="#-anomalies">🔗 链接</a>
