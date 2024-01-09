@@ -55,7 +55,7 @@
 
 🦾 Build your personal database administrator (D-Bot)🧑‍💻, which is good at *reading documents, using various tools, writing analysis reports!* 
 
-**An important, major version update is coming soon, stay tuned!** 📣 🔜
+**An important, major [version update](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat) is coming soon, stay tuned!** 📣 🔜
 
 
 
@@ -91,15 +91,27 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 
 ## 📰 Updates
 
+- [ ] New Frontend
+
+    * Knowledgebase + Diagnosis + Report Replay [new branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat)
+
 - [ ] Extreme Speed Version for localized llms
 
-- [x] 8 new expert roles by the clustering of extracted *Knowledge*
+    * [x] [*4-bit* quantized LLM](https://huggingface.co/curtis-sun/diag-baichuan2-4bit/tree/main) (reducing inference time by 1/3)
+
+    * [ ] *Synchronous Concurrency Mechanism* during LLM inference
+
+    * [ ] *Document knowledge embedding and matching*
+
+      - [x] Vector database (ChromaDB)  [new branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat)
+
+      - [ ] RESTful Search Engine (Elasticsearch)
+
+- [x] xpert prompt generation using *document knowledge*   [new branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat)
 
 - [x] Upgrade the LLM-based diagnosis mechanism: 
 
     * [x] *Task Dispatching -> Concurrent Diagnosis -> Cross Review -> Report Generation*
-
-- [x] Add typical anomalies and alerts (Pigsty) <a href="#-anomalies">🔗 link</a>
 
 <!-- - [x] An end-to-end framework is available! <a href="#-diagnosis">🚀 link</a> -->
 
