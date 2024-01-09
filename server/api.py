@@ -40,7 +40,7 @@ async def document():
 
 def create_app(run_mode: str = None):
     app = FastAPI(
-        title="Datachat API Server",
+        title="DB-GPT API Server",
         version=VERSION
     )
     MakeFastAPIOffline(app)

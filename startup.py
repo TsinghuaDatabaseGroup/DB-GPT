@@ -593,10 +593,10 @@ def dump_server_info(after_start=False, args=None):
         if args.openai_api:
             print(f"    OpenAI API Server: {fschat_openai_api_address()}")
         if args.api:
-            print(f"    Datachat  API  Server: {api_address()}")
+            print(f"    DB-GPT  API  Server: {api_address()}")
         if args.webui:
-            print(f"    Datachat WEBUI Server: {webui_address()}")
-            print(f"    Datachat REPORTS WEBUI Server: {reports_webui_address()}")
+            print(f"    DB-GPT WEBUI Server: {webui_address()}")
+            print(f"    DB-GPT REPORTS WEBUI Server: {reports_webui_address()}")
     print("=" * 30 + "Langchain-Chatchat Configuration" + "=" * 30)
     print("\n")
 
