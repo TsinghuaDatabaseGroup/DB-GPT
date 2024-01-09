@@ -17,6 +17,14 @@ WEBUI_SERVER = {
     "port": 8501,
 }
 
+# reports webui
+REPORTS_WEBUI_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "webui_pages/reports/reports_ui")
+REPORTS_WEBUI_SERVER = {
+    ""
+    "host": DEFAULT_BIND_HOST,
+    "port": 8523,
+}
+
 # api.py server
 API_SERVER = {
     "host": DEFAULT_BIND_HOST,
