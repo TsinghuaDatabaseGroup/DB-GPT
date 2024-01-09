@@ -381,5 +381,3 @@ https://github.com/Vonng/pigsty
 <div align= "center">
 <img src="img/group.png" width="400px">
 </div>
-
-
