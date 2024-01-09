@@ -1,0 +1,128 @@
+{
+    "0": {
+        "source_sections": "['1 title.txt', '1.1 overall_performance.txt']",
+        "rule": {
+            "name": "waiting_events",
+            "content": "This document provides an analysis of waiting events in database performance. It describes common waiting events and how to analyze and handle them. The document lists various types of waiting events, such as waiting for data to be sent, executing sort operations, waiting for WAL log synchronization, and waiting for other nodes. It also provides steps for analyzing and addressing these waiting events.",
+            "metrics": [
+                "waiting_events",
+                "analyze",
+                "handle"
+            ],
+            "steps": [
+                "Identify the waiting events in the database performance.",
+                "Analyze the waiting events and their impact on performance.",
+                "Handle the waiting events by taking appropriate actions based on the specific event type."
+            ]
+        }
+    },
+    "1": {
+        "source_sections": "['1 title.txt', '1.1 overall_performance.txt']",
+        "rule": {
+            "name": "view_analysis",
+            "content": "This document provides a guide for analyzing the performance of a database by focusing on three main factors: CPU usage, IO usage, and memory usage. It provides step-by-step instructions for identifying and analyzing SQL queries that may be causing high CPU, IO, or memory usage. It also discusses how to analyze and address abnormal wait events and performance fluctuations.",
+            "metrics": [
+                "CPU_usage",
+                "IO_usage",
+                "memory_usage",
+                "SQL_queries",
+                "abnormal_wait_events",
+                "performance_fluctuations"
+            ],
+            "steps": [
+                "Focus on CPU usage, IO usage, and memory usage to analyze the performance of the database.",
+                "Identify and analyze SQL queries that may be causing high CPU, IO, or memory usage.",
+                "Analyze and address abnormal wait events that may impact performance.",
+                "Investigate performance fluctuations and take appropriate actions to address them."
+            ]
+        }
+    },
+    "2": {
+        "source_sections": "['1 title.txt', '1.1 overall_performance.txt']",
+        "rule": {
+            "name": "single_slow_queries",
+            "content": "The document discusses the problem of single slow queries in GaussDB (openGauss) and provides steps to diagnose and optimize these queries. The document suggests identifying the target SQL query, collecting statistics and information related to the query and the database configuration, and analyzing the performance bottlenecks of the query. It also provides different approaches to analyze and troubleshoot slow queries based on their characteristics (e.g., long-running, consistently slow, or intermittent).",
+            "metrics": [
+                "slow_queries",
+                "diagnose",
+                "optimize",
+                "target_SQL_query",
+                "statistics",
+                "database_configuration",
+                "performance_bottlenecks",
+                "characteristics"
+            ],
+            "steps": [
+                "Identify the target SQL query that is slow.",
+                "Collect statistics and information related to the query and the database configuration.",
+                "Analyze the performance bottlenecks of the query.",
+                "Diagnose and optimize the slow query based on its characteristics (e.g., long-running, consistently slow, or intermittent)."
+            ]
+        }
+    },
+    "3": {
+        "source_sections": "['1 title.txt', '1.1 overall_performance.txt', '1.2 waiting_events.txt', '1.3 view_analysis.txt', '1.4 single_slow_queries.txt', '1.5 configuration_parameters.txt']",
+        "rule": {
+            "name": "view_analysis",
+            "content": "The document provides a detailed guide on diagnosing and optimizing database performance issues, specifically focusing on high CPU usage, high IO, high memory usage, abnormal waiting events, and performance fluctuations. It outlines steps to identify and analyze problematic SQL queries, monitor CPU and IO usage, and manage memory allocation. The document also provides instructions on how to use various database views and commands to gather necessary information for diagnosis. It emphasizes the importance of understanding the root cause of performance issues to effectively optimize database operations.",
+            "metrics": [
+                "high_CPU_usage",
+                "high_IO",
+                "high_memory_usage",
+                "abnormal_waiting_events",
+                "performance_fluctuations",
+                "problematic_SQL_queries",
+                "CPU_and_IO_usage",
+                "memory_allocation"
+            ],
+            "steps": "For each accessed table, if the total number of live tuples and dead tuples is within an acceptable limit (1000), and table size is not too big (50MB), it is not a root cause. Otherwise, if the dead rate also exceeds the threshold (0.02), it is considered a root cause. And we suggest to clean up dead tuples in time."
+        }
+    },
+    "4": {
+        "source_sections": "['1 title.txt', '1.1 overall_performance.txt']",
+        "rule": {
+            "name": "configuration_parameters",
+            "content": "This document provides guidance on optimizing key parameters in a production database. It covers various parameters related to memory, flow control, thread pool, connections, automatic cleanup, cluster read-only mode, and dirty pages. The document explains the purpose of each parameter and provides recommendations for setting their values based on specific business needs and server configurations. It also highlights the importance of considering the interdependencies between certain parameters before making any adjustments.",
+            "metrics": [
+                "optimizing_parameters",
+                "memory",
+                "flow_control",
+                "thread_pool",
+                "connections",
+                "automatic_cleanup",
+                "cluster_read_only_mode",
+                "dirty_pages",
+                "recommendations",
+                "interdependencies"
+            ],
+            "steps": [
+                "Understand the purpose of each parameter related to memory, flow control, thread pool, connections, automatic cleanup, cluster read-only mode, and dirty pages.",
+                "Consider specific business needs and server configurations when setting the values of these parameters.",
+                "Take into account the interdependencies between certain parameters before making any adjustments."
+            ]
+        }
+    },
+    "5": {
+        "source_sections": "['1 title.txt', '1.1 overall_performance.txt']",
+        "rule": {
+            "name": "single_slow_queries",
+            "content": "The document discusses the diagnosis and optimization of slow queries in GaussDB (openGauss) databases. It provides a step-by-step analysis process for identifying and resolving performance bottlenecks in single slow queries. The document covers various factors that can contribute to slow query performance, such as suboptimal query statements, inefficient query plans, improper parameter settings, table bloating, concurrency lock conflicts, and resource limitations. It also suggests collecting relevant statistics and information about the query and the database environment to aid in the analysis and optimization process.",
+            "metrics": [
+                "slow queries",
+                "query statements",
+                "query plans",
+                "parameter settings",
+                "table bloating",
+                "concurrency lock conflicts",
+                "resource limitations",
+                "relevant statistics"
+            ],
+            "steps": [
+                "Identify slow queries by analyzing database performance.",
+                "Analyze the factors contributing to slow query performance, such as suboptimal query statements, inefficient query plans, improper parameter settings, table bloating, concurrency lock conflicts, and resource limitations.",
+                "Collect relevant statistics and information about the query and the database environment.",
+                "Resolve the performance bottlenecks in slow queries based on the analysis and optimization process."
+            ]
+        }
+    }
+}

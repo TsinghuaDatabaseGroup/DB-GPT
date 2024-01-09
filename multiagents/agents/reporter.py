@@ -1,28 +1,11 @@
 from __future__ import annotations
-
-import asyncio
-from colorama import Fore
-import re
-import bdb
 import time
-import logging
-import json
-from string import Template
 from pydantic import Field
-from typing import TYPE_CHECKING, List, Tuple
-from termcolor import colored
-
-# from multiagents.environments import PipelineEnvironment
-from multiagents.message import SolverMessage, Message, CriticMessage
-from multiagents.memory import BaseMemory, ChatHistoryMemory
+from typing import List
+from multiagents.message import SolverMessage, Message
 from multiagents.agents import agent_registry
 from multiagents.agents.base import BaseAgent
-from utils.utils import AgentCriticism
-from multiagents.tools.api_retrieval import APICaller
-from multiagents.reasoning_algorithms import UCT_vote_function, node_to_chain
-from utils.utils import AgentAction, AgentFinish
-from multiagents.reasoning_algorithms import base_env
-from prompt_templates.Report_prompts import  ANOMALY_DESC_PROMPT, ANOMALY_TITLE_PROMPT
+from multiagents.prompt_templates.Report_prompts import  ANOMALY_DESC_PROMPT, ANOMALY_TITLE_PROMPT
 
 @agent_registry.register("reporter") # solver is also tool agent by default
 class ReporterAgent(BaseAgent):
@@ -41,7 +24,7 @@ class ReporterAgent(BaseAgent):
 
     report: dict = {"title": "", "anomaly date": "", "anomaly description": "", "root cause": "", "labels": "", "diagnosis process": "", "solutions": ""}
     
-    record: dict = {"anomalyAnalysis": {"RoleAssigner":{"messages":[]},"Solver":{"messages":[]},"CpuExpert":{"messages":[]},"MemoryExpert":{"messages":[]},"IoExpert":{"messages":[]},"WorkloadExpert":{"messages":[]},"QueryExpert":{"messages":[]},"WriteExpert":{"messages":[]},"IndexExpert":{"messages":[]},"ConfigurationExpert":{"messages":[]}}, "brainstorming": {"messages":[]}, "report":{}, "title":"alert name", "time":"alert time", "topMetrics": []} # type: bar / line
+    record: dict = {"anomalyAnalysis": {"RoleAssigner":{"messages":[]},"Solver":{"messages":[]}}, "brainstorming": {"messages":[]}, "report":{}, "title":"alert name", "time":"alert time", "topMetrics": []} # type: bar / line
 
     def initialize_report(self):
         

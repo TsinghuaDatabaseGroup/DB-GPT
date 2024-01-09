@@ -1,27 +1,19 @@
-import asyncio
-import logging
-from typing import Any, Dict, List, Tuple, Union
+from typing import Dict, List, Union
 from enum import Enum
-from colorama import Fore
 import json
 import re
 from dateutil import parser, tz
 from datetime import datetime, timedelta
 import time
-import ast
 from termcolor import colored
 from tqdm import tqdm
-
-from utils.utils import AGENT_TYPES
+from multiagents.utils.utils import AGENT_TYPES
 from multiagents.agents.conversation_agent import BaseAgent
-from multiagents.message import Message, SolverMessage, CriticMessage
+from multiagents.message import Message, SolverMessage
 from multiagents.tools.metrics import current_diag_time
-
-from prompt_templates.Diagnosis_smmary_prompts import DIAGNOSIS_SUMMARYY_PROMPT
-
+from multiagents.prompt_templates.Diagnosis_smmary_prompts import DIAGNOSIS_SUMMARYY_PROMPT
 from multiagents.environments.decision_maker import (
     BaseDecisionMaker,
-    DynamicDecisionMaker,
     decision_maker_registry,
 )
 from multiagents.environments.role_assigner import (
@@ -30,7 +22,6 @@ from multiagents.environments.role_assigner import (
 )
 
 from . import env_registry as EnvironmentRegistry
-# from .base import BaseEnvironment
 from pydantic import BaseModel
 
 
@@ -412,7 +403,11 @@ class DBAEnvironment(BaseModel):
                     if 'time' not in m_response:
                         m_response['time'] = time.strftime("%H:%M:%S", time.localtime())
 
-                    self.reporter.record["anomalyAnalysis"][diag['sender']]["messages"].append({"data": m_message, "time": m_response['time']})
+                    if diag['sender'] not in self.reporter.record["anomalyAnalysis"]:
+                        self.reporter.record["anomalyAnalysis"][diag['sender']] = {"messages": []}
+                        self.reporter.record["anomalyAnalysis"][diag['sender']]["messages"].append({"data": m_message, "time": m_response['time']})
+                    else:
+                        self.reporter.record["anomalyAnalysis"][diag['sender']]["messages"].append({"data": m_message, "time": m_response['time']})
 
         # # single llm
         # self.reporter.add_diagnosis_labels()

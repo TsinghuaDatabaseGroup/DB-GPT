@@ -1,7 +1,5 @@
 from __future__ import annotations
 import asyncio
-from colorama import Fore
-
 from typing import TYPE_CHECKING, List
 
 from . import decision_maker_registry
@@ -9,7 +7,6 @@ from .base import BaseDecisionMaker
 
 if TYPE_CHECKING:
     from multiagents.agents.base import BaseAgent
-    from multiagents.message import Message
 
 
 @decision_maker_registry.register("dynamic")

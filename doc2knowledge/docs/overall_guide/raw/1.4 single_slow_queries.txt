@@ -1,0 +1,55 @@
+GaussDB(openGauss)联合运维
+与下游和SRE分享GaussDB(openGauss)故障模式处理方法，现网问题回顾、技术分享以及赋能课程等
+
+【问题描述】
+单SQL慢不满足客户要求
+
+【问题现象】
+业务反馈业务接口时延高;或者慢SQL
+
+【告警】
+业务侧相关接口时延、成功率等告警。数据库内核P80/P95相关告警
+
+【业务影响】【原因分析】
+1.1.业务语句不优
+·业务语句编写不优，比如:连接无过滤条件、条件过滤性差等·缺少索引、物化视图等
+·语句不能走到合适索引，比如:语句带表达式不能走索引，或者传入类型和索引类型不匹配不能走索引
+·业务语句索引过滤性差
+2.计划不优，统计信息收集不及时等。
+3.参数设置不合理(work_memmaintance_work_mem等)。
+4.未做vacuum，表膨胀，大量的死元组。
+5.并发锁冲突，等锁时间较长(业务逻辑冲突、复制表分布式死锁等)。
+6.资源瓶颈导致的性能问题。
+7.流控导致。
+
+【分析步骤】
+
+【步骤一】确定目标SQL
+    主动发现
+        ·查看告警，发现慢SQL告警:
+        ·定期巡检WDR报告发现异常SQL，如CPU消耗较多的Top SQL等;·长事务告警，发现有长时间未结束的SQL;
+被动调优
+用户、业务反馈慢SQL，
+
+【步骤二】收集统计信息、提前排除影响
+1.获取完整的SQL语句和SQL中相关表的结构、索引信息、表大小和索引大小等信息。
+2.获取数据库的参数配置信息，包括work memmaintance_work memshared buffers等，比如排序操作或者hash操作语句可能因为work_mem太小而影响执行执行效率。
+3.获取SQL中相关结构的pgstat信息，pgstat相关可以用来分析vacuum和analyze情况、以及表和索引的状态信息，这部分可以通过如下视图获取pg_statalltables，pg_stat_all_indexes, pg_statio_all_tables,pg_statio all_indexes，具体视图分析参考单SQL慢视图分析。
+4.对于有可能写大量日志的慢SQL，需要先确认该环境是否有开启流控(recovery_time_target)操作，为了保证RTO对于突然激增的xlog日志，流控可能会限制xlog同步到备机的速度，导致语句执行变慢，具体排查方法参考慢SQL视图分析。
+5.收集慢SQL对应时间段的系统资源情况，确认系统资源是否有异常。
+
+【步骤三】分析SQL性能瓶颈
+·如果目标SQL长时间未结束。
+    a)首先确定SQL慢在什么地方，可以通过pgthread wait status或者ASP信息分析该SOL的Top Wait Event信息，具体分析方法参考慢SQL视图分析-运行中的慢SQL，其中等待事件的说明参考整体性能慢-等待事件分析。
+    b)如该SQL有大量的等锁事件，可以通过ASP中的block sessionid信息找到锁等待关系，并确定等锁的原因。
+    c)如果语句执行时间超过慢SQL阈值log_minduration statement，可以通过Full SQL视图查看计划(503.1)，具体分析方法查看单SQL慢视图分析。
+    d)根据找到的慢SQL，跟业务沟通是否能获取完成的业务SQL，尝试复现。
+
+·单SQL一直慢
+    a)拿到慢SQL语句首先考虑通过explain获取计划，能快速确定语句的性能瓶颈点，并结合【步骤二】获取的信息分析具体原因，计划分析参看单SQL慢一计划分析。
+    b)另外可以通过summary_statement和statement history分析SQL的KPI信息，首先可以通过SQL的时间模型确定具体的耗时阶段，然后结合行活动、语句级别waitevent等信息确定SQL的耗时原因，具体分析参考单SQL慢视图分析。
+
+·单SQL偶现慢
+    a)如果SQL的执行时间超过慢SQL阈值log_min_duraionstatement，则通过statement history查看慢SQL的执行计划、时间模型、行活动、wait event锁等信息，其中计划分析参考单SQL慢--计划分析部分，其他参看单SQL慢-视图分析部分。
+    b)如果慢SQL的top wait event有等事件，可以通过ASP信息查看会话间的锁等待关系。
+    c)如果语句执行时间没超过log_mindurationstatement阈值，第一种可以考虑打开full SQL，set track stmt stat level='L1,L1’，需要注意打开会SQL会记录所有执行的语句(可以会话级别打开)，会占用大量的磁盘，用完后要理解关闭;第二种可以考虑调用动态接口，对固定的慢进行跟踪。一般是先通过慢SQL视图分析，通过gs_asp查看慢SQL对应的wait event信息，通过 statement history查看慢SQL信息。

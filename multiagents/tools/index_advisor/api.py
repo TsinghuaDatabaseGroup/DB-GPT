@@ -1,8 +1,10 @@
 import os
+
+from configs import POSTGRESQL_CONFIG
 from multiagents.tools.index_advisor.index_selection.selection_utils.postgres_dbms import PostgresDatabaseConnector
 from multiagents.tools.index_advisor.index_selection.selection_utils import selec_com
 from multiagents.tools.index_advisor.configs import get_index_result
-from multiagents.tools.metrics import postgresql_conf, advisor
+from multiagents.tools.metrics import advisor
 from multiagents.tools.metrics import get_workload_statistics
 import ast
 
@@ -41,8 +43,8 @@ def optimize_index_selection(start_time: int, end_time: int):
     for dbname in databases:
         
         # 2. load db settings
-        db_config = {"postgresql": postgresql_conf}
-        db_config["postgresql"]["dbname"] =  dbname
+        db_config = {"postgresql": POSTGRESQL_CONFIG}
+        db_config["postgresql"]["dbname"] = dbname
         connector = PostgresDatabaseConnector(db_config, autocommit=True)
 
         tables, columns = selec_com.get_columns_from_db(connector) # todo sample data for each column

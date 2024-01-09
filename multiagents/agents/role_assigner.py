@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import asyncio
-from colorama import Fore
 import bdb
 import re
 from string import Template

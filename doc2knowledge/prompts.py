@@ -8,7 +8,9 @@ DIAG_PROMPT = """Here are some diagnosis knowledge blocks following the followin
 "content": "If the accessed table has too many dead tuples, it can cause bloat-table and degrade performance",
 "metrics": ["live_tuples", "dead_tuples", "table_size", "dead_rate"],
 "steps": "For each accessed table, if the total number of live tuples and dead tuples is within an acceptable limit (1000), and table size is not too big (50MB), it is not a root cause. Otherwise, if the dead rate also exceeds the threshold (0.02), it is considered a root cause. And we suggest to clean up dead tuples in time."}
-```"""
+```
+Note elements in "metrics" should be concrete names like "live_tuples", "dead_tuples", "table_size", "dead_rate", etc. rather than "metric1", "metric2", etc. "content" should be a detailed description string. "steps" should be a string that contains steps to follow to diagnose the problem.
+"""
 
 LOOKUP_FUNCTION = {
     'name': "look_up",
@@ -49,12 +51,11 @@ SUMMARIZE_PROMPT_MSG = [{'role': "system", 'content': (
     f"Your summarization is later used as an index for others to quickly locate technical details about {DOCUMENT_TOPIC}.\n{DOCUMENT_PROMPT}\n"
 )}]
 
-TASK_PROMPT = "write database diagnosis knowledge that can be learned from the document"
+TASK_PROMPT = "write an aspect of detailed diagnosis knowledge (e.g., only about high IO, only about slow queries) that can be learned from the document"
 RULES_EXTRACTION_PROMPT_MSG = [{'role': "system", 'content': (
-    f"Given a document index, please {TASK_PROMPT}.\n{DOCUMENT_PROMPT}\nIf you are not sure, try to look up chapters and submit knowledge blocks in the currently reading chapter one by one in order. In case that you could not find any knowlege or the corresonding, please try to look up other chapters.\n"
+    f"Given a document index, please {TASK_PROMPT}.\nTry to submit knowledge blocks in the currently reading chapter one by one in order. Each knowledge block should strictly follow the dict format (with double quotes)\n"
     f"{'Extracted knowledge blocks should follow the following format.' + ' ' + DIAG_PROMPT}\n"
-    f"{LOOKUP_PROMPT}\n"
-    f"{SUBMIT_RULE_PROMPT}\n"
+    f"Do not repeatedly extract the following knowledge blocks:\n${{existing_rules}}\n"
 )}]
 INDEX_TEMPLATE = "{idx} - {title}"
 CONTENT_TEMPLATE = "{idx} - {title}\n{content}"

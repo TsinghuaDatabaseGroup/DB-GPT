@@ -4,6 +4,8 @@ from prompts import *
 import time
 from openai import OpenAI
 import itertools
+import requests
+from termcolor import colored
 
 # config utils
 def get_config(key):
@@ -77,12 +79,13 @@ class LLMCore(object):
                 api_key=self.config['api_key'],
                 organization = self.config['organization']
             )
-
+            
             self.model = backend.split('_')[-1]
+            
         else:
             pass
         
-    def Query(self, messages, temperature=0, functions=list(), retry_gap=0.1, timeout=3):
+    def Query(self, messages, temperature=0, functions=list(), retry_gap=0.1, timeout=10):
         
         
         identifier = "|".join([self.backend, str(messages)] + ([str(functions)] if functions else []))
@@ -91,33 +94,70 @@ class LLMCore(object):
         response = None
         if response is not None:
             return response
-        while timeout>0:
+
+        api_key = os.environ.get("OPENAI_API_KEY")
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + api_key
+        }
+        url = "https://api.aiaiapi.com/v1/chat/completions"
+
+        cur_timeout = timeout
+        while cur_timeout>0:
             try:
                 if functions:
                     assert (self.model=='gpt-4'), f"Functions are only supported in 'gpt-4'!"
-                    response = self.client.chat.completions.create(
-                        model = self.model,
-                        messages = messages,
-                        functions = functions,
-                        temperature = temperature,
-                    )
+                    
+                    payload = {
+                        "model": "gpt-3.5-turbo-16k", # "gpt-4-1106-preview", # "gpt-3.5-turbo-16k",#"gpt-4-32k-0613",
+                        "messages": messages,
+                        "functions": functions,
+                        "temperature": temperature,
+                    }
+
+                    response = requests.post(url, json=payload, headers=headers)
+
+
+                    # response = self.client.chat.completions.create(
+                    #     model = self.model,
+                    #     messages = messages,
+                    #     functions = functions,
+                    #     temperature = temperature,
+                    # )
                 else:
-                    response = self.client.chat.completions.create(
-                        model = self.model,
-                        messages = messages,
-                        temperature = temperature,
-                    )
-                response = response.choices[0].message
+
+                    payload = {
+                        "model": "gpt-3.5-turbo-16k", # "gpt-4-1106-preview", # "gpt-3.5-turbo-16k",#"gpt-4-32k-0613",
+                        "messages": messages,
+                        "temperature": temperature,
+                    }
+
+                    response = requests.post(url, json=payload, headers=headers)
+
+                    # response = self.client.chat.completions.create(
+                    #     model = self.model,
+                    #     messages = messages,
+                    #     temperature = temperature,
+                    # )
+
+                output = json.loads(response.text)
+                
+                if "choices" in output:
+                    output = output["choices"][0]["message"]
+                else:
+                    if cur_timeout % timeout == 0:
+
+                        print(colored("Fail to prase the response: " + str(response.text), "red"))
+
+                # response = response.choices[0].message
 
                 # update_cache(identifier, response)
-                return response
-            except KeyboardInterrupt as e:
-                exit(0)
-            except NotImplementedError as e:
-                exit(0)
+                return output
+
             except Exception as e:
-                print(ERROR(e))
+                # print(ERROR(e))
                 time.sleep(retry_gap)
-                print(ERROR(f"Retrying..."))
-                timeout -= 1
+            
+            cur_timeout -= 1
+        
         return None

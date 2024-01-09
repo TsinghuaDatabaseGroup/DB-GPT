@@ -1,0 +1,54 @@
+对于由于异常等待事件导致的性能慢，可参考本章节
+本章节主要列举一些常见的等待事件，以及如何分析处理
+等待事件主要分布于如下性能视图
+·dbe_pert.wait_events - 内存累积视图，重启数据丢失
+·pg_thread_wait_status - 实时视图，当前语句等待事件
+·statement_history - Full/Slow SQL 语句
+·dbe_perf.local_active_session/gs_asp
+
+【分析步骤】
+· 等待应用侧发数据 . - STATUC/wait cmd
+表示此session正在等待用户发送数据，当前压力未在内核侧
+
+· 正 在 执 行 中 - STATUS/none
+    ·表示正在执行过程中，未在某个events产生较多耗时
+    · 此状态下内核侧从Events 来看无明显瓶颈
+
+· 数据库限流-IO EVENT/LOGCTRL SLEEP
+    · 为了保障数据库的RTO, 数据库本身具备流控的能力(受recovery    time    target 控制)
+    · 在压力测试的时候，性能压制较为明显，可考虑是否关闭流控
+
+· Pooler CN向 DN  建连 - STATUS/pooler         create         conn
+    · 表示分布式GaussDB 内pooler CN正在向DN 建连
+    ·CN  至DN 网络异常、 DN 上线程池繁忙都有可能导致此Event量大
+    · 另外如果log hostname 开启， DN 会同DNS 通信，如果DN 同dns 时延过高，也会导致CN/DN  建连慢 
+    
+· 等待其它结点- STATUS/wait    node
+    · 表示当前Query 正在等待其它结点返回，通常如果多数查询在等待某个结点，表示此结点可能是瓶颈点，可以重点排查此结点
+
+· 等待wal 日志同步- STATUS/wait  wal   sync
+    ·通常表示事务提交等待备机日志下盘，此事件异常，可能表示如下原因：(1) wal日志量大；(2)主备机 网络异常；(3)备机IO 异常
+
+· 发送数据- STATUS/flush    data
+    · 表示网络数据发送，可能存在：(1)数据量大；(2)网络异常
+
+· 正 在 执 行sort    算 子 - STATUS/Sort 、Sort      -      fetch      tuple 、Sort      -      write      file
+    · 分别表示正在执行sort 算子、获取sort 元组、 sort   下盘操作
+    · 其它算子Material/HashJoin/HashAgg        等类似
+    · 对于异常下盘场景，可以评估考虑本session  增加work  mem _
+    · 考虑是否优化Query
+
+· gtm  类等待事件- STATUS/gtm    xxx
+    · 通常遇到gtm 异常事件首先可排查CN/DN 同GTM 主机的网络时延，类似问题在现实中遇到过多次
+
+· IO 异 常 - IO_EVENT/DataFileRead, DataFileWrite
+    · 通常出现大量这两种等待事件，可能的情况是IO异常、业务不优导致的IO使用，可以重点分析排查。
+
+· 并发更新- LOCK_EVENT/tuple 、transactionid
+    · 通常大量出现这两个等待事件，业务极大可能出来并发更新，出现整体业务阻塞
+    · 结 合pg_thread_wait_status/dbe_perflocal_active_session/gs_asp内block_sessionid, 可找到具体阻塞本session的session_id
+
+· 常规锁管理器热-LWLOCK_EVENT/LockMgrLock
+    · 如 果 此Event  出现在异常等待事件内，代表常规锁的管理器的分区锁产生热点
+    · 可适当调整num_internal_lock_partitions内LOG2_LOCKTABLE_PART/FASTPATH_PART
+    · 具体细节可参考产品文档的相关参数介绍

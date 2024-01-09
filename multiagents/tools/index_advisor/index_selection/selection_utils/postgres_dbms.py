@@ -258,7 +258,10 @@ END $$;""")
             if "pkey" not in index_name and "primary" not in index_name:
                 drop_stmt = "drop index {}".format(index_name)
                 logging.debug("Dropping index {}".format(index_name))
-                self.exec_only(drop_stmt)
+                try:
+                    self.exec_only(drop_stmt)
+                except:
+                    print("faile to drop index: ", index_name)
 
     # PostgreSQL expects the timeout in milliseconds
     def exec_query(self, query, timeout=None, cost_evaluation=False):

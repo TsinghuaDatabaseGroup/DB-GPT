@@ -1,24 +1,28 @@
+*.log
+*.log.*
+*.bak
+logs
+/knowledge_base/*
+!/knowledge_base/samples
+/knowledge_base/samples/vector_store
+
+/configs/*.py
+/configs/tool_config.yaml
+.vscode/
+/alert_results/*
+
+workload_info.json
+
+/multiagents/localized_llms/sentence_embedding/*
+
+# below are standard python ignore files
 # Byte-compiled / optimized / DLL files
-tree_of_thought/LLM/my_openai_0613.py
 __pycache__/
 *.py[cod]
 *$py.class
-monitoring_scripts/prometheus/core.py
-doc2knowledge/docs/overall_diagnosis_knowledge/raw/raw.txt
+
 # C extensions
 *.so
-.DS_Store
-.vscode/settings.json
-.idea
-
-openai_keys.txt
-others/customllm_test.py
-alert_results/2023*
-alert_results/logs
-
-doc2knowledge/docs/case_guide
-doc2knowledge/docs/overall_guide
-doc2knowledge/docs/private_docs
 
 # Distribution / packaging
 .Python
@@ -39,6 +43,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+m3e-base/
+chroma_db
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -68,8 +74,6 @@ cover/
 # Translations
 *.mo
 *.pot
-
-materials/videos
 
 # Django stuff:
 *.log
@@ -101,21 +105,21 @@ ipython_config.py
 # pyenv
 #   For a library or package, you might want to ignore these files since the code is
 #   intended to run in multiple environments; otherwise, check them in:
-# .python-version
+.python-version
 
 # pipenv
 #   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
 #   However, in case of collaboration, if having platform-specific dependencies or dependencies
 #   having no cross-platform support, pipenv may install dependencies that don't work, or not
 #   install all needed dependencies.
-#Pipfile.lock
+Pipfile.lock
 
 # poetry
 #   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
 #   This is especially recommended for binary packages to ensure reproducibility, and is more
 #   commonly ignored for libraries.
 #   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
-#poetry.lock
+poetry.lock
 
 # pdm
 #   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
@@ -173,11 +177,8 @@ cython_debug/
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
-tool_config.yaml
-chat_history.json
-openai_keys.txt
-others/customllm_test.py
-environment.yml
-workload_info.json
-workload_info.json
+.idea/
+.pytest_cache
+.DS_Store
+
+

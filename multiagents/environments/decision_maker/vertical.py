@@ -1,15 +1,12 @@
 from __future__ import annotations
 import asyncio
-from colorama import Fore
-
 from typing import TYPE_CHECKING, List
 
 from . import decision_maker_registry
 from .base import BaseDecisionMaker
 
 if TYPE_CHECKING:
-    from multiagents.agents import BaseAgent, SolverAgent, CriticAgent
-    from multiagents.message import Message, CriticMessage, SolverMessage
+    from multiagents.agents import BaseAgent
 
 
 @decision_maker_registry.register("vertical")

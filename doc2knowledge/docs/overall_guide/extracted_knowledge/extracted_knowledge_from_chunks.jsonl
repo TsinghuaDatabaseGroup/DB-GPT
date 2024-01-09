@@ -1,0 +1,359 @@
+{
+    "0": {
+        "name": "mmx_process_memory",
+        "content": "The mmx_process_memory parameter determines the maximum amount of physical memory that a database node can use. If this value is set improperly, such as being larger than the server's physical memory, it may cause operating system out-of-memory issues. It is recommended to adjust this parameter based on the actual business requirements and server configuration.",
+        "metrics": [
+            "mmx_process_memory"
+        ],
+        "steps": "Check the current value of mmx_process_memory parameter. If it is set larger than the server's physical memory, it may be a root cause of out-of-memory issues. Adjust the value of mmx_process_memory parameter based on the actual business requirements and server configuration."
+    },
+    "1": {
+        "name": "shared_buffers",
+        "content": "The shared_buffers parameter determines the size of shared memory. It affects the performance of database operations that involve reading data from disk into memory.",
+        "metrics": [
+            "shared_buffers"
+        ],
+        "steps": "Check the current value of shared_buffers parameter. If it is set too low, it may cause frequent disk I/O and degrade performance. Adjust the value of shared_buffers parameter based on the actual workload and available memory on the server."
+    },
+    "2": {
+        "name": "work_mem",
+        "content": "The work_mem parameter determines the amount of memory used for internal sorting operations and hash tables before writing to temporary disk files. It is used in operations such as ORDER BY, DISTINCT, and merge joins.",
+        "metrics": [
+            "work_mem"
+        ],
+        "steps": "Check the current value of work_mem parameter. If it is set too low, it may result in disk spills and degrade performance. Adjust the value of work_mem parameter based on the specific query characteristics and concurrency requirements."
+    },
+    "3": {
+        "name": "maintenance_work_mem",
+        "content": "The maintenance_work_mem parameter determines the maximum amount of memory that can be used for maintenance operations such as VACUUM and CREATE INDEX. It affects the efficiency of these maintenance operations.",
+        "metrics": [
+            "maintenance_work_mem"
+        ],
+        "steps": "Check the current value of maintenance_work_mem parameter. If it is set too low, it may slow down maintenance operations. Adjust the value of maintenance_work_mem parameter based on the specific maintenance tasks and available memory on the server."
+    },
+    "4": {
+        "name": "mmx_process_memory",
+        "content": "The mmx_process_memory parameter determines the maximum amount of physical memory that a database node can use. If this value is set improperly, such as being larger than the server's physical memory, it may cause operating system out-of-memory issues. It is recommended to adjust this parameter based on the actual business requirements and server configuration.",
+        "metrics": [
+            "mmx_process_memory"
+        ],
+        "steps": "Check the value of mmx_process_memory parameter. If it is set larger than the server's physical memory, it may cause out-of-memory issues. Adjust the value based on the actual business requirements and server configuration."
+    },
+    "5": {
+        "name": "shared_buffers",
+        "content": "The shared_buffers parameter determines the size of shared memory. It affects the performance of database operations that involve reading data from disk into memory.",
+        "metrics": [
+            "shared_buffers"
+        ],
+        "steps": "Check the value of shared_buffers parameter. If it is set too low, it may result in frequent disk I/O operations. Adjust the value based on the workload and available memory to optimize performance."
+    },
+    "6": {
+        "name": "work_mem",
+        "content": "The work_mem parameter determines the amount of memory used for internal sorting operations and hash tables before writing to temporary disk files. It is used in operations such as ORDER BY, DISTINCT, and merge joins.",
+        "metrics": [
+            "work_mem"
+        ],
+        "steps": "Check the value of work_mem parameter. If the physical memory allocated by work_mem is not sufficient, the operator's data will be written to temporary tablespace, which can degrade performance. Adjust the value based on the query characteristics and concurrency to ensure sufficient memory for sorting operations and hash tables."
+    },
+    "7": {
+        "name": "maintenance_work_mem",
+        "content": "The maintenance_work_mem parameter determines the maximum amount of memory that can be used for maintenance operations such as VACUUM and CREATE INDEX. It affects the efficiency of these maintenance operations.",
+        "metrics": [
+            "maintenance_work_mem"
+        ],
+        "steps": "Check the value of maintenance_work_mem parameter. If necessary, adjust the value based on the memory requirements and available memory to improve the efficiency of maintenance operations."
+    },
+    "8": {
+        "name": "recovery_time_target",
+        "content": "The recovery_time_target parameter controls the time it takes for the primary and standby servers to switch roles during a failover. A value of 0 disables flow control. The default value is 60, which ensures a timeout (TO) time of 805 seconds. If the estimated TO time exceeds 605 seconds, flow control will be used to limit performance. In high-concurrency scenarios with a large volume of log writes, this can impact performance. If the business has high concurrency, high performance requirements, and low RTO requirements, this parameter can be set to 0 to improve performance but sacrifice RTO. The parameter range is 0.1 to 3600, and the value should be adjusted based on RTO and performance requirements.",
+        "metrics": [
+            "recovery_time_target"
+        ],
+        "steps": "Check the current value of recovery_time_target. If it is set to 0, flow control is disabled. If it is set to a non-zero value, evaluate the estimated TO time and compare it to the desired RTO. Adjust the value of recovery_time_target accordingly."
+    },
+    "9": {
+        "name": "recovery_parse_workers + recovery_redo_workers",
+        "content": "The recovery_parse_workers and recovery_redo_workers parameters work together to enable or disable the extreme RTO feature, which reduces the difference between the primary and standby servers and ensures a low RTO. Enabling extreme RTO requires disabling standby server reads. recovery_parse_workers controls the number of ParseRecord threads in extreme RTO, while recovery_redo_workers controls the number of PageRedoWorker threads corresponding to each ParseRecord thread. These parameters should be adjusted when there is sufficient CPU resources. Setting both parameters to 1 disables extreme RTO.",
+        "metrics": [
+            "recovery_parse_workers",
+            "recovery_redo_workers"
+        ],
+        "steps": "Check the current values of recovery_parse_workers and recovery_redo_workers. If both are set to 1, extreme RTO is disabled. If either parameter is set to a value greater than 1, extreme RTO is enabled. Evaluate the impact of extreme RTO on performance and adjust the values of these parameters accordingly."
+    },
+    "10": {
+        "name": "database_bottleneck",
+        "content": "To determine if the bottleneck is on the database side, check the CPU usage of the host where the database is located, relevant views in the database, or related metrics on OPS. If there are very few active sessions in the database, it is highly likely that the database throughput cannot increase.",
+        "metrics": [
+            "pg_stat_activity",
+            "pgxc_stat_activity",
+            "dbe_perf.local_threadpool_status",
+            "dbe_perfglobal_threadpool_status",
+            "CPU_usage",
+            "active_sessions"
+        ],
+        "steps": "Check the state of sessions in pg_stat_activity and pgxc_stat_activity views. Pay attention to sessions with a state other than idle. Also, check the session_info field in dbe_perf.local_threadpool_status and dbe_perfglobal_threadpool_status views. Monitor the CPU usage and the number of active sessions on OPS."
+    },
+    "11": {
+        "name": "business_bottleneck",
+        "content": "If the database side does not perceive obvious business pressure, or the pressure is not large enough and resource consumption is very low (e.g., CPU usage is less than IO%, the number of active sessions is single-digit), it is recommended to investigate on the business side. Common causes may include: application server resource exhaustion (insufficient CPU/IO/memory), high network latency between application server and database, slow processing of query results on the application server, resulting in slow transmission of SQL statements within transactions to the database, etc.",
+        "metrics": [
+            "CPU_usage",
+            "active_sessions"
+        ],
+        "steps": "Check the CPU usage and the number of active sessions on the database side. If the CPU usage is low and the number of active sessions is very small, investigate the business side for potential bottlenecks."
+    },
+    "12": {
+        "name": "high_cpu_usage",
+        "content": "High CPU usage can be caused by the gaussdb process or certain SQL statements. It can be diagnosed by checking the CPU usage of the system and analyzing the WDR report.",
+        "metrics": [
+            "cpu_usage",
+            "gaussdb_process",
+            "top_sql_cpu"
+        ],
+        "steps": "1. Check the CPU usage of the system using tools like OPSCPU, top command, or sar command to identify the high CPU usage process. If it is caused by the database, the gaussdb process is expected to have a high usage.\n2. Compare the WDR report of normal time periods and abnormal time periods to analyze the SQL statements in the 'Top SQL order by CPU' section.\n3. If the CPU usage is consistently high, try optimizing the SQL statements mentioned in the 'SQL ordered by CPU Time' section of the WDR report. Alternatively, refer to Chapter 1.3 for further analysis.\n4. If the cause of high CPU usage is still unclear, generate a flame graph for the database code functions during the abnormal time period and identify the bottleneck points. Refer to flame graph analysis for guidance."
+    },
+    "13": {
+        "name": "high_IO",
+        "content": "If the system shows high IO utilization, it can indicate potential performance issues. This can be observed through metrics such as %util in iostat, high r_await (usually greater than 3ms), or high w_await (usually greater than 3ms).",
+        "metrics": [
+            "%util",
+            "r_await",
+            "w_await"
+        ],
+        "steps": "If the above IO metrics show abnormalities, such as low read/write throughput or high latency, it is recommended to contact the operating system team for further analysis. Possible causes may include: (1) misconfiguration of disk cache/RAID write strategy, (2) disk bandwidth throttling (OBS itself has flow control). Additionally, if the IO volume is high, tools like pidstat or iotop can be used to analyze the threads consuming IO. Specifically, the TPLworker thread often indicates excessive IO caused by user SQL queries. To identify the SQL statements causing high IO, follow these steps: (1) Identify the TID (Thread ID) using pidstat/iotop, (2) Query the pg_thread_wait_status view with the lwtid obtained in the previous step to get the corresponding tid and sessionid, (3) Query the pg_stat_activity view with the tid and sessionid obtained in the previous step to find the session information causing high IO, including the specific SQL statement. Once identified, optimize the related queries to reduce IO volume, referring to Chapter 1.4 for guidance. Additionally, the SQL ordered by Physical Reads section in the WDR report can help identify queries causing high IO during specific time periods. If the IO volume remains consistently high and is caused by user statements, refer to the IO-related content in Chapter 1.3 for further assistance."
+    },
+    "14": {
+        "name": "high_memory_usage",
+        "content": "If the memory usage of the database system is high, it can cause slow program execution.",
+        "metrics": [
+            "memory_usage"
+        ],
+        "steps": "First, identify the process with abnormal memory usage. In this case, we only consider the gaussdb process. Refer to the 'SQL ordered by CPU Time' section in the WDR report to analyze and optimize the relevant statements. Alternatively, refer to Chapter 1.3 for short-term CPU abnormalities."
+    },
+    "15": {
+        "name": "concurrency_issues",
+        "content": "Concurrency issues can cause increased latency, decreased TPS, or thread pool exhaustion. This is mainly caused by concurrent updates and resulting lock waits.",
+        "metrics": [
+            "latency",
+            "tps",
+            "thread_pool"
+        ],
+        "steps": "To diagnose concurrency issues, refer to Chapter 1.3 for guidance."
+    },
+    "16": {
+        "name": "suboptimal_database_usage",
+        "content": "Suboptimal database usage can lead to performance degradation and inefficiency.",
+        "metrics": [
+            "latency",
+            "tps",
+            "thread_pool"
+        ],
+        "steps": "To diagnose suboptimal database usage, refer to Chapter 1.3 for guidance."
+    },
+    "17": {
+        "name": "database_configuration",
+        "content": "The database configuration may not be optimal, leading to performance issues. Common configuration issues include shared_buffers being too small, work_mem being too small for sorting operations, and thread_pool_attr being set too small.",
+        "metrics": [
+            "shared_buffers",
+            "work_mem",
+            "thread_pool_attr"
+        ],
+        "steps": "Check the current values of shared_buffers, work_mem, and thread_pool_attr. If any of these values are significantly smaller than recommended values, consider adjusting them based on the specific business requirements."
+    },
+    "18": {
+        "name": "abnormal_wait_events",
+        "content": "Abnormal wait events in the database can indicate performance issues",
+        "metrics": [
+            "wait_events"
+        ],
+        "steps": "To identify abnormal wait events, check the wait events in the database. If there are wait events that are significantly higher than normal, it indicates a performance issue. Refer to Chapter 1.2 for more details on how to identify and diagnose abnormal wait events."
+    },
+    "19": {
+        "name": "long_term_performance_degradation",
+        "content": "Long-term performance degradation refers to a scenario where the performance of the database fluctuates significantly over a certain period of time (hours). For example, the performance is normal from 8:00 to 9:00, but there is a significant performance fluctuation from 10:00 to 11:00. In this scenario, we can compare the WDR reports of the two time periods to identify any differences. The following aspects can be investigated: (1) Top SQL queries, (2) Top wait events, (3) Load profile, (4) Cache/IO statistics, (5) Object statistics.",
+        "metrics": [
+            "WDR_reports",
+            "Top_SQL",
+            "Top_wait_events",
+            "Load_profile",
+            "Cache_IO_stats",
+            "Object_stats"
+        ],
+        "steps": "1. Compare the WDR reports of the two time periods to identify any differences.\n2. Investigate the top SQL queries during the time periods.\n3. Analyze the top wait events to identify any bottlenecks.\n4. Examine the load profile to understand the workload during the time periods.\n5. Check the cache/IO statistics to identify any issues with caching or IO performance.\n6. Analyze the object statistics to identify any issues with specific database objects."
+    },
+    "20": {
+        "name": "short_term_performance_jitter",
+        "content": "Short-term performance jitter refers to the situation where there are sudden fluctuations in performance at the second level. This is not adequately captured by the default one-hour interval of the WDR snapshot. It can be diagnosed by referring to the chapter on overall performance slow - analyzing performance jitter.",
+        "metrics": [],
+        "steps": "Refer to the chapter on overall performance slow - analyzing performance jitter for diagnosis steps."
+    },
+    "21": {
+        "name": "waiting_app_send_data",
+        "content": "This event indicates that the session is waiting for the application to send data. The current pressure is not on the kernel side.",
+        "metrics": [
+            "STATUC/wait cmd"
+        ],
+        "steps": "Check if the session is waiting for the application to send data. If so, the current pressure is not on the kernel side."
+    },
+    "22": {
+        "name": "executing",
+        "content": "This event indicates that the session is currently executing and there is no significant bottleneck in terms of events.",
+        "metrics": [
+            "STATUS/none"
+        ],
+        "steps": "Check if the session is currently executing. If so, there is no significant bottleneck in terms of events."
+    },
+    "23": {
+        "name": "database_throttling",
+        "content": "This event indicates that the database has flow control enabled to ensure RTO (Recovery Time Objective). It is recommended to consider disabling flow control during performance testing if it significantly affects performance.",
+        "metrics": [
+            "IO EVENT/LOGCTRL SLEEP"
+        ],
+        "steps": "Check if the database has flow control enabled. If so, consider disabling flow control during performance testing if it significantly affects performance."
+    },
+    "24": {
+        "name": "pooler_connecting",
+        "content": "This event indicates that the pooler CN is establishing a connection to the DN. Possible causes for a large number of events include network anomalies between CN and DN, busy thread pool on DN, or high latency between DN and DNS if log hostname is enabled.",
+        "metrics": [
+            "STATUS/pooler create conn"
+        ],
+        "steps": "Check if the pooler CN is establishing a connection to the DN. If there is a large number of events, investigate possible causes such as network anomalies, busy thread pool on DN, or high latency between DN and DNS."
+    },
+    "25": {
+        "name": "waiting_other_nodes",
+        "content": "This event indicates that the current query is waiting for other nodes to return. If most queries are waiting for a specific node, it may indicate that this node is a bottleneck and should be investigated.",
+        "metrics": [
+            "STATUS/wait node"
+        ],
+        "steps": "Check if the current query is waiting for other nodes to return. If most queries are waiting for a specific node, investigate this node as a potential bottleneck."
+    },
+    "26": {
+        "name": "waiting_wal_sync",
+        "content": "This event indicates that the transaction is waiting for the WAL (Write-Ahead Log) synchronization. Possible causes for this event include large WAL volume, network anomalies between primary and standby, or IO issues on the standby.",
+        "metrics": [
+            "STATUS/wait wal sync"
+        ],
+        "steps": "Check if the transaction is waiting for WAL synchronization. If so, investigate possible causes such as large WAL volume, network anomalies, or IO issues on the standby."
+    },
+    "27": {
+        "name": "sending_data",
+        "content": "This event indicates that the session is sending data over the network. Possible causes for this event include large data volume or network anomalies.",
+        "metrics": [
+            "STATUS/flush data"
+        ],
+        "steps": "Check if the session is sending data over the network. If so, investigate possible causes such as large data volume or network anomalies."
+    },
+    "28": {
+        "name": "executing_sort_operator",
+        "content": "This event indicates that the session is executing a sort operator. It may involve sorting, fetching tuples, or writing files. Consider increasing work_mem or optimizing the query if there are abnormal disk operations.",
+        "metrics": [
+            "STATUS/Sort",
+            "Sort - fetch tuple",
+            "Sort - write file"
+        ],
+        "steps": "Check if the session is executing a sort operator. If there are abnormal disk operations, consider increasing work_mem or optimizing the query."
+    },
+    "29": {
+        "name": "gtm_event",
+        "content": "This event indicates a GTM (Global Transaction Manager) related issue. Check for network latency between CN/DN and GTM host.",
+        "metrics": [
+            "STATUS/gtm xxx"
+        ],
+        "steps": "Check for network latency between CN/DN and GTM host if this event is encountered."
+    },
+    "30": {
+        "name": "io_abnormality",
+        "content": "This event indicates an IO abnormality. Possible causes include IO issues or inefficient IO usage due to business operations. Investigate and analyze further.",
+        "metrics": [
+            "IO_EVENT/DataFileRead",
+            "IO_EVENT/DataFileWrite"
+        ],
+        "steps": "Check if there is a large number of IO events. Investigate possible causes such as IO issues or inefficient IO usage due to business operations."
+    },
+    "31": {
+        "name": "concurrent_updates",
+        "content": "This event indicates concurrent updates. If there is a large number of these events, it may indicate a high level of concurrent updates causing overall business blocking. Use pg_thread_wait_status/dbe_perf.local_active_session/gs_asp to find the specific session_id causing the blockage.",
+        "metrics": [
+            "LOCK_EVENT/tuple",
+            "LOCK_EVENT/transactionid"
+        ],
+        "steps": "Check if there is a large number of concurrent update events. Use pg_thread_wait_status/dbe_perf.local_active_session/gs_asp to find the specific session_id causing the blockage."
+    },
+    "32": {
+        "name": "lock_manager_hotspot",
+        "content": "If this event appears in the list of abnormal waiting events, it indicates a hotspot in the regular lock manager's partition lock. Consider adjusting num_internal_lock_partitions and related parameters.",
+        "metrics": [
+            "LWLOCK_EVENT/LockMgrLock"
+        ],
+        "steps": "If this event appears in the list of abnormal waiting events, consider adjusting num_internal_lock_partitions and related parameters. Refer to the product documentation for more details on these parameters."
+    },
+    "33": {
+        "name": "high_cpu_user_sql",
+        "content": "If the high CPU usage is caused by the database process, it is usually due to poorly optimized SQL statements. This section focuses on CPU abnormalities caused by user statements.",
+        "metrics": [
+            "cputime",
+            "query_id",
+            "Iwtid",
+            "cpu_usage",
+            "cpu_time",
+            "db_time"
+        ],
+        "steps": "Step 1: If the CPU usage is consistently high, query the dbe_perf.statement and dbe_perf.summarystatement views to identify the statements with high CPU time.\nStep 2: If the CPU usage is currently high, use the pg_stat_activity view to get the query_id of the running SQL statement. Then use the query_id to query the pg_thread_wait_status view to get the Iwtid of the running SQL. Finally, use the 'top -Hp gaussdb_process_id' command to check the CPU usage of the corresponding lwtid (PID).\nStep 3: If the CPU usage was high in the past, refer to the performance jitter section of this chapter to identify the target SQL.\nStep 4: Query the statement history table on each CN/DN node to find slow SQL statements with high CPU consumption. Compare the cpu_time and db_time of the statements to identify the ones with high CPU consumption.\nStep 5: If the SQL statements found in the previous steps have intermittent high CPU consumption, use the dynamic interface to capture detailed information about the subsequent execution of the queries."
+    },
+    "34": {
+        "name": "high_io",
+        "content": "High IO can be caused by user statements that result in excessive physical reads. It can be identified by checking the 'nblocks_fetched' and 'nblockshit' fields in the dbe_perf.statement/dbeperfsummary statement tables. If the difference between these two fields is high, it indicates a high number of physical reads.",
+        "metrics": [
+            "nblocks_fetched",
+            "nblockshit"
+        ],
+        "steps": "1. Check the 'nblocks_fetched' and 'nblockshit' fields in the dbe_perf.statement/dbeperfsummary statement tables. If the difference between these two fields is high, it indicates a high number of physical reads.\n2. Query the pg_thread_waitstatus view and check the 'waitstatus' and 'wait_event' fields. If the query status is 'IO_EVENT' or 'DataFileRead', it indicates the presence of physical reads.\n3. Query the dbe_perf.local_activesession/qsasp view or table for records where the query wait event is 'IO_EVENT' or 'DataFileRead'. Refer to the performance jitter section for more details.\n4. Query the slow SQL records with a high difference in 'n_blocks_fetched' and 'n_block_shit' fields, or high 'dataio_time' records. If the slow SQL has the 'L2details' field enabled, check the corresponding events (such as 'DataFileRead') in the 'events' field. Note: This capability is only available in kernel version 503.\n5. Use the dynamic interface (refer to the high CPU section in this chapter) along with step 4 to identify abnormal SQL."
+    },
+    "35": {
+        "name": "high_memory_usage",
+        "content": "If the database kernel has high memory usage, it can lead to various issues such as query errors and abnormal memory consumption on user sessions.",
+        "metrics": [
+            "max_process_memory",
+            "process_used_memory",
+            "max_dynamic_memory",
+            "dynamic_used_memory",
+            "dynamic_used_shrctx"
+        ],
+        "steps": "1. Check the 'dbe_perf.memory_nodedetail' view to determine the memory usage points, including 'max_process_memory' (maximum memory used by the process), 'process_used_memory' (memory already used by the process), 'max_dynamic_memory' (maximum dynamically usable memory), 'dynamic_used_memory' (used dynamic memory), and 'dynamic_used_shrctx' (used shared dynamic memory). Focus on the difference between 'max_dynamic_memory' and 'dynamic_used_memory'. If the dynamic memory is insufficient, it can cause query errors. 'dynamic_used_memory' includes memory consumption on user sessions and memory consumption by kernel modules.\n2. If 'dynamic_used_shrctx' is relatively small, query the 'dbe_perf.session_memory_detail' view to get the memory consumption of different sessions. Usually, the number of user sessions and the memory usage per session can cause dynamic memory issues.\n3. If 'dynamic_used_shrctx' is relatively large, query the 'dbe_perf.shared_memory_detail' view to identify the context of abnormal memory consumption. In most cases, it is due to abnormal memory consumption on user sessions."
+    },
+    "36": {
+        "name": "abnormal_wait_events",
+        "content": "Abnormal wait events can cause overall slowness in the system. It is important to identify these wait events and analyze if they are causing performance issues. Common approaches to reduce abnormal wait events can be found in the 'Overall Performance Slow - Wait Event Analysis' chapter (Chapter 1.2).",
+        "metrics": [
+            "pg_thread_wait_status",
+            "dbe_perf_local_active_session",
+            "gsasp_table",
+            "statement_history_table",
+            "dbe_perf_wait_events"
+        ],
+        "steps": "Step 1: Check the current performance by querying 'pg_thread_wait_status' to identify the events most sessions are waiting for.\nStep 2: Check the past performance by querying 'dbe_perf.local_active_session' for recent slowness. For slowness within the last two days, query the 'gsasp' table in the 'postgres' database.\nStep 3: Investigate slow SQL queries by querying the 'statement_history' table and using the 'pg_catalog.statement_detail_decode(details, plaintext='true')' function to decode the details field (requires kernel version 503 or above). Switch to the 'postgres' database for this step.\nStep 4: For consistently slow performance, investigate the 'dbe_perf.wait_events' table and sort by 'total_waittime' or 'avg_waittime' in descending order. Identify the top events by referring to the 'Overall Performance Slow - Wait Event Analysis' chapter (Chapter 1.2)."
+    },
+    "37": {
+        "name": "high_io",
+        "content": "High IO can cause performance degradation. It is important to identify the tables or queries that are causing high IO and optimize them.",
+        "metrics": [
+            "pg_stat_user_tables",
+            "pg_stat_user_indexes",
+            "pg_statio_user_tables",
+            "pg_statio_user_indexes"
+        ],
+        "steps": "Step 1: Check the IO statistics of user tables by querying 'pg_stat_user_tables' and 'pg_stat_user_indexes'.\nStep 2: Check the IO statistics of user tables and indexes by querying 'pg_statio_user_tables' and 'pg_statio_user_indexes'.\nStep 3: Identify the tables or indexes with high IO and analyze the queries that are causing the high IO.\nStep 4: Optimize the queries or consider adding indexes to improve IO performance."
+    },
+    "38": {
+        "name": "abnormal_wait_events",
+        "content": "Abnormal wait events, including concurrent updates, can cause overall slowness in the system. It is important to identify these wait events and analyze if they are causing performance issues. Common approaches to reduce abnormal wait events can be found in the 'Overall Performance Slow - Wait Event Analysis' chapter (Chapter 1.2).",
+        "metrics": [
+            "pg_thread_wait_status",
+            "dbe_perf_local_active_session",
+            "gsasp_table",
+            "statement_history_table",
+            "dbe_perf_wait_events"
+        ],
+        "steps": "Step 1: Check the current performance by querying 'pg_thread_wait_status' to identify the events most sessions are waiting for.\nStep 2: Check the past performance by querying 'dbe_perf.local_active_session' for recent slowness. For slowness within the last two days, query the 'gsasp' table in the 'postgres' database.\nStep 3: Investigate slow SQL queries by querying the 'statement_history' table and using the 'pg_catalog.statement_detail_decode(details, plaintext='true')' function to decode the details field (requires kernel version 503 or above). Switch to the 'postgres' database for this step.\nStep 4: For consistently slow performance, investigate the 'dbe_perf.wait_events' table and sort by 'total_waittime' or 'avg_waittime' in descending order. Identify the top events by referring to the 'Overall Performance Slow - Wait Event Analysis' chapter (Chapter 1.2)."
+    }
+}

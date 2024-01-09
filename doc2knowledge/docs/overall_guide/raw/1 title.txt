@@ -1,0 +1,2 @@
+GaussDB(openGauss)联合运维
+与下游和SRE分享GaussDB(openGauss)故障模式处理方法、现网问题回顾，技术分享以及赋能课程等
