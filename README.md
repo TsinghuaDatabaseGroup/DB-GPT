@@ -107,7 +107,7 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 
       - [ ] RESTful Search Engine (Elasticsearch)
 
-- [x] xpert prompt generation using *document knowledge*   [new branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat)
+- [x] Expert prompt generation using *document knowledge*   [new branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat)
 
 - [x] Upgrade the LLM-based diagnosis mechanism: 
 
