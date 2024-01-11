@@ -15,9 +15,6 @@ const name = defaultSettings.title || 'vue Admin' // page title
 // port = 9228 npm run dev OR npm run dev --port = 9228
 const port = process.env.port || process.env.npm_config_port || 8025 // dev port
 
-console.log('process.env.npm_config_port:', process.env.npm_config_port)
-console.log('process.env.npm_config_baseurl:', process.env.npm_config_baseurl)
-
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**
