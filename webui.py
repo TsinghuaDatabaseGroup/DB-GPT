@@ -19,7 +19,7 @@ if __name__ == "__main__":
     is_lite = "lite" in sys.argv
 
     st.set_page_config(
-        "Data-Chat WebUI",
+        "DB-GPT",
         os.path.join("img", "chat_icon_blue_square_v2.png"),
         layout="wide",
         initial_sidebar_state="expanded"
