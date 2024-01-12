@@ -26,27 +26,27 @@ if __name__ == "__main__":
     )
 
     pages = {
-        "对话": {
+        "Knowledge Base": {
+            "icon": "hdd-stack",
+            "func": knowledge_base_page,
+        },
+        "Chat": {
             "icon": "chat",
             "func": dialogue_page,
         },
-        "异常诊断": {
+        "Diagnosis": {
             "icon": "heart-pulse",
             "func": diagnose_page,
         },
-        "历史报告": {
+        "History": {
             "icon": "file-earmark-text",
             "func": reports_page,
-        },
-        "知识库管理": {
-            "icon": "hdd-stack",
-            "func": knowledge_base_page,
         }
     }
 
     with st.sidebar:
         st.caption(
-            f"""<p align="right">当前版本：{VERSION}</p>""",
+            f"""<p align="right">D-Bot Version：{VERSION}</p>""",
             unsafe_allow_html=True,
         )
         options = list(pages)

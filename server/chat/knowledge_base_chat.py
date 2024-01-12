@@ -68,7 +68,8 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
         cache_kb = KBServiceFactory.get_service("cache", SupportedVSType.CHROMADB)
 
 
-        docs = cache_kb.search_docs(query, top_k)
+        # docs = cache_kb.search_docs(query, top_k)
+        docs = []
         
         if len(docs) > 0:
             is_answer = False
@@ -97,6 +98,7 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
 
         if len(docs) == 0:  # 如果没有找到相关文档，使用empty模板
             prompt_template = get_prompt_template("knowledge_base_chat", "empty")
+            # prompt_template = "response `I cannot find the answer from knowledge base`"
         else:
             prompt_template = get_prompt_template("knowledge_base_chat", prompt_name)
         input_msg = History(role="user", content=prompt_template).to_msg_template(False)

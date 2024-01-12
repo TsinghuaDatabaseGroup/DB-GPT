@@ -28,7 +28,7 @@ class java_rewrite(object):
                 classpath.extend([os.path.join(local_lib_dir, jar)
                                   for jar in os.listdir(local_lib_dir)])
                 jp.startJVM(jp.getDefaultJVMPath(), classpath=classpath)
-                print("系统启动java的jvm虚拟环境成功")
+                print("Start the java jvm virtual environment successfully")
                 return True
         except Exception as e:
             print("系统启动java的jvm虚拟环境出现错误,错误原因:" + str(e))

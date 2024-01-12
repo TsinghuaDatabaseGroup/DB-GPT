@@ -68,12 +68,12 @@ def parse_command(text: str, modal: Modal) -> bool:
             if not name:
                 i = 1
                 while True:
-                    name = f"会话{i}"
+                    name = f"Session{i}"
                     if name not in conv_names:
                         break
                     i += 1
             if name in st.session_state["conversation_ids"]:
-                st.error(f"该会话名称 “{name}” 已存在")
+                st.error(f"Session Name “{name}” exists")
                 time.sleep(1)
             else:
                 st.session_state["conversation_ids"][name] = uuid.uuid4().hex
@@ -81,10 +81,10 @@ def parse_command(text: str, modal: Modal) -> bool:
         elif cmd == "del":
             name = name or st.session_state.get("cur_conv_name")
             if len(conv_names) == 1:
-                st.error("这是最后一个会话，无法删除")
+                st.error("This is the last session and cannot be deleted")
                 time.sleep(1)
             elif not name or name not in st.session_state["conversation_ids"]:
-                st.error(f"无效的会话名称：“{name}”")
+                st.error(f"Invalid session name:“{name}”")
                 time.sleep(1)
             else:
                 st.session_state["conversation_ids"].pop(name, None)
@@ -118,24 +118,24 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
         index = 0
         if st.session_state.get("cur_conv_name") in conv_names:
             index = conv_names.index(st.session_state.get("cur_conv_name"))
-        conversation_name = st.selectbox("当前会话：", conv_names, index=index)
+        conversation_name = st.selectbox("Current Session Name：", conv_names, index=index)
         chat_box.use_chat_name(conversation_name)
         conversation_id = st.session_state["conversation_ids"][conversation_name]
 
         # TODO: 对话模型与会话绑定
         def on_mode_change():
             mode = st.session_state.dialogue_mode
-            text = f"已切换到 {mode} 模式。"
-            if mode == "知识库问答":
+            text = f"Switch to {mode} mode"
+            if mode == "Knowledge-based Chat":
                 cur_kb = st.session_state.get("selected_kb")
                 if cur_kb:
-                    text = f"{text} 当前知识库： `{cur_kb}`。"
+                    text = f"{text} Current Knowledge base： `{cur_kb}`。"
             st.toast(text)
 
-        dialogue_modes = ["LLM 对话",
-                          "知识库问答"
+        dialogue_modes = ["llm_chat",
+                          "knowledge_base_chat"
                           ]
-        dialogue_mode = st.selectbox("请选择对话模式：",
+        dialogue_mode = st.selectbox("Please select chat mode：",
                                      dialogue_modes,
                                      index=0,
                                      on_change=on_mode_change,
@@ -171,7 +171,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
             index = llm_models.index(cur_llm_model)
         else:
             index = 0
-        llm_model = st.selectbox("选择LLM模型：",
+        llm_model = st.selectbox("Choose LLM Model：",
                                  llm_models,
                                  index,
                                  format_func=llm_model_format_func,
@@ -183,7 +183,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
                 and not llm_model in config_models.get("online", {})
                 and not llm_model in config_models.get("langchain", {})
                 and llm_model not in running_models):
-            with st.spinner(f"正在加载模型： {llm_model}，请勿进行操作或刷新页面"):
+            with st.spinner(f"Loading Model： {llm_model}，Do not perform operations or refresh the page"):
                 prev_model = st.session_state.get("prev_llm_model")
                 r = api.change_llm_model(prev_model, llm_model)
                 if msg := check_error_msg(r):
@@ -193,11 +193,11 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
                     st.session_state["prev_llm_model"] = llm_model
 
         index_prompt = {
-            "LLM 对话": "llm_chat",
-            "自定义Agent问答": "agent_chat",
-            "搜索引擎问答": "search_engine_chat",
-            "知识库问答": "knowledge_base_chat",
-            "文件对话": "knowledge_base_chat"
+            "llm_chat": "llm_chat",
+            "agent_chat": "agent_chat",
+            "search_engine_chat": "search_engine_chat",
+            "knowledge_base_chat": "knowledge_base_chat",
+            "file_chat": "knowledge_base_chat"
         }
         prompt_templates_kb_list = list(PROMPT_TEMPLATES[index_prompt[dialogue_mode]].keys())
         prompt_template_name = prompt_templates_kb_list[0]
@@ -205,11 +205,11 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
             st.session_state.prompt_template_select = prompt_templates_kb_list[0]
 
         def prompt_change():
-            text = f"已切换为 {prompt_template_name} 模板。"
+            text = f"Switch to {prompt_template_name} template"
             st.toast(text)
 
         prompt_template_select = st.selectbox(
-            "请选择Prompt模板：",
+            "Pleae choose Prompt template：",
             prompt_templates_kb_list,
             index=0,
             on_change=prompt_change,
@@ -217,30 +217,30 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
         )
         prompt_template_name = st.session_state.prompt_template_select
         temperature = st.slider("Temperature：", 0.0, 1.0, TEMPERATURE, 0.05)
-        history_len = st.number_input("历史对话轮数：", 0, 20, HISTORY_LEN)
+        history_len = st.number_input("History turns：", 0, 20, HISTORY_LEN)
 
         def on_kb_change():
-            st.toast(f"已加载知识库： {st.session_state.selected_kb}")
+            st.toast(f"Loaded Knowledge bases： {st.session_state.selected_kb}")
 
-        if dialogue_mode == "知识库问答":
-            with st.expander("知识库配置", True):
+        if dialogue_mode == "knowledge_base_chat":
+            with st.expander("knowledge_base_setting", True):
                 kb_list = api.list_knowledge_bases()
                 index = 0
                 if DEFAULT_KNOWLEDGE_BASE in kb_list:
                     index = kb_list.index(DEFAULT_KNOWLEDGE_BASE)
                 selected_kb = st.selectbox(
-                    "请选择知识库：",
+                    "Please choose knowledge base：",
                     kb_list,
                     index=index,
                     on_change=on_kb_change,
                     key="selected_kb",
                 )
-                kb_top_k = st.number_input("匹配知识条数：", 1, 20, VECTOR_SEARCH_TOP_K)
+                kb_top_k = st.number_input("Matched Chunk Num：", 1, 20, VECTOR_SEARCH_TOP_K)
 
                 ## Bge 模型会超过1
-                score_threshold = st.slider("知识匹配分数阈值：", 0.0, 2.0, float(SCORE_THRESHOLD), 0.01)
+                score_threshold = st.slider("Knowledge matching score threshold：", 0.0, 2.0, float(SCORE_THRESHOLD), 0.01)
 
-        elif dialogue_mode == "文件对话":
+        elif dialogue_mode == "file_chat":
             with st.expander("文件对话配置", True):
                 files = st.file_uploader("上传知识文件：",
                                          [i for ls in LOADER_DICT.values() for i in ls],
@@ -252,7 +252,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
                 score_threshold = st.slider("知识匹配分数阈值：", 0.0, 2.0, float(SCORE_THRESHOLD), 0.01)
                 if st.button("开始上传", disabled=len(files) == 0):
                     st.session_state["file_chat_id"] = upload_temp_docs(files, api)
-        elif dialogue_mode == "搜索引擎问答":
+        elif dialogue_mode == "search_engine_chat":
             search_engine_list = api.list_search_engines()
             if DEFAULT_SEARCH_ENGINE in search_engine_list:
                 index = search_engine_list.index(DEFAULT_SEARCH_ENGINE)
@@ -269,7 +269,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
     # Display chat messages from history on app rerun
     chat_box.output_messages()
 
-    chat_input_placeholder = "请输入对话内容，换行请使用Shift+Enter。输入/help查看自定义命令 "
+    chat_input_placeholder = "Please enter the conversation content and use Shift+Enter for line breaks. Enter /help to view custom commands "
 
     def on_feedback(
             feedback,
@@ -294,8 +294,8 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
         else:
             history = get_messages_history(history_len)
             chat_box.user_say(prompt)
-            if dialogue_mode == "LLM 对话":
-                chat_box.ai_say("正在思考...")
+            if dialogue_mode == "LLM Session":
+                chat_box.ai_say("LLM Thinking...")
                 text = ""
                 message_id = ""
                 r = api.chat_chat(prompt,
@@ -360,10 +360,10 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
                         chat_box.update_msg(text, element_index=1)
                 chat_box.update_msg(ans, element_index=0, streaming=False)
                 chat_box.update_msg(text, element_index=1, streaming=False)
-            elif dialogue_mode == "知识库问答":
+            elif dialogue_mode == "knowledge_base_chat":
                 chat_box.ai_say([
-                    f"正在查询知识库 `{selected_kb}` ...",
-                    Markdown("...", in_expander=True, title="知识库匹配结果", state="complete"),
+                    f"Looking up `{selected_kb}` ...",
+                    Markdown("...", in_expander=True, title="Matching Results", state="complete"),
                 ])
                 text = ""
                 for d in api.knowledge_base_chat(prompt,
@@ -437,14 +437,14 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
         cols = st.columns(2)
         export_btn = cols[0]
         if cols[1].button(
-                "清空对话",
+                "Clear Up Sessions",
                 use_container_width=True,
         ):
             chat_box.reset_history()
             st.rerun()
 
     export_btn.download_button(
-        "导出记录",
+        "Export Records",
         "".join(chat_box.export2md()),
         file_name=f"{now:%Y-%m-%d %H.%M}_对话记录.md",
         mime="text/markdown",
