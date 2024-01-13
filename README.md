@@ -100,12 +100,11 @@ $ cd DB-GPT
 
 # 安装全部依赖
 $ pip3 install -r requirements.txt 
-$ pip3 install -r requirements_api.txt
-$ pip3 install -r requirements_webui.txt  
+$ pip3 install -r requirements_api.txt # 如果只运行API，可以只安装API依赖，请使用 requirements_api.txt
 
 # 默认依赖包括基本运行环境（Chroma-DB向量库）。如果要使用其它向量库，请将 requirements.txt 中相应依赖取消注释再安装。
 
-# 如果要运行Web UI，还需要安装前端项目中的依赖包。此处UI较为复杂，所以使用VUE单独写了个前端页面。
+# 如果要运行Web UI，还需要安装前端项目中的依赖包。由于历史报告页面UI较为复杂，所以使用VUE单独写了个前端页面。
 cd webui_pages/reports/reports_ui
 rm -rf node_modules/
 rm -r package-lock.json
@@ -117,8 +116,6 @@ npm install -g cross-env
 
 如需在本地或离线环境下运行本项目，需要首先将项目所需的模型下载至本地，通常开源 LLM 与 Embedding 模型可以从 [HuggingFace](https://huggingface.co/models) 下载。
 
-以本项目中默认使用的 LLM 模型 [THUDM/ChatGLM2-6B](https://huggingface.co/THUDM/chatglm2-6b) 与 Embedding 模型 [moka-ai/m3e-base](https://huggingface.co/moka-ai/m3e-base) 为例：
-
 下载模型需要先[安装 Git LFS](https://docs.github.com/zh/repositories/working-with-files/managing-large-files/installing-git-large-file-storage)，然后运行
 
 ```Shell
@@ -127,11 +124,22 @@ $ git clone https://huggingface.co/moka-ai/m3e-base
 ```
 ### 3. 初始化知识库和配置文件
 
-按照下列方式初始化自己的知识库和简单的复制配置文件
+复制配置文件
 ```shell
 $ python copy_config_example.py
+# 生成的配置文件在 configs/ 目录下
+# basic_config.py 是基础配置文件，不需要修改
+# diagnose_config.py 是诊断配置文件，需要根据自己的环境修改。
+# kb_config.py 是知识库配置文件，可以修改DEFAULT_VS_TYPE来指定知识库的存储向量库等，也可以修改修改相关的路径。
+# model_config.py 是模型配置文件，可以修改LLM_MODELS来指定使用的模型,当前模型配置主要针对知识库搜索，诊断相关的模型还有一些硬编码在代码中，后续会统一到这里。
+# prompt_config.py 是prompt配置文件，主要是LLM对话和知识库的prompt。
+# server_config.py 是服务配置文件，主要是服务的端口号等。
+```
+初始化知识库
+```shell
 $ python init_database.py --recreate-vs
  ```
+
 ### 4. 一键启动
 
 按照以下命令启动项目
@@ -156,6 +164,10 @@ $ python startup.py -a
 
 ![](img/init_knowledge_base.jpg)
 
+- Web UI 诊断报告页面：
+
+![](img/db-gpt-report.png)
+
 
 ### 诊断
 
@@ -163,7 +175,7 @@ $ python startup.py -a
 
 #### 1. 先决条件
 
-- PostgreSQL v12 或更高版本
+- PostgreSQL v12 （我们是基于 PostgreSQL v12 进行开发测试的，我们不保证其他版本的 PostgreSQL 的兼容性）
 
   > 确保您的数据库支持远程连接 ([链接](https://support.cpanel.net/hc/en-us/articles/4419265023383-How-to-enable-remote-PostgreSQL-access))
 
@@ -205,8 +217,8 @@ python3 run_diagnose.py --anomaly_file ./diagnostic_files/testing_cases_5.json
 
 我们支持 Prometheus 的 AlertManager。您可以在这里找到有关如何配置 alertmanager 的更多信息：[alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/)。
 
-- 我们提供与 AlertManager 相关的配置文件，包括[alertmanager.yml](./prometheus_service/alertmanager.yml)、[node_rules.yml](prometheus_service/node_rules.yml)和[pgsql_rules.yml](prometheus_service/pgsql_rules.yml)。路径位于根目录的[config folder](./config/)中，您可以将其部署到您的 Prometheus 服务器以检索相关的异常。
-- 我们还提供支持获取警报的 webhook 服务器。路径是根目录中的 webhook 文件夹，您可以将其部署到您的服务器以获取和存储 Prometheus 的警报。这个文件是使用 SSH 获取的。您需要在 config 文件夹中的[diagnose_config.py](./configs/diagnose_config.py)中配置您的服务器信息。
+- 我们提供与 AlertManager 相关的配置文件，包括[alertmanager.yml](./prometheus_service/alertmanager.yml)、[node_rules.yml](prometheus_service/node_rules.yml)和[pgsql_rules.yml](prometheus_service/pgsql_rules.yml)。您可以将其部署到您的 Prometheus 服务器以检索相关的异常。
+- 我们还提供支持获取警报和指标的服务器，您可以将其部署到您的服务器以获取和存储 Prometheus 的警报和对应时间段内TOP指标。您可以在prometheus_service中获取相关信息。
 - [node_rules.yml](prometheus_service/node_rules.yml)和[pgsql_rules.yml](prometheus_service/pgsql_rules.yml)是引用[https://github.com/Vonng/pigsty](https://github.com/Vonng/pigsty)开源项目，他们的监控做得非常好，感谢他们的努力。
 
 ### 异常模拟
@@ -316,6 +328,7 @@ python doc2knowledge.py
 - ~~查询日志选项（可能会占用磁盘空间，我们需要仔细考虑）~~
 - ~~添加更多通信机制~~
 - ~~支持更多知识来源~~
+- 项目工程化，解决依赖问题和代码中的硬编码问题
 - 达到 D-bot(gpt4)能力的本地化模型
 - 支持其他数据库（例如，mysql/redis）
 
@@ -371,8 +384,9 @@ https://github.com/Vonng/pigsty
 
 其他合作者: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](https://github.com/LikyThu)。
 
-我们感谢所有对这个项目的贡献者。如果你想参与或贡献，不要犹豫！
+该项目框架是基于[Langchain-Chatchat](https://github.com/chatchat-space/Langchain-Chatchat)开发的，感谢他们的开源！
 
+我们感谢所有对这个项目的贡献者。如果你想参与或贡献，不要犹豫！
 
 <span id="-contact"></span>
 

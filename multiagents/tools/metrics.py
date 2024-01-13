@@ -1,11 +1,6 @@
-from configs import POSTGRESQL_CONFIG
-from multiagents.our_argparse import args
-import warnings
-from multiagents.tools.metric_monitor.anomaly_detection import prometheus
 from multiagents.tools.metrics import *
 import numpy as np
 from multiagents.utils.database import DBArgs, Database
-from multiagents.knowledge.knowledge_extraction import KnowledgeExtraction
 import time
 import json
 
