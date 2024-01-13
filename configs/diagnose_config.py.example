@@ -27,23 +27,3 @@ MYSQL_CONFIG = {
   "user": "XX",
   "password": "XXXXXX",
 }
-
-DATABASESERVER_CONFIG = {
-  "server_address": "182.XX.XX.X",
-  "username": "XXX",
-  "password": "XXX",
-  "remote_directory": "/var/lib/pgsql/12/data/pg_log",
-}
-
-BENCHSERVER_CONFIG = {
-  "server_address": "8.XX.XX.XXX",
-  "username": "XXX",
-  "password": "XXXXX",
-  "remote_directory": "/root/benchmark",
-}
-
-PROMETHEUS_CONFIG = {
-  "api_url": "http://8.131.XXX.XXX:9090/",
-  "postgresql_exporter_instance": "172.27.XXX.XXX:9187",
-  "node_exporter_instance": "172.27.XX.XX:9100"
-}

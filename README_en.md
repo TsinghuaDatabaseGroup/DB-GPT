@@ -148,24 +148,23 @@ Then, create a virtual environment and install the project's dependencies within
 
 ```shell
 
-# 拉取仓库
+# Clone Code
 $ git clone https://github.com/TsinghuaDatabaseGroup/DB-GPT.git
 
-# 进入目录
+# cd directory
 $ cd Langchain-Chatchat
 
-# 安装全部依赖
+# install dependencies
 $ pip3 install -r requirements.txt 
-$ pip3 install -r requirements_api.txt
-$ pip3 install -r requirements_webui.txt  
+$ pip3 install -r requirements_api.txt # if you just want to use the API, please install requirements_api.txt
 
-# 默认依赖包括基本运行环境（Chroma-DB向量库）。如果要使用其它向量库，请将 requirements.txt 中相应依赖取消注释再安装。
+# The default dependency includes the base runtime environment (Chroma-DB vector library). If you want to use other vector libraries, uncomment the corresponding dependencies in requirements.txt before installing them.
 
-# 如果要运行Web UI，还需要安装前端项目中的依赖包。此处UI较为复杂，所以使用VUE单独写了个前端页面。
+# If you want to run the Web UI, you also need to install the dependency packages in the front-end project. Here the UI is more complicated, so I wrote a separate front page using VUE.
 cd webui_pages/reports/reports_ui
 rm -rf node_modules/
 rm -r package-lock.json
-# 首次运行安装依赖项（推荐使用nodejs, ^16.13.1）
+# First run installation dependencies (nodejs recommended, ^16.13.1)
 npm install  --legacy-peer-deps
 npm install -g cross-env
 ```
@@ -174,9 +173,6 @@ npm install -g cross-env
 
 If you need to run this project locally or in an offline environment, you must first download the required models for
 the project. Typically, open-source LLM and Embedding models can be downloaded from HuggingFace.
-
-Taking the default LLM model used in this project, [THUDM/chatglm2-6b](https://huggingface.co/THUDM/chatglm2-6b), and
-the Embedding model [moka-ai/m3e-base](https://huggingface.co/moka-ai/m3e-base) as examples:
 
 To download the models, you need to first
 install [Git LFS](https://docs.github.com/zh/repositories/working-with-files/managing-large-files/installing-git-large-file-storage)
@@ -193,6 +189,16 @@ Follow the steps below to initialize your own knowledge base and config file:
 
 ```shell
 $ python copy_config_example.py
+# The generated configuration file is in the configs/ directory
+# basic_config.py is the base configuration file and does not need to be modified
+# diagnose_config.py is a diagnostic profile that needs to be modified to fit your environment.
+# kb_config.py is the configuration file of the knowledge base. You can modify DEFAULT_VS_TYPE to specify the storage vector library of the knowledge base, or modify the related path.
+# model_config.py is the model configuration file, you can modify LLM_MODELS to specify the model to use, the current model configuration is mainly for knowledge base search, diagnostic related models and some hard-coded code, will be unified here later.
+# prompt_config.py is a prompt configuration file, which is mainly prompt for LLM conversations and knowledge bases.
+# server_config.py is the service configuration file, mainly the port number of the service, etc.
+```
+Init Database
+```shell
 $ python init_database.py --recreate-vs
  ```
 
@@ -220,6 +226,10 @@ $ python startup.py -a
 
 ![](img/init_knowledge_base.jpg)
 
+- Web UI Reports page：
+
+![](img/db-gpt-report.png)
+
 
 ### Diagnosis Side
 
@@ -227,7 +237,7 @@ $ python startup.py -a
 
 #### 1. Prerequisites
 
-- PostgreSQL v12 or higher
+- PostgreSQL v12 (Our development tests are based on PostgreSQL v12 and we do not guarantee compatibility with other versions of PostgreSQL.)
 
     > Make sure your database supports remote connection ([link](https://support.cpanel.net/hc/en-us/articles/4419265023383-How-to-enable-remote-PostgreSQL-access))
 
@@ -271,9 +281,8 @@ python3 run_diagnosis.py --anomaly_file ./diagnostic_files/testing_cases_5.json
 
 We support AlertManager for Prometheus. You can find more information about how to configure alertmanager here: [alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/).
 
-- We provide AlertManager-related configuration files, including [alertmanager.yml](./prometheus_service/alertmanager.yml), [node_rules.yml](prometheus_service/node_rules.yml), and [pgsql_rules.yml](prometheus_service/pgsql_rules.yml). The path is in the [config folder](./config/) in the root directory, which you can deploy to your Prometheus server to retrieve the associated exceptions.
-- We also provide webhook server that supports getting alerts. The path is a webhook folder in the root directory that you can deploy to your server to get and store Prometheus's alerts in files. 
-- Currently, the alert file is obtained using SSh. You need to configure your server information in the [diagnose_config.py](./configs/diagnose_config.py) in the config folder.
+- We provide AlertManager-related configuration files, including [alertmanager.yml](./prometheus_service/alertmanager.yml), [node_rules.yml](prometheus_service/node_rules.yml), and [pgsql_rules.yml](prometheus_service/pgsql_rules.yml), which you can deploy to your Prometheus server to retrieve the associated exceptions.
+- We also provide servers that support getting alerts and metrics, which you can deploy to your server to get and store Prometheus alerts and TOP metrics for the corresponding time period. You can get this information at prometheus_service.- Currently, the alert file is obtained using SSh. You need to configure your server information in the [diagnose_config.py](./configs/diagnose_config.py) in the config folder.
 - [node_rules.yml](prometheus_service/node_rules.yml) and [pgsql_rules.yml](prometheus_service/pgsql_rules.yml) is a reference https://github.com/Vonng/pigsty code in this open source project, their monitoring do very well, thank them for their effort.
 
 
@@ -397,8 +406,8 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 - ~~Query log option (potential to take up disk space and we need to consider it carefully)~~
 - ~~Add more communication mechanisms~~
 - ~~Localized model that reaches D-bot(gpt4)'s capability~~
+- Project engineering, solving dependency problems and hard-coding problems in code
 - Localized llms that are tailored with domain knolwedge and can generate precise and straigtforward analysis.
-- Prometheus-as-a-Service
 - Support other databases (e.g., mysql/redis)
 
 
@@ -458,6 +467,8 @@ Feel free to cite us ([paper link](https://arxiv.org/pdf/2312.01454.pdf)) if you
 </a>
 
 Other Collaborators: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](https://github.com/LikyThu).
+
+The project framework is based on [Langchain-Chatchat] (https://github.com/chatchat-space/Langchain-Chatchat), thanks to their open source!
 
 We thank all the contributors to this project. Do not hesitate if you would like to get involved or contribute! 
 

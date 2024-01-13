@@ -1,14 +1,7 @@
-import numpy as np
-import ast
-
-from multiagents.tools.metric_monitor.anomaly_detection import prometheus
 from multiagents.tools.metric_monitor.anomaly_detection import detect_anomalies
 from multiagents.tools.metrics import *
 from multiagents.tools.metric_monitor.anomaly_analysis import metric_analysis_results, slow_query_analysis_results, workload_analysis_results
 from multiagents.utils.markdown_format import generate_prometheus_chart_content
-from multiagents.tools.index_advisor.api import optimize_index_selection
-from server.knowledge_base.kb_doc_api import search_docs
-from server.knowledge_base.kb_service.base import KBServiceFactory, SupportedVSType
 from prometheus_service.prometheus_abnormal_metric import prometheus_metrics
 
 

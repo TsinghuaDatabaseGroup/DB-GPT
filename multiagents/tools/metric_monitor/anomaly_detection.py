@@ -1,14 +1,6 @@
 import numpy as np
 import requests
 
-from configs import PROMETHEUS_CONFIG
-from multiagents.utils.yaml_utils import read_yaml
-
-
-def prometheus(url, params):
-    res = requests.get(url=PROMETHEUS_CONFIG.get('api_url') + url, params=params)
-    return res.json()
-
 
 def detect_anomalies(data, significance_level=0.2):
     # assume the workload is steadily running 
