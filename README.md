@@ -3,9 +3,13 @@
 </div>
 
 <div align="center">
-  <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms">
-    本地模型
-  </a> 🔥
+
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/anomalies/public_testing_set/all_anomalies.jsonl">![Dialogues](https://img.shields.io/badge/异常测例-539-red?style=flat-square)</a>
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/multiagents/tools">![Dialogues](https://img.shields.io/badge/工具APIs-60+-red?style=flat-square)</a>
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/multiagents/localized_llms/training_data">![Dialogues](https://img.shields.io/badge/sft训练数据-2813-red?style=flat-square)</a>
+<a href="https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1">![Dialogues](https://img.shields.io/badge/本地嵌入模型-1-red?style=flat-square)</a>
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/multiagents/llms">![Dialogues](https://img.shields.io/badge/本地大语言模型-4-red?style=flat-square)</a>
+
 </div>
 
 <p align="center">
@@ -28,20 +32,29 @@
 
 🦾 构建您的个人数据库管理员（D-Bot）🧑‍💻, 擅长*阅读文件，使用各种工具，编写分析报告！*
 
-**一个重要的主版本更新即将上传！敬请期待！** 📣 🔜
+<!-- **一个重要的主版本更新即将上传！敬请期待！** 📣 🔜 -->
 
 
 <span id="-demo"></span>
 
-## 🗺 在线演示
+## 🗺 演示效果
 
-在在线网站（[http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)），您可以浏览所有历史诊断结果、使用的指标和详细的诊断过程。
+1. 启动本地服务后，可以在网页端（基于[Chatchat](chat.openai.com)开源项目二次开发）轻松将文档导入知识库、利用知识库进行有根据的问答、以及利用知识库进行诊断异常告警的诊断分析。
 
 <p align="center">
   <a href="http://dbgpt.dbmind.cn">
-    <img src="./assets/dbot2.gif" width="800px">
+    <img src="img/demo-dbot_chatchat.gif" width="800px">
   </a>
 </p>
+
+
+2. 在在线网站（[http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)），您可以浏览所有历史诊断结果、使用的指标和详细的诊断过程。
+
+<!-- <p align="center">
+  <a href="http://dbgpt.dbmind.cn">
+    <img src="img/dbot2.gif" width="800px">
+  </a>
+</p> -->
 
 <p align="center">
   <a href="http://dbgpt.dbmind.cn">
@@ -53,8 +66,23 @@
 
 ## 📰 更新
 
+- [x] 前端
+    
+    * [x] 知识库 + 诊断 + 报告回放
+
 - [ ] 加速本地模型（极速版dbot）
-- [x] 根据 *知识聚类结果* 新增8种专家角色
+
+    * [x] [*4-bit* 量化LLM](https://huggingface.co/curtis-sun/diag-baichuan2-4bit/tree/main) (推理时间减少1/3)
+
+    * [ ] 增加模型推理阶段的 *异步并发机制*
+
+    * [ ] 文档知识压缩与匹配
+
+      - [x] 向量数据库 (ChromaDB)
+
+      - [ ] RESTful风格的搜索引擎 (Elasticsearch)
+
+- [x] 根据 *知识聚类结果* 自动生成专家描述
 - [x] 升级基于 LLM 的诊断机制:
   - [x] _任务分派 -> 并行诊断 -> 交叉审查 -> 报告生成_
 - [x] 添加典型异常和警报 (Pigsty) <a href="#-anomalies">🔗 链接</a>
@@ -72,6 +100,7 @@
 - [x] 我们的愿景论文已发布 (持续更新)
   - _LLM As DBA_ [[论文]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[推特]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[幻灯片]](materials/slides)
   - _DB-GPT: Large Language Model Meets Database_ [[论文]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
+
 
 > 该项目正在不断引入新特性 👫👫<br/>
 > 不要忘记星标 ⭐ 并关注 👀 以同步最新进展 :)
@@ -112,6 +141,7 @@ rm -r package-lock.json
 npm install  --legacy-peer-deps
 npm install -g cross-env
 ```
+
 ### 2， 模型下载
 
 如需在本地或离线环境下运行本项目，需要首先将项目所需的模型下载至本地，通常开源 LLM 与 Embedding 模型可以从 [HuggingFace](https://huggingface.co/models) 下载。
@@ -347,6 +377,8 @@ https://github.com/OpenBMB/AgentVerse
 
 https://github.com/Vonng/pigsty
 
+https://github.com/chatchat-space/Langchain-Chatchat
+
 <span id="-citation"></span>
 
 ## 📒 引用
@@ -384,8 +416,6 @@ https://github.com/Vonng/pigsty
 
 其他合作者: [Wei Zhou](https://github.com/Beliefuture), [Kunyi Li](https://github.com/LikyThu)。
 
-该项目框架是基于[Langchain-Chatchat](https://github.com/chatchat-space/Langchain-Chatchat)开发的，感谢他们的开源！
-
 我们感谢所有对这个项目的贡献者。如果你想参与或贡献，不要犹豫！
 
 <span id="-contact"></span>
@@ -393,5 +423,5 @@ https://github.com/Vonng/pigsty
 ## 联系我们
 👏🏻欢迎加入我们的微信群
 <div align= "center">
-<img src="img/group.png" width="400px">
+<img src="img/chat-2024-01-13.png" width="400px">
 </div>
