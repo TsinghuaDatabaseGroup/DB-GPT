@@ -90,7 +90,7 @@ class KBService(ABC):
         self.do_clear_vs()
         status = delete_files_from_db(self.kb_name)
         return status
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
     def drop_kb(self):
         """
         删除知识库
@@ -313,7 +313,7 @@ class KBServiceFactory:
         if _ is None:  # kb not in db, just return None
             return None
         return KBServiceFactory.get_service(kb_name, vs_type, embed_model)
-    
+
     @staticmethod
     def get_services() -> list:
         kbs = list_kbs_from_db()
@@ -431,8 +431,8 @@ def score_threshold_process(score_threshold, k, docs):
             operator.le
         )
         docs = [
-            (doc, similarity)
+            (doc, float(similarity))
             for doc, similarity in docs
-            if cmp(similarity, score_threshold)
+            if cmp(float(similarity), score_threshold)
         ]
     return docs[:k]

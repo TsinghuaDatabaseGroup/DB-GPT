@@ -37,9 +37,6 @@ class ChromaKBService(KBService):
         self.vector_name = self.vector_name or self.embed_model
         self.kb_path = self.get_kb_path()
         self.vs_path = self.get_vs_path()
-        print("vector_name:", self.vector_name)
-        print("kb_path:", self.kb_path)
-        print("vs_path:", self.vs_path)
         self._load_chroma()
 
     def do_create_kb(self):
@@ -57,16 +54,21 @@ class ChromaKBService(KBService):
         self._load_chroma()
         # TODO: 取消score_threshold_process，使用chromadb自己的距离计算
         docs = self.chroma.similarity_search_with_score(query, top_k)
+        print("********do_search:", docs)
         return score_threshold_process(score_threshold, top_k, docs)
 
     def do_add_doc(self,
                    docs: List[Document],
                    **kwargs,
                    ) -> List[Dict]:
+        print(f"server.knowledge_base.kb_service.chroma_kb_service.do_add_doc 输入的docs参数长度为:{len(docs)}")
+        print("*" * 100)
         texts = [doc.page_content for doc in docs]
         metadatas = [doc.metadata for doc in docs]
         ids = self.chroma.add_texts(texts, metadatas)
         doc_infos = [{"id": id, "metadata": metadata} for id, metadata in zip(ids, metadatas)]
+        print("写入数据成功.")
+        print("*" * 100)
         return doc_infos
 
     def do_delete_doc(self,
