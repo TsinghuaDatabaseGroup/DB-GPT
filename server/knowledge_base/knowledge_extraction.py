@@ -7,7 +7,6 @@ from server.utils import BaseResponse, save_file
 
 current_task = {"thread": None, "output": ""}
 
-
 def run_knowledge_extraction_script(file_path: str) -> Iterator[str]:
     try:
         process = Popen(["python3", "run_diagnose.py", "--anomaly_file", file_path], stdout=PIPE, text=True)

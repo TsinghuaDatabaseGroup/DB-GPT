@@ -74,13 +74,22 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
         )
 
         docs = search_docs(query, knowledge_base_name, top_k, score_threshold)
-        print(f"docs:{docs}")
-        context = "\n".join([doc.metadata['content'] for doc in docs])
+
+        print(f" ===== docs:{docs}")
+
+        if len(docs) > 0 and 'content' not in docs[0].metadata:
+            context = '\n'.join([doc.page_content for doc in docs])
+        elif len(docs) > 0 and 'content' in docs[0].metadata:
+            context = "\n".join([doc.metadata['content'] for doc in docs])
+        else: 
+            context = ""
 
         if len(docs) == 0:  # 如果没有找到相关文档，使用empty模板
             prompt_template = get_prompt_template("knowledge_base_chat", "empty")
         else:
             prompt_template = get_prompt_template("knowledge_base_chat", prompt_name)
+
+        print(" === prompt_template: ", prompt_template)
         input_msg = History(role="user", content=prompt_template).to_msg_template(False)
         chat_prompt = ChatPromptTemplate.from_messages(
             [i.to_msg_template() for i in history] + [input_msg])

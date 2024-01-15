@@ -639,7 +639,7 @@ class ApiRequest:
             json=data,
         )
         return self._get_response_value(response, as_json=True)
-
+    
     def upload_kb_docs(
         self,
         files: List[Union[str, Path, bytes]],
@@ -684,6 +684,7 @@ class ApiRequest:
             data=data,
             files=[("files", (filename, file)) for filename, file in files],
         )
+
         return self._get_response_value(response, as_json=True)
 
     def delete_kb_docs(
