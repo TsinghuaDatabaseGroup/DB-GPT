@@ -42,7 +42,7 @@ def search_docs(
     # remove elements with the same content in docs
     no_replicate_docs = []
     for i, doc in enumerate(docs):
-        if i == 0 or doc[0].metadata['content'] != docs[i - 1][0].metadata['content']:
+        if i == 0 or 'content' not in doc[0].metadata or doc[0].metadata['content'] != docs[i - 1][0].metadata['content']:
             no_replicate_docs.append(doc)
     
     data = [DocumentWithScore(page_content=x[0].page_content, metadata=x[0].dict()['metadata'], score=x[1]) for x in no_replicate_docs]
