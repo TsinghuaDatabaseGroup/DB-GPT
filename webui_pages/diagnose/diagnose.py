@@ -10,7 +10,8 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
     try:
         kb_list = {x["kb_name"]: x for x in get_kb_details()}
     except Exception as e:
-        st.error("获取知识库信息错误，请检查是否已按照 `README.md` 中 `4 知识库初始化与迁移` 步骤完成初始化或迁移，或是否为数据库连接错误。")
+        st.error("There is an error in obtaining knowledge base information. Please check whether the initialization or migration has been completed according to the steps of `4 Knowledge Base Initialization and Migration` in `README.md`, or whether there is a database connection error.")
+        # st.error("获取知识库信息错误，请检查是否已按照 `README.md` 中 `4 知识库初始化与迁移` 步骤完成初始化或迁移，或是否为数据库连接错误。")
         st.stop()
     kb_names = list(kb_list.keys())
 
@@ -41,7 +42,7 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
             return kb_name
     
     selected_kb = st.selectbox(
-        "请选择诊断知识库：",
+        "Available knowledge base",
         kb_names,
         format_func=format_selected_kb,
         index=selected_kb_index
@@ -50,12 +51,12 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
     if st.session_state["diagnosing"]:
         diagnose_process(api)
 
-    file = st.file_uploader("上传异常文件：", [i for ls in DIAGNOSE_FILE_DICT.values() for i in ls], accept_multiple_files=False)
-    if st.button("上传并诊断"):
+    file = st.file_uploader("Upload Anomaly File：", [i for ls in DIAGNOSE_FILE_DICT.values() for i in ls], accept_multiple_files=False)
+    if st.button("Upload and Diagnosis"):
         st.session_state["upload_and_diagnose_clicked"] = True
 
     if st.session_state["upload_and_diagnose_clicked"]:
-        st.write("上传文件中...")
+        st.write("Uploading...")
         filename = file.name
         file_content = file.read()
         resp = api.diagnose_file(filename, file_content)
@@ -63,13 +64,13 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
             st.error(msg)
             reset_session_state()
             return
-        st.write("上传成功, 开始诊断")
+        st.write("Upload Success, Start Diagnosis!")
         st.session_state["diagnosing"] = True
         diagnose_process(api)
 
 
 def diagnose_process(api):
-    with (st.status(label="任务诊断中...", expanded=True) as status):
+    with (st.status(label="Diagnosing...", expanded=True) as status):
         code_placeholder = st.empty()
         while True:
             response = api.diagnose_output()
@@ -78,7 +79,7 @@ def diagnose_process(api):
                 reset_session_state()
                 return
             if not response["is_alive"]:
-                status.update(label="没有诊断任务在运行", expanded=True, state="complete")
+                status.update(label="No diagnosis task is being executed...", expanded=True, state="complete")
                 break
             st.session_state["task_output"] = str(response["output"])
             code_placeholder.code(st.session_state["task_output"], language='powershell')
