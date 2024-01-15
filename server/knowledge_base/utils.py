@@ -262,7 +262,7 @@ def make_text_splitter(
         print(e)
         text_splitter_module = importlib.import_module('langchain.text_splitter')
         TextSplitter = getattr(text_splitter_module, "RecursiveCharacterTextSplitter")
-        text_splitter = TextSplitter(chunk_size=250, chunk_overlap=50)
+        text_splitter = TextSplitter(chunk_size=chunk_size, chunk_overlap=50)
     return text_splitter
 
 

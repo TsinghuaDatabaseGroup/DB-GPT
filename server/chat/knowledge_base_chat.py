@@ -65,26 +65,6 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
         callback = AsyncIteratorCallbackHandler()
         if isinstance(max_tokens, int) and max_tokens <= 0:
             max_tokens = None
-        cache_kb = KBServiceFactory.get_service("cache", SupportedVSType.CHROMADB)
-
-
-        # docs = cache_kb.search_docs(query, top_k)
-        docs = []
-        
-        if len(docs) > 0:
-            is_answer = False
-            for doc, score in docs:
-                answer = doc.metadata.get("answer")
-
-                print("answer: ", answer)
-                if answer and '根据已知信息无法回答该问题' not in answer and float(score) <= score_threshold:
-                    is_answer = True
-                    yield json.dumps({"answer": f"<span style='word-break:break-all;'>{answer}<span style='color:#999999'> --- from Cache, Score={score}。</span></span><br>" }, ensure_ascii=False)
-            if is_answer:
-                yield json.dumps({
-                                     "answer": f"<span style='color:#999999; text-align:center;'> --- Cache End --- </span><br>"},
-                                 ensure_ascii=False)
-                return
 
         model = get_ChatOpenAI(
             model_name=model_name,
@@ -93,12 +73,12 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
             callbacks=[callback],
         )
 
-        docs = search_docs(query, knowledge_base_name, top_k, score_threshold)        
+        docs = search_docs(query, knowledge_base_name, top_k, score_threshold)
+        print(f"docs:{docs}")
         context = "\n".join([doc.metadata['content'] for doc in docs])
 
         if len(docs) == 0:  # 如果没有找到相关文档，使用empty模板
             prompt_template = get_prompt_template("knowledge_base_chat", "empty")
-            # prompt_template = "response `I cannot find the answer from knowledge base`"
         else:
             prompt_template = get_prompt_template("knowledge_base_chat", prompt_name)
         input_msg = History(role="user", content=prompt_template).to_msg_template(False)
@@ -130,15 +110,14 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
                 # Use server-sent-events to stream the response
                 answer += token
                 yield json.dumps({"answer": token}, ensure_ascii=False)
+            yield json.dumps({"docs": source_documents}, ensure_ascii=False)
         else:
+            answer = ""
             async for token in callback.aiter():
                 answer += token
             yield json.dumps({"answer": answer,
                               "docs": source_documents},
                              ensure_ascii=False)
-            yield json.dumps({"docs": source_documents}, ensure_ascii=False)
-        doc_infos = cache_kb.do_add_doc([Document(page_content=query, metadata={"source": "cache", "answer": answer})])
-        print("cache doc_infos：", doc_infos)
         await task
 
     return StreamingResponse(knowledge_base_chat_iterator(query=query,
