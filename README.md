@@ -186,17 +186,18 @@ $ python startup.py -a
 
 2. Web UI 启动界面示例：
 
-- Web UI 对话界面：
-
-![img](img/LLM_success.png)
-
 - Web UI 知识库管理页面：
 
-![](img/init_knowledge_base.jpg)
+![](img/chat_kb.png)
 
-- Web UI 诊断报告页面：
 
-![](img/db-gpt-report.png)
+- Web UI 对话界面：
+
+![img](img/chat_chat.png)
+
+- Web UI 诊断页面：
+
+![](img/chat_diagnosis.png)
 
 
 ### 诊断
