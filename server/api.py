@@ -1,5 +1,4 @@
 from typing import List, Literal
-
 from server.utils import (
     BaseResponse,
     ListResponse,
@@ -40,7 +39,7 @@ async def document():
 
 def create_app(run_mode: str = None):
     app = FastAPI(
-        title="DB-GPT API Server",
+        title="Datachat API Server",
         version=VERSION
     )
     MakeFastAPIOffline(app)
@@ -89,10 +88,6 @@ def mount_app_routes(app: FastAPI, run_mode: str = None):
     mount_knowledge_routes(app)
     # 摘要相关接口
     mount_filename_summary_routes(app)
-    # 异常报告相关接口
-    mount_alert_routes(app)
-    # 异常诊断相关接口
-    mount_diagnose_routes(app)
 
     # LLM模型相关接口
     app.post("/llm_model/list_running_models",
@@ -149,41 +144,6 @@ def mount_app_routes(app: FastAPI, run_mode: str = None):
              summary="将文本向量化，支持本地模型和在线模型",
              )(embed_texts_endpoint)
 
-
-def mount_diagnose_routes(app: FastAPI):
-
-    from server.diagnose.diagnose import run_diagnose, get_diagnose_output
-
-    app.post("/diagnose/run_diagnose",
-             tags=["Diagnose"],
-             response_model=BaseResponse,
-             summary="诊断异常文件")(run_diagnose)
-
-    app.get("/diagnose/diagnose_output",
-            tags=["Diagnose"],
-            response_model=BaseResponse,
-            summary="诊断异常打印")(get_diagnose_output)
-
-
-def mount_alert_routes(app: FastAPI):
-    from server.alert.alert import histories, history_detail, diagnose_llm_model_list
-
-    app.post("/alert/report/histories",
-             tags=["Alert"],
-             response_model=BaseResponse,
-             summary="获取所有异常诊断文件")(histories)
-
-    app.post("/alert/report/history_detail",
-             tags=["Alert"],
-             response_model=BaseResponse,
-             summary="获取异常诊断文件详情")(history_detail)
-
-    app.post("/alert/report/diagnose_llm_model_list",
-             tags=["Alert"],
-             response_model=BaseResponse,
-             summary="获取异常诊断模型列表")(diagnose_llm_model_list)
-
-
 def mount_knowledge_routes(app: FastAPI):
     from server.chat.knowledge_base_chat import knowledge_base_chat
     from server.chat.file_chat import upload_temp_docs, file_chat
@@ -195,12 +155,11 @@ def mount_knowledge_routes(app: FastAPI):
         delete_docs,
         update_docs,
         download_doc,
-        docs_text_split_content,
         recreate_vector_store,
         search_docs,
         DocumentWithScore,
-        update_info)
-    from server.knowledge_base.knowledge_extraction import get_knowledge_extraction_output, run_knowledge_extraction
+        update_info,
+        docs_text_split_content)
 
     app.post("/chat/knowledge_base_chat",
              tags=["Chat"],
@@ -272,9 +231,11 @@ def mount_knowledge_routes(app: FastAPI):
             tags=["Knowledge Base Management"],
             summary="下载对应的知识文件")(download_doc)
 
+
     app.post("/knowledge_base/docs_text_split_content",
             tags=["Knowledge Base Management"],
             summary="下载对应的知识文件的分片内容")(docs_text_split_content)
+
 
     app.post("/knowledge_base/recreate_vector_store",
              tags=["Knowledge Base Management"],
@@ -285,18 +246,6 @@ def mount_knowledge_routes(app: FastAPI):
              tags=["Knowledge Base Management"],
              summary="上传文件到临时目录，用于文件对话。"
              )(upload_temp_docs)
-
-    app.post("/knowledge_base/run_knowledge_extraction",
-             tags=["Knowledge Base Management"],
-             response_model=BaseResponse,
-             summary="添加知识文件")(run_knowledge_extraction)
-
-    app.get("/knowledge_base/knowledge_extraction_output",
-            tags=["Knowledge Base Management"],
-            response_model=BaseResponse,
-            summary="获取知识聚合文件打印")(get_knowledge_extraction_output)
-
-
 
 def mount_filename_summary_routes(app: FastAPI):
     from server.knowledge_base.kb_summary_api import (

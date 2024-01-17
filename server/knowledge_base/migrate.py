@@ -1,7 +1,7 @@
 from configs import (
-    EMBEDDING_MODEL, DEFAULT_VS_TYPE, ZH_TITLE_ENHANCE,
+    EMBEDDING_MODEL, ZH_TITLE_ENHANCE,
     CHUNK_SIZE, OVERLAP_SIZE,
-    logger, log_verbose
+    logger, log_verbose, DEFAULT_VS_TYPES
 )
 
 from server.knowledge_base.utils import (
@@ -82,11 +82,10 @@ def file_to_kbfile(kb_name: str, files: List[str]) -> List[KnowledgeFile]:
                          exc_info=e if log_verbose else None)
     return kb_files
 
-
 def folder2db(
         kb_names: List[str],
         mode: Literal["recreate_vs", "update_in_db", "increament"],
-        vs_type: Literal["faiss", "milvus", "pg", "chromadb"] = DEFAULT_VS_TYPE,
+        vs_types: List[Literal["faiss", "milvus", "pg", "chromadb"]] = DEFAULT_VS_TYPES,
         embed_model: str = EMBEDDING_MODEL,
         chunk_size: int = CHUNK_SIZE,
         chunk_overlap: int = OVERLAP_SIZE,
@@ -102,7 +101,6 @@ def folder2db(
     """
 
     def files2vs(kb_name: str, kb_files: List[KnowledgeFile]):
-        
         for success, result in files2docs_in_thread(kb_files,
                                                     chunk_size=chunk_size,
                                                     chunk_overlap=chunk_overlap,
@@ -117,43 +115,36 @@ def folder2db(
                 print(result)
 
     kb_names = kb_names or list_kbs_from_folder()
-    for kb_name in kb_names:
-        # kb_name
-        kb = KBServiceFactory.get_service(kb_name, vs_type, embed_model)
-        if not kb.exists():
-            kb.create_kb()
 
-        # 清除向量库，从本地文件重建
-        if mode == "recreate_vs":
-            kb.clear_vs()
-            kb.create_kb()
-            kb_files = file_to_kbfile(kb_name, list_files_from_folder(kb_name))
-            files2vs(kb_name, kb_files)
-            kb.save_vector_store()
-        # # 不做文件内容的向量化，仅将文件元信息存到数据库
-        # # 由于现在数据库存了很多与文本切分相关的信息，单纯存储文件信息意义不大，该功能取消。
-        # elif mode == "fill_info_only":
-        #     files = list_files_from_folder(kb_name)
-        #     kb_files = file_to_kbfile(kb_name, files)
-        #     for kb_file in kb_files:
-        #         add_file_to_db(kb_file)
-        #         print(f"已将 {kb_name}/{kb_file.filename} 添加到数据库")
-        # 以数据库中文件列表为基准，利用本地文件更新向量库
-        elif mode == "update_in_db":
-            files = kb.list_files()
-            kb_files = file_to_kbfile(kb_name, files)
-            files2vs(kb_name, kb_files)
-            kb.save_vector_store()
-        # 对比本地目录与数据库中的文件列表，进行增量向量化
-        elif mode == "increament":
-            db_files = kb.list_files()
-            folder_files = list_files_from_folder(kb_name)
-            files = list(set(folder_files) - set(db_files))
-            kb_files = file_to_kbfile(kb_name, files)
-            files2vs(kb_name, kb_files)
-            kb.save_vector_store()
-        else:
-            print(f"unspported migrate mode: {mode}")
+    for vs_type in vs_types:
+        for kb_name in kb_names:
+            kb = KBServiceFactory.get_service(kb_name, vs_type, embed_model)
+            if not kb.exists():
+                kb.create_kb()
+
+            if mode == "recreate_vs":
+                kb.clear_vs()
+                kb.create_kb()
+                kb_files = file_to_kbfile(kb_name, list_files_from_folder(kb_name))
+                files2vs(kb_name, kb_files)
+                kb.save_vector_store()
+
+            elif mode == "update_in_db":
+                files = kb.list_files()
+                kb_files = file_to_kbfile(kb_name, files)
+                files2vs(kb_name, kb_files)
+                kb.save_vector_store()
+
+            elif mode == "increament":
+                db_files = kb.list_files()
+                folder_files = list_files_from_folder(kb_name)
+                files = list(set(folder_files) - set(db_files))
+                kb_files = file_to_kbfile(kb_name, files)
+                files2vs(kb_name, kb_files)
+                kb.save_vector_store()
+
+            else:
+                print(f"unspported migrate mode: {mode}")
 
 
 def prune_db_docs(kb_names: List[str]):
@@ -162,7 +153,7 @@ def prune_db_docs(kb_names: List[str]):
     it is used to delete database docs after user deleted some doc files in file browser
     """
     for kb_name in kb_names:
-        kb = KBServiceFactory.get_service_by_name(kb_name)
+        kb = KBServiceFactory.get_service_by_name(kb_name, DEFAULT_VS_TYPES[0])
         if kb is not None:
             files_in_db = kb.list_files()
             files_in_folder = list_files_from_folder(kb_name)
@@ -180,7 +171,7 @@ def prune_folder_files(kb_names: List[str]):
     it is used to free local disk space by delete unused doc files.
     """
     for kb_name in kb_names:
-        kb = KBServiceFactory.get_service_by_name(kb_name)
+        kb = KBServiceFactory.get_service_by_name(kb_name, DEFAULT_VS_TYPES[0])
         if kb is not None:
             files_in_db = kb.list_files()
             files_in_folder = list_files_from_folder(kb_name)

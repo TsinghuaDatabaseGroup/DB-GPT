@@ -6,9 +6,7 @@ import pandas as pd
 from server.knowledge_base.utils import get_file_path, LOADER_DICT
 from server.knowledge_base.kb_service.base import get_kb_details, get_kb_file_details
 from typing import Literal, Dict, Tuple
-from configs import (kbs_config,
-                    EMBEDDING_MODEL, DEFAULT_VS_TYPE,
-                    CHUNK_SIZE, OVERLAP_SIZE, ZH_TITLE_ENHANCE)
+from configs import (EMBEDDING_MODEL, CHUNK_SIZE, OVERLAP_SIZE, ZH_TITLE_ENHANCE)
 from server.utils import list_embed_models, list_online_embed_models
 import os
 import time
@@ -72,12 +70,14 @@ def knowledge_base_page(api: ApiRequest, is_lite: bool = None):
     if "selected_kb_info" not in st.session_state:
         st.session_state["selected_kb_info"] = ""
 
+
     if "selected_splits_info" not in st.session_state:
         st.session_state["selected_splits_info"] = []
 
+
     def format_selected_kb(kb_name: str) -> str:
         if kb := kb_list.get(kb_name):
-            return f"{kb_name} ({kb['vs_type']} @ {kb['embed_model']})"
+            return f"{kb_name} ({kb['embed_model']})"
         else:
             return kb_name
 
@@ -102,22 +102,14 @@ def knowledge_base_page(api: ApiRequest, is_lite: bool = None):
                 key="kb_info",
             )
 
-            cols = st.columns(2)
-
-            vs_types = list(kbs_config.keys())
-            vs_type = cols[0].selectbox(
-                "Vector Storage Type",
-                vs_types,
-                index=vs_types.index(DEFAULT_VS_TYPE),
-                key="vs_type",
-            )
+            cols = st.columns(1)
 
             if is_lite:
                 embed_models = list_online_embed_models()
             else:
                 embed_models = list_embed_models() + list_online_embed_models()
 
-            embed_model = cols[1].selectbox(
+            embed_model = cols[0].selectbox(
                 "Embedding Model",
                 embed_models,
                 index=embed_models.index(EMBEDDING_MODEL),
@@ -138,7 +130,6 @@ def knowledge_base_page(api: ApiRequest, is_lite: bool = None):
             else:
                 ret = api.create_knowledge_base(
                     knowledge_base_name=kb_name,
-                    vector_store_type=vs_type,
                     embed_model=embed_model,
                 )
                 st.toast(ret.get("msg", " "))
@@ -328,9 +319,10 @@ def knowledge_base_page(api: ApiRequest, is_lite: bool = None):
             st.rerun()
 
         if st.session_state["selected_splits_info"]:
-            st.write(f"<span style='color:#33333; font-size: 24px'>Chunk Contents</span>", unsafe_allow_html=True)
             response = st.session_state["selected_splits_info"]
             for item in response:
-                with st.expander(item['file_name']):
-                    for i, content in enumerate(item['contents']):
-                        st.write(f"The {i+1}th Chunk：" + f"<div style='color:#666666'>{content}</div>", unsafe_allow_html=True)
+                with st.expander("Vs Type：" + item['vs_type']):
+                    contents = item['data']
+                    for subItem in contents:
+                        for i, content in enumerate(subItem['contents']):
+                            st.write(f"The {i + 1}th Chunk：" + f"<div style='color:#666666'>{content}</div>", unsafe_allow_html=True)

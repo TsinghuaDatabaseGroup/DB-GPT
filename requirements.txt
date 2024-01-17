@@ -44,6 +44,8 @@ paramiko==3.3.1
 psycopg2-binary; platform_python_implementation == "CPython"
 jpype1==1.4.1
 termcolor
+elasticsearch==8.11.1
+jieba==0.42.1
 # Online api libs dependencies
 
 # zhipuai>=1.0.7
