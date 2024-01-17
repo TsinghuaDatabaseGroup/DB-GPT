@@ -16,6 +16,9 @@ workload_info.json
 
 /multiagents/localized_llms/sentence_embedding/*
 
+chromadb_search_results.txt
+es_search_results.txt
+
 # below are standard python ignore files
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -18,7 +18,7 @@ from server.db.repository.knowledge_file_repository import (
 )
 
 from configs import (kbs_config, VECTOR_SEARCH_TOP_K, SCORE_THRESHOLD,
-                     EMBEDDING_MODEL, KB_INFO)
+                     EMBEDDING_MODEL, KB_INFO, DEFAULT_VS_TYPES)
 from server.knowledge_base.utils import (
     get_kb_path, get_doc_path, KnowledgeFile,
     list_kbs_from_folder, list_files_from_folder,
@@ -58,7 +58,7 @@ class KBService(ABC):
                  embed_model: str = EMBEDDING_MODEL,
                  ):
         self.kb_name = knowledge_base_name
-        self.kb_info = KB_INFO.get(knowledge_base_name, f"Knowledge base about {knowledge_base_name}")
+        self.kb_info = KB_INFO.get(knowledge_base_name, f"关于{knowledge_base_name}的知识库")
         self.embed_model = embed_model
         self.kb_path = get_kb_path(self.kb_name)
         self.doc_path = get_doc_path(self.kb_name)
@@ -80,6 +80,7 @@ class KBService(ABC):
         if not os.path.exists(self.doc_path):
             os.makedirs(self.doc_path)
         self.do_create_kb()
+        print("========知识库入库======="f"KnowledgeBase {self.kb_name} created")
         status = add_kb_to_db(self.kb_name, self.kb_info, self.vs_type(), self.embed_model)
         return status
 
@@ -218,9 +219,10 @@ class KBService(ABC):
     def list_kbs(cls):
         return list_kbs_from_db()
 
-    def exists(self, kb_name: str = None):
+    def exists(self, kb_name: str = None, vs_type: str = None):
         kb_name = kb_name or self.kb_name
-        return kb_exists(kb_name)
+        vs_type = vs_type or self.vs_type()
+        return kb_exists(kb_name, vs_type)
 
     @abstractmethod
     def vs_type(self) -> str:
@@ -308,19 +310,11 @@ class KBServiceFactory:
             return DefaultKBService(kb_name)
 
     @staticmethod
-    def get_service_by_name(kb_name: str) -> KBService:
-        _, vs_type, embed_model = load_kb_from_db(kb_name)
+    def get_service_by_name(kb_name: str, vs_type: str) -> KBService:
+        _, vs_type, embed_model = load_kb_from_db(kb_name, vs_type)
         if _ is None:  # kb not in db, just return None
             return None
         return KBServiceFactory.get_service(kb_name, vs_type, embed_model)
-
-    @staticmethod
-    def get_services() -> list:
-        kbs = list_kbs_from_db()
-        if kbs is None:  # no kbs, just return None
-            return None
-
-        return kbs
 
     @staticmethod
     def get_default():
@@ -363,7 +357,7 @@ def get_kb_details() -> List[Dict]:
 
 
 def get_kb_file_details(kb_name: str) -> List[Dict]:
-    kb = KBServiceFactory.get_service_by_name(kb_name)
+    kb = KBServiceFactory.get_service_by_name(kb_name, DEFAULT_VS_TYPES[0])
     if kb is None:
         return []
 
@@ -436,3 +430,4 @@ def score_threshold_process(score_threshold, k, docs):
             if cmp(float(similarity), score_threshold)
         ]
     return docs[:k]
+
