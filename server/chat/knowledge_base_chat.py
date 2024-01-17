@@ -1,6 +1,10 @@
 from fastapi import Body, Request
 from fastapi.responses import StreamingResponse
-from configs import (LLM_MODELS, VECTOR_SEARCH_TOP_K, SCORE_THRESHOLD, TEMPERATURE)
+from configs import (
+    LLM_MODELS,
+    VECTOR_SEARCH_TOP_K,
+    SCORE_THRESHOLD,
+    TEMPERATURE, DEFAULT_VS_TYPES, KNOWLEDGE_USE_CACHE)
 from server.utils import wrap_done, get_ChatOpenAI
 from server.utils import BaseResponse, get_prompt_template
 from langchain.chains import LLMChain
@@ -17,6 +21,7 @@ from server.knowledge_base.kb_doc_api import search_docs
 
 
 async def knowledge_base_chat(query: str = Body(..., description="用户输入", examples=["你好"]),
+                              ignore_cache: bool = Body(True, description="是否忽略缓存"),
                               knowledge_base_name: str = Body(..., description="知识库名称", examples=["samples"]),
                               top_k: int = Body(VECTOR_SEARCH_TOP_K, description="匹配向量数"),
                               score_threshold: float = Body(
@@ -24,8 +29,8 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
                                   description="知识库匹配相关度阈值，取值范围在0-1之间，SCORE越小，相关度越高，取到1相当于不筛选，建议设置在0.5左右",
                                   ge=0,
                                   le=2
-                              ),
-                              history: List[History] = Body(
+),
+    history: List[History] = Body(
                                   [],
                                   description="历史对话",
                                   examples=[[
@@ -33,21 +38,22 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
                                        "content": "我们来玩成语接龙，我先来，生龙活虎"},
                                       {"role": "assistant",
                                        "content": "虎头虎脑"}]]
-                              ),
-                              stream: bool = Body(False, description="流式输出"),
-                              model_name: str = Body(LLM_MODELS[0], description="LLM 模型名称。"),
-                              temperature: float = Body(TEMPERATURE, description="LLM 采样温度", ge=0.0, le=1.0),
-                              max_tokens: Optional[int] = Body(
+),
+    stream: bool = Body(False, description="流式输出"),
+    model_name: str = Body(LLM_MODELS[0], description="LLM 模型名称。"),
+    temperature: float = Body(TEMPERATURE, description="LLM 采样温度", ge=0.0, le=1.0),
+    max_tokens: Optional[int] = Body(
                                   None,
                                   description="限制LLM生成Token数量，默认None代表模型最大值"
-                              ),
-                              prompt_name: str = Body(
+),
+    prompt_name: str = Body(
                                   "default",
                                   description="使用的prompt模板名称(在configs/prompt_config.py中配置)"
-                              ),
-                              request: Request = None,
-                              ):
-    kb = KBServiceFactory.get_service_by_name(knowledge_base_name)
+),
+    request: Request = None,
+):
+
+    kb = KBServiceFactory.get_service_by_name(knowledge_base_name, DEFAULT_VS_TYPES[0])
     if kb is None:
         return BaseResponse(code=404, msg=f"未找到知识库 {knowledge_base_name}")
 
@@ -57,40 +63,46 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
             query: str,
             top_k: int,
             history: Optional[List[History]],
+            ignore_cache: bool = True,
             model_name: str = LLM_MODELS[0],
             prompt_name: str = prompt_name,
-            score_threshold: float = SCORE_THRESHOLD,
     ) -> AsyncIterable[str]:
         nonlocal max_tokens
         callback = AsyncIteratorCallbackHandler()
         if isinstance(max_tokens, int) and max_tokens <= 0:
             max_tokens = None
 
+        if not ignore_cache:
+            cache_kb = KBServiceFactory.get_service(
+                "cache", SupportedVSType.CHROMADB)
+            docs = cache_kb.search_docs(query, top_k)
+            if len(docs) > 0:
+                for doc, score in docs:
+                    answer = doc.metadata.get("answer")
+                    if answer:
+                        yield json.dumps({"answer": f"<span style='word-break:break-all; color:#333333; font-size:16px; margin-bottom:10px;'>{doc.page_content}:<br><span style='color:#999999; font-size:14px;'>{answer}</span></span><br>"}, ensure_ascii=False)
+            else:
+                yield json.dumps({"answer": "No Cache"}, ensure_ascii=False)
+            return
         model = get_ChatOpenAI(
             model_name=model_name,
             temperature=temperature,
             max_tokens=max_tokens,
             callbacks=[callback],
         )
-
         docs = search_docs(query, knowledge_base_name, top_k, score_threshold)
-
-        print(f" ===== docs:{docs}")
-
-        if len(docs) > 0 and 'content' not in docs[0].metadata:
-            context = '\n'.join([doc.page_content for doc in docs])
-        elif len(docs) > 0 and 'content' in docs[0].metadata:
-            context = "\n".join([doc.metadata['content'] for doc in docs])
-        else: 
-            context = ""
+        print("******search_docs*******:", docs)
+        context = "\n".join([doc.page_content for doc in docs])
 
         if len(docs) == 0:  # 如果没有找到相关文档，使用empty模板
-            prompt_template = get_prompt_template("knowledge_base_chat", "empty")
+            prompt_template = get_prompt_template(
+                "knowledge_base_chat", "empty")
         else:
-            prompt_template = get_prompt_template("knowledge_base_chat", prompt_name)
-
-        print(" === prompt_template: ", prompt_template)
-        input_msg = History(role="user", content=prompt_template).to_msg_template(False)
+            prompt_template = get_prompt_template(
+                "knowledge_base_chat", prompt_name)
+        input_msg = History(
+            role="user",
+            content=prompt_template).to_msg_template(False)
         chat_prompt = ChatPromptTemplate.from_messages(
             [i.to_msg_template() for i in history] + [input_msg])
 
@@ -101,18 +113,20 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
             chain.acall({"context": context, "question": query}),
             callback.done),
         )
-        
+
         source_documents = []
         for inum, doc in enumerate(docs):
             filename = doc.metadata.get("source")
-            parameters = urlencode({"knowledge_base_name": knowledge_base_name, "file_name": filename})
+            parameters = urlencode(
+                {"knowledge_base_name": knowledge_base_name, "file_name": filename})
             base_url = request.base_url
             url = f"{base_url}knowledge_base/download_doc?" + parameters
             text = f"""出处 [{inum + 1}] [{filename}]({url}) \n\n{doc.page_content}\n\n"""
             source_documents.append(text)
 
         if len(source_documents) == 0:  # 没有找到相关文档
-            source_documents.append(f"<span style='color:red'>未找到相关文档,该回答为大模型自身能力解答！</span>")
+            source_documents.append(
+                f"<span style='color:red'>未找到相关文档,该回答为大模型自身能力解答！</span>")
         answer = ""
         if stream:
             async for token in callback.aiter():
@@ -127,11 +141,20 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
             yield json.dumps({"answer": answer,
                               "docs": source_documents},
                              ensure_ascii=False)
+
+        if KNOWLEDGE_USE_CACHE:
+            cache_kb = KBServiceFactory.get_service(
+                "cache", SupportedVSType.CHROMADB)
+            doc_infos = cache_kb.do_add_doc([Document(page_content=query, metadata={"source": "cache", "answer": answer})])
+            print("cache doc_infos：", doc_infos)
         await task
 
-    return StreamingResponse(knowledge_base_chat_iterator(query=query,
-                                                          top_k=top_k,
-                                                          history=history,
-                                                          model_name=model_name,
-                                                          prompt_name=prompt_name),
-                             media_type="text/event-stream")
+    return StreamingResponse(
+        knowledge_base_chat_iterator(
+            query=query,
+            top_k=top_k,
+            history=history,
+            ignore_cache=ignore_cache,
+            model_name=model_name,
+            prompt_name=prompt_name),
+        media_type="text/event-stream")

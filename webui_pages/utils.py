@@ -7,7 +7,6 @@ from pathlib import Path
 # 此处导入的配置为发起请求（如WEBUI）机器上的配置，主要用于为前端设置默认值。分布式部署时可以与服务器上的不同
 from configs import (
     EMBEDDING_MODEL,
-    DEFAULT_VS_TYPE,
     LLM_MODELS,
     TEMPERATURE,
     SCORE_THRESHOLD,
@@ -197,6 +196,7 @@ class ApiRequest:
     def _get_response_value(
         self,
         response: httpx.Response,
+
         as_json: bool = False,
         value_func: Callable = None,
     ):
@@ -348,59 +348,70 @@ class ApiRequest:
         return self._httpx_stream2generator(response)
 
 
-    def diagnose_file(self, file_name: str, file_content: Union[bytes]):
+    def db_ddl_info(self, host: str, user: str, password: str, database: str, port: int):
         '''
-        对异常文件进行诊断
-        '''
-        response = self.post(
-            "/diagnose/run_diagnose",
-            files={"file": (file_name, file_content)},
-            stream=False,
-        )
-        return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", {}))
-
-
-    def diagnose_output(self):
-        '''
-        获取异常诊断输出
-        '''
-        response = self.get(
-            "/diagnose/diagnose_output",
-            stream=False,
-        )
-        return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", {}))
-
-
-    def diagnose_histories(self, start: str, end: str, model: str = "GPT4-0613"):
-        '''
-        获取诊断历史列表
+        对应api.py/chat/db_ddl_info接口
         '''
         data = {
-            "start": start,
-            "end": end,
-            "model": model
+            "host": host,
+            "user": user,
+            "password": password,
+            "database": database,
+            "port": port
+        }
+
+        response = self.post(
+            "/db/db_ddl_info",
+            json=data,
+            stream=False,
+        )
+        return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", {}))
+
+    def db_execute_sql(self, host: str, user: str, password: str, database: str, port: int, sql: str):
+        '''
+        对应api.py/chat/db_execute_sql接口
+        '''
+        data = {
+            "host": host,
+            "user": user,
+            "password": password,
+            "database": database,
+            "port": port,
+            "sql": sql
         }
         response = self.post(
-            "/alert/report/histories",
+            "/db/db_execute_sql",
             json=data,
             stream=False,
         )
         return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", []))
 
-    def diagnose_history_detail(self, file_name: str, model: str = "GPT4-0613"):
+
+    def db_generate_sql(
+        self,
+        query: str,
+        ddl: str,
+        model: str = LLM_MODELS[0],
+        temperature: float = TEMPERATURE,
+        max_tokens: int = None
+    ):
         '''
-        获取诊断历史详情
+        对应api.py/chat/db_data_base_chat接口
         '''
         data = {
-            "file_name": file_name,
-            "model": model
+            "query": query,
+            "ddl": ddl,
+            "model_name": model,
+            "temperature": temperature,
+            "max_tokens": max_tokens
         }
+
         response = self.post(
-            "/alert/report/history_detail",
+            "/db/db_generate_sql",
             json=data,
-            stream=False,
+            stream=True,
         )
-        return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", {}))
+        return self._httpx_stream2generator(response, as_json=True)
 
     def knowledge_base_chat(
         self,
@@ -410,6 +421,7 @@ class ApiRequest:
         score_threshold: float = SCORE_THRESHOLD,
         history: List[Dict] = [],
         stream: bool = True,
+        ignore_cache: bool = True,
         model: str = LLM_MODELS[0],
         temperature: float = TEMPERATURE,
         max_tokens: int = None,
@@ -425,6 +437,7 @@ class ApiRequest:
             "score_threshold": score_threshold,
             "history": history,
             "stream": stream,
+            "ignore_cache": ignore_cache, # 是否忽略缓存
             "model_name": model,
             "temperature": temperature,
             "max_tokens": max_tokens,
@@ -440,6 +453,21 @@ class ApiRequest:
             stream=True,
         )
         return self._httpx_stream2generator(response, as_json=True)
+
+
+    def docs_text_split_content(self, knowledge_base_name, file_names):
+        '''
+        对应api.py/knowledge_base/doc_text_split_content接口
+        '''
+        data = {
+            "knowledge_base_name": knowledge_base_name,
+            "file_names": file_names,
+        }
+        response = self.post(
+            "/knowledge_base/docs_text_split_content",
+            json=data,
+        )
+        return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", []))
 
     def upload_temp_docs(
         self,
@@ -571,7 +599,6 @@ class ApiRequest:
     def create_knowledge_base(
         self,
         knowledge_base_name: str,
-        vector_store_type: str = DEFAULT_VS_TYPE,
         embed_model: str = EMBEDDING_MODEL,
     ):
         '''
@@ -579,7 +606,6 @@ class ApiRequest:
         '''
         data = {
             "knowledge_base_name": knowledge_base_name,
-            "vector_store_type": vector_store_type,
             "embed_model": embed_model,
         }
 
@@ -639,7 +665,7 @@ class ApiRequest:
             json=data,
         )
         return self._get_response_value(response, as_json=True)
-    
+
     def upload_kb_docs(
         self,
         files: List[Union[str, Path, bytes]],
@@ -684,7 +710,6 @@ class ApiRequest:
             data=data,
             files=[("files", (filename, file)) for filename, file in files],
         )
-
         return self._get_response_value(response, as_json=True)
 
     def delete_kb_docs(
@@ -709,22 +734,6 @@ class ApiRequest:
             json=data,
         )
         return self._get_response_value(response, as_json=True)
-
-
-    def docs_text_split_content(self, knowledge_base_name, file_names):
-        '''
-        对应api.py/knowledge_base/doc_text_split_content接口
-        '''
-        data = {
-            "knowledge_base_name": knowledge_base_name,
-            "file_names": file_names,
-        }
-        print('=======:', data)
-        response = self.post(
-            "/knowledge_base/docs_text_split_content",
-            json=data,
-        )
-        return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", []))
 
 
     def update_kb_info(self,knowledge_base_name,kb_info):
@@ -780,7 +789,6 @@ class ApiRequest:
         self,
         knowledge_base_name: str,
         allow_empty_kb: bool = True,
-        vs_type: str = DEFAULT_VS_TYPE,
         embed_model: str = EMBEDDING_MODEL,
         chunk_size=CHUNK_SIZE,
         chunk_overlap=OVERLAP_SIZE,
@@ -792,7 +800,6 @@ class ApiRequest:
         data = {
             "knowledge_base_name": knowledge_base_name,
             "allow_empty_kb": allow_empty_kb,
-            "vs_type": vs_type,
             "embed_model": embed_model,
             "chunk_size": chunk_size,
             "chunk_overlap": chunk_overlap,

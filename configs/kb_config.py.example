@@ -6,6 +6,14 @@ DEFAULT_KNOWLEDGE_BASE = "samples"
 # 默认向量库/全文检索引擎类型。
 DEFAULT_VS_TYPE = "chromadb"
 
+DEFAULT_VS_TYPES = ["es", "chromadb"]
+
+# 每种向量库的prompt字节的最大长度，超过则截断，
+VS_TYPE_PROMPT_TOTAL_BYTE_SIZE = 3000
+
+# 使用缓存逻辑
+KNOWLEDGE_USE_CACHE = False
+
 # 缓存向量库数量（针对FAISS）
 CACHED_VS_NUM = 1
 
@@ -83,6 +91,13 @@ SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_ROOT_PATH}"
 kbs_config = {
     "chromadb": {
         "persist_directory": os.path.join(os.path.dirname(os.path.dirname(__file__)), "chroma_db")
+    },
+    "es": {
+        "host": "127.0.0.1",
+        "port": "9200",
+        "index_name": "test_index",
+        "user": "elastic",
+        "password": "xxxxxxxxxxxxxx"
     }
 }
 
