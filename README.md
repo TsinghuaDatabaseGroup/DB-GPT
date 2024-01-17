@@ -105,7 +105,7 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 
       - [x] Vector database (ChromaDB)  [new branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat)
 
-      - [ ] RESTful Search Engine (Elasticsearch)
+      - [x] RESTful Search Engine (Elasticsearch)  [new branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat)
 
 - [x] Expert prompt generation using *document knowledge*   [new branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat)
 
