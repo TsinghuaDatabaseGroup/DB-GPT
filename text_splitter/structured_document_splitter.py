@@ -9,13 +9,13 @@ from text_splitter.summary_llm.openai import OpenAISummary, prompt_generation
 logger = logging.getLogger(__name__)
 
 
-def read_structured_docx(file_path):
+def read_structured_docx(base_path, file_path):
     doc = Document(file_path)
 
     all_styles = []
     for style in doc.styles:
         all_styles.append(style.name)
-
+    
     tree = []
     current_node = tree
     path = [tree]  # Stack to keep track of current position in the tree
@@ -23,10 +23,10 @@ def read_structured_docx(file_path):
     new_node = {}
     content_text = ""
     for para in doc.paragraphs:
-
-        print(" ==================== ")
-        print(para.text)
-        print(" ==================== ")
+        
+        para.text = para.text.strip()
+        if para.text == "" or "云和恩墨" in para.text:
+            continue
 
         style = para.style.name
 
@@ -51,7 +51,7 @@ def read_structured_docx(file_path):
             current_node = new_node['children']
             path.append(current_node)
         else:
-            content_text = content_text + para.text
+            content_text = content_text + '\n\n' + para.text
 
     if content_text != "":
         if new_node != {}:
@@ -59,6 +59,15 @@ def read_structured_docx(file_path):
         else:
             new_node = {'name': "root", 'text': content_text, 'children': []}
             tree = [new_node]
+
+    doc_split_path = os.path.join(base_path, file_path.split("/")[-1].split(".")[0])
+
+    if os.path.exists(doc_split_path):
+        import shutil
+        shutil.rmtree(doc_split_path)
+    os.makedirs(doc_split_path)
+
+    write_tree_to_files(tree, base_path=doc_split_path)
     
     return tree
 
@@ -66,9 +75,14 @@ def read_structured_docx(file_path):
 def write_tree_to_files(tree, base_path, section_prefix=""):
 
     for idx, node in enumerate(tree):
+
         section_number = f"{section_prefix}.{idx + 1}" if section_prefix != "" else str(idx + 1)
         filename = f"{section_number} {node['name']}.txt"
         file_path = os.path.join(base_path, filename)
+
+        print(" ==================== ")
+        print(f"{filename}: {node['text']}")
+        print(" ==================== ")
 
         # Write the node text to the file
         with open(file_path, 'w', encoding='utf-8') as file:
@@ -80,7 +94,7 @@ def write_tree_to_files(tree, base_path, section_prefix=""):
 
 # Example usage
 # Assuming 'tree' is your data structure
-# write_tree_to_files(tree, base_path="output_directory")
+
 
 
 def traverse_and_print_leaf_texts(node):
@@ -226,7 +240,7 @@ if __name__ == "__main__":
         section_style_prefix=["Heading"]
     )
 
-    files = os.listdir("../knowledge_base/yun_he_en_mo/")
+    files = os.listdir("./example_docs/")
 
     ls = []
     for file in files:
@@ -238,4 +252,4 @@ if __name__ == "__main__":
 
     for inum, element in enumerate(ls):
         print("\n*************** ", element[0], " ***************\n")
-        chunks = text_splitter._split_doc_tree(element[1])        
+        chunks = text_splitter._split_doc_tree(element[1])
