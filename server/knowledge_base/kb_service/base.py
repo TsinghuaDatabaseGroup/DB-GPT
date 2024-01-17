@@ -173,7 +173,7 @@ class KBService(ABC):
 
     def count_files(self):
         return count_files_from_db(self.kb_name)
-
+    
     def search_docs(self,
                     query: str,
                     top_k: int = VECTOR_SEARCH_TOP_K,
