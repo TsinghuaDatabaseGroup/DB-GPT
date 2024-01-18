@@ -4,12 +4,14 @@ Please output your judgement in the following format: Output "Answer:" followed 
 
 DIAG_PROMPT = """Here are some diagnosis knowledge blocks following the following dict format:
 ```
-{"name": "many_dead_tuples",
-"content": "If the accessed table has too many dead tuples, it can cause bloat-table and degrade performance",
-"metrics": ["live_tuples", "dead_tuples", "table_size", "dead_rate"],
-"steps": "For each accessed table, if the total number of live tuples and dead tuples is within an acceptable limit (1000), and table size is not too big (50MB), it is not a root cause. Otherwise, if the dead rate also exceeds the threshold (0.02), it is considered a root cause. And we suggest to clean up dead tuples in time."}
+{
+  "name": "许多死元组",
+  "content": "如果访问的表中有太多的死元组，可能会导致表膨胀并降低性能。",
+  "metrics": ["活元组", "死元组", "表大小", "死亡率"],
+  "steps": "对于每个访问的表，如果活元组和死元组的总数在可接受的限制范围内（1000），并且表大小不太大（50MB），则不是根本原因。否则，如果死亡率也超过了阈值（0.02），则被视为根本原因。我们建议及时清理死元组。"
+}
 ```
-Note elements in "metrics" should be concrete names like "live_tuples", "dead_tuples", "table_size", "dead_rate", etc. rather than "metric1", "metric2", etc. "content" should be a detailed description string. "steps" should be a string that contains steps to follow to diagnose the problem.
+Note elements in "metrics" should be concrete names like "活元组", "死元组", "表大小", "死亡率", etc. rather than "metric1", "metric2", etc. "content" should be a detailed description string. "steps" should be a string that contains steps to follow to diagnose the problem.
 """
 
 LOOKUP_FUNCTION = {
@@ -26,11 +28,11 @@ LOOKUP_FUNCTION = {
         'required': ["index"],
     }
 }
-LOOKUP_PROMPT = f"Remember: This is an interactive task. At any time, use `look_up()` to obtain the detailed content in a given chapter. The available chapters include ${{alert_info}}\n"
+LOOKUP_PROMPT = f"Remember: This is an interactive task. At any time, use `look_up()` to obtain the detailed content in a given chapter. The available chapters include ${{relevant_chapters}}\n"
 
 SUBMIT_RULE_FUNCTION = {
     'name': "submit_rule",
-    'description': "Submit a or multiple diagnosis knowledge blocks summarized based on the knowledge learned from the document. The diagnosis knowledge blocks should follow the dict format.",
+    'description': "Submit a or multiple diagnosis knowledge blocks summarized based on the knowledge learned from the document. The diagnosis knowledge blocks should follow the dict format and all the values in the dict should be chinese.",
     'parameters': {
         'type': "object",
         'properties': {
@@ -56,6 +58,7 @@ RULES_EXTRACTION_PROMPT_MSG = [{'role': "system", 'content': (
     f"Given a document index, please {TASK_PROMPT}.\nTry to submit knowledge blocks in the currently reading chapter one by one in order. Each knowledge block should strictly follow the dict format (with double quotes)\n"
     f"{'Extracted knowledge blocks should follow the following format.' + ' ' + DIAG_PROMPT}\n"
     f"Do not repeatedly extract the following knowledge blocks:\n${{existing_rules}}\n"
+    f"Do not repeatedly lookup the following sub-chapters:\n${{used_chapters}}\n"
 )}]
 INDEX_TEMPLATE = "{idx} - {title}"
 CONTENT_TEMPLATE = "{idx} - {title}\n{content}"
