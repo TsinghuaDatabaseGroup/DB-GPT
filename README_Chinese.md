@@ -82,7 +82,7 @@
 
 - [x] 根据 *知识聚类结果* 自动生成专家描述
 
-- [x] 升级基于 LLM 的诊断机制:
+- [ ] 升级基于 LLM 的诊断机制:
   - [x] _任务分派 -> 并行诊断 -> 交叉审查 -> 报告生成_
   - [ ] 完善异步机制
 
@@ -140,6 +140,22 @@ rm -r package-lock.json
 npm install  --legacy-peer-deps
 npm install -g cross-env
 ```
+
++ PostgreSQL v12 （我们是基于 PostgreSQL v12 进行开发测试的，我们不保证其他版本的 PostgreSQL 的兼容性）
+
+  > 确保您的数据库支持远程连接 ([链接](https://support.cpanel.net/hc/en-us/articles/4419265023383-How-to-enable-remote-PostgreSQL-access))
+
+  > 此外，安装扩展如 _[pg_stat_statements](https://pganalyze.com/docs/install/01_enabling_pg_stat_statements)_（跟踪频繁查询), _[pg_hint_plan](https://pg-hint-plan.readthedocs.io/en/latest/installation.html)_（优化物理操作符), 和 _[hypopg](https://github.com/HypoPG/hypopg)_（创建假设索引）。
+
+  > 注意 _pg_stat_statements_ 会持续累积查询统计数据。因此您需要定期清除统计数据：1) 要丢弃所有统计数据，执行 _"SELECT pg_stat_statements_reset();"_; 2) 要丢弃特定查询的统计数据，执行 _"SELECT pg_stat_statements_reset(userid, dbid, queryid);"_。
+
++ 下载 [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1) 模型参数
+
+  > 创建新目录 ./multiagents/localized_llms/sentence_embedding/
+
+  > 将下载的sentence-transformer.zip压缩包放置在./multiagents/localized_llms/sentence_embedding/目录下；解压压缩包。
+
+
 
 ### 2， 模型下载
 
@@ -205,14 +221,6 @@ $ python startup.py -a
 
 #### 1. 先决条件
 
-- PostgreSQL v12 （我们是基于 PostgreSQL v12 进行开发测试的，我们不保证其他版本的 PostgreSQL 的兼容性）
-
-  > 确保您的数据库支持远程连接 ([链接](https://support.cpanel.net/hc/en-us/articles/4419265023383-How-to-enable-remote-PostgreSQL-access))
-
-  > 此外，安装扩展如 _[pg_stat_statements](https://pganalyze.com/docs/install/01_enabling_pg_stat_statements)_（跟踪频繁查询), _[pg_hint_plan](https://pg-hint-plan.readthedocs.io/en/latest/installation.html)_（优化物理操作符), 和 _[hypopg](https://github.com/HypoPG/hypopg)_（创建假设索引）。
-
-  > 注意 _pg_stat_statements_ 会持续累积查询统计数据。因此您需要定期清除统计数据：1) 要丢弃所有统计数据，执行 _"SELECT pg_stat_statements_reset();"_; 2) 要丢弃特定查询的统计数据，执行 _"SELECT pg_stat_statements_reset(userid, dbid, queryid);"_。
-
 - (可选) 在 PostgreSQL 中启用慢查询日志 ([链接](https://ubiq.co/database-blog/how-to-enable-slow-query-log-in-postgresql/))
 
   > (1) 对于 _"systemctl restart postgresql"_，服务名可以不同（例如，postgresql-12.service）;
@@ -224,12 +232,6 @@ $ python startup.py -a
 - (可选) Prometheus
 
   > 查看[prometheus.md](materials/help_documents/prometheus.md)了解详细的安装指南。
-  
-- 下载 [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1) 模型参数
-
-  > 创建新目录 ./multiagents/localized_llms/sentence_embedding/
-
-  > 将下载的sentence-transformer.zip压缩包放置在./multiagents/localized_llms/sentence_embedding/目录下；解压压缩包。
 
 #### 2. 诊断
 
