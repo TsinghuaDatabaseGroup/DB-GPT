@@ -45,7 +45,7 @@
 </p>
 
 <p align="center">
-    【English | <a href="README_Chinese11-7_update.md">中文</a>】
+    【English | <a href="README_Chinese.md">中文</a>】
 </p>
 
 
