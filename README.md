@@ -1,5 +1,5 @@
 <div align= "center">
-    <h1> <img src="imgs/dbagent.png" width="100px"> LLM As Database Administrator</h1>
+    <h1> <img src="img/dbagent.png" width="100px"> LLM As Database Administrator</h1>
 </div>
 
 <!-- <p align="center">
