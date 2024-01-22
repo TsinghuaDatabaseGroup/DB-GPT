@@ -119,7 +119,7 @@ class LLMCore(object):
                     # assert (self.model=='gpt-4'), f"Functions are only supported in 'gpt-4'!"
                     
                     payload = {
-                        "model": "gpt-3.5-turbo-1106", # "gpt-4-1106-preview", # "gpt-3.5-turbo-16k",#"gpt-4-32k-0613",
+                        "model": "gpt-4-1106-preview", # "gpt-4-1106-preview", # "gpt-3.5-turbo-16k",#"gpt-4-32k-0613",
                         "messages": messages,
                         "functions": functions,
                         "temperature": temperature,
@@ -137,7 +137,7 @@ class LLMCore(object):
                 else:
 
                     payload = {
-                        "model": "gpt-3.5-turbo-1106", # "gpt-4-1106-preview", # "gpt-3.5-turbo-16k",#"gpt-4-32k-0613",
+                        "model": "gpt-4-1106-preview", # "gpt-4-1106-preview", # "gpt-3.5-turbo-16k",#"gpt-4-32k-0613",
                         "messages": messages,
                         "temperature": temperature,
                     }
