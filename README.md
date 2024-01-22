@@ -1,5 +1,5 @@
 <div align= "center">
-    <h1> <img src="imgs/dbagent.png" width="100px"> LLM As Database Administrator</h1>
+    <h1> <img src="img/dbagent.png" width="100px"> LLM As Database Administrator</h1>
 </div>
 
 <!-- <p align="center">
@@ -15,12 +15,11 @@
 
 <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/anomalies/public_testing_set/all_anomalies.jsonl">![Dialogues](https://img.shields.io/badge/Anomalies-539-red?style=flat-square)</a>
 <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/multiagents/tools">![Dialogues](https://img.shields.io/badge/Tool\_APIs-60+-red?style=flat-square)</a>
-<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms/training_data">![Dialogues](https://img.shields.io/badge/Training\_Data-2813-red?style=flat-square)</a>
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/multiagents/localized_llms/training_data">![Dialogues](https://img.shields.io/badge/Training\_Data-2813-red?style=flat-square)</a>
 <a href="https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1">![Dialogues](https://img.shields.io/badge/Local\_Text\_Embed-1-red?style=flat-square)</a>
-<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/multiagents/llms">![Dialogues](https://img.shields.io/badge/Local\_LLMs-3-red?style=flat-square)</a>
+<a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/multiagents/llms">![Dialogues](https://img.shields.io/badge/Local\_Finetuned\_LLMs-4-red?style=flat-square)</a>
 
 </div>
-
 
 <!-- <div align="center">
   <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/main/localized_llms">
@@ -45,18 +44,17 @@
 </p>
 
 <p align="center">
-    【English | <a href="README_Chinese11-7_update.md">中文</a>】
+    【English | <a href="README_Chinese.md">中文</a>】
 </p>
 
 
 <p align="center">
-    <img src="imgs/overview_v3.png" width="800px">
+    <img src="img/overview_v3.png" width="800px">
 </p>
 
-🦾 Build your personal database administrator (D-Bot)🧑‍💻, which is good at *reading documents, using various tools, writing analysis reports!* 
+🦾 Build your personal database administrator (D-Bot)🧑‍💻, which is good at solving database problems by  *reading documents, using various tools, writing analysis reports!* 
 
-**An important, major [version update](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat) is coming soon, stay tuned!** 📣 🔜
-
+<!-- **An important, major [version update](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat) is coming soon, stay tuned!** 📣 🔜 -->
 
 
 <!-- >Besides, to extend the database maintenance capability, we are also finetuning LLMs to support localized diagnosis, *query rewriting* and *anomaly simulation* (comming soon). -->
@@ -66,26 +64,27 @@
 
 ## 🗺 Online Demo
 
-In the online website ([http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)), you can browse all the historical diagnosis results, used metrics, and the detailed diagnosis processes.
+1. After launching the local service (based on the [Chatchat](chat.openai.com) project), you can easily import documents into the knowledge base, utilize the knowledge base for *well-founded Q&A* and *diagnosis analysis of abnormal alarms*.
 
 <p align="center">
   <a href="http://dbgpt.dbmind.cn">
-    <img src="imgs/frontend_v2_1.png" width="800px" alt="frontend_v2">
+    <img src="img/demo-dbot_chatchat.gif" width="800px">
+  </a>
+</p>
+
+2. On the online website (http://dbgpt.dbmind.cn), you can browse all historical diagnostic results, used metrics, and detailed diagnosis processes.
+
+<p align="center">
+  <a href="http://dbgpt.dbmind.cn">
+    <img src="img/frontend_v2_2.png" width="800px" alt="frontend_v2">
   </a>
 </p>
 
 
-<p align="center">
-  <a href="http://dbgpt.dbmind.cn">
-    <img src="imgs/frontend_v2_2.png" width="800px" alt="frontend_v2">
-  </a>
-</p>
+*Old Version 1*: [[Gradio for Diag Game]](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/old_version)
 
-<p align="center">
-  <a href="./assets/dbot2_v2.gif">Demo Video</a>
-</p>
+*Old Version 2*: [[Vue for Report Replay]](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/report_replay)
 
-Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/old_version) of D-Bot.
 
 <span id="-news"></span>
 
@@ -93,25 +92,28 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 
 - [ ] New Frontend
 
-    * Knowledgebase + Diagnosis + Report Replay [new branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat)
+    * [x] Knowledgebase + Chat Q&A + Diagnosis + Report Replay
 
 - [ ] Extreme Speed Version for localized llms
 
     * [x] [*4-bit* quantized LLM](https://huggingface.co/curtis-sun/diag-baichuan2-4bit/tree/main) (reducing inference time by 1/3)
 
-    * [ ] *Synchronous Concurrency Mechanism* during LLM inference
+    * [ ] Tiny LLM
 
-    * [ ] *Document knowledge embedding and matching*
+- [x] Multi-path extraction of document knowledge
 
-      - [x] Vector database (ChromaDB)  [new branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat)
+    * [x] Vector database (ChromaDB)
 
-      - [x] RESTful Search Engine (Elasticsearch)  [new branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat)
+    * [x] RESTful Search Engine (Elasticsearch)
 
-- [x] Expert prompt generation using *document knowledge*   [new branch](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat)
+- [x] Expert prompt generation using *document knowledge*
 
-- [x] Upgrade the LLM-based diagnosis mechanism: 
+- [ ] Upgrade the LLM-based diagnosis mechanism: 
 
     * [x] *Task Dispatching -> Concurrent Diagnosis -> Cross Review -> Report Generation*
+
+    * [ ] *Synchronous Concurrency Mechanism* during LLM inference
+
 
 <!-- - [x] An end-to-end framework is available! <a href="#-diagnosis">🚀 link</a> -->
 
@@ -130,11 +132,11 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 
 - [x] Papers and experimental reports are continuously updated
 
-    * *D-Bot: Database Diagnosis System using Large Language Models.* [[paper]](https://arxiv.org/pdf/2312.01454.pdf)
+    * [x] *D-Bot: Database Diagnosis System using Large Language Models.* [[paper]](https://arxiv.org/pdf/2312.01454.pdf)
 
-    * *LLM As DBA.* [[vision]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[slides]](materials/slides)
+    * [x] *LLM As DBA.* [[vision]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[slides]](materials/slides)
 
-    * *DB-GPT: Large Language Model Meets Database.* [[vision]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
+    * [x] *DB-GPT: Large Language Model Meets Database.* [[vision]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
 
 > This project is evolving with new features 👫👫<br/> 
 > Don't forget to star ⭐ and watch 👀 to stay up to date :)
@@ -145,88 +147,130 @@ Here is the [Old Version](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/o
 
 ## 🕹 QuickStart
 
-### Folder Structure
+### 1. Environment Setup
 
-    .
-    ├── multiagents
-    │   ├── agent_conf                        # Settings of each agent
-    │   ├── agents                            # Implementation of different agent types 
-    │   ├── environments                      # E.g., diag orders / diag update / terminal conditions
-    │   ├── knowledge                         # Diagnosis experience from documents
-    │   ├── llms                              # Supported models
-    │   ├── memory                            # The content and summary of chat history
-    │   ├── reasoning_algorithms              # The available algorithm for single LLM reasoning
-    │   ├── response_formalize_scripts        # Useless content removal of model response
-    │   ├── tools                             # External monitoring/optimization tools for models
-    │   └── utils                             # Other functions (e.g., database/json/yaml operations)
-    ├── web_service                           # Web services to view diagnostic reports
-    │   ├── backend                           # Web services backend
-    │   ├── frontend                          # Web services frontend 
-    ├── webhook                               # Use the webhook to save the results of the alert to a file
-
-
-<span id="-frontend"></span>
-
-### Website Side
-
-We provide a local website to browse historical diagnosis reports and procedures. You can launch it in three steps:
-
-* install nodejs (16.13.1 and above is recommended)
++ First, ensure that your machine has Python (>= 3.10) installed.
 
 ```
-npm install -g n
-sudo n 16.18.1
+$ python --version
+Python 3.10.12
 ```
 
-* install dependencies for the first run。
++ Next, create a virtual environment and install the dependencies for the project within it.
+```shell
+# Clone the repository
+$ git clone https://github.com/TsinghuaDatabaseGroup/DB-GPT.git
 
-```
-# install frontend environment
-cd web_service/frontend
+# Enter the directory
+$ cd DB-GPT
+
+# Install all dependencies
+$ pip3 install -r requirements.txt 
+$ pip3 install -r requirements_api.txt # If only running the API, you can just install the API dependencies, please use requirements_api.txt
+
+# Default dependencies include the basic runtime environment (Chroma-DB vector library). If you want to use other vector libraries, please uncomment the respective dependencies in requirements.txt before installation.
+
+# If you want to run the Web UI, you also need to install dependencies in the frontend project. As the UI for the history report page is quite complex, a separate frontend page was written using VUE.
+cd webui_pages/reports/reports_ui
 rm -rf node_modules/
 rm -r package-lock.json
-# install dependencies for the first run
-npm install  --legacy-peer-deps
+# First-time run to install dependencies (recommended to use nodejs, ^16.13.1)
+npm install --legacy-peer-deps
+npm install -g cross-env
 ```
 
-* configuring the Backend Address for Frontend Requests
+<!-- > You can comment the Llama2Chat/CodeLlamaChat/Baichuan2Chat imports in ./llms/__init__.py if using openai models only -->
 
+> If fail to install google-colab, try *conda install -c conda-forge google-colab*
+
+
++ PostgreSQL v12 (We have developed and tested based on PostgreSQL v12, we do not guarantee compatibility with other versions of PostgreSQL)
+
+  > Ensure your database supports remote connections ([link](https://support.cpanel.net/hc/en-us/articles/4419265023383-How-to-enable-remote-PostgreSQL-access))
+
+  > Moreover, install extensions like _[pg_stat_statements](https://pganalyze.com/docs/install/01_enabling_pg_stat_statements)_ (track frequent queries), _[pg_hint_plan](https://pg-hint-plan.readthedocs.io/en/latest/installation.html)_ (optimize physical operators), and _[hypopg](https://github.com/HypoPG/hypopg)_ (create hypothetical indexes).
+
+  > Note pg_stat_statements accumulates query statistics over time. Therefore, you need to regularly clear the statistics: 1) to discard all statistics, execute "SELECT pg_stat_statements_reset();"; 2) to discard statistics for a specific query, execute "SELECT pg_stat_statements_reset(userid, dbid, queryid);".
+
+
++ Download the model parameters of [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1)
+
+  > Create a new directory ./multiagents/localized_llms/sentence_embedding/
+
+  > Place the downloaded sentence-transformer.zip in the ./multiagents/localized_llms/sentence_embedding/ directory; unzip the archive.
+
+
+
+### 2. Model Download
+
+If you need to run this project locally or in an offline environment, you first need to download the required models to your local machine, usually open-source LLM and Embedding models can be downloaded from [HuggingFace](https://huggingface.co/models).
+
+To download models, first install [Git LFS](https://docs.github.com/zh/repositories/working-with-files/managing-large-files/installing-git-large-file-storage), then run
+
+```Shell
+$ git lfs install
+$ git clone https://huggingface.co/moka-ai/m3e-base
 ```
-vim web_service/frontend/.env.development
-# Replace 127.0.0.1 with the Backend ID address, the corresponding 8024 port needs to be consistent with the backend port.
-VUE_APP_BASE_API = 'http://127.0.0.1:8024/'
+### 3. Initialize Knowledge Base and Configuration Files
+
+Copy the configuration files
+```shell
+$ python copy_config_example.py
+# The generated configuration files are in the configs/ directory
+# basic_config.py is the basic configuration file, no modification needed
+# diagnose_config.py is the diagnostic configuration file, needs to be modified according to your environment.
+# kb_config.py is the knowledge base configuration file, you can modify DEFAULT_VS_TYPE to specify the storage vector library of the knowledge base, or modify related paths.
+# model_config.py is the model configuration file, you can modify LLM_MODELS to specify the model used, the current model configuration is mainly for knowledge base search, diagnostic related models are still hardcoded in the code, they will be unified here later.
+# prompt_config.py is the prompt configuration file, mainly for LLM dialogue and knowledge base prompts.
+# server_config.py is the server configuration file, mainly for server port numbers, etc.
 ```
 
-```
-
-* run
+Initialize the knowledge base
 
 ```shell
-# cd service directory
-cd web_service
-# launch the local server and open the website
-sh run_service.sh
+$ python init_database.py --recreate-vs
+ ```
+
+### 4. One-click Start
+
+Start the project with the following commands
+```shell
+$ python startup.py -a
 ```
 
-> Modify the "python app.py" command within *run_service.sh* if there are multiple Python versions (e.g., "python3.9 app.py").
+### 5. Launch Interface Examples
 
-After successfully launching the local server, visit [http://127.0.0.1:8025/](http://127.0.0.1:8025/) to browse the diagnosis reports.
+If started correctly, you will see the following interface
 
-### Diagnosis Side
+
+1. FastAPI Docs Interface
+
+![](img/fastapi_docs_026.png)
+
+2. Web UI Launch Interface Examples:
+
+- Web UI Knowledge Base Management Page：
+
+![](img/chat_kb.png)
+
+
+- Web UI Conversation Interface:
+
+![img](img/chat_chat.png)
+
+- Web UI UI Diagnostic Page：
+
+![](img/chat_diagnosis.png)
+
+
+
+### 👩🏻‍⚕️ Anomaly Diagnosis
 
 <span id="-prerequisites"></span>
 
 #### 1. Prerequisites
 
-- PostgreSQL v12 or higher
-
-    > Make sure your database supports remote connection ([link](https://support.cpanel.net/hc/en-us/articles/4419265023383-How-to-enable-remote-PostgreSQL-access))
-
-    > Additionally, install extensions like *[pg_stat_statements](https://pganalyze.com/docs/install/01_enabling_pg_stat_statements)* (track frequent queries), *[pg_hint_plan](https://pg-hint-plan.readthedocs.io/en/latest/installation.html)* (optimize physical operators), and *[hypopg](https://github.com/HypoPG/hypopg)* (create hypothetical Indexes).
-
-    > Note *pg_stat_statements* continuosly accumulate query statistics over time. So you need to clear the statistics from time to time: 1) To discard all the statistics, execute *"SELECT pg_stat_statements_reset();"*; 2) To discard the statistics of specific query, execute *"SELECT pg_stat_statements_reset(userid, dbid, queryid);"*.
-
-- Enable slow query log in PostgreSQL ([link](https://ubiq.co/database-blog/how-to-enable-slow-query-log-in-postgresql/))
+- (optional) Enable slow query log in PostgreSQL ([link](https://ubiq.co/database-blog/how-to-enable-slow-query-log-in-postgresql/))
 
     > (1) For *"systemctl restart postgresql"*, the service name can be different (e.g., postgresql-12.service); 
     
@@ -234,24 +278,11 @@ After successfully launching the local server, visit [http://127.0.0.1:8025/](ht
     
     > (3) Set *"log_line_prefix = '%m [%p] [%d]'"* in postgresql.conf (to record the database names of different queries).
 
-- Prometheus
+- (optional) Prometheus
 
     > Check [prometheus.md](materials/help_documents/prometheus.md) for detailed installation guides.
 
-
-#### 2. Package Installation
-
-Step 1: Install python packages.
-
-```bash
-pip install -r requirements.txt
-```
-
-> You can comment the Llama2Chat/CodeLlamaChat/Baichuan2Chat imports in ./llms/__init__.py if using openai models only
-
-> If fail to install google-colab, try *conda install -c conda-forge google-colab*
-
-Step 2: Configure environment variables.
+<!-- Step 2: Configure environment variables.
 
 - Export your OpenAI API key
 ```bash
@@ -262,9 +293,9 @@ export OPENAI_API_KEY="your_api_key_here"
 ```bash
 # windows
 set OPENAI_API_KEY="your_api_key_here"
-```
+``` -->
 
-Step 3: Add database/anomaly/prometheus settings into [tool_config_example.yaml](config/tool_config_example.yaml) and rename into *tool_config.yaml*:
+<!-- Step 2: Add database/anomaly/prometheus settings into [diagnose_config.py](configs/tool_config_example.yaml) and rename into *tool_config.yaml*:
 
     ```bash
     POSTGRESQL:
@@ -299,17 +330,21 @@ export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_pr
 ```bash
 cd others
 python openai_test.py
-```
+``` -->
 
-Step 4: Download [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1) model parameters
+<!-- Step 4: Download [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1) model parameters
 
 - Create new directory *./localized_llms/sentence_embedding*
 
-- Move the downloaded sentence-transformer.zip to *./localized_llms/sentence_embedding/* directory, and unzip it.
+- Move the downloaded sentence-transformer.zip to *./localized_llms/sentence_embedding/* directory, and unzip it. -->
 
-#### 3. Generate New Diagnosis Report
+#### 2. Test typical cases
 
-- Test single case
+```shell
+python3 run_diagnose.py --anomaly_file ./diagnostic_files/testing_cases_5.json
+```
+
+<!-- - Test single case
 
 ```shell
 python main.py
@@ -319,7 +354,7 @@ python main.py
 
 ```shell
 python batch_main.py
-```
+``` -->
 
 <span id="-anomalies"></span>
 
@@ -371,39 +406,37 @@ We offer scripts that could incur typical anomalies. Check out different anomaly
 
 (Basic version by [Zui Chen](https://scholar.google.com/citations?user=WJdZtGAAAAAJ&hl=en))
 
-Step 1. Rename *doc2knowledge/config_template.json* into *doc2knowledge/config.json*. And add the value for "api_key" ("organization" is optional)
+> (1) If you only need simple document splitting, you can directly use the document import function in the "Knowledge Base Management Page".
 
-> GPT-4 is necessary to utilize the *function calling* feature. I will try to solve this limit.
+> (2) We require the document itself to have chapter format information, and currently only support the docx format.
 
-Step 2. Split documents into separated section files by the section indexes (e.g., section1, section1.1, section2 ...). And copy the section files into the *docs/<your_document_name>/raw/*. For example:
+Step 1. Configure the *ROOT_DIR_NAME* path in *./doc2knowledge/doc_to_section.py* and store all docx format documents in *ROOT_DIR_NAME*.
 
-    .
-    ├── docs
-    │   ├── report_example
-    |   │   ├── raw    
-    |   │   |    ├── 1 title.txt    
-    |   │   |    ├── 1.1 category.txt
+Step 2. Configure OPENAI_KEY.
 
-> It is a laborious work and hard to find a better way than manually splitting the given document
+```bash
+export OPENAI_API_KEY=XXXXX
+```
 
-> You can jump over this step and directly run the *report_example* case
-
-Step 3. Modify the arguments in *doc2knowledge.py* script and run the script:
+Step 3. Split the document into separate chapter files by chapter index.
 
 ```bash
 cd doc2knowledge/
+python doc_to_section.py
+```
+
+Step 4. Modify parameters in the doc2knowledge.py script and run the script:
+
+```bash
 python doc2knowledge.py
 ```
 
-> The summary for the same document sections is cached. You can delete this file if do not like to reuse the previous caches.
 
-Step 4. With the extracted knowledge, you can visualize their clustering results:
+Step 5. With the extracted knowledge, you can visualize their clustering results:
 
 ```bash
-cd doc2knowledge/
 python knowledge_clustering.py
 ```
-
 
 <span id="-tools"></span>
 
@@ -436,7 +469,7 @@ This error is caused by issues with the Python runtime environment path. You nee
 Step 1: Check Environment Variables.
 
 <div align="center">
-<img src="imgs/faq2.png" width="800px">
+<img src="img/faq2.png" width="800px">
 </div>
 
 You must configure the "Scripts" in the environment variables.
@@ -466,7 +499,7 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 - [Tsinghua University](https://www.tsinghua.edu.cn/en/)
 - [ModelBest](https://modelbest.cn/)
-
+- [Enmotech](https://enmotech.com/)
 
 <span id="-projects"></span>
 
@@ -477,6 +510,8 @@ https://github.com/OpenBMB/AgentVerse
 https://github.com/Vonng/pigsty
 
 https://github.com/UKPLab/sentence-transformers
+
+https://github.com/chatchat-space/Langchain-Chatchat
 
 
 <span id="-citation"></span>
@@ -524,7 +559,7 @@ We thank all the contributors to this project. Do not hesitate if you would like
 ## Contact Information
 👏🏻Welcome to our wechat group!
 <div align= "center">
-<img src="imgs/chat-2024-01-13.png" width="400px">
+<img src="img/chat-2024-01-22.png" width="400px">
 </div>
 
 <!-- ## ⭐️ Star History

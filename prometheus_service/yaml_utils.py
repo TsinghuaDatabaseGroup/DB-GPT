@@ -17,7 +17,7 @@ def read_yaml(config_name, config_path):
         raise ValueError('请输入正确配置文件路径')
 
 
-def read_prometheus_metrics_yaml(config_path, node_exporter_instance, postgresql_exporter_instance, mysql_exporter_instance):
+def read_prometheus_metrics_yaml(config_path, node_exporter_instance, postgresql_exporter_instance):
     """
     config_path: 配置文件路径
     """
@@ -35,13 +35,10 @@ def read_prometheus_metrics_yaml(config_path, node_exporter_instance, postgresql
                 query_list = []
                 for item in items:
                     instance_from = item.get('instance_from')
-                    if instance_from == 'mysql':
-                        instance = mysql_exporter_instance
-                    elif instance_from == 'node':
-                        instance = node_exporter_instance
-                    elif instance_from == 'postgresql':
-                        instance = postgresql_exporter_instance
-                    else:
+                    instance = node_exporter_instance if instance_from == 'node' else (
+                        postgresql_exporter_instance if instance_from == 'postgresql' else None
+                    )
+                    if not instance:
                         raise ValueError('请输入正确的instance_from')
                     query_list.append(item['query'].replace('$instance', instance))
                 result_dict[key] = query_list

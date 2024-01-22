@@ -1,18 +1,15 @@
 from multiagents.reasoning_algorithms.tree_of_thought.Tree.Tree import my_tree, tree_node
 from copy import deepcopy
 from multiagents.reasoning_algorithms import base_search_method
-from prompt_templates.Tree_search_prompts import  MAKE_REFLECTION_RPOMPT,DIVERSITY_PROMPT,VOTE_BEST_SYSTEM_PROMPT,VOTE_BEST_USER_PROMPT,DEFAULT_POLICY_SYSTEM_PROMPT, DEFAULT_POLICY_USER_PROMPT
-from prompt_templates.Reflexion_prompts import MAKE_REFLEXION_USER_PROMPT
-from typing import List, NamedTuple, Optional, Union
+from multiagents.prompt_templates.Tree_search_prompts import  MAKE_REFLECTION_RPOMPT,DIVERSITY_PROMPT,VOTE_BEST_SYSTEM_PROMPT,VOTE_BEST_USER_PROMPT,DEFAULT_POLICY_SYSTEM_PROMPT, DEFAULT_POLICY_USER_PROMPT
+from multiagents.prompt_templates.Reflexion_prompts import MAKE_REFLEXION_USER_PROMPT
 from termcolor import colored
-from string import Template
-from utils.utils import AgentAction, AgentFinish
-from multiagents.memory import BaseMemory, ChatHistoryMemory
+from multiagents.utils.utils import AgentAction
+from multiagents.memory import BaseMemory
 import numpy as np
 import re
 import json
-from pydantic import BaseModel, Field
-from pprint import pprint
+from pydantic import Field
 import datetime
 import time
 from tqdm import tqdm
@@ -529,11 +526,11 @@ class UCT_vote_function(base_search_method):
                         
                         metric_name = self.name.lower()
                         metric_name = metric_name.replace("expert","")
+                        metric_name = metric_name.strip()
 
-                        if "workload" in metric_name or "configuration" in metric_name or "index" in metric_name or "query" in metric_name:
-                            metric_name = "cpu"
-                        elif "write" in metric_name:
-                            metric_name = "memory"
+                        if "cpu" not in metric_name and "memory" not in metric_name:
+                            # random select metric_name as cpu or memory
+                            metric_name = np.random.choice(["cpu","memory"])
                             
                         metric_name = metric_name + "_" + "usage"
 
@@ -553,7 +550,7 @@ class UCT_vote_function(base_search_method):
                             metric_name = self.name.lower()
                             metric_name = metric_name.replace("expert","") + "_" + "usage"
 
-                            parameters.append({"start_time": self.start_time, "end_time": self.end_time, "metric_name": metric_name, "alert_metric": alert_metric, "diag_id": str(self.diag_id), "enable_prometheus": self.enable_prometheus})
+                            parameters.append({"start_time": self.start_time, "end_time": self.end_time, "metric_name": self.name, "alert_metric": alert_metric, "diag_id": str(self.diag_id), "enable_prometheus": self.enable_prometheus})
                     else:
                         
                         try:

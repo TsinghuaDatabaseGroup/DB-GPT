@@ -1,20 +1,15 @@
 import logging
 import os
-from typing import Dict, List, Optional, Union
-from pydantic import BaseModel, Field
+from typing import List, Optional, Union
+from pydantic import Field
+
+from configs import ONLINE_LLM_MODEL
 from multiagents.llms.base import LLMResult
 from . import llm_registry
 from .base import BaseChatModel, BaseCompletionModel, BaseModelArgs
-import requests
-import json
-import aiohttp
-import asyncio
 import time
 import random
 import re
-from termcolor import colored
-from tqdm import tqdm
-
 from openai import OpenAI
 
 
@@ -120,12 +115,8 @@ class OpenAIChat(BaseChatModel):
 
     def parse(self):
         #messages = self._construct_messages(prompt) # TODO add history messages
-
-        training_data_position = "./alert_results/logs/diag_training_data_11_27.jsonl"
-        client = OpenAI( api_key=os.environ['OPENAI_API_KEY'],  # this is also the default, it can be omitted
-                )
-        self.args.model = "gpt-4-0613"
-
+        client = OpenAI(api_key=ONLINE_LLM_MODEL["openai-api"]["api_key"])
+        self.args.model = ONLINE_LLM_MODEL["openai-api"]["model_name"]
         messages = self.conversation_history
 
         new_messages = []
@@ -154,37 +145,7 @@ class OpenAIChat(BaseChatModel):
 
                 if output is None:
                     return {"role": "assistant", "content": "OpenAI service is unavailable. Please try again.", "time": time.strftime("%H:%M:%S", time.localtime())}
-
                 output = remove_charts(output)
-
-                '''
-                with open(training_data_position, "a") as wf:
-                    if isinstance(messages, list):
-                        messages_str = messages # messages[-1]
-                        if isinstance(messages_str, dict):
-                            messages_str = str(messages_str["content"])
-                        else:
-                            messages_str = str(messages_str)
-                    else:
-                        if isinstance(messages, dict):
-                            messages_str = str()
-                        else:
-                            messages_str = str(messages)
-
-                    # messages_str = messages_str.replace('\n', '\\n')
-                    # messages_str = messages_str.replace('"', '\\"')
-
-                    # output = output.replace('\n', '\\n')
-                    # output = output.replace('"', '\\"')
-
-                    messages_str = remove_charts(messages_str)
-
-                    # dump into the json file in pretty format
-                    json.dump({"input": str(messages_str), "output": str(output)}, wf)
-                    # add \n at the end of the line
-                    wf.write('\n')                
-                '''
-
                 return {"role": "assistant", "content": output, "time": time.strftime("%H:%M:%S", time.localtime())}
             except:
                 print(f"Generate_response Exception. Try again.")

@@ -1,10 +1,5 @@
-import os
-
-from utils.database import DBArgs, Database
-import jpype as jp
-import jpype.imports
-from multiagents.tools.metrics import postgresql_conf
-
+from configs import POSTGRESQL_CONFIG
+from multiagents.utils.database import DBArgs, Database
 from multiagents.tools.query_advisor.rewrite_class import rule_is_valid
 
 # tranformation rules (45)
@@ -208,7 +203,7 @@ def UNION_TO_DISTINCT_rule(query):
 # "tidscan",]
 
 def enable_or_disable_bitmapscan_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_bitmapscan to \"{action}\"; " + query.replace("\n", "")
@@ -235,7 +230,7 @@ def enable_or_disable_bitmapscan_operator(action: str, query: str):
 
 
 def enable_or_disable_gathermerge_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_gathermerge to \"{action}\"; " + query.replace("\n", "")
@@ -262,7 +257,7 @@ def enable_or_disable_gathermerge_operator(action: str, query: str):
 
 
 def enable_or_disable_hashagg_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_hashagg to \"{action}\"; " + query.replace("\n", "")
@@ -289,7 +284,7 @@ def enable_or_disable_hashagg_operator(action: str, query: str):
 
 
 def enable_or_disable_hashjoin_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_hashjoin to \"{action}\"; " + query.replace("\n", "")
@@ -316,7 +311,7 @@ def enable_or_disable_hashjoin_operator(action: str, query: str):
 
 
 def enable_or_disable_indexonlyscan_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_indexonlyscan to \"{action}\"; " + query.replace("\n", "")
@@ -343,7 +338,7 @@ def enable_or_disable_indexonlyscan_operator(action: str, query: str):
 
 
 def enable_or_disable_indexscan_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_indexscan to \"{action}\"; " + query.replace("\n", "")
@@ -370,7 +365,7 @@ def enable_or_disable_indexscan_operator(action: str, query: str):
 
 
 def enable_or_disable_material_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_material to \"{action}\"; " + query.replace("\n", "")
@@ -397,7 +392,7 @@ def enable_or_disable_material_operator(action: str, query: str):
 
 
 def enable_or_disable_mergejoin_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_mergejoin to \"{action}\"; " + query.replace("\n", "")
@@ -424,7 +419,7 @@ def enable_or_disable_mergejoin_operator(action: str, query: str):
 
 
 def enable_or_disable_nestloop_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_nestloop to \"{action}\"; " + query.replace("\n", "")
@@ -451,7 +446,7 @@ def enable_or_disable_nestloop_operator(action: str, query: str):
 
 
 def enable_or_disable_parallel_append_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_parallel_append to \"{action}\"; " + query.replace("\n", "")
@@ -478,7 +473,7 @@ def enable_or_disable_parallel_append_operator(action: str, query: str):
 
 
 def enable_or_disable_parallel_hash_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_parallel_hash to \"{action}\"; " + query.replace("\n", "")
@@ -505,7 +500,7 @@ def enable_or_disable_parallel_hash_operator(action: str, query: str):
 
 
 def enable_or_disable_partition_pruning_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_partition_pruning to \"{action}\"; " + query.replace("\n", "")
@@ -532,7 +527,7 @@ def enable_or_disable_partition_pruning_operator(action: str, query: str):
 
 
 def enable_or_disable_seqscan_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_seqscan to \"{action}\"; " + query.replace("\n", "")
@@ -559,7 +554,7 @@ def enable_or_disable_seqscan_operator(action: str, query: str):
 
 
 def enable_or_disable_sort_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_sort to \"{action}\"; " + query.replace("\n", "")
@@ -586,7 +581,7 @@ def enable_or_disable_sort_operator(action: str, query: str):
 
 
 def enable_or_disable_tidscan_operator(action: str, query: str):
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
     new_query = f"set enable_tidscan to \"{action}\"; " + query.replace("\n", " ")

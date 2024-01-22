@@ -1,21 +1,6 @@
-import logging
 import os
-from typing import Dict, List, Optional, Union
-from pydantic import BaseModel, Field
-from multiagents.llms.base import LLMResult
-from . import llm_registry
-import requests
-import json
-import aiohttp
-import asyncio
 import time
-import random
-import re
-from termcolor import colored
-from tqdm import tqdm
 from openai import OpenAI
-import pickle
-
 from sentence_transformers import SentenceTransformer
 
 
@@ -24,7 +9,7 @@ def sentence_embedding(sentence: str, model: str = "sentence-transformer"):
 
     if model == "sentence-transformer":
 
-        model_path = './localized_llms/sentence_embedding/sentence-transformer/'
+        model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "localized_llms/sentence_embedding/sentence-transformer/")
         try:
             embedder = SentenceTransformer(model_path)
         except FileNotFoundError:

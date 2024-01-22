@@ -1,0 +1,29 @@
+import os
+
+# 诊断结果文件夹
+DIAGNOSTIC_RESULTS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "alert_results")
+
+# 诊断所用的模型列表
+DIAGNOSE_LLM_MODEL_LIST = ["GPT4-0613", "Llama2-13b", "CodeLlama2-13b", "BaiChuan-13b"]
+
+# 诊断文件所在文件夹
+DIAGNOSTIC_FILES_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "diagnostic_files")
+if not os.path.exists(DIAGNOSTIC_FILES_PATH):
+    os.mkdir(DIAGNOSTIC_FILES_PATH)
+
+# 数据库配置
+
+POSTGRESQL_CONFIG = {
+  "host": "182.XX.XX.XXX",
+  "port": 5432,
+  "user": "XXXX",
+  "password": "XXXXX",
+  "dbname": "postgres"
+}
+
+MYSQL_CONFIG = {
+  "host": "166.XX.XX.XX",
+  "port": 3306,
+  "user": "XX",
+  "password": "XXXXXX",
+}

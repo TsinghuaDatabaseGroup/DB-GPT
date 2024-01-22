@@ -6,8 +6,9 @@ from multiagents.agents.conversation_agent import BaseAgent
 from multiagents.environments.base import BaseEnvironment
 from multiagents.environments import DBAEnvironment
 from multiagents.initialization import load_agent, load_environment, prepare_task_config
-from utils.utils import AGENT_TYPES
-from multiagents.tools.metrics import get_workload_statistics
+from multiagents.utils.utils import AGENT_TYPES
+from server.knowledge_base.kb_doc_api import fetch_expert_kb_names
+
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
@@ -26,11 +27,41 @@ class MultiAgents:
         
         # Prepare the config of the task
         task_config = prepare_task_config(task, args)
+        agent_templates = task_config["agents"]
         model_type = task_config['llm_type']
-
-        # Build the agents
-        reporter = None
         agents = {}
+
+        # Reporter
+        reporter = load_agent(agent_templates[0])
+
+        # Assigner for expert selection
+        agents[AGENT_TYPES("role_assigner")] = [load_agent(agent_templates[1])]
+
+        # Candidate experts
+        expert_names = fetch_expert_kb_names()
+
+        for expert_name in expert_names:
+            agent_type_name = "solver"
+            agent_type = AGENT_TYPES(agent_type_name)
+
+            # copy a new agent_templates[2]
+            
+            agent_args = agent_templates[2].copy()
+
+            expert_name = expert_name.replace("_expert", "")
+            expert_name = expert_name.strip()
+
+            agent_args['name'] = agent_args['name'].replace("${agent_name}", expert_name)
+            agent_args['role_description'] = agent_args['role_description'].replace("${agent_name}", expert_name)
+            agent_args['prompt_template'] = agent_args['prompt_template'].replace("${agent_name}", expert_name)
+                        
+            if agent_type not in agents:
+                agents[agent_type] = [load_agent(agent_args)]
+            else:
+                agents[agent_type].append(load_agent(agent_args))
+
+
+        '''
         for agent_config in task_config["agents"]:
             
             agent_type = AGENT_TYPES(agent_config["agent_type"])
@@ -48,6 +79,7 @@ class MultiAgents:
 
         if reporter is None:
             raise ValueError("Reporter is not specified.")
+        '''
 
         # Build the environment
         env_config = task_config["environment"]

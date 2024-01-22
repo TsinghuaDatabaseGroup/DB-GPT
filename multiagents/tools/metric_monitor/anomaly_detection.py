@@ -1,14 +1,5 @@
 import numpy as np
 import requests
-from utils.yaml_utils import read_yaml
-
-
-def prometheus(url, params):
-    
-    conf = read_yaml('PROMETHEUS', 'config/tool_config.yaml')
-    res = requests.get(url=conf.get('api_url') + url, params=params)
-
-    return res.json()
 
 
 def detect_anomalies(data, significance_level=0.2):
@@ -39,8 +30,6 @@ def detect_anomalies(data, significance_level=0.2):
     
     # Calculate the critical value based on the significance level and sample size
     critical_value = np.sqrt(-0.1 * np.log(significance_level / 2) / n)
-
-    # pdb.set_trace()
 
     # Compare the KS statistic with the critical value
     anomalies = np.where(ks_statistic > critical_value, True, False)

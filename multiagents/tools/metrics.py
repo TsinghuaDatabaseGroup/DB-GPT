@@ -1,28 +1,21 @@
-from utils.yaml_utils import read_yaml, read_prometheus_metrics_yaml
-from utils.server import obtain_slow_queries, obtain_anomaly_time
-from our_argparse import args
-import warnings
-from multiagents.tools.metric_monitor.anomaly_detection import prometheus
+from multiagents.tools.metrics import *
 import numpy as np
-from termcolor import colored
-from utils.database import DBArgs, Database
-from multiagents.knowledge.knowledge_extraction import KnowledgeExtraction
+from multiagents.utils.database import DBArgs, Database
 import time
 import json
-import os
+
 
 # [anomaly script]
-# ANOMALY_FILE_NAME = "anomalies/public_testing_set/testing_cases.json"
-BATCH_ANOMALY_FILE_NAME = "anomalies/public_testing_set/testing_cases_5.json"
+
 if args.enable_prometheus == False:
     # read anomaly information into anomalies_list
-    with open(BATCH_ANOMALY_FILE_NAME, 'r') as f:
+    with open(args.anomaly_file, 'r') as f:
         anomalies_list = json.load(f)
         for i in anomalies_list:
             exceptions = {}
 
             if "exceptions" not in anomalies_list[i]:
-                raise Exception(f"No metric values found for anomaly {i} in the file {BATCH_ANOMALY_FILE_NAME}!")
+                raise Exception(f"No metric values found for anomaly {i} in the file {args.anomaly_file}!")
 
             for c in anomalies_list[i]["exceptions"]:
                 for k, v in anomalies_list[i]["exceptions"][c].items():
@@ -41,21 +34,11 @@ def update_current_time():
 
 current_diag_time = update_current_time()
 
-
-# [promehteus config]
-promethest_conf = read_yaml('PROMETHEUS', 'config/tool_config.yaml')
-benchserver_conf = read_yaml('BENCHSERVER', 'config/tool_config.yaml')
-postgresql_conf = read_yaml('POSTGRESQL', 'config/tool_config.yaml')
-database_server_conf = read_yaml('DATABASESERVER', 'config/tool_config.yaml')
-node_exporter_instance = promethest_conf.get('node_exporter_instance')
-postgresql_exporter_instance = promethest_conf.get('postgresql_exporter_instance')
-prometheus_metrics = read_prometheus_metrics_yaml(config_path='config/prometheus_metrics.yaml',node_exporter_instance=node_exporter_instance, postgresql_exporter_instance=postgresql_exporter_instance)
-
 # [index advisor]
 advisor = "db2advis"  # option: extend, db2advis (fast)
 
 # [workload statistics] 
-dbargs = DBArgs("postgresql", config=postgresql_conf)
+dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)
 db = Database(dbargs, timeout=-1)
 WORKLOAD_FILE_NAME = "workload_info.json"
 
@@ -65,34 +48,34 @@ def get_workload_statistics():
         return info["workload_statistics"]
 
 def get_slow_queries(diag_id):
-    with open(BATCH_ANOMALY_FILE_NAME, 'r') as f:
+    with open(args.anomaly_file, 'r') as f:
         info = json.load(f)
     return info[diag_id]["slow_queries"]
 
 def get_workload_sqls(diag_id):
-    with open(BATCH_ANOMALY_FILE_NAME, 'r') as f:
+    with open(args.anomaly_file, 'r') as f:
         info = json.load(f)
     return info[diag_id]["workload"]
 
 # [diagnosis knowledge]
-knowledge_matcher = KnowledgeExtraction(
-    "/multiagents/knowledge/root_causes_dbmind.jsonl")
-cpu_knowledge_matcher = KnowledgeExtraction(
-    "/multiagents/knowledge/domain_knowledge/cpu.jsonl")
-io_knowledge_matcher = KnowledgeExtraction(
-    "/multiagents/knowledge/domain_knowledge/io.jsonl")
-memory_knowledge_matcher = KnowledgeExtraction(
-    "/multiagents/knowledge/domain_knowledge/memory.jsonl")
-workload_knowledge_matcher = KnowledgeExtraction(
-    "/multiagents/knowledge/domain_knowledge/workload.jsonl")
-query_knowledge_matcher = KnowledgeExtraction(
-    "/multiagents/knowledge/domain_knowledge/query.jsonl")
-write_knowledge_matcher = KnowledgeExtraction(
-    "/multiagents/knowledge/domain_knowledge/write.jsonl")
-index_knowledge_matcher = KnowledgeExtraction(
-    "/multiagents/knowledge/domain_knowledge/index.jsonl")
-configuration_knowledge_matcher = KnowledgeExtraction(
-    "/multiagents/knowledge/domain_knowledge/configuration.jsonl")
+# knowledge_matcher = KnowledgeExtraction(
+#     "/multiagents/knowledge/root_causes_dbmind.jsonl")
+# cpu_knowledge_matcher = KnowledgeExtraction(
+#     "/multiagents/knowledge/domain_knowledge/cpu.jsonl")
+# io_knowledge_matcher = KnowledgeExtraction(
+#     "/multiagents/knowledge/domain_knowledge/io.jsonl")
+# memory_knowledge_matcher = KnowledgeExtraction(
+#     "/multiagents/knowledge/domain_knowledge/memory.jsonl")
+# workload_knowledge_matcher = KnowledgeExtraction(
+#     "/multiagents/knowledge/domain_knowledge/workload.jsonl")
+# query_knowledge_matcher = KnowledgeExtraction(
+#     "/multiagents/knowledge/domain_knowledge/query.jsonl")
+# write_knowledge_matcher = KnowledgeExtraction(
+#     "/multiagents/knowledge/domain_knowledge/write.jsonl")
+# index_knowledge_matcher = KnowledgeExtraction(
+#     "/multiagents/knowledge/domain_knowledge/index.jsonl")
+# configuration_knowledge_matcher = KnowledgeExtraction(
+#     "/multiagents/knowledge/domain_knowledge/configuration.jsonl")
 
 # [functions]
 def obtain_values_of_metrics(i, metrics, start_time, end_time):

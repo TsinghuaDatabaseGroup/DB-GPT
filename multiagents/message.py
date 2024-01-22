@@ -1,8 +1,6 @@
 from pydantic import BaseModel, Field
-from typing import List, Tuple, Set, Union, Any
-
-# from langchain.schema import AgentAction, ChatMessage
-from utils.utils import AgentAction
+from typing import List, Tuple, Set, Union
+from multiagents.utils.utils import AgentAction
 
 class Message(BaseModel):
     content: dict = Field(default={"diagnose": "", "solution": [], "knowledge": ""})

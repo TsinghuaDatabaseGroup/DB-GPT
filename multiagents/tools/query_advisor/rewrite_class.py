@@ -1,9 +1,9 @@
 import os
 
-from utils.database import DBArgs, Database
+from configs import POSTGRESQL_CONFIG
+from multiagents.utils.database import DBArgs, Database
 import jpype as jp
 import jpype.imports
-from multiagents.tools.metrics import postgresql_conf
 
 class java_rewrite(object):
     def __init__(self):
@@ -28,7 +28,7 @@ class java_rewrite(object):
                 classpath.extend([os.path.join(local_lib_dir, jar)
                                   for jar in os.listdir(local_lib_dir)])
                 jp.startJVM(jp.getDefaultJVMPath(), classpath=classpath)
-                print("系统启动java的jvm虚拟环境成功")
+                print("Start the java jvm virtual environment successfully")
                 return True
         except Exception as e:
             print("系统启动java的jvm虚拟环境出现错误,错误原因:" + str(e))
@@ -50,7 +50,7 @@ class java_rewrite(object):
                 # 如果遇到签名问题，执行``` zip -d java_parser.jar 'META-INF/.SF' 'META-INF/.RSA' 'META-INF/*SF' ```
                 SingleRewrite = jp.JClass("SingleRewrite")
                 # String rule, String sql, String host, String port, String user, String passwd, String dbType/mysql/postgresql
-                res = SingleRewrite.singleRule(rule, query, postgresql_conf.get('host'), str(postgresql_conf.get('port')), postgresql_conf.get('user'), postgresql_conf.get('password'), postgresql_conf.get('dbname'), "postgresql")
+                res = SingleRewrite.singleRule(rule, query, POSTGRESQL_CONFIG.get('host'), str(POSTGRESQL_CONFIG.get('port')), POSTGRESQL_CONFIG.get('user'), POSTGRESQL_CONFIG.get('password'), POSTGRESQL_CONFIG.get('dbname'), "postgresql")
                 return res
         except Exception as e:
             print("JAVA调用singleRule方法出错,错误原因:" + str(e))
@@ -69,7 +69,7 @@ def rule_is_valid(rule, query):
     if res is None or not res.get('status'):
         return f"Failed to optimize the query. error msg is {res.get('message')}"
 
-    dbargs = DBArgs("postgresql", config=postgresql_conf)  # todo assign database name
+    dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     new_query = data.get('rewritten_sql')
     new_query_plan = db.pgsql_query_plan(new_query)

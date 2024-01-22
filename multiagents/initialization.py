@@ -77,7 +77,7 @@ def prepare_task_config(task, args):
         )
     
     task_config = yaml.safe_load(open(config_path))
-
+    
     # Build the output parser
     parser = output_parser_registry.build(task)
     task_config["output_parser"] = parser

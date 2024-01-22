@@ -30,7 +30,7 @@ class BaseEnvironment(BaseModel):
     cnt_turn: int = 0
     last_messages: List[Message] = []
     rule_params: Dict = {}
-
+    
     @abstractmethod
     async def step(self) -> List[Message]:
         """Run one step of the environment"""
