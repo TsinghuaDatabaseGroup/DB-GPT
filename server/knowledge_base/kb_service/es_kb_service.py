@@ -246,10 +246,11 @@ class ESKBService(KBService):
             }
             search_results = self.es_client_python.search(body=query)
             if len(search_results["hits"]["hits"]) == 0:
-                raise ValueError("召回元素个数为0")
-        info_docs = [{"id": hit["_id"], "metadata": hit["_source"]
-                      ["metadata"]} for hit in search_results["hits"]["hits"]]
-        return info_docs
+                return []
+            info_docs = [{"id": hit["_id"], "metadata": hit["_source"]["metadata"]} for hit in search_results["hits"]["hits"]]
+            return info_docs
+        else:
+            return []
 
     def do_clear_vs(self):
         """从知识库删除全部向量"""

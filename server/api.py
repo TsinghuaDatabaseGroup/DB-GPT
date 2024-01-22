@@ -88,7 +88,10 @@ def mount_app_routes(app: FastAPI, run_mode: str = None):
     mount_knowledge_routes(app)
     # 摘要相关接口
     mount_filename_summary_routes(app)
-
+    # 异常报告相关接口
+    mount_alert_routes(app)
+    # 异常诊断相关接口
+    mount_diagnose_routes(app)
     # LLM模型相关接口
     app.post("/llm_model/list_running_models",
              tags=["LLM Model Management"],
@@ -143,6 +146,40 @@ def mount_app_routes(app: FastAPI, run_mode: str = None):
              tags=["Other"],
              summary="将文本向量化，支持本地模型和在线模型",
              )(embed_texts_endpoint)
+
+
+def mount_diagnose_routes(app: FastAPI):
+
+    from server.diagnose.diagnose import run_diagnose, get_diagnose_output
+
+    app.post("/diagnose/run_diagnose",
+             tags=["Diagnose"],
+             response_model=BaseResponse,
+             summary="诊断异常文件")(run_diagnose)
+
+    app.get("/diagnose/diagnose_output",
+            tags=["Diagnose"],
+            response_model=BaseResponse,
+            summary="诊断异常打印")(get_diagnose_output)
+
+
+def mount_alert_routes(app: FastAPI):
+    from server.alert.alert import histories, history_detail, diagnose_llm_model_list
+
+    app.post("/alert/report/histories",
+             tags=["Alert"],
+             response_model=BaseResponse,
+             summary="获取所有异常诊断文件")(histories)
+
+    app.post("/alert/report/history_detail",
+             tags=["Alert"],
+             response_model=BaseResponse,
+             summary="获取异常诊断文件详情")(history_detail)
+
+    app.post("/alert/report/diagnose_llm_model_list",
+             tags=["Alert"],
+             response_model=BaseResponse,
+             summary="获取异常诊断模型列表")(diagnose_llm_model_list)
 
 def mount_knowledge_routes(app: FastAPI):
     from server.chat.knowledge_base_chat import knowledge_base_chat
