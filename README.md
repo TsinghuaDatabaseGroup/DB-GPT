@@ -74,8 +74,6 @@
 
     * [x] [*4-bit* 量化LLM](https://huggingface.co/curtis-sun/diag-baichuan2-4bit/tree/main) (推理时间减少1/3)
 
-    * [ ] 增加模型推理阶段的 *异步并发机制*
-
     * [ ] 文档知识多路抽取
 
       - [x] 向量数据库 (ChromaDB)
@@ -314,8 +312,6 @@ python doc_to_section.py
 ```bash
 python doc2knowledge.py
 ```
-
-![Alt text](img/image-1.png)
 
 
 <span id="-tools"></span>

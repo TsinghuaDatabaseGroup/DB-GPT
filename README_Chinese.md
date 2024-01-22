@@ -74,8 +74,6 @@
 
     * [x] [*4-bit* 量化LLM](https://huggingface.co/curtis-sun/diag-baichuan2-4bit/tree/main) (推理时间减少1/3)
 
-    * [ ] 增加模型推理阶段的 *异步并发机制*
-
     * [ ] 文档知识多路抽取
 
       - [x] 向量数据库 (ChromaDB)
@@ -305,9 +303,6 @@ export OPENAI_API_KEY=XXXXX
 cd doc2knowledge/
 python doc_to_section.py
 ```
-
-![Alt text](img/image.png)
-
 
 步骤 3. 修改*doc2knowledge.py*脚本中的参数并运行脚本：
 
