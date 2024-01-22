@@ -93,7 +93,7 @@
 
 - [ ] New Frontend
 
-    * Knowledgebase + Chat Q&A + Diagnosis + Report Replay
+    * [x] Knowledgebase + Chat Q&A + Diagnosis + Report Replay
 
 - [ ] Extreme Speed Version for localized llms
 
@@ -501,6 +501,7 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 - [Tsinghua University](https://www.tsinghua.edu.cn/en/)
 - [ModelBest](https://modelbest.cn/)
 
+- [Enmotech](https://enmotech.com/)
 
 <span id="-projects"></span>
 
