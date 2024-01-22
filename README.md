@@ -304,14 +304,13 @@ cd doc2knowledge/
 python doc_to_section.py
 ```
 
-![Alt text](img/image.png)
-
-
 步骤 3. 修改*doc2knowledge.py*脚本中的参数并运行脚本：
 
 ```bash
 python doc2knowledge.py
 ```
+
+![Alt text](img/image-1.png)
 
 
 <span id="-tools"></span>
