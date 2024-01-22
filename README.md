@@ -103,9 +103,9 @@
 
 - [x] Multi-path extraction of document knowledge
 
-      - [x] Vector database (ChromaDB)
+    * [x] Vector database (ChromaDB)
 
-      - [x] RESTful Search Engine (Elasticsearch)
+    * [x] RESTful Search Engine (Elasticsearch)
 
 - [x] Expert prompt generation using *document knowledge*
 
@@ -113,7 +113,7 @@
 
     * [x] *Task Dispatching -> Concurrent Diagnosis -> Cross Review -> Report Generation*
 
-    * *Synchronous Concurrency Mechanism* during LLM inference
+    * [ ] *Synchronous Concurrency Mechanism* during LLM inference
 
 
 <!-- - [x] An end-to-end framework is available! <a href="#-diagnosis">🚀 link</a> -->
@@ -133,11 +133,11 @@
 
 - [x] Papers and experimental reports are continuously updated
 
-    * *D-Bot: Database Diagnosis System using Large Language Models.* [[paper]](https://arxiv.org/pdf/2312.01454.pdf)
+    * [x] *D-Bot: Database Diagnosis System using Large Language Models.* [[paper]](https://arxiv.org/pdf/2312.01454.pdf)
 
-    * *LLM As DBA.* [[vision]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[slides]](materials/slides)
+    * [x] *LLM As DBA.* [[vision]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[twitter]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[slides]](materials/slides)
 
-    * *DB-GPT: Large Language Model Meets Database.* [[vision]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
+    * [x] *DB-GPT: Large Language Model Meets Database.* [[vision]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
 
 > This project is evolving with new features 👫👫<br/> 
 > Don't forget to star ⭐ and watch 👀 to stay up to date :)
@@ -157,9 +157,8 @@ $ python --version
 Python 3.10.12
 ```
 
-Next, create a virtual environment and install the dependencies for the project within it.
++ Next, create a virtual environment and install the dependencies for the project within it.
 ```shell
-
 # Clone the repository
 $ git clone https://github.com/TsinghuaDatabaseGroup/DB-GPT.git
 
@@ -180,6 +179,11 @@ rm -r package-lock.json
 npm install --legacy-peer-deps
 npm install -g cross-env
 ```
+
+<!-- > You can comment the Llama2Chat/CodeLlamaChat/Baichuan2Chat imports in ./llms/__init__.py if using openai models only -->
+
+> If fail to install google-colab, try *conda install -c conda-forge google-colab*
+
 
 + PostgreSQL v12 (We have developed and tested based on PostgreSQL v12, we do not guarantee compatibility with other versions of PostgreSQL)
 
@@ -261,15 +265,13 @@ If started correctly, you will see the following interface
 
 
 
-### 👩🏻‍⚕️ Diagnosis Side
+### 👩🏻‍⚕️ Anomaly Diagnosis
 
 <span id="-prerequisites"></span>
 
 #### 1. Prerequisites
 
-- (optional) PostgreSQL v12 or higher
-
-- Enable slow query log in PostgreSQL ([link](https://ubiq.co/database-blog/how-to-enable-slow-query-log-in-postgresql/))
+- (optional) Enable slow query log in PostgreSQL ([link](https://ubiq.co/database-blog/how-to-enable-slow-query-log-in-postgresql/))
 
     > (1) For *"systemctl restart postgresql"*, the service name can be different (e.g., postgresql-12.service); 
     
@@ -277,15 +279,11 @@ If started correctly, you will see the following interface
     
     > (3) Set *"log_line_prefix = '%m [%p] [%d]'"* in postgresql.conf (to record the database names of different queries).
 
-- Prometheus
+- (optional) Prometheus
 
     > Check [prometheus.md](materials/help_documents/prometheus.md) for detailed installation guides.
 
-> You can comment the Llama2Chat/CodeLlamaChat/Baichuan2Chat imports in ./llms/__init__.py if using openai models only
-
-> If fail to install google-colab, try *conda install -c conda-forge google-colab*
-
-Step 2: Configure environment variables.
+<!-- Step 2: Configure environment variables.
 
 - Export your OpenAI API key
 ```bash
@@ -296,9 +294,9 @@ export OPENAI_API_KEY="your_api_key_here"
 ```bash
 # windows
 set OPENAI_API_KEY="your_api_key_here"
-```
+``` -->
 
-Step 3: Add database/anomaly/prometheus settings into [diagnose_config.py](configs/tool_config_example.yaml) and rename into *tool_config.yaml*:
+<!-- Step 2: Add database/anomaly/prometheus settings into [diagnose_config.py](configs/tool_config_example.yaml) and rename into *tool_config.yaml*:
 
     ```bash
     POSTGRESQL:
@@ -333,7 +331,7 @@ export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_pr
 ```bash
 cd others
 python openai_test.py
-```
+``` -->
 
 <!-- Step 4: Download [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1) model parameters
 
@@ -341,7 +339,7 @@ python openai_test.py
 
 - Move the downloaded sentence-transformer.zip to *./localized_llms/sentence_embedding/* directory, and unzip it. -->
 
-- Test typical cases
+#### 2. Test typical cases
 
 ```shell
 python3 run_diagnose.py --anomaly_file ./diagnostic_files/testing_cases_5.json
