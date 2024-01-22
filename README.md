@@ -50,7 +50,7 @@
 
 
 <p align="center">
-    <img src="imgs/overview_v3.png" width="800px">
+    <img src="img/overview_v3.png" width="800px">
 </p>
 
 🦾 Build your personal database administrator (D-Bot)🧑‍💻, which is good at solving database problems by  *reading documents, using various tools, writing analysis reports!* 
@@ -472,7 +472,7 @@ This error is caused by issues with the Python runtime environment path. You nee
 Step 1: Check Environment Variables.
 
 <div align="center">
-<img src="imgs/faq2.png" width="800px">
+<img src="img/faq2.png" width="800px">
 </div>
 
 You must configure the "Scripts" in the environment variables.
@@ -562,7 +562,7 @@ We thank all the contributors to this project. Do not hesitate if you would like
 ## Contact Information
 👏🏻Welcome to our wechat group!
 <div align= "center">
-<img src="imgs/chat-2024-01-22.png" width="400px">
+<img src="img/chat-2024-01-22.png" width="400px">
 </div>
 
 <!-- ## ⭐️ Star History
