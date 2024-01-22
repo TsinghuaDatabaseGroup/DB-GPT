@@ -49,7 +49,7 @@
 
 
 <p align="center">
-    <img src="img/overview_v3.png" width="800px">
+    <img src="img/overview_v4.png" width="800px">
 </p>
 
 🦾 Build your personal database administrator (D-Bot)🧑‍💻, which is good at solving database problems by  *reading documents, using various tools, writing analysis reports!* 
@@ -66,11 +66,15 @@
 
 1. After launching the local service (based on the [Chatchat](chat.openai.com) project), you can easily import documents into the knowledge base, utilize the knowledge base for *well-founded Q&A* and *diagnosis analysis of abnormal alarms*.
 
-<p align="center">
+<!-- <p align="center">
   <a href="http://dbgpt.dbmind.cn">
     <img src="img/demo-dbot_chatchat.gif" width="800px">
   </a>
-</p>
+</p> -->
+
+[![Watch the video](img/chat_diagnosis.png)](https://vimeo.com/905172621?share=copy)
+
+
 
 2. On the online website (http://dbgpt.dbmind.cn), you can browse all historical diagnostic results, used metrics, and detailed diagnosis processes.
 

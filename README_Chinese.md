@@ -27,7 +27,7 @@
 </p>
 
 <p align="center">
-    <img src="img/overview_v3.png" width="800px">
+    <img src="img/overview_v4.png" width="800px">
 </p>
 
 🦾 构建您的个人数据库管理员（D-Bot）🧑‍💻, 擅长通过 *阅读文件，使用各种工具，编写分析报告* 解决数据库问题！
@@ -41,11 +41,14 @@
 
 1. 启动本地服务后，可以在网页端（基于[Chatchat](chat.openai.com)开源项目二次开发）轻松将文档导入知识库、利用知识库进行有根据的问答、以及利用知识库进行异常告警的诊断分析。
 
-<p align="center">
+<!-- <p align="center">
   <a href="http://dbgpt.dbmind.cn">
     <img src="img/demo-dbot_chatchat.gif" width="800px">
   </a>
-</p>
+</p> -->
+
+
+[![Watch the video](img/chat_diagnosis.png)](https://vimeo.com/905172621?share=copy)
 
 
 2. 在在线网站（[http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)），您可以浏览所有历史诊断结果、使用的指标和详细的诊断过程。
