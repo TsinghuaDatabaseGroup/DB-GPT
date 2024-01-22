@@ -68,27 +68,29 @@
 
 - [x] 前端
     
-    * [x] 知识库 + 问答 + 诊断 + 报告回放
+    * [x] 知识库 + chat问答 + 异常诊断 + 报告回放
 
 - [ ] 加速本地模型（极速版dbot）
 
     * [x] [*4-bit* 量化LLM](https://huggingface.co/curtis-sun/diag-baichuan2-4bit/tree/main) (推理时间减少1/3)
 
-    * [ ] 文档知识多路抽取
+    * [ ] Tiny LLM
 
-      - [x] 向量数据库 (ChromaDB)
-
-      - [x] RESTful风格的搜索引擎 (Elasticsearch)
+- [x] 文档知识多路抽取
+  - [x] 向量数据库 (ChromaDB)
+  - [x] RESTful风格的搜索引擎 (Elasticsearch)
 
 - [x] 根据 *知识聚类结果* 自动生成专家描述
+
 - [x] 升级基于 LLM 的诊断机制:
   - [x] _任务分派 -> 并行诊断 -> 交叉审查 -> 报告生成_
   - [ ] 完善异步机制
 
 - [x] 添加典型异常和警报 (Pigsty) <a href="#-anomalies">🔗 链接</a>
-- [x] 提供端到端框架！<a href="#-diagnosis">🚀 链接</a>
-- [ ] 在多个层次上支持监控和优化工具 [🔗 链接](multiagents/tools)
 
+- [x] 提供端到端框架！<a href="#-diagnosis">🚀 链接</a>
+
+- [ ] 在多个层次上支持监控和优化工具 [🔗 链接](multiagents/tools)
   - [x] 监控指标 (Prometheus)
   - [ ] 代码级别的火焰图分析，定位算子、配置等问题
   - [x] 诊断知识检索 (dbmind)
@@ -101,15 +103,12 @@
   - _LLM As DBA_ [[论文]](https://arxiv.org/abs/2308.05481) [[中文解读]](https://mp.weixin.qq.com/s/i0-Fdde7DX9YE1jACxB9_Q) [[推特]](https://twitter.com/omarsar0/status/1689811820272353280?s=61&t=MlkXRcM6bNQYHnTIQVUmVw) [[幻灯片]](materials/slides)
   - _DB-GPT: Large Language Model Meets Database_ [[论文]](http://dbgroup.cs.tsinghua.edu.cn/ligl/papers/dbgpt-dse.pdf)
 
-
 > 该项目正在不断引入新特性 👫👫<br/>
 > 不要忘记星标 ⭐ 并关注 👀 以同步最新进展 :)
 
 <span id="-quickstart"></span>
 
 ## 🕹 快速开始
-
-## 快速上手
 
 ### 1. 环境配置
 
@@ -200,7 +199,7 @@ $ python startup.py -a
 ![](img/chat_diagnosis.png)
 
 
-### 诊断
+## 👩🏻‍⚕️ 异常诊断
 
 <span id="-prerequisites"></span>
 
@@ -226,11 +225,11 @@ $ python startup.py -a
 
   > 查看[prometheus.md](materials/help_documents/prometheus.md)了解详细的安装指南。
   
-步骤1: 下载 [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1) 模型参数
+- 下载 [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1) 模型参数
 
-- 创建新目录 ./multiagents/localized_llms/sentence_embedding/
+  > 创建新目录 ./multiagents/localized_llms/sentence_embedding/
 
-- 将下载的sentence-transformer.zip压缩包放置在./multiagents/localized_llms/sentence_embedding/目录下；解压压缩包。
+  > 将下载的sentence-transformer.zip压缩包放置在./multiagents/localized_llms/sentence_embedding/目录下；解压压缩包。
 
 #### 2. 诊断
 
@@ -284,20 +283,22 @@ _[点击查看 29 种典型异常与专家分析](./anomaly_trigger/29种性能�
 
 <span id="-doc2knowledge"></span>
 
-> 1. 如果只需要简单的文档拆分，可以直接使用“知识库管理页面”中的文档导入功能；2. 本功能目前要求文档本身有章节格式信息，仅支持docx格式。
+> (1) 如果只需要简单的文档拆分，可以直接使用“知识库管理页面”中的文档导入功能。
+
+> (2) 本功能目前要求文档本身有章节格式信息，目前仅支持docx格式。
 
 
 步骤 1. 配置 *./doc2knowledge/doc_to_section.py* 中的 *ROOT_DIR_NAME* 路径，并将所有docx格式文档存放在 *ROOT_DIR_NAME* 下。
 
 
-步骤 2. 配置OPENAI KEY。
+步骤 2. 配置OPENAI_KEY。
 
 ```bash
 export OPENAI_API_KEY=XXXXX
 ```
 
 
-步骤 3. 按章节索引将文档分割为单独的章节文件。
+步骤 2. 按章节索引将文档分割为单独的章节文件。
 
 ```bash
 cd doc2knowledge/
@@ -365,6 +366,7 @@ python doc2knowledge.py
 - 项目工程化，解决依赖问题和代码中的硬编码问题
 - 达到 D-bot(gpt4)能力的本地化模型
 - 支持其他数据库（例如，mysql/redis）
+- 独立知识抽取模块
 
 <span id="-community"></span>
 
@@ -427,5 +429,5 @@ https://github.com/chatchat-space/Langchain-Chatchat
 ## 联系我们
 👏🏻欢迎加入我们的微信群
 <div align= "center">
-<img src="img/chat-2024-01-13.png" width="400px">
+<img src="img/chat-2024-01-22.png" width="400px">
 </div>

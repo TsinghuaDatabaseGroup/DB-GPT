@@ -427,5 +427,5 @@ https://github.com/chatchat-space/Langchain-Chatchat
 ## 联系我们
 👏🏻欢迎加入我们的微信群
 <div align= "center">
-<img src="img/chat-2024-01-13.png" width="400px">
+<img src="img/chat-2024-01-22.png" width="400px">
 </div>
