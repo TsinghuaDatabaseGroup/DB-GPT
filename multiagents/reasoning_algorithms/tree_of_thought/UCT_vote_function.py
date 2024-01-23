@@ -1,8 +1,8 @@
 from multiagents.reasoning_algorithms.tree_of_thought.Tree.Tree import my_tree, tree_node
 from copy import deepcopy
 from multiagents.reasoning_algorithms import base_search_method
-from multiagents.prompt_templates.Tree_search_prompts import  MAKE_REFLECTION_RPOMPT,DIVERSITY_PROMPT,VOTE_BEST_SYSTEM_PROMPT,VOTE_BEST_USER_PROMPT,DEFAULT_POLICY_SYSTEM_PROMPT, DEFAULT_POLICY_USER_PROMPT
-from multiagents.prompt_templates.Reflexion_prompts import MAKE_REFLEXION_USER_PROMPT
+from multiagents.prompt_templates.tree_search_prompts import  MAKE_REFLECTION_RPOMPT,DIVERSITY_PROMPT,VOTE_BEST_SYSTEM_PROMPT,VOTE_BEST_USER_PROMPT,DEFAULT_POLICY_SYSTEM_PROMPT, DEFAULT_POLICY_USER_PROMPT
+from multiagents.prompt_templates.reflexion_prompts import MAKE_REFLEXION_USER_PROMPT
 from termcolor import colored
 from multiagents.utils.utils import AgentAction
 from multiagents.memory import BaseMemory

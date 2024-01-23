@@ -16,34 +16,15 @@ def whether_is_abnormal_metric(
         # print(f"{metric_name} is unknown")
         return f"The metric {metric_name} is unknown \n {metric_name}"
 
-    if enable_prometheus == True:
-        # read metric values from prometheus
-        metric_values = prometheus('api/v1/query_range',
-                                    {'query': prometheus_metrics[metric_name],
-                                    'start': start_time,
-                                    'end': end_time,
-                                    'step': '3'})
+    # read metric values from the anomaly file
+    metric_values = obtain_values_of_metrics(diag_id, [prometheus_metrics[metric_name]], -1, -1)
 
-        if "data" not in metric_values:
-            raise Exception("The metric name could be wrong!")
-        if "result" in metric_values["data"] and metric_values["data"]["result"] != []:
-            metric_values = metric_values["data"]["result"][0]["values"]
-        else:
-            raise Exception("No metric values found for the given time range")
-
+    if len(metric_values) > 0:
+        metric_values = next(iter(metric_values.values()))
         is_abnormal = detect_anomalies(
-            np.array([float(value) for _, value in metric_values]))
+            np.array(metric_values))
     else:
-        # read metric values from the anomaly file
-        metric_values = obtain_values_of_metrics(diag_id, [prometheus_metrics[metric_name]], -1, -1)
-        
-        if len(metric_values) > 0:
-            metric_values = next(iter(metric_values.values()))
-            is_abnormal = detect_anomalies(
-                np.array(metric_values))
-        else:
-            is_abnormal = False
-
+        is_abnormal = False
 
     # draw the metric chart
     chart_metric_values = [[i, str(value)] for i, value in metric_values]

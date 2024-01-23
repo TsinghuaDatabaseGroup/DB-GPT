@@ -5,7 +5,7 @@ from typing import List
 from multiagents.message import SolverMessage, Message
 from multiagents.agents import agent_registry
 from multiagents.agents.base import BaseAgent
-from multiagents.prompt_templates.Report_prompts import  ANOMALY_DESC_PROMPT, ANOMALY_TITLE_PROMPT
+from multiagents.prompt_templates.report_prompts import ANOMALY_DESC_PROMPT, ANOMALY_TITLE_PROMPT
 
 @agent_registry.register("reporter") # solver is also tool agent by default
 class ReporterAgent(BaseAgent):

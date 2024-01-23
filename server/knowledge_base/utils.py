@@ -84,7 +84,6 @@ def list_files_from_folder(kb_name: str):
 
     return result
 
-DIAGNOSE_FILE_DICT = {"JSONLoader": [".json", ".jsonl"]}
 
 DIAGNOSE_FILE_DICT = {"JSONLoader": [".json", ".jsonl"]}
 KNOWLEDGE_EXTRACTION_FILE_DICT = {"UnstructuredWordDocumentLoader": [".docx", ".doc"]}
@@ -92,10 +91,8 @@ KNOWLEDGE_EXTRACTION_FILE_DICT = {"UnstructuredWordDocumentLoader": [".docx", ".
 LOADER_DICT = {"UnstructuredHTMLLoader": ['.html'],
                "UnstructuredMarkdownLoader": ['.md'],
                "JSONLoader": ['.json', '.jsonl'],
-               #"JSONLinesLoader": [".jsonl"],
                "CSVLoader": [".csv"],
                # "FilteredCSVLoader": [".csv"], # 需要自己指定，目前还没有支持
-                  
                "RapidOCRLoader": ['.png', '.jpg', '.jpeg', '.bmp'],
                "UnstructuredEmailLoader": ['.eml', '.msg'],
                "UnstructuredEPubLoader": ['.epub'],

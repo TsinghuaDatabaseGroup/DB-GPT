@@ -38,9 +38,6 @@ class ChromaKBService(KBService):
         self.vector_name = self.vector_name or self.embed_model
         self.kb_path = self.get_kb_path()
         self.vs_path = self.get_vs_path()
-        print("vector_name:", self.vector_name)
-        print("kb_path:", self.kb_path)
-        print("vs_path:", self.vs_path)
         self._load_chroma()
 
     def do_create_kb(self):
@@ -77,11 +74,11 @@ class ChromaKBService(KBService):
 
             if byte_count >= VS_TYPE_PROMPT_TOTAL_BYTE_SIZE:
                 break
-        print(f"ChomaDB搜索到{len(info_docs)}个结果：")
+        print(f"ChromaDB搜索到{len(info_docs)}个结果：")
         # 将结果写入文件
         result_file = open("chromadb_search_results.txt", "w", encoding="utf-8")
         result_file.write(f"query:{query}")
-        result_file.write(f"ChomaDB搜索到{len(info_docs)}个结果：\n")
+        result_file.write(f"ChromaDB搜索到{len(info_docs)}个结果：\n")
         for item in info_docs:
             doc = item[0]
             result_file.write(doc.page_content + "\n")
