@@ -46,6 +46,7 @@ jpype1==1.4.1
 termcolor
 elasticsearch==8.11.1
 jieba==0.42.1
+jq==1.6.0
 # Online api libs dependencies
 
 # zhipuai>=1.0.7

@@ -6,7 +6,7 @@ DEFAULT_KNOWLEDGE_BASE = "samples"
 # 默认向量库/全文检索引擎类型。
 DEFAULT_VS_TYPE = "chromadb"
 
-DEFAULT_VS_TYPES = ["es", "chromadb"]
+DEFAULT_VS_TYPES = ["chromadb"] # ["es", "chromadb"]
 
 # 每种向量库的prompt字节的最大长度，超过则截断，
 VS_TYPE_PROMPT_TOTAL_BYTE_SIZE = 3000
