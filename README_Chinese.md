@@ -39,7 +39,7 @@
 
 ## 🗺 演示效果
 
-1. 启动本地服务后，可以在网页端（基于[Chatchat](chat.openai.com)开源项目二次开发）轻松将文档导入知识库、利用知识库进行有根据的问答、以及利用知识库进行异常告警的诊断分析。
+1. 启动本地服务后，可以在网页端（采用了[Chatchat](chat.openai.com)项目的前端和配置方式）轻松将文档导入知识库、利用知识库进行有根据的问答、以及利用知识库进行异常告警的诊断分析。
 
 <!-- <p align="center">
   <a href="http://dbgpt.dbmind.cn">
@@ -65,9 +65,9 @@
   </a>
 </p>
 
-*历史版本 1*: [[Gradio for Diag Game]](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/old_version)
+*历史版本 1*: [[Gradio for Diag Game]](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/old_version) （不依赖langchain）
 
-*历史版本 2*: [[Vue for Report Replay]](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/report_replay)
+*历史版本 2*: [[Vue for Report Replay]](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/report_replay) （不依赖langchain）
 
 
 <span id="-news"></span>

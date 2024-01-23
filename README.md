@@ -64,7 +64,7 @@
 
 ## 🗺 Online Demo
 
-1. After launching the local service (based on the [Chatchat](chat.openai.com) project), you can easily import documents into the knowledge base, utilize the knowledge base for *well-founded Q&A* and *diagnosis analysis of abnormal alarms*.
+1. After launching the local service (adopting frontend and configs from [Chatchat](chat.openai.com)), you can easily import documents into the knowledge base, utilize the knowledge base for *well-founded Q&A* and *diagnosis analysis of abnormal alarms*.
 
 <!-- <p align="center">
   <a href="http://dbgpt.dbmind.cn">
@@ -85,9 +85,9 @@
 </p>
 
 
-*Old Version 1*: [[Gradio for Diag Game]](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/old_version)
+*Old Version 1*: [[Gradio for Diag Game]](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/old_version) (no langchain)
 
-*Old Version 2*: [[Vue for Report Replay]](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/report_replay)
+*Old Version 2*: [[Vue for Report Replay]](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/report_replay) (no langchain)
 
 
 <span id="-news"></span>
