@@ -11,7 +11,7 @@ from multiagents.utils.utils import AGENT_TYPES
 from multiagents.agents.conversation_agent import BaseAgent
 from multiagents.message import Message, SolverMessage
 from multiagents.tools.metrics import current_diag_time
-from multiagents.prompt_templates.Diagnosis_smmary_prompts import DIAGNOSIS_SUMMARYY_PROMPT
+from multiagents.prompt_templates.diagnosis_smmary_prompts import DIAGNOSIS_SUMMARYY_PROMPT
 from multiagents.environments.decision_maker import (
     BaseDecisionMaker,
     decision_maker_registry,

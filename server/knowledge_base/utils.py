@@ -84,7 +84,6 @@ def list_files_from_folder(kb_name: str):
 
     return result
 
-DIAGNOSE_FILE_DICT = {"JSONLoader": [".json", ".jsonl"]}
 
 DIAGNOSE_FILE_DICT = {"JSONLoader": [".json", ".jsonl"]}
 KNOWLEDGE_EXTRACTION_FILE_DICT = {"UnstructuredWordDocumentLoader": [".docx", ".doc"]}
@@ -92,10 +91,8 @@ KNOWLEDGE_EXTRACTION_FILE_DICT = {"UnstructuredWordDocumentLoader": [".docx", ".
 LOADER_DICT = {"UnstructuredHTMLLoader": ['.html'],
                "UnstructuredMarkdownLoader": ['.md'],
                "JSONLoader": ['.json', '.jsonl'],
-               #"JSONLinesLoader": [".jsonl"],
                "CSVLoader": [".csv"],
                # "FilteredCSVLoader": [".csv"], # 需要自己指定，目前还没有支持
-                  
                "RapidOCRLoader": ['.png', '.jpg', '.jpeg', '.bmp'],
                "UnstructuredEmailLoader": ['.eml', '.msg'],
                "UnstructuredEPubLoader": ['.epub'],
@@ -176,7 +173,7 @@ def get_loader(loader_name: str, file_path: str, loader_kwargs: Dict = None):
         ## TODO：支持更多的自定义CSV读取逻辑
 
     elif loader_name == "JSONLoader":
-        loader_kwargs.setdefault("jq_schema", ".")
+        loader_kwargs.setdefault("jq_schema", ".[]")
         loader_kwargs.setdefault("content_key", "metrics")
         loader_kwargs.setdefault("text_content", True)
     elif loader_name == "JSONLinesLoader":

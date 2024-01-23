@@ -9,6 +9,7 @@ from server.utils import BaseResponse, ListResponse, run_in_thread_pool
 from server.knowledge_base.utils import (validate_kb_name, list_files_from_folder, get_file_path,
                                          files2docs_in_thread, KnowledgeFile)
 from fastapi.responses import StreamingResponse, FileResponse
+from server.knowledge_base.kb_service.base import get_kb_details
 from pydantic import Json
 import json
 from server.knowledge_base.kb_service.base import KBServiceFactory
@@ -470,3 +471,20 @@ def recreate_vector_store(
                 kb.save_vector_store()
 
     return StreamingResponse(output(), media_type="text/event-stream")
+
+
+def fetch_expert_kb_names() -> List[str]:
+    kb_list = {x["kb_name"]: x for x in get_kb_details()}
+    if kb_list is None:
+        raise Exception("No knowledge base found!")
+    kb_names = list(kb_list.keys())
+
+    expert_kb_names = []
+    for kb_name in kb_names:
+        if "_expert" in kb_name:
+            expert_kb_names.append(kb_name)
+
+    if len(expert_kb_names) == 0:
+        raise Exception("No expert knowledge base found!")
+
+    return expert_kb_names

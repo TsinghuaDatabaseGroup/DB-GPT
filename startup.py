@@ -597,7 +597,7 @@ def dump_server_info(after_start=False, args=None):
         if args.webui:
             print(f"    DB-GPT WEBUI Server: {webui_address()}")
             print(f"    DB-GPT REPORTS WEBUI Server: {reports_webui_address()}")
-    print("=" * 30 + "Langchain-Chatchat Configuration" + "=" * 30)
+    print("=" * 30 + "DB-GPT Configuration" + "=" * 30)
     print("\n")
 
 

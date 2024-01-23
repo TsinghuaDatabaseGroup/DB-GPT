@@ -234,9 +234,6 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
         #     on_change=prompt_change,
         #     key="prompt_template_select",
         # )
-        # prompt_template_name = st.session_state.prompt_template_select
-        temperature = st.slider("Temperature：", 0.0, 1.0, TEMPERATURE, 0.05)
-        history_len = st.number_input("History turns：", 0, 20, HISTORY_LEN)
 
         def on_kb_change():
             st.toast(f"Loaded Knowledge bases： {st.session_state.selected_kb}")
@@ -316,7 +313,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
     }
 
     if prompt := st.chat_input(chat_input_placeholder, key="prompt"):
-        history = get_messages_history(history_len)
+        history = get_messages_history(HISTORY_LEN)
         chat_box.user_say(prompt)
         st.session_state.cache_prompt = prompt
         if dialogue_mode == "LLM Session":
@@ -328,7 +325,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
                               conversation_id=conversation_id,
                               model=llm_model,
                               prompt_name=prompt_template_name,
-                              temperature=temperature)
+                              temperature=TEMPERATURE)
             for t in r:
                 if error_msg := check_error_msg(
                         t):  # check whether error occured
@@ -368,7 +365,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
                                     history=history,
                                     model=llm_model,
                                     prompt_name=prompt_template_name,
-                                    temperature=temperature,
+                                    temperature=TEMPERATURE,
                                     ):
                 try:
                     d = json.loads(d)
@@ -409,7 +406,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
                         ignore_cache=True,
                         model=llm_model,
                         prompt_name=prompt_template_name,
-                        temperature=temperature):
+                        temperature=TEMPERATURE):
                     if error_msg := check_error_msg(
                             d):  # check whether error occured
                         st.error(error_msg)
@@ -440,7 +437,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
                         ignore_cache=False,
                         model=llm_model,
                         prompt_name=prompt_template_name,
-                        temperature=temperature):
+                        temperature=TEMPERATURE):
                     if error_msg := check_error_msg(
                             d):  # check whether error occured
                         st.error(error_msg)
@@ -464,7 +461,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
                             ignore_cache=True,
                             model=llm_model,
                             prompt_name=prompt_template_name,
-                            temperature=temperature):
+                            temperature=TEMPERATURE):
                         if error_msg := check_error_msg(
                                 d):  # check whether error occured
                             st.error(error_msg)
@@ -510,7 +507,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
                     history=history,
                     model=llm_model,
                     prompt_name=prompt_template_name,
-                    temperature=temperature):
+                    temperature=TEMPERATURE):
                 if error_msg := check_error_msg(
                         d):  # check whether error occured
                     st.error(error_msg)
@@ -536,7 +533,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
                     history=history,
                     model=llm_model,
                     prompt_name=prompt_template_name,
-                    temperature=temperature,
+                    temperature=TEMPERATURE,
                     split_result=se_top_k > 1):
                 if error_msg := check_error_msg(
                         d):  # check whether error occured
@@ -563,7 +560,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
             key="ignore_cache_button",
                 type="primary"):
             st.session_state.show_ignore_cache_button = False
-            history = get_messages_history(history_len)
+            history = get_messages_history(HISTORY_LEN)
             chat_box.ai_say([f"正在查询知识库 `{selected_kb}` ...", Markdown(
                 "...", in_expander=True, title="知识库匹配结果", state="complete"), ])
             doc_text = ""
@@ -575,7 +572,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
                                              ignore_cache=True,
                                              model=llm_model,
                                              prompt_name=prompt_template_name,
-                                             temperature=temperature):
+                                             temperature=TEMPERATURE):
                 if error_msg := check_error_msg(
                         d):  # check whether error occured
                     st.error(error_msg)

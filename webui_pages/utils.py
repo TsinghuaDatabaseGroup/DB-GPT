@@ -348,70 +348,61 @@ class ApiRequest:
         return self._httpx_stream2generator(response)
 
 
-    def db_ddl_info(self, host: str, user: str, password: str, database: str, port: int):
-        '''
-        对应api.py/chat/db_ddl_info接口
-        '''
-        data = {
-            "host": host,
-            "user": user,
-            "password": password,
-            "database": database,
-            "port": port
-        }
 
+    def diagnose_file(self, file_name: str, file_content: Union[bytes]):
+        '''
+        对异常文件进行诊断
+        '''
         response = self.post(
-            "/db/db_ddl_info",
-            json=data,
+            "/diagnose/run_diagnose",
+            files={"file": (file_name, file_content)},
             stream=False,
         )
         return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", {}))
 
-    def db_execute_sql(self, host: str, user: str, password: str, database: str, port: int, sql: str):
+
+    def diagnose_output(self):
         '''
-        对应api.py/chat/db_execute_sql接口
+        获取异常诊断输出
+        '''
+        response = self.get(
+            "/diagnose/diagnose_output",
+            stream=False,
+        )
+        return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", {}))
+
+
+    def diagnose_histories(self, start: str, end: str, model: str = "GPT4-0613"):
+        '''
+        获取诊断历史列表
         '''
         data = {
-            "host": host,
-            "user": user,
-            "password": password,
-            "database": database,
-            "port": port,
-            "sql": sql
+            "start": start,
+            "end": end,
+            "model": model
         }
         response = self.post(
-            "/db/db_execute_sql",
+            "/alert/report/histories",
             json=data,
             stream=False,
         )
         return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", []))
 
-
-    def db_generate_sql(
-        self,
-        query: str,
-        ddl: str,
-        model: str = LLM_MODELS[0],
-        temperature: float = TEMPERATURE,
-        max_tokens: int = None
-    ):
+    def diagnose_history_detail(self, file_name: str, model: str = "GPT4-0613"):
         '''
-        对应api.py/chat/db_data_base_chat接口
+        获取诊断历史详情
         '''
         data = {
-            "query": query,
-            "ddl": ddl,
-            "model_name": model,
-            "temperature": temperature,
-            "max_tokens": max_tokens
+            "file_name": file_name,
+            "model": model
         }
-
         response = self.post(
-            "/db/db_generate_sql",
+            "/alert/report/history_detail",
             json=data,
-            stream=True,
+            stream=False,
         )
-        return self._httpx_stream2generator(response, as_json=True)
+        return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", {}))
+
 
     def knowledge_base_chat(
         self,

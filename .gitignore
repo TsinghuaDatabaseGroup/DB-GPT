@@ -15,6 +15,14 @@ openai_keys.txt
 others/customllm_test.py
 alert_results/2023*
 alert_results/logs
+alert_results/
+configs/*.py
+chromadb_search_results.txt
+
+m3e-base/
+chroma_db/
+
+multiagents/localized_llms/sentence_embedding/
 
 doc2knowledge/docs/case_guide
 doc2knowledge/docs/overall_guide
