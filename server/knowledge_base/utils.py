@@ -176,15 +176,16 @@ def get_loader(loader_name: str, file_path: str, loader_kwargs: Dict = None):
         ## TODO：支持更多的自定义CSV读取逻辑
 
     elif loader_name == "JSONLoader":
-        loader_kwargs.setdefault("jq_schema", ".")
+        loader_kwargs.setdefault("jq_schema", ".[]")
         loader_kwargs.setdefault("content_key", "metrics")
         loader_kwargs.setdefault("text_content", True)
     elif loader_name == "JSONLinesLoader":
         loader_kwargs.setdefault("jq_schema", ".")
         loader_kwargs.setdefault("text_content", True)
-
+    
 
     loader = DocumentLoader(file_path, **loader_kwargs)
+
     return loader
 
 
