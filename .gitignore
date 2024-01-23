@@ -18,6 +18,7 @@ alert_results/logs
 alert_results/
 configs/*.py
 chromadb_search_results.txt
+knowledge_base/info.db
 
 m3e-base/
 chroma_db/
