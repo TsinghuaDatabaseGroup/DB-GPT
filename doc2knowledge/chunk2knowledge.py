@@ -85,6 +85,7 @@ def ExtractKnowledge(nodes_mapping, root_index, iteration=2, iteration_gap=1, so
     # RULES_EXTRACTION_PROMPT_MSG[0]['content'] = RULES_EXTRACTION_PROMPT_MSG[0]['content'].replace('${relevant_chapters}', str(relevant_nodes))
 
     if os.path.exists(target_file):
+        return []
         with open(target_file, 'r') as rf:
             # if rf content is empty
             if rf.read() == '':
@@ -137,9 +138,12 @@ def ExtractKnowledge(nodes_mapping, root_index, iteration=2, iteration_gap=1, so
                     #     rule = rule[len('{\n  "blocks": '):-len('\n}')]
 
                     rule = ast.literal_eval(rule)
+
                     if 'blocks' in rule:
                         rule = rule['blocks']
-                        rule = ast.literal_eval(rule)
+                        if isinstance(rule, str):
+                            rule = rule.replace('\n', '\\n')
+                            rule = ast.literal_eval(rule)
 
                     if isinstance(rule, dict):
                         rules = [rule]
@@ -206,7 +210,8 @@ def ExtractKnowledge(nodes_mapping, root_index, iteration=2, iteration_gap=1, so
                     except:
                         rules = ""
 
-                except:
+                except Exception as e:
+                    # import pdb; pdb.set_trace()
                     message = "Invaid Rule."
                     print(ERROR(message))
                     rules = ""
@@ -253,7 +258,7 @@ if __name__=="__main__":
         StrArgumentDescriptor("doc", short='d', default="docs/enmo/reports"),
         StrArgumentDescriptor("root_index", short='r', default="0"), # e.g., section 0
         IntArgumentDescriptor("summary_min_length", short='l', default=200),
-        IntArgumentDescriptor("num_iteration", short='K', default=40),
+        IntArgumentDescriptor("num_iteration", short='K', default=30),
         IntArgumentDescriptor("iteration_gap", short='T', default=1),
         SwitchArgumentDescriptor("clear_cache", short='c', default=True),
     ])
@@ -271,16 +276,30 @@ if __name__=="__main__":
             doc_section_dirs.append(pjoin(root, dir))
 
 
-    for section_dir in doc_section_dirs:
+    num_with_multi_sections = 0
+
+    for i,section_dir in enumerate(doc_section_dirs):
         
+        print(f"Processing {i+1}/{len(doc_section_dirs)}: {section_dir}")
+
+        target_file = os.path.abspath(os.path.join(args.doc, f"knowledge_from_{section_dir.split('/')[-2]}.jsonl"))
+        if os.path.exists(target_file):
+            continue
+
+        if len(ListFiles(section_dir)) > 1:
+            num_with_multi_sections += 1
+            print(f"Multi-sections: {section_dir}")
+        else:
+            continue
+
         # generate the cascading summary index
         nodes = CascadingSummary(section_dir)
         nodes_mapping = {node['id_str']: node for node in nodes}
 
         if (args.root_index) not in nodes_mapping:
             print(f"Invalid root index: {section_dir}")
-            continue
-
-        target_file = os.path.abspath(os.path.join(args.doc, f"knowledge_from_{section_dir.split('/')[-2]}.jsonl"))
+            continue        
 
         extracted_knowlege_chunks = ExtractKnowledge(nodes_mapping, root_index=args.root_index, iteration=args.num_iteration, iteration_gap=args.iteration_gap, source_file=args.doc,target_file=target_file)
+    
+    print(f"num_with_multi_sections: {num_with_multi_sections}")
