@@ -22,6 +22,18 @@ knowledge_base/info.db
 
 m3e-base/
 chroma_db/
+*/node_modules/
+
+*/.DS_Store
+*/dist
+# Editor directories and files
+*/.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 multiagents/localized_llms/sentence_embedding/
 
