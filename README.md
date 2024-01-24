@@ -343,9 +343,9 @@ python openai_test.py
 - Move the downloaded sentence-transformer.zip to *./localized_llms/sentence_embedding/* directory, and unzip it. -->
 
 #### 2. Test typical cases
-
+We put multiple test cases under the test_case folder. You can select a case file on the front-end page for diagnosis or use the command line.
 ```shell
-python3 run_diagnose.py --anomaly_file ./diagnostic_files/testing_cases_5.json
+python3 run_diagnose.py --anomaly_file ./test_cases/testing_cases_5.json
 ```
 
 <!-- - Test single case

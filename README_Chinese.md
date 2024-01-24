@@ -244,9 +244,9 @@ $ python startup.py -a
 #### 2. 诊断
 
 - 测试单个案例
-
+我们在test_case文件夹下面放了多个测试案例。可以通过前端页面选择案例文件，进行诊断，也可以通过命令行进行诊断。
 ```shell
-python3 run_diagnose.py --anomaly_file ./diagnostic_files/testing_cases_5.json
+python3 run_diagnose.py --anomaly_file ./test_cases/testing_cases_5.json
 ```
 
 <span id="-anomalies"></span>

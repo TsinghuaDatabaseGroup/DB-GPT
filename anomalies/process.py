@@ -32,7 +32,7 @@ import json
 # with open("batch_testing_set.json", 'w') as f:
 #     json.dump(alert_json, f)
 
-with open("batch_testing_set.json", 'r') as f:
+with open("../test_cases/batch_testing_set.json", 'r') as f:
     dicts = json.load(f)
 
 for dict in dicts:
