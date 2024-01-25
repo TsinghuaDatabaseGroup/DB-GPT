@@ -1,0 +1,40 @@
+{
+  "name": "report_component",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve --fix",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "element-ui": "2.15.5",
+    "highlight.js": "^10.7.1",
+    "markdown-it": "^13.0.2",
+    "moment": "^2.27.0",
+    "normalize.css": "7.0.0",
+    "path-to-regexp": "2.4.0",
+    "streamlit-component-lib": "^1.1.0",
+    "typed.js": "^2.0.14",
+    "vue": "2.6.12",
+    "vue-demi": "^0.7.0",
+    "vue-i18n": "^8.28.2"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
+    "@vue/cli-plugin-babel": "~4.4.0",
+    "@vue/cli-plugin-eslint": "~4.4.0",
+    "@vue/cli-plugin-typescript": "~4.4.0",
+    "@vue/cli-service": "~4.4.0",
+    "@vue/eslint-config-typescript": "^5.0.2",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "typescript": "~3.9.3",
+    "sass": "1.26.8",
+    "sass-loader": "8.0.2",
+    "vue-template-compiler": "2.6.12"
+  }
+}

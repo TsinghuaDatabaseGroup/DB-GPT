@@ -139,14 +139,6 @@ $ pip3 install -r requirements.txt
 $ pip3 install -r requirements_api.txt # 如果只运行API，可以只安装API依赖，请使用 requirements_api.txt
 
 # 默认依赖包括基本运行环境（Chroma-DB向量库）。如果要使用其它向量库，请将 requirements.txt 中相应依赖取消注释再安装。
-
-# 如果要运行Web UI，还需要安装前端项目中的依赖包。由于历史报告页面UI较为复杂，所以使用VUE单独写了个前端页面。
-cd webui_pages/reports/reports_ui
-rm -rf node_modules/
-rm -r package-lock.json
-# 首次运行安装依赖项（推荐使用nodejs, ^16.13.1）
-npm install  --legacy-peer-deps
-npm install -g cross-env
 ```
 
 + PostgreSQL v12 （我们是基于 PostgreSQL v12 进行开发测试的，我们不保证其他版本的 PostgreSQL 的兼容性）

@@ -20,6 +20,9 @@ configs/*.py
 chromadb_search_results.txt
 knowledge_base/info.db
 
+*/node_modules/
+*/.idea
+
 m3e-base/
 chroma_db/
 
@@ -33,7 +36,6 @@ doc2knowledge/docs/private_docs
 .Python
 build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/
