@@ -1,11 +1,12 @@
 <template>
   <div class="node">
-    <div class="header">
-      {{itemData.title || '标题'}}
+    <div class="header" :style="itemData.isCompleted ? 'background-color: RGBA(103, 194, 58, 0.8);': 'background-color: #3C3A3A;'">
+      {{itemData.title}}
     </div>
     <div class="content">
-      {{itemData.content || '内容内容内容内容内容内容内容内容内容内容内容'}}
+      {{itemData.content}}
     </div>
+    <div v-if="itemData.isRuning" class="blinking-dot"></div>
   </div>
 </template>
 
@@ -29,39 +30,60 @@ export default {
 
 <style>
 
+.blinking-dot {
+  width: 12px;
+  height: 12px;
+  background-color: #67C23A;
+  border-radius: 50%;
+  position: absolute;
+  top: 8px;
+  right:8px;
+  animation: breathe 1.5s infinite;
+}
+
+@keyframes breathe {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
 .butterflie-circle-endpoint {
   background: #67C23A !important;
   border: 1px solid #67C23A !important;
 }
 
 .node {
-  max-width: 200px;
-  min-width: 60px;
+  width: 240px;
   box-shadow: 0 2px 3px 0 rgba(0,112,204,0.06);;
-  background-color: #fff;
   border-radius:8px;
   overflow: hidden;
-  border: 1px solid #aaa;
+  position: relative;
 }
 
 .header {
-  padding: 5px;
+  position: relative;
+  padding: 5px 20px;
   border-radius: 5px 5px 0 0;
   color: #FFF;
+  border: none;
   min-height: 10px;
-  background-color: #F66902;
+  background-color: #3C3A3A;
   text-align: center;
   font-size: 12px;
 }
 
 .content {
-  color: #222;
+  position: relative;
+  color: #ffffff;
   padding: 10px;
-  border: 1px solid #D9D9D9;
-  border-top: none;
+  border-top: 2px solid #000000;
   border-radius: 0 0 5px 5px;
   min-height: 60px;
   font-size: 12px;
+  background-color: #3C3A3A;
 }
 
 </style>

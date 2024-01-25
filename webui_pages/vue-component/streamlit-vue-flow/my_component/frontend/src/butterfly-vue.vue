@@ -137,22 +137,19 @@ export default {
         console.log('initCanvas***********');
         this.canvasConf.root = root;
         this.canvas = new this.baseCanvas(this.canvasConf);
-        this.canvas.setMinimap(true, {
-          height: 100,
-          width: 200
-        })
+
         setTimeout(() => {
           this.canvas.setGridMode(true, {
             isAdsorb: false,         // 是否自动吸附,默认关闭
             theme: {
               shapeType: 'circle',     // 展示的类型，支持line & circle
               gap: 20,               // 网格间隙
-              background: 'rgba(0, 0, 0, 0.8)',     // 网格背景颜色
+              background: 'rgba(0, 0, 0, 1)',     // 网格背景颜色
               circleRadiu: 1.5,        // 圆点半径
-              circleColor: 'rgba(255, 255, 255, 0.6)'
+              circleColor: 'rgba(255, 255, 255, 1)'
             }
           })
-        }, 100);
+        }, 300);
 
       }
     },
@@ -292,7 +289,7 @@ export default {
 <style>
 .butterflies-link {
   fill: none;
-  stroke: #eeeccc;
+  stroke: #4B4F6B;
   stroke-width: 3px;
 }
 </style>

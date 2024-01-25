@@ -14,7 +14,7 @@
 // import { Streamlit } from "streamlit-component-lib";
 import {ButterflyVue} from './index.js';
 
-import mockData from "./grid-mockData.js";
+import mockData from "./nodeData.js";
 export default {
   name: "MyComponent",
   props: ["args"],
