@@ -1,9 +1,9 @@
 <template>
-  <div class="c-flex-row" style="width: 100%; font-size: 1rem; line-height: 1.6!important; height: 55rem">
+  <div class="c-flex-row" style="width: 100%; font-size: 1rem; line-height: 1.6!important; height: 1000px">
     <div class="c-flex-column" style=" width: 55%;">
       <div
         class="c-flex-row c-align-items-center c-justify-content-between c-shaow-card"
-        style="padding: 10px 20px; margin: 20px 20px 0 ; border-radius: 80px!important;"
+        style="padding: 10px 20px; border-radius: 80px!important;"
       >
         <el-form
           ref="form"
@@ -38,7 +38,7 @@
         </div>
 
       </div>
-      <div class="c-flex c-flex-column" style="height: calc(100vh - 100px); overflow-y: auto; margin: 10px 0; padding-left: 20px">
+      <div class="c-flex c-flex-column" style="height: calc(100vh - 100px); overflow-y: auto; margin: 10px 0; padding: 0 10px">
         <div
           v-for="(item, index) in historyMessages"
           :key="index"
@@ -91,7 +91,7 @@
       style="overflow-y: scroll; height: 100vh; overflow-x: hidden; width: 45%; background: RGBA(255, 255, 255, 1.00);"
     >
       <div
-        style="background-color: white; padding: 10px; margin: 10px; border-radius: 8px;"
+        style="background-color: white; padding: 0 10px; margin: 0 10px; border-radius: 8px;"
         v-html="openReport"
       />
     </div>
@@ -541,7 +541,7 @@ table thead:first-child tr:first-child td {
 
 .diagnose-item {
   flex-shrink: 0;
-  padding: 10px 20px;
+  padding: 10px 0;
   margin-bottom: 10px;
   border-bottom-left-radius: 10px;
   border-top-left-radius: 10px;

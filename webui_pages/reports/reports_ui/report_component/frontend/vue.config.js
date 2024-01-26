@@ -1,3 +1,4 @@
 module.exports = {
-  publicPath: './'
-} 
+  publicPath: './',
+  outputDir: 'build_dist',
+}
