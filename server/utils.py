@@ -424,14 +424,6 @@ def webui_address() -> str:
     port = WEBUI_SERVER["port"]
     return f"http://{host}:{port}"
 
-def reports_webui_address() -> str:
-    from configs.server_config import REPORTS_WEBUI_SERVER
-
-    host = REPORTS_WEBUI_SERVER["host"]
-    port = REPORTS_WEBUI_SERVER["port"]
-    return f"http://{host}:{port}"
-
-
 def get_prompt_template(type: str, name: str) -> Optional[str]:
     '''
     从prompt_config中加载模板内容

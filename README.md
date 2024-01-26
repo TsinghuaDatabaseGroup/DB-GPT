@@ -173,14 +173,6 @@ $ pip3 install -r requirements.txt
 $ pip3 install -r requirements_api.txt # If only running the API, you can just install the API dependencies, please use requirements_api.txt
 
 # Default dependencies include the basic runtime environment (Chroma-DB vector library). If you want to use other vector libraries, please uncomment the respective dependencies in requirements.txt before installation.
-
-# If you want to run the Web UI, you also need to install dependencies in the frontend project. As the UI for the history report page is quite complex, a separate frontend page was written using VUE.
-cd webui_pages/reports/reports_ui
-rm -rf node_modules/
-rm -r package-lock.json
-# First-time run to install dependencies (recommended to use nodejs, ^16.13.1)
-npm install --legacy-peer-deps
-npm install -g cross-env
 ```
 
 <!-- > You can comment the Llama2Chat/CodeLlamaChat/Baichuan2Chat imports in ./llms/__init__.py if using openai models only -->

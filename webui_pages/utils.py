@@ -372,7 +372,19 @@ class ApiRequest:
         return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", {}))
 
 
-    def diagnose_histories(self, start: str, end: str, model: str = "GPT4-0613"):
+    def diagnose_diagnose_llm_model_list(self):
+        '''
+        获取诊断历史列表
+        '''
+        data = {}
+        response = self.post(
+            "/alert/report/diagnose_llm_model_list",
+            json=data,
+            stream=False,
+        )
+        return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", []))
+
+    def diagnose_histories(self, start: str = None, end: str = None, model: str = "GPT4-0613"):
         '''
         获取诊断历史列表
         '''

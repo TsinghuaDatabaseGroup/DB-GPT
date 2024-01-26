@@ -25,6 +25,18 @@ if __name__ == "__main__":
         initial_sidebar_state="expanded"
     )
 
+    css = """
+    <style>
+        .block-container {
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            padding-top: 40px !important;
+            padding-bottom: 40px !important;
+        }
+    </style>
+    """
+    st.write(css, unsafe_allow_html=True)
+
     pages = {
         "Knowledge Base": {
             "icon": "hdd-stack",
