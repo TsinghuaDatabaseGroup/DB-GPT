@@ -143,7 +143,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
         def on_mode_change():
             mode = st.session_state.dialogue_mode
             text = f"Switch to {mode} mode"
-            if mode == "Knowledge-based Chat":
+            if mode == "knowledge_base_chat":
                 cur_kb = st.session_state.get("selected_kb")
                 if cur_kb:
                     text = f"{text} Current Knowledge base： `{cur_kb}`。"
@@ -316,7 +316,7 @@ def dialogue_page(api: ApiRequest, is_lite: bool = False):
         history = get_messages_history(HISTORY_LEN)
         chat_box.user_say(prompt)
         st.session_state.cache_prompt = prompt
-        if dialogue_mode == "LLM Session":
+        if dialogue_mode == "llm_chat":
             chat_box.ai_say("LLM Thinking...")
             text = ""
             message_id = ""
