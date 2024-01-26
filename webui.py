@@ -28,11 +28,10 @@ if __name__ == "__main__":
     css = """
     <style>
         .block-container {
-            padding: 20px 20px 10 20px !important;
             padding-left: 20px !important;
             padding-right: 20px !important;
             padding-top: 40px !important;
-            overflow: hidden;
+            padding-bottom: 40px !important;
         }
     </style>
     """

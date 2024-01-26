@@ -1,28 +1,31 @@
 import streamlit as st
-
-from server.utils import reports_webui_address
+from streamlit.components.v1 import declare_component
 from webui_pages.utils import *
-
+import os
 
 def reports_page(api: ApiRequest, is_lite: bool = False):
+    if "model_list" not in st.session_state:
+        st.session_state["model_list"] = api.diagnose_diagnose_llm_model_list()
 
-    css = """
-    <style>
-        .st-emotion-cache-z5fcl4 {
-            padding: 40px 0 0 0;
-            overflow: hidden;
-        }
-    </style>
-    """
-    st.write(css, unsafe_allow_html=True)
+    if "current_model" not in st.session_state:
+        st.session_state["current_model"] = st.session_state["model_list"][0]
 
-    with st.spinner('Loading...'):
-        st.markdown(f"""<div style="width: 100%; height: calc(100vh - 50px);">
-            <iframe src="{reports_webui_address()}" width="100%" height="100%" frameborder="0">
-                Your browser does not support iframe.
-            </iframe>
-        </div>""", unsafe_allow_html=True)
-    st.spinner()
+    st.session_state["diagnose_histories"] = api.diagnose_histories(model=st.session_state["current_model"])
+
+    my_component = declare_component("my_component", path=os.path.join(os.path.dirname(__file__), 'reports_ui/report_component/frontend/build_dist'))
+    response = my_component(args={
+        "modelList": st.session_state["model_list"],
+        "currentModel": st.session_state["current_model"],
+        "diagnoseHistories": st.session_state["diagnose_histories"]
+    }, key="my_component")
+    try:
+        if response["model"] and response["model"] != st.session_state["current_model"]:
+            st.session_state["current_model"] = response["model"]
+            st.session_state["diagnose_histories"] = api.diagnose_histories(model=st.session_state["current_model"])
+            st.rerun()
+    except Exception as e:
+        print(e)
+
 
 
 

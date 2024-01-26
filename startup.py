@@ -29,9 +29,7 @@ from configs import (
     FSCHAT_MODEL_WORKERS,
     API_SERVER,
     WEBUI_SERVER,
-    REPORTS_WEBUI_SERVER,
-    HTTPX_DEFAULT_TIMEOUT,
-    REPORTS_WEBUI_PATH,
+    HTTPX_DEFAULT_TIMEOUT
 )
 from server.utils import (fschat_controller_address, fschat_model_worker_address,
                           fschat_openai_api_address, set_httpx_config, get_httpx_client,
@@ -443,9 +441,6 @@ def run_api_server(started_event: mp.Event = None, run_mode: str = None):
 
 
 def run_webui(started_event: mp.Event = None, run_mode: str = None):
-    from server.utils import api_address
-
-    subprocess.Popen(['cross-env', f'VUE_APP_BASEURL={api_address()}', 'npm', 'run', 'dev', '--silent', '--', '--port', str(REPORTS_WEBUI_SERVER['port'])], cwd=REPORTS_WEBUI_PATH)
 
     from server.utils import set_httpx_config
     set_httpx_config()
@@ -566,7 +561,7 @@ def dump_server_info(after_start=False, args=None):
     import platform
     import langchain
     import fastchat
-    from server.utils import api_address, webui_address, reports_webui_address
+    from server.utils import api_address, webui_address
 
     print("\n")
     print("=" * 30 + "Data chat Configuration" + "=" * 30)
@@ -596,7 +591,6 @@ def dump_server_info(after_start=False, args=None):
             print(f"    DB-GPT  API  Server: {api_address()}")
         if args.webui:
             print(f"    DB-GPT WEBUI Server: {webui_address()}")
-            print(f"    DB-GPT REPORTS WEBUI Server: {reports_webui_address()}")
     print("=" * 30 + "DB-GPT Configuration" + "=" * 30)
     print("\n")
 
