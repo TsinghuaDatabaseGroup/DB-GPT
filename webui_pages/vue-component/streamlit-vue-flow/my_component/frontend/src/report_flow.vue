@@ -2,7 +2,7 @@
   <div class="wrapper" :style="`width: ${ options.width }; height: ${ options.height }; background: ${ options.background };`">
     <butterfly-vue
         ref="butterflyVue"
-        :canvasData="mockData"
+        :canvasData="nodeData"
         @onLoaded="finishLoaded"
         className='grid'
         key="grid"
@@ -13,10 +13,18 @@
 <script>
 // import { Streamlit } from "streamlit-component-lib";
 import {ButterflyVue} from './index.js';
+import titleContentNode from './node/title-content-node';
+import agentGroupNode from './node/agent_group_node';
+import Edge from './util/edge';
 
-import mockData from "./nodeData.js";
+const classMap = {
+  'titleContentNode': titleContentNode,
+  'agentGroupNode': agentGroupNode,
+  'Edge': Edge
+};
+
 export default {
-  name: "MyComponent",
+  name: "ReportFlow",
   props: ["args"],
   components: {
     ButterflyVue
@@ -28,12 +36,13 @@ export default {
         height: '300px',
         background: '#ffffff',
       },
+      runData: {},
       defaults: {
           width: '100%',
           height: '300px',
           background: '#ffffff',
       },
-      mockData,
+      nodeData: {},
       canvansRef:{},
       butterflyVue: {},
       nodeIndex: 0
@@ -46,6 +55,14 @@ export default {
         this.options.width = newVal.args.width || this.defaults.width;
         this.options.height = newVal.args.height  || this.defaults.height;
         this.options.background = newVal.args.background  || this.defaults.background;
+        const jsonData = newVal.args.nodeData
+        jsonData.nodes.forEach(node => {
+          node.render = classMap[node.render];
+        });
+        jsonData.edges.forEach(edge => {
+          edge.Class = classMap[edge.Class];
+        });
+        this.nodeData = jsonData;
         console.log('Args changed from', oldVal, 'to', newVal);
       },
       deep: true,

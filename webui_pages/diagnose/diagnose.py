@@ -1,5 +1,5 @@
 import time
-
+import re
 import streamlit as st
 from streamlit.components.v1 import declare_component
 
@@ -7,32 +7,208 @@ from webui_pages.utils import *
 from server.knowledge_base.utils import DIAGNOSE_FILE_DICT
 
 def diagnose_page(api: ApiRequest, is_lite: bool = None):
+    if 'diagnosing' not in st.session_state:
+        st.session_state['diagnosing'] = False
 
-    col1, col2 = st.columns(2)
+    if 'diagnose_api' not in st.session_state:
+        st.session_state['diagnose_api'] = None
+
+    if 'task_output' not in st.session_state:
+        st.session_state['task_output'] = ''
+
+    if 'upload_and_diagnose_clicked' not in st.session_state:
+        st.session_state['upload_and_diagnose_clicked'] = False
+
+    if 'node_data' not in st.session_state:
+        st.session_state['node_data'] = {
+            'nodes': [
+                {
+                    'id': 'A',
+                    'userData': {
+                        'title': '初始化专家角色',
+                        'content': '',
+                        'isCompleted': False,
+                        'isRuning': False
+                    },
+                    'render': 'titleContentNode',
+                    'top': 20,
+                    'left': 120,
+                    'endpoints': [
+                        {
+                            'id': 'bottom',
+                            'orientation': [0, 1]
+                        }
+                    ]
+                },
+                {
+                    'id': 'B',
+                    'userData': {
+                        'title': '初始化诊断报告',
+                        'content': '',
+                        'isCompleted': False,
+                        'isRuning': False
+                    },
+                    'render': 'titleContentNode',
+                    'top': 150,
+                    'left': 120,
+                    'endpoints': [
+                        {
+                            'id': 'top',
+                            'orientation': [0, -1]
+                        },
+                        {
+                            'id': 'bottom',
+                            'orientation': [0, 1]
+                        }
+                    ]
+                },
+                {
+                    'id': 'C',
+                    'userData': {
+                        'title': '根据异常分配诊断专家',
+                        'content': '',
+                        'isCompleted': False,
+                        'isRuning': False
+                    },
+                    'render': 'titleContentNode',
+                    'top': 280,
+                    'left': 120,
+                    'endpoints': [
+                        {
+                            'id': 'top',
+                            'orientation': [0, -1]
+                        },
+                        {
+                            'id': 'bottom',
+                            'orientation': [0, 1]
+                        }
+                    ]
+                },
+                {
+                    'id': 'D',
+                    'userData': {
+                        'title': '专家诊断',
+                        'content': '',
+                        'isCompleted': False,
+                        'isRuning': False,
+                        'expertData': []
+                    },
+                    'render': 'agentGroupNode',
+                    'top': 410,
+                    'left': 50,
+                    'endpoints': [
+                        {
+                            'id': 'top',
+                            'orientation': [0, -1]
+                        },
+                        {
+                            'id': 'bottom',
+                            'orientation': [0, 1]
+                        }
+                    ]
+                },
+                {
+                    'id': 'E',
+                    'userData': {
+                        'title': '圆桌讨论',
+                        'content': '',
+                        'isCompleted': False,
+                        'isRuning': False,
+                        'expertData': []
+                    },
+                    'render': 'titleContentNode',
+                    'top': 610,
+                    'left': 120,
+                    'endpoints': [
+                        {
+                            'id': 'top',
+                            'orientation': [0, -1]
+                        },
+                        {
+                            'id': 'bottom',
+                            'orientation': [0, 1]
+                        }
+                    ]
+                },
+                {
+                    'id': 'F',
+                    'userData': {
+                        'title': '报告生成',
+                        'content': '',
+                        'isCompleted': False,
+                        'isRuning': False
+                    },
+                    'render': 'titleContentNode',
+                    'top': 740,
+                    'left': 120,
+                    'endpoints': [
+                        {
+                            'id': 'top',
+                            'orientation': [0, -1]
+                        }
+                    ]
+                }
+            ],
+            'edges': [
+                {
+                    'id': '1',
+                    'source': 'bottom',
+                    'target': 'top',
+                    'sourceNode': 'A',
+                    'targetNode': 'B',
+                    'type': 'endpoint'
+                },
+                {
+                    'id': '2',
+                    'source': 'bottom',
+                    'target': 'top',
+                    'sourceNode': 'B',
+                    'targetNode': 'C',
+                    'type': 'endpoint'
+                },
+                {
+                    'id': '3',
+                    'source': 'bottom',
+                    'target': 'top',
+                    'sourceNode': 'C',
+                    'targetNode': 'D',
+                    'type': 'endpoint'
+                },
+                {
+                    'id': '4',
+                    'source': 'bottom',
+                    'target': 'top',
+                    'sourceNode': 'D',
+                    'targetNode': 'E',
+                    'type': 'endpoint'
+                },
+                {
+                    'id': '5',
+                    'source': 'bottom',
+                    'target': 'top',
+                    'sourceNode': 'E',
+                    'targetNode': 'F',
+                    'type': 'endpoint'
+                }
+            ]
+        }
+
+    deal_node_data()
+
+    col1, col2 = st.columns([2, 3])
     with col1:
-        my_component = declare_component("my_component", url="http://localhost:3001")
-        args = {"width": "300px", "height": "860px"}
+        my_component = declare_component('my_component', url='http://localhost:8080')
+        args = {'width': '40%', 'height': '860px', 'nodeData': st.session_state['node_data']}
         my_component(args=args)
 
     with col2:
-        if "diagnosing" not in st.session_state:
-            st.session_state["diagnosing"] = False
 
-        if "diagnose_api" not in st.session_state:
-            st.session_state["diagnose_api"] = None
+        file = st.file_uploader('Upload Anomaly File：', [i for ls in DIAGNOSE_FILE_DICT.values() for i in ls], accept_multiple_files=False)
+        if st.button('Upload and Diagnosis'):
+            st.session_state['upload_and_diagnose_clicked'] = True
 
-        if "task_output" not in st.session_state:
-            st.session_state["task_output"] = ""
-
-        if "upload_and_diagnose_clicked" not in st.session_state:
-            st.session_state["upload_and_diagnose_clicked"] = False
-
-        file = st.file_uploader("Upload Anomaly File：", [i for ls in DIAGNOSE_FILE_DICT.values() for i in ls], accept_multiple_files=False)
-        if st.button("Upload and Diagnosis"):
-            st.session_state["upload_and_diagnose_clicked"] = True
-
-        if st.session_state["upload_and_diagnose_clicked"]:
-            st.write("Uploading...")
+        if st.session_state['upload_and_diagnose_clicked']:
+            st.write('Uploading...')
             filename = file.name
             file_content = file.read()
             resp = api.diagnose_file(filename, file_content)
@@ -40,31 +216,74 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
                 st.error(msg)
                 reset_session_state()
                 return
-            st.write("Upload Success, Start Diagnosis!")
-            st.session_state["diagnosing"] = True
+            st.write('Upload Success, Start Diagnosis!')
+            st.session_state['diagnosing'] = True
             diagnose_process(api)
 
-        if st.session_state["diagnosing"]:
+        if st.session_state['diagnosing']:
             diagnose_process(api)
 
-def diagnose_process(api):
+
+def extract_flows(log_text):
+    pattern = r'<flow>(.*?)</flow>'
+    matches = re.findall(pattern, log_text)
+
+    flow_jsons = []
+    for match in matches:
+        match = match.replace("'", '"').replace("True", 'true').replace("False", 'false')
+        try:
+            flow_json = json.loads(match)
+            flow_jsons.append(flow_json)
+        except json.JSONDecodeError:
+            print("Could not decode string to json: {match}")
+
+    return flow_jsons
+
+
+def remove_duplicates(flows):
+    """
+    过滤数组，如果对象的title一样，则只保留后面那个。
+    """
+    temp_dict = {}
+    for flow in flows:
+        title = flow['title']
+        temp_dict[title] = flow
+    unique_flows = list(temp_dict.values())
+    return unique_flows
+
+def deal_node_data():
+    text = "阿斯达大所大<flow>{'title': '初始化专家角色', 'content': '', 'isCompleted': False, 'isRuning': True}</flow>" + "<flow>{'title': '初始化专家角色', 'content': '这里补充content', 'isCompleted': True, 'isRuning': False}</flow>"+"111111<flow>{'title': '初始化诊断报告', 'content': '', 'isCompleted': False, 'isRuning': True}</flow>"+"<flow>{'title': '初始化诊断报告', 'content': '这里补充content', 'isCompleted': True, 'isRuning': False}</flow>"+"<flow>{'title': '根据异常分配诊断专家', 'content': '', 'isCompleted': False, 'isRuning': True}</flow>"+"<flow>{'title': '根据异常分配诊断专家', 'content': '这里补充content', 'isCompleted': True, 'isRuning': False}</flow>"+"<flow>{'title': '专家诊断', 'content': '', 'expertData': [], 'isCompleted': False, 'isRuning': True}</flow>少时诵诗书所所"+"<flow>{'title': '专家诊断', 'content': '', 'expertData': ['CpuExpert', 'IoExpert'], 'isCompleted': True, 'isRuning': False}</flow>sss"+"<flow>{'title': '圆桌讨论', 'content': '', 'isCompleted': False, 'isRuning': True}</flow>"+"<flow>{'title': '圆桌讨论', 'content': '这里补充content', 'isCompleted': True, 'isRuning': False}</flow>"+"<flow>{'title': '报告生成', 'content': '', 'isCompleted': False, 'isRuning': True}</flow>"
+
+    flows = extract_flows(text)
+    flows = remove_duplicates(flows)
+
+    for (index, node) in enumerate(st.session_state['node_data']['nodes']):
+        user_data = node['userData']
+        for flow in flows:
+            if user_data.get('title') == flow.get("title"):
+                node['userData'] = flow
+                st.session_state['node_data']['nodes'][index] = node
+                continue
+
+
+def diagnose_process(r_api):
     with st.container(height=500):
-        with (st.status(label="Diagnosing...", expanded=True) as status):
+        with (st.status(label='Diagnosing...', expanded=True) as status):
             code_placeholder = st.empty()
             while True:
-                response = api.diagnose_output()
+                response = r_api.diagnose_output()
                 if msg := check_error_msg(response):
                     st.error(msg)
                     reset_session_state()
                     return
-                if not response["is_alive"]:
-                    status.update(label="No diagnosis task is being executed...", expanded=True, state="complete")
+                if not response['is_alive']:
+                    status.update(label='No diagnosis task is being executed...', expanded=True, state='complete')
                     break
-                st.session_state["task_output"] = str(response["output"])
-                code_placeholder.code(st.session_state["task_output"], language='powershell')
+                st.session_state['task_output'] = str(response['output'])
+                code_placeholder.code(st.session_state['task_output'], language='powershell')
                 time.sleep(2)  # wait for 2 seconds before polling again
             reset_session_state()
 
 def reset_session_state():
-    st.session_state["diagnosing"] = False
-    st.session_state["upload_and_diagnose_clicked"] = False
+    st.session_state['diagnosing'] = False
+    st.session_state['upload_and_diagnose_clicked'] = False

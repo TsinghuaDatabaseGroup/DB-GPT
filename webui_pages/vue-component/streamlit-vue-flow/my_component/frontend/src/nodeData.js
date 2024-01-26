@@ -12,8 +12,12 @@ const data = {
     {
       isRoot: true,
       id: 'A',
-      title: '初始化专家角色',
-      content: '',
+      userData: {
+        title: '初始化专家角色',
+        content: '',
+        isCompleted: false,
+        isRuning: false,
+      },
       render: titleContentNode,
       top: 20,
       left: 120,
@@ -27,8 +31,12 @@ const data = {
     {
       id: 'B',
       isRoot: true,
-      title: '初始化诊断报告',
-      content: '',
+      userData: {
+        title: '初始化诊断报告',
+        content: '',
+        isCompleted: false,
+        isRuning: false,
+      },
       top: 150,
       left: 120,
       render: titleContentNode,
@@ -45,8 +53,12 @@ const data = {
     },
     {
       id: 'C',
-      title: '根据异常分配诊断专家',
-      content: '',
+      userData: {
+        title: '根据异常分配诊断专家',
+        content: '',
+        isCompleted: false,
+        isRuning: false,
+      },
       top: 280,
       left: 120,
       render: titleContentNode,
@@ -63,8 +75,13 @@ const data = {
     },
     {
       id: 'D',
-      title: '专家诊断',
-      content: '',
+      userData: {
+        title: '专家诊断',
+        content: '',
+        isCompleted: false,
+        isRuning: false,
+        expertData: []
+      },
       top: 410,
       left: 50,
       render: agentGroupNode,
@@ -81,8 +98,12 @@ const data = {
     },
     {
       id: 'E',
-      title: '圆桌讨论',
-      content: '',
+      userData: {
+        title: '圆桌讨论',
+        content: '',
+        isCompleted: false,
+        isRuning: false
+      },
       top: 610,
       left: 120,
       render: titleContentNode,
@@ -99,8 +120,12 @@ const data = {
     },
     {
       id: 'F',
-      title: '报告生成',
-      content: '',
+      userData: {
+        title: '报告生成',
+        content: '',
+        isCompleted: false,
+        isRuning: false
+      },
       top: 740,
       left: 120,
       render: titleContentNode,

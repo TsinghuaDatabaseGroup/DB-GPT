@@ -1,15 +1,16 @@
 <template>
   <div class="group_node">
-    <div class="group_node_header" :style="itemData.isCompleted ? 'background-color: RGBA(103, 194, 58, 0.8);': 'background-color: #3C3A3A;'">
-      {{itemData.title}}
+    <div class="group_node_header" :style="itemData.userData.isCompleted ? 'background-color: RGBA(103, 194, 58, 0.9);': 'background-color: #3C3A3A;'">
+      {{itemData.userData.title}}
     </div>
     <div class="group_content">
-      <div v-for="(item, index) in agentData" :style="'opacity: ' + item.opacity" :key="index" class="group_content_item">
+      <div v-for="(item, index) in expertData" :style="expertUsedData.indexOf(item.title) >= 0 ? '' : 'opacity: 0.5'" :key="index"
+           class="group_content_item">
         <img class="group_content_item_avatar" :src="require(`@/assets/${item.avatar}`)">
         <div class="group_content_item_text">{{item.title}}</div>
       </div>
     </div>
-    <div v-if="itemData.isRuning" class="blinking-dot"></div>
+    <div v-if="itemData.userData.isRuning" class="blinking-dot"></div>
   </div>
 </template>
 
@@ -27,51 +28,48 @@ export default {
   },
   data() {
     return {
-      agentData: [
+      expertData: [
         {
-          title: 'Cpu Expert',
+          title: 'CpuExpert',
           avatar: 'cpu_robot.webp',
-          opacity: 1
         },
         {
-          title: 'Mex Expert',
+          title: 'MemoryExpert',
           avatar: 'mem_robot.webp',
-          opacity: 1
         },
         {
-          title: 'Index Expert',
-          avatar: 'index_robot.webp',
-          opacity: 1
-        },
-        {
-          title: 'IO Expert',
+          title: 'IoExpert',
           avatar: 'io_robot.webp',
-          opacity: 0.5
         },
         {
-          title: 'Net Expert',
-          avatar: 'net_robot.webp',
-          opacity: 0.5
+          title: 'IndexExpert',
+          avatar: 'index_robot.webp',
         },
         {
-          title: 'Query Expert',
+          title: 'ConfigurationExpert',
+          avatar: 'configuration_robot.webp',
+        },
+        {
+          title: 'QueryExpert',
           avatar: 'query_robot.webp',
-          opacity: 1
         },
         {
-          title: 'Workload Expert',
+          title: 'WorkloadExpert',
           avatar: 'workload_robot.webp',
-          opacity: 0.5
-        },
-        {
-          title: 'DBA Expert',
-          avatar: 'dba_robot.webp',
-          opacity: 0.5
         }
-      ]
+      ],
+      expertUsedData: []
     }
   },
-  components: {
+  watch: {
+    itemData: {
+      handler(newVal, oldVal) {
+        this.expertUsedData = newVal.userData.expertData || []
+        console.log('Args changed from', oldVal, 'to', newVal);
+      },
+      deep: true,
+      immediate: true
+    },
   },
   methods: {}
 };
@@ -79,30 +77,7 @@ export default {
 
 <style>
 
-.blinking-dot {
-  width: 12px;
-  height: 12px;
-  background-color: #67C23A;
-  border-radius: 50%;
-  position: absolute;
-  top: 8px;
-  right:8px;
-  animation: breathe 1.5s infinite;
-}
 
-@keyframes breathe {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.2;
-  }
-}
-
-.butterflie-circle-endpoint {
-  background: #67C23A !important;
-  border: 1px solid #67C23A !important;
-}
 
 .group_node {
   width: 380px;
@@ -130,7 +105,7 @@ export default {
   border-top: 2px solid #000000;
   border-radius: 0 0 5px 5px;
   min-height: 60px;
-  font-size: 12px;
+  text-align: center;
   background-color: #3C3A3A;
   display: flex;
   flex-direction: row;
