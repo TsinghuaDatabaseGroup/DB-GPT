@@ -230,10 +230,12 @@ def extract_flows(log_text):
 
     flow_jsons = []
     for match in matches:
-        match = match.replace("'", '"').replace("True", 'true').replace("False", 'false')
+        match = match.replace("'", '"')
+        print('****match:', match)
         try:
             flow_json = json.loads(match)
             flow_jsons.append(flow_json)
+            print('****flow_json:', flow_json)
         except json.JSONDecodeError:
             print("Could not decode string to json: {match}")
 
@@ -252,8 +254,7 @@ def remove_duplicates(flows):
     return unique_flows
 
 def deal_node_data():
-    text = "阿斯达大所大<flow>{'title': '初始化专家角色', 'content': '', 'isCompleted': False, 'isRuning': True}</flow>" + "<flow>{'title': '初始化专家角色', 'content': '这里补充content', 'isCompleted': True, 'isRuning': False}</flow>"+"111111<flow>{'title': '初始化诊断报告', 'content': '', 'isCompleted': False, 'isRuning': True}</flow>"+"<flow>{'title': '初始化诊断报告', 'content': '这里补充content', 'isCompleted': True, 'isRuning': False}</flow>"+"<flow>{'title': '根据异常分配诊断专家', 'content': '', 'isCompleted': False, 'isRuning': True}</flow>"+"<flow>{'title': '根据异常分配诊断专家', 'content': '这里补充content', 'isCompleted': True, 'isRuning': False}</flow>"+"<flow>{'title': '专家诊断', 'content': '', 'expertData': [], 'isCompleted': False, 'isRuning': True}</flow>少时诵诗书所所"+"<flow>{'title': '专家诊断', 'content': '', 'expertData': ['CpuExpert', 'IoExpert'], 'isCompleted': True, 'isRuning': False}</flow>sss"+"<flow>{'title': '圆桌讨论', 'content': '', 'isCompleted': False, 'isRuning': True}</flow>"+"<flow>{'title': '圆桌讨论', 'content': '这里补充content', 'isCompleted': True, 'isRuning': False}</flow>"+"<flow>{'title': '报告生成', 'content': '', 'isCompleted': False, 'isRuning': True}</flow>"
-
+    text = st.session_state['task_output']
     flows = extract_flows(text)
     flows = remove_duplicates(flows)
 
@@ -281,7 +282,10 @@ def diagnose_process(r_api):
                     break
                 st.session_state['task_output'] = str(response['output'])
                 code_placeholder.code(st.session_state['task_output'], language='powershell')
-                time.sleep(2)  # wait for 2 seconds before polling again
+                time.sleep(2)
+                deal_node_data()
+                st.rerun()
+                # wait for 2 seconds before polling again
             reset_session_state()
 
 def reset_session_state():

@@ -145,7 +145,8 @@ class DBAEnvironment(BaseModel):
         advice: str = "No advice yet.", 
         previous_plan: str = "No solution yet."
     ) -> List[Message]:
-        
+
+        print("<flow>{'title': '初始化诊断报告', 'content': '', 'isCompleted': 0, 'isRuning': 1}</flow>")
         alert_str = ""
         alert_dict = []
 
@@ -158,7 +159,8 @@ class DBAEnvironment(BaseModel):
         self.reporter.alert_str = alert_str
         self.reporter.alert_dict = alert_dict
 
-        print(colored(f"Report Initialization!","black"))
+        print("Report Initialization!")
+        print(f"<flow>{{'title': '初始化诊断报告', 'content': '诊断报告已经初始化', 'isCompleted': 1, 'isRuning': 0}}</flow>")
         with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
             self.reporter.initialize_report()
             pbar.update(1)        
@@ -209,9 +211,11 @@ class DBAEnvironment(BaseModel):
         # return summarized_diags, labels
 
         # ===================================================
-
+        print("<flow>{'title': '根据异常分配诊断专家', 'content': '', 'isCompleted': 0, 'isRuning': 1}</flow>")
         self.reporter.record["anomalyAnalysis"]["RoleAssigner"]["messages"].append({"data": self.reporter.report["anomaly description"], "time": time.strftime("%H:%M:%S", time.localtime())})
-        
+        anomaly_description = self.reporter.report["anomaly description"][:20] + '...'
+        anomaly_description = anomaly_description.replace('\n', ' ').replace('"', '\'')
+        print(f"<flow>{{'title': '根据异常分配诊断专家', 'content': '{anomaly_description}', 'isCompleted': 1, 'isRuning': 0}}</flow>")
         self.role_assigner.alert_str = self.reporter.report["anomaly description"]
         self.role_assigner.alert_dict = self.reporter.alert_dict
 
@@ -225,6 +229,7 @@ class DBAEnvironment(BaseModel):
         # append the names of selected_experts (e.g., selected_experts[0].name) to the task description by \n
         if len(selected_experts) > args.max_hired_experts:
             selected_experts = selected_experts[:args.max_hired_experts]
+        print( f"<flow>{{'title': '专家诊断', 'content': '', 'expertData': {str([expert.name for expert in selected_experts])}, 'isCompleted': 0, 'isRuning': 1}}</flow>")
         expert_select_desc = "Based on the task description, I decide to select the following experts to diagnose the problem:\n" + "\n".join([expert.name for expert in selected_experts])
         
         self.reporter.record["anomalyAnalysis"]["RoleAssigner"]["messages"].append({"data": expert_select_desc, "time": time.strftime("%H:%M:%S", time.localtime())})
@@ -305,7 +310,8 @@ class DBAEnvironment(BaseModel):
             task_description=self.task_description,
             previous_plan=previous_plan,
             advice=advice)
-        
+        print(f"<flow>{{'title': '专家诊断', 'content': '', 'expertData': {str([expert.name for expert in agents])}, 'isCompleted': 1, 'isRuning': 0}}</flow>")
+
         print("\n============= Finish the initial diagnosis =============")
         
         for i,diag in enumerate(initial_diags):
@@ -409,15 +415,6 @@ class DBAEnvironment(BaseModel):
                     else:
                         self.reporter.record["anomalyAnalysis"][diag['sender']]["messages"].append({"data": m_message, "time": m_response['time']})
 
-        # # single llm
-        # self.reporter.add_diagnosis_labels()
-
-        # return self.reporter.report, self.reporter.record
-        
-        # brainstorm over the initial_diags results
-        ## summarize to avoid exceeding length limit
-        ## incremental summary
-
         self.reporter.messages = []
         for agent in agents:
             agent.messages = []
@@ -452,7 +449,8 @@ class DBAEnvironment(BaseModel):
             # self.reporter.messages.append(diag_message)
             for agent in agents:
                 agent.messages.append(diag_message)
-        
+
+        print("<flow>{'title': '圆桌讨论', 'content': '', 'isCompleted': 0, 'isRuning': 1}</flow>")
         print(colored(f"Cross Review!","yellow"))
         
         # discuss over the summarized initial_diags results
@@ -476,11 +474,13 @@ class DBAEnvironment(BaseModel):
                 #     "data":"#diagnose /n xxxxxx /n  # solution /n XXXXXX/n   # knowledge /n  XXXXX/n  下面展示图表 ```chart xxczxczxczczxc ```` ",
                 #     "time":"message sending time"
                 # }
-
+        print(f"<flow>{{'title': '圆桌讨论', 'content': '圆桌讨论结束', 'isCompleted': 1, 'isRuning': 0}}</flow>")
         # review the diagnosis results by the reporter
+        print("<flow>{'title': '报告生成', 'content': '', 'isCompleted': 0, 'isRuning': 1}</flow>")
         self.reporter.update_diagnosis()
         self.reporter.add_diagnosis_labels()
         self.reporter.update_solutions()
+        print(f"<flow>{{'title': '报告生成', 'content': '报告已经生成', 'isCompleted': 1, 'isRuning': 0}}</flow>")
 
 
         return self.reporter.report

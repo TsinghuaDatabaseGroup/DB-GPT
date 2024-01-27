@@ -59,6 +59,10 @@ export default {
   min-height: 60px;
   font-size: 12px;
   background-color: #3C3A3A;
+  word-break: break-all;
+  height: 60px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 </style>
