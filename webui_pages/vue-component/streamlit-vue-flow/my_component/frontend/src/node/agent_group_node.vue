@@ -4,7 +4,7 @@
       {{itemData.userData.title}}
     </div>
     <div class="group_content">
-      <div v-for="(item, index) in expertData" :style="expertUsedData.indexOf(item.title) >= 0 ? '' : 'opacity: 0.5'" :key="index"
+      <div v-for="(item, index) in expertData" :style="expertUsedData.indexOf(item.subTitle) >= 0 ? '' : 'opacity: 0.5'" :key="index"
            class="group_content_item">
         <img class="group_content_item_avatar" :src="require(`@/assets/${item.avatar}`)">
         <div class="group_content_item_text">{{item.title}}</div>
@@ -31,32 +31,44 @@ export default {
       expertData: [
         {
           title: 'CpuExpert',
+          subTitle: 'cpu expert',
           avatar: 'cpu_robot.webp',
         },
         {
           title: 'MemoryExpert',
+          subTitle: 'memory expert',
           avatar: 'mem_robot.webp',
         },
         {
           title: 'IoExpert',
+          subTitle: 'io expert',
           avatar: 'io_robot.webp',
         },
         {
           title: 'IndexExpert',
+          subTitle: 'index expert',
           avatar: 'index_robot.webp',
         },
         {
-          title: 'ConfigurationExpert',
+          title: 'ConfigExpert',
+          subTitle: 'configuration expert',
           avatar: 'configuration_robot.webp',
         },
         {
           title: 'QueryExpert',
+          subTitle: 'query expert',
           avatar: 'query_robot.webp',
         },
         {
           title: 'WorkloadExpert',
+          subTitle: 'workload expert',
           avatar: 'workload_robot.webp',
-        }
+        },
+        {
+          title: 'WriteExpert',
+          subTitle: 'write expert',
+          avatar: 'mem_robot.webp',
+        },
       ],
       expertUsedData: []
     }
@@ -80,7 +92,7 @@ export default {
 
 
 .group_node {
-  width: 380px;
+  width: 400px;
   border-radius:8px;
   overflow: hidden;
   position: relative;

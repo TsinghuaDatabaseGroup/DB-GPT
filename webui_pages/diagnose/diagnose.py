@@ -13,11 +13,20 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
     if 'diagnose_api' not in st.session_state:
         st.session_state['diagnose_api'] = None
 
+    if 'diagnose_file' not in st.session_state:
+        st.session_state['diagnose_file'] = None
+
     if 'task_output' not in st.session_state:
         st.session_state['task_output'] = ''
 
     if 'upload_and_diagnose_clicked' not in st.session_state:
         st.session_state['upload_and_diagnose_clicked'] = False
+
+    if 'upload_and_diagnose_clicked' not in st.session_state:
+        st.session_state['upload_and_diagnose_clicked'] = False
+
+    if 'diagnose_component' not in st.session_state:
+        st.session_state['diagnose_component'] = False
 
     if 'node_data' not in st.session_state:
         st.session_state['node_data'] = {
@@ -95,7 +104,7 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
                     },
                     'render': 'agentGroupNode',
                     'top': 410,
-                    'left': 50,
+                    'left': 40,
                     'endpoints': [
                         {
                             'id': 'top',
@@ -196,26 +205,27 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
     deal_node_data()
 
     col1, col2 = st.columns([2, 3])
+
     with col1:
-        my_component = declare_component('my_component', url='http://localhost:8080')
+        st.session_state['diagnose_component'] = declare_component('my_component', url='http://localhost:8080')
         args = {'width': '40%', 'height': '860px', 'nodeData': st.session_state['node_data']}
-        my_component(args=args)
+        st.session_state['diagnose_component'](args=args)
 
     with col2:
 
-        file = st.file_uploader('Upload Anomaly File：', [i for ls in DIAGNOSE_FILE_DICT.values() for i in ls], accept_multiple_files=False)
+        st.session_state['diagnose_file'] = st.file_uploader('Upload Anomaly File：', [i for ls in DIAGNOSE_FILE_DICT.values() for i in ls], accept_multiple_files=False, disabled=st.session_state['diagnosing'])
         if st.button('Upload and Diagnosis'):
             st.session_state['upload_and_diagnose_clicked'] = True
 
         if st.session_state['upload_and_diagnose_clicked']:
-            st.write('Uploading...')
-            filename = file.name
-            file_content = file.read()
-            resp = api.diagnose_file(filename, file_content)
-            if msg := check_error_msg(resp):
-                st.error(msg)
-                reset_session_state()
-                return
+            if st.session_state['diagnose_file']:
+                filename = st.session_state['diagnose_file'].name
+                file_content = st.session_state['diagnose_file'].read()
+                resp = api.diagnose_file(filename, file_content)
+                if msg := check_error_msg(resp):
+                    st.error(msg)
+                    reset_session_state()
+                    return
             st.write('Upload Success, Start Diagnosis!')
             st.session_state['diagnosing'] = True
             diagnose_process(api)
@@ -284,6 +294,7 @@ def diagnose_process(r_api):
                 code_placeholder.code(st.session_state['task_output'], language='powershell')
                 time.sleep(2)
                 deal_node_data()
+                print("=============st.rerun()==============")
                 st.rerun()
                 # wait for 2 seconds before polling again
             reset_session_state()
@@ -291,3 +302,4 @@ def diagnose_process(r_api):
 def reset_session_state():
     st.session_state['diagnosing'] = False
     st.session_state['upload_and_diagnose_clicked'] = False
+    st.session_state['diagnose_file'] = None
