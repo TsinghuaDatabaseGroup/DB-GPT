@@ -2,7 +2,7 @@ import time
 import re
 import streamlit as st
 from streamlit.components.v1 import declare_component
-
+import os
 from webui_pages.utils import *
 from server.knowledge_base.utils import DIAGNOSE_FILE_DICT
 
@@ -207,7 +207,7 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
     col1, col2 = st.columns([2, 3])
 
     with col1:
-        st.session_state['diagnose_component'] = declare_component('my_component', url='http://localhost:8080')
+        st.session_state['diagnose_component'] = declare_component('my_component', path=os.path.join(os.path.dirname(__file__), 'build_dist'))
         args = {'width': '40%', 'height': '860px', 'nodeData': st.session_state['node_data']}
         st.session_state['diagnose_component'](args=args)
 
