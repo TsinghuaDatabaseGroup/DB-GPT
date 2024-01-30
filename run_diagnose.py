@@ -99,3 +99,4 @@ if __name__ == "__main__":
         asyncio.run(main(args))
         end_time = time.time()
         print("============diag during time==========: ", end_time - start_time)
+        print("============Diagnose Finished!==========")

@@ -372,6 +372,16 @@ class ApiRequest:
         return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", {}))
 
 
+    def stop_diagnose(self):
+        '''
+        结束异常诊断
+        '''
+        response = self.get(
+            "/diagnose/stop_diagnose",
+            stream=False,
+        )
+        return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", {}))
+
     def diagnose_diagnose_llm_model_list(self):
         '''
         获取诊断历史列表

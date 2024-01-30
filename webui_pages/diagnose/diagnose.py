@@ -6,6 +6,179 @@ import os
 from webui_pages.utils import *
 from server.knowledge_base.utils import DIAGNOSE_FILE_DICT
 
+NODE_DATA = {
+    'nodes': [
+        {
+            'id': 'A',
+            'userData': {
+                'title': '初始化专家角色',
+                'content': '',
+                'isCompleted': False,
+                'isRuning': False
+            },
+            'render': 'titleContentNode',
+            'top': 20,
+            'left': 120,
+            'endpoints': [
+                {
+                    'id': 'bottom',
+                    'orientation': [0, 1]
+                }
+            ]
+        },
+        {
+            'id': 'B',
+            'userData': {
+                'title': '初始化诊断报告',
+                'content': '',
+                'isCompleted': False,
+                'isRuning': False
+            },
+            'render': 'titleContentNode',
+            'top': 150,
+            'left': 120,
+            'endpoints': [
+                {
+                    'id': 'top',
+                    'orientation': [0, -1]
+                },
+                {
+                    'id': 'bottom',
+                    'orientation': [0, 1]
+                }
+            ]
+        },
+        {
+            'id': 'C',
+            'userData': {
+                'title': '根据异常分配诊断专家',
+                'content': '',
+                'isCompleted': False,
+                'isRuning': False
+            },
+            'render': 'titleContentNode',
+            'top': 280,
+            'left': 120,
+            'endpoints': [
+                {
+                    'id': 'top',
+                    'orientation': [0, -1]
+                },
+                {
+                    'id': 'bottom',
+                    'orientation': [0, 1]
+                }
+            ]
+        },
+        {
+            'id': 'D',
+            'userData': {
+                'title': '专家诊断',
+                'content': '',
+                'isCompleted': False,
+                'isRuning': False,
+                'expertData': []
+            },
+            'render': 'agentGroupNode',
+            'top': 410,
+            'left': 40,
+            'endpoints': [
+                {
+                    'id': 'top',
+                    'orientation': [0, -1]
+                },
+                {
+                    'id': 'bottom',
+                    'orientation': [0, 1]
+                }
+            ]
+        },
+        {
+            'id': 'E',
+            'userData': {
+                'title': '圆桌讨论',
+                'content': '',
+                'isCompleted': False,
+                'isRuning': False,
+                'expertData': []
+            },
+            'render': 'titleContentNode',
+            'top': 620,
+            'left': 120,
+            'endpoints': [
+                {
+                    'id': 'top',
+                    'orientation': [0, -1]
+                },
+                {
+                    'id': 'bottom',
+                    'orientation': [0, 1]
+                }
+            ]
+        },
+        {
+            'id': 'F',
+            'userData': {
+                'title': '报告生成',
+                'content': '',
+                'isCompleted': False,
+                'isRuning': False
+            },
+            'render': 'titleContentNode',
+            'top': 750,
+            'left': 120,
+            'endpoints': [
+                {
+                    'id': 'top',
+                    'orientation': [0, -1]
+                }
+            ]
+        }
+    ],
+    'edges': [
+        {
+            'id': '1',
+            'source': 'bottom',
+            'target': 'top',
+            'sourceNode': 'A',
+            'targetNode': 'B',
+            'type': 'endpoint'
+        },
+        {
+            'id': '2',
+            'source': 'bottom',
+            'target': 'top',
+            'sourceNode': 'B',
+            'targetNode': 'C',
+            'type': 'endpoint'
+        },
+        {
+            'id': '3',
+            'source': 'bottom',
+            'target': 'top',
+            'sourceNode': 'C',
+            'targetNode': 'D',
+            'type': 'endpoint'
+        },
+        {
+            'id': '4',
+            'source': 'bottom',
+            'target': 'top',
+            'sourceNode': 'D',
+            'targetNode': 'E',
+            'type': 'endpoint'
+        },
+        {
+            'id': '5',
+            'source': 'bottom',
+            'target': 'top',
+            'sourceNode': 'E',
+            'targetNode': 'F',
+            'type': 'endpoint'
+        }
+    ]
+}
+
 def diagnose_page(api: ApiRequest, is_lite: bool = None):
     if 'diagnosing' not in st.session_state:
         st.session_state['diagnosing'] = False
@@ -29,191 +202,20 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
         st.session_state['diagnose_component'] = False
 
     if 'node_data' not in st.session_state:
-        st.session_state['node_data'] = {
-            'nodes': [
-                {
-                    'id': 'A',
-                    'userData': {
-                        'title': '初始化专家角色',
-                        'content': '',
-                        'isCompleted': False,
-                        'isRuning': False
-                    },
-                    'render': 'titleContentNode',
-                    'top': 20,
-                    'left': 120,
-                    'endpoints': [
-                        {
-                            'id': 'bottom',
-                            'orientation': [0, 1]
-                        }
-                    ]
-                },
-                {
-                    'id': 'B',
-                    'userData': {
-                        'title': '初始化诊断报告',
-                        'content': '',
-                        'isCompleted': False,
-                        'isRuning': False
-                    },
-                    'render': 'titleContentNode',
-                    'top': 150,
-                    'left': 120,
-                    'endpoints': [
-                        {
-                            'id': 'top',
-                            'orientation': [0, -1]
-                        },
-                        {
-                            'id': 'bottom',
-                            'orientation': [0, 1]
-                        }
-                    ]
-                },
-                {
-                    'id': 'C',
-                    'userData': {
-                        'title': '根据异常分配诊断专家',
-                        'content': '',
-                        'isCompleted': False,
-                        'isRuning': False
-                    },
-                    'render': 'titleContentNode',
-                    'top': 280,
-                    'left': 120,
-                    'endpoints': [
-                        {
-                            'id': 'top',
-                            'orientation': [0, -1]
-                        },
-                        {
-                            'id': 'bottom',
-                            'orientation': [0, 1]
-                        }
-                    ]
-                },
-                {
-                    'id': 'D',
-                    'userData': {
-                        'title': '专家诊断',
-                        'content': '',
-                        'isCompleted': False,
-                        'isRuning': False,
-                        'expertData': []
-                    },
-                    'render': 'agentGroupNode',
-                    'top': 410,
-                    'left': 40,
-                    'endpoints': [
-                        {
-                            'id': 'top',
-                            'orientation': [0, -1]
-                        },
-                        {
-                            'id': 'bottom',
-                            'orientation': [0, 1]
-                        }
-                    ]
-                },
-                {
-                    'id': 'E',
-                    'userData': {
-                        'title': '圆桌讨论',
-                        'content': '',
-                        'isCompleted': False,
-                        'isRuning': False,
-                        'expertData': []
-                    },
-                    'render': 'titleContentNode',
-                    'top': 610,
-                    'left': 120,
-                    'endpoints': [
-                        {
-                            'id': 'top',
-                            'orientation': [0, -1]
-                        },
-                        {
-                            'id': 'bottom',
-                            'orientation': [0, 1]
-                        }
-                    ]
-                },
-                {
-                    'id': 'F',
-                    'userData': {
-                        'title': '报告生成',
-                        'content': '',
-                        'isCompleted': False,
-                        'isRuning': False
-                    },
-                    'render': 'titleContentNode',
-                    'top': 740,
-                    'left': 120,
-                    'endpoints': [
-                        {
-                            'id': 'top',
-                            'orientation': [0, -1]
-                        }
-                    ]
-                }
-            ],
-            'edges': [
-                {
-                    'id': '1',
-                    'source': 'bottom',
-                    'target': 'top',
-                    'sourceNode': 'A',
-                    'targetNode': 'B',
-                    'type': 'endpoint'
-                },
-                {
-                    'id': '2',
-                    'source': 'bottom',
-                    'target': 'top',
-                    'sourceNode': 'B',
-                    'targetNode': 'C',
-                    'type': 'endpoint'
-                },
-                {
-                    'id': '3',
-                    'source': 'bottom',
-                    'target': 'top',
-                    'sourceNode': 'C',
-                    'targetNode': 'D',
-                    'type': 'endpoint'
-                },
-                {
-                    'id': '4',
-                    'source': 'bottom',
-                    'target': 'top',
-                    'sourceNode': 'D',
-                    'targetNode': 'E',
-                    'type': 'endpoint'
-                },
-                {
-                    'id': '5',
-                    'source': 'bottom',
-                    'target': 'top',
-                    'sourceNode': 'E',
-                    'targetNode': 'F',
-                    'type': 'endpoint'
-                }
-            ]
-        }
-
-    deal_node_data()
+        st.session_state['node_data'] = NODE_DATA
 
     col1, col2 = st.columns([2, 3])
 
     with col1:
-        st.session_state['diagnose_component'] = declare_component('my_component', path=os.path.join(os.path.dirname(__file__), 'build_dist'))
-        args = {'width': '40%', 'height': '860px', 'nodeData': st.session_state['node_data']}
-        st.session_state['diagnose_component'](args=args)
+        diagnose_component = declare_component('my_component', path=os.path.join(os.path.dirname(__file__), 'streamlit-vue-flow/build_dist'))
+        # diagnose_component = declare_component('my_component', url='http://localhost:3001')
+        args = {'width': '500px', 'height': '860px', 'nodeData': st.session_state['node_data']}
+        diagnose_component(args=args)
 
     with col2:
 
         st.session_state['diagnose_file'] = st.file_uploader('Upload Anomaly File：', [i for ls in DIAGNOSE_FILE_DICT.values() for i in ls], accept_multiple_files=False, disabled=st.session_state['diagnosing'])
+
         if st.button('Upload and Diagnosis'):
             st.session_state['upload_and_diagnose_clicked'] = True
 
@@ -241,16 +243,13 @@ def extract_flows(log_text):
     flow_jsons = []
     for match in matches:
         match = match.replace("'", '"')
-        print('****match:', match)
         try:
             flow_json = json.loads(match)
             flow_jsons.append(flow_json)
-            print('****flow_json:', flow_json)
         except json.JSONDecodeError:
             print("Could not decode string to json: {match}")
 
     return flow_jsons
-
 
 def remove_duplicates(flows):
     """
@@ -267,7 +266,9 @@ def deal_node_data():
     text = st.session_state['task_output']
     flows = extract_flows(text)
     flows = remove_duplicates(flows)
-
+    if not flows or len(flows) == 0:
+        st.session_state['node_data'] = NODE_DATA
+        return
     for (index, node) in enumerate(st.session_state['node_data']['nodes']):
         user_data = node['userData']
         for flow in flows:
@@ -294,8 +295,8 @@ def diagnose_process(r_api):
                 code_placeholder.code(st.session_state['task_output'], language='powershell')
                 time.sleep(2)
                 deal_node_data()
-                print("=============st.rerun()==============")
                 st.rerun()
+                print("=============st.rerun()==============")
                 # wait for 2 seconds before polling again
             reset_session_state()
 

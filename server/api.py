@@ -150,7 +150,7 @@ def mount_app_routes(app: FastAPI, run_mode: str = None):
 
 def mount_diagnose_routes(app: FastAPI):
 
-    from server.diagnose.diagnose import run_diagnose, get_diagnose_output
+    from server.diagnose.diagnose import run_diagnose, get_diagnose_output, stop_diagnose
 
     app.post("/diagnose/run_diagnose",
              tags=["Diagnose"],
@@ -162,6 +162,10 @@ def mount_diagnose_routes(app: FastAPI):
             response_model=BaseResponse,
             summary="诊断异常打印")(get_diagnose_output)
 
+    app.get("/diagnose/stop_diagnose",
+            tags=["Diagnose"],
+            response_model=BaseResponse,
+            summary="结束异常诊断")(get_diagnose_output)
 
 def mount_alert_routes(app: FastAPI):
     from server.alert.alert import histories, history_detail, diagnose_llm_model_list

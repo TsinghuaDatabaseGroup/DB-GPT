@@ -1,4 +1,6 @@
+import multiprocessing
 import os
+import time
 from subprocess import Popen, PIPE
 from fastapi import File, UploadFile
 from configs import (logger, DIAGNOSTIC_FILES_PATH, )
@@ -6,7 +8,7 @@ from typing import Iterator
 import threading
 from server.utils import BaseResponse, save_file
 
-current_task = {"thread": None, "output": ""}
+current_task = {"thread": None, "output": "", "process": None}
 
 
 def run_diagnose_script(file_path: str) -> Iterator[str]:
@@ -19,12 +21,18 @@ def run_diagnose_script(file_path: str) -> Iterator[str]:
                 break
             if output:
                 print('诊断输出:', output.strip())
-                current_task["output"] += f"{output.strip()}\n"
+                if output.strip() == "============Diagnose Finished!==========":
+                    current_task["output"] = "The diagnosis is over and the next diagnosis begins.\n"
+                else:
+                    current_task["output"] += f"{output.strip()}\n"
     except Exception as e:
         error_message = f"Error executing task: {e}"
         logger.error(error_message)
         current_task["output"] += error_message
 
+def thread_for_subprocess(file_path):
+    current_task["process"] = multiprocessing.Process(target=run_diagnose_script, args=(file_path,), daemon=True, name='Diagnose')
+    current_task["process"].start()
 
 def run_diagnose(file: UploadFile = File(..., description="上传文件，支持多文件")):
     if current_task["thread"] and current_task["thread"].is_alive():
@@ -34,11 +42,10 @@ def run_diagnose(file: UploadFile = File(..., description="上传文件，支持
 
     current_task["thread"] = threading.Thread(target=run_diagnose_script, args=(file_path,), name='Diagnose')
     current_task["thread"].start()
-    current_task["thread"].join(5)
 
     # 检查线程是否仍在运行
     if current_task["thread"].is_alive():
-        # 任务在2秒后仍在运行，因此我们假设它已成功启动并将继续运行
+        # 任务在5秒后仍在运行，因此我们假设它已成功启动并将继续运行
         return BaseResponse(code=200, msg="Success")
     else:
         # 任务在2秒后已经完成，可能是由于出错而结束
@@ -46,6 +53,11 @@ def run_diagnose(file: UploadFile = File(..., description="上传文件，支持
         error_message = current_task["output"] if current_task["output"] else "An unknown error occurred."
         return BaseResponse(code=500, msg=error_message)
 
+
+def stop_diagnose():
+    current_task["process"].terminate()
+    msg = "No task is running"
+    return BaseResponse(code=200, msg=msg, data={"is_alive": 0, "output": current_task["output"]})
 
 def get_diagnose_output():
     is_alive = current_task["thread"] and current_task["thread"].is_alive()
