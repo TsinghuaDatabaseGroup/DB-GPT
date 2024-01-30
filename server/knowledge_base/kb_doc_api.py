@@ -481,7 +481,7 @@ def fetch_expert_kb_names() -> List[str]:
 
     expert_kb_names = []
     for kb_name in kb_names:
-        if "_expert" in kb_name:
+        if "Expert" in kb_name:
             expert_kb_names.append(kb_name)
 
     if len(expert_kb_names) == 0:

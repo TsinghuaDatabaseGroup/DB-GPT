@@ -213,7 +213,7 @@ class DBAEnvironment(BaseModel):
         # ===================================================
         print("<flow>{'title': '根据异常分配诊断专家', 'content': '', 'isCompleted': 0, 'isRuning': 1}</flow>")
         self.reporter.record["anomalyAnalysis"]["RoleAssigner"]["messages"].append({"data": self.reporter.report["anomaly description"], "time": time.strftime("%H:%M:%S", time.localtime())})
-        anomaly_description = self.reporter.report["anomaly description"][:20] + '...'
+        anomaly_description = self.reporter.report["anomaly description"][:100] + '...'
         anomaly_description = anomaly_description.replace('\n', ' ').replace('"', '\'')
         print(f"<flow>{{'title': '根据异常分配诊断专家', 'content': '{anomaly_description}', 'isCompleted': 1, 'isRuning': 0}}</flow>")
         self.role_assigner.alert_str = self.reporter.report["anomaly description"]

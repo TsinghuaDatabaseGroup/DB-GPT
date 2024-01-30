@@ -30,7 +30,13 @@ async def main(args):
 
     report, records = await multi_agents.run(args)
 
-    cur_time = int(time.time())
+    current_diag_time = time.localtime()
+
+    cur_time = int(time.mktime(current_diag_time))
+
+    current_diag_time = time.strftime("%Y-%m-%d-%H:%M:%S", current_diag_time)
+
+    records["report_generate_time"] = current_diag_time
 
     with open(f"./alert_results/{model_type}/{str(cur_time)}.jsonl", "w") as f:
         json.dump(records, f, indent=4)
