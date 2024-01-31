@@ -207,8 +207,8 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
     col1, col2 = st.columns([2, 3])
 
     with col1:
-        diagnose_component = declare_component('my_component', path=os.path.join(os.path.dirname(__file__), 'streamlit-vue-flow/build_dist'))
-        # diagnose_component = declare_component('my_component', url='http://localhost:3001')
+        # diagnose_component = declare_component('my_component', path=os.path.join(os.path.dirname(__file__), 'streamlit-vue-flow/build_dist'))
+        diagnose_component = declare_component('my_component', url='http://localhost:3001')
         args = {'width': '500px', 'height': '860px', 'nodeData': st.session_state['node_data']}
         diagnose_component(args=args)
 

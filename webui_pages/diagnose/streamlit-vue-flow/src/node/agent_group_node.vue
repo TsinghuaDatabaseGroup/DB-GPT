@@ -4,19 +4,27 @@
       {{itemData.userData.title}}
     </div>
     <div class="group_content">
-      <div v-for="(item, index) in expertData" :style="expertUsedData.indexOf(item.subTitle) >= 0 ? '' : 'opacity: 0.5'" :key="index"
+      <div v-for="(item, index) in expertData" :style="expertUsedDataTitle.indexOf(item.subTitle) >= 0 ? '' : 'opacity: 0.5'" :key="index"
            class="group_content_item">
-        <template v-if="itemData.isDiagnosing">
-          <div :class="expertUsedData.indexOf(item.subTitle) >= 0 ? 'blinking-avatar-dot' : '' ">
-            <img class="group_content_item_avatar" :src="require(`@/assets/${item.avatar}`)">
-          </div>
+
+        <template v-if="expertUsedDataTitle.indexOf(item.subTitle) >= 0">
+          <el-popover
+              placement="top-start"
+              title=""
+              width="200"
+              trigger="hover"
+             >
+            <div style="font-size: 12px; color: #666666; white-space: pre-wrap; word-break: break-all"></div>
+            <div slot="reference" :class="itemData.isDiagnosing ? 'blinking-avatar-dot' : 'avatar-dot' ">
+              <img class="group_content_item_avatar" :src="require(`@/assets/${item.avatar}`)">
+            </div>
+          </el-popover>
         </template>
         <template v-else>
-          <div :class="expertUsedData.indexOf(item.subTitle) >= 0 ? 'avatar-dot' : '' ">
+          <div>
             <img class="group_content_item_avatar" :src="require(`@/assets/${item.avatar}`)">
           </div>
         </template>
-
         <div class="group_content_item_text">{{item.title}}</div>
       </div>
     </div>
@@ -80,13 +88,15 @@ export default {
           avatar: 'mem_robot.webp',
         },
       ],
-      expertUsedData: []
+      expertUsedDataTitle: []
     }
   },
   watch: {
     itemData: {
       handler(newVal, oldVal) {
-        this.expertUsedData = newVal.userData.expertData || []
+        if(newVal.userData.expertData) {
+          this.expertUsedDataTitle = newVal.userData.expertData.map(item => item.name.lowerCase());
+        }
         console.log('Args changed from', oldVal, 'to', newVal);
       },
       deep: true,

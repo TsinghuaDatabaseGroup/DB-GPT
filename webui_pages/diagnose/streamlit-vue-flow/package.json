@@ -11,6 +11,7 @@
     "axios": "^1.6.7",
     "butterfly-dag": "^4.3.28",
     "core-js": "^3.6.5",
+    "element-ui": "^2.15.14",
     "streamlit-component-lib": "^1.1.0",
     "vue": "2.6.11"
   },
@@ -23,6 +24,7 @@
     "@vue/cli-service": "~4.4.0",
     "@vue/eslint-config-typescript": "^5.0.2",
     "babel-eslint": "^10.1.0",
+    "babel-plugin-component": "^1.1.1",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "typescript": "~3.9.3",

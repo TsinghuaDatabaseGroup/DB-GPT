@@ -229,7 +229,14 @@ class DBAEnvironment(BaseModel):
         # append the names of selected_experts (e.g., selected_experts[0].name) to the task description by \n
         if len(selected_experts) > args.max_hired_experts:
             selected_experts = selected_experts[:args.max_hired_experts]
-        print( f"<flow>{{'title': '专家诊断', 'content': '', 'expertData': {str([expert.name for expert in selected_experts])}, 'isCompleted': 0, 'isRuning': 1}}</flow>")
+
+        expert_data = []
+        for expert in selected_experts:
+            expert_data.append({
+                "name": expert.name,
+                "role": expert.role_description
+            })
+        print(f"<flow>{{'title': '专家诊断', 'content': '', 'expertData': {str(expert_data)}, 'isCompleted': 0, 'isRuning': 1}}</flow>")
         expert_select_desc = "Based on the task description, I decide to select the following experts to diagnose the problem:\n" + "\n".join([expert.name for expert in selected_experts])
         
         self.reporter.record["anomalyAnalysis"]["RoleAssigner"]["messages"].append({"data": expert_select_desc, "time": time.strftime("%H:%M:%S", time.localtime())})
@@ -310,7 +317,14 @@ class DBAEnvironment(BaseModel):
             task_description=self.task_description,
             previous_plan=previous_plan,
             advice=advice)
-        print(f"<flow>{{'title': '专家诊断', 'content': '', 'expertData': {str([expert.name for expert in agents])}, 'isCompleted': 1, 'isRuning': 0}}</flow>")
+
+        expert_data = []
+        for expert in agents:
+            expert_data.append({
+                "name": expert.name,
+                "role": expert.role_description
+            })
+        print(f"<flow>{{'title': '专家诊断', 'content': '', 'expertData': {str(expert_data)}, 'isCompleted': 1, 'isRuning': 0}}</flow>")
 
         print("\n============= Finish the initial diagnosis =============")
         
