@@ -12,7 +12,8 @@ def reports_page(api: ApiRequest, is_lite: bool = False):
 
     st.session_state["diagnose_histories"] = api.diagnose_histories(model=st.session_state["current_model"])
 
-    my_component = declare_component("my_component", path=os.path.join(os.path.dirname(__file__), 'reports_ui/report_component/frontend/build_dist'))
+    my_component = declare_component("my_component", path=os.path.join(os.path.dirname(__file__), 'reports_ui/build_dist'))
+    # my_component = declare_component("my_component", url='http://localhost:3001')
     response = my_component(args={
         "modelList": st.session_state["model_list"],
         "currentModel": st.session_state["current_model"],

@@ -1,54 +1,107 @@
+import json
 import os
-from subprocess import Popen, PIPE
+import time
+import subprocess
 from fastapi import File, UploadFile
-from configs import (logger, DIAGNOSTIC_FILES_PATH, )
-from typing import Iterator
+from configs import (DIAGNOSTIC_FILES_PATH, )
 import threading
 from server.utils import BaseResponse, save_file
 
-current_task = {"thread": None, "output": ""}
+current_task = {"thread": None, "output": "", "process": None}
+
+THREADNAME = "run_diagnose"
+DIAGNOSE_RUN_LOG_PATH = "./diagnose_run_log.txt"
+DIAGNOSE_RUN_PID_PATH = "./diagnose_run_pid.txt"
 
 
-def run_diagnose_script(file_path: str) -> Iterator[str]:
+def status():
+    threads = threading.enumerate()
+    runing = False
+    for thread in threads:
+        if thread.name == THREADNAME:
+            runing = True
+            break
+    return runing
+
+
+def diagnose_status():
+    return BaseResponse(code=200, msg="Success", data={"is_alive": status()})
+
+
+def run_diagnose_script(file_path: str):
+    with open(DIAGNOSE_RUN_LOG_PATH, 'w') as log_txt:
+        print("=-======:", os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+        cmd = [
+            "python3",
+            f"{os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))}/run_diagnose.py",
+            "--anomaly_file",
+            file_path
+        ]
+        process = subprocess.Popen(
+            cmd,
+            shell=False,
+            stdout=log_txt,
+            stderr=log_txt)
+        with open(DIAGNOSE_RUN_PID_PATH, "w") as pid_file:
+            pid_file.write(str(process.pid))
+        process.wait(3600)
+
+
+def save_diagnose_file(file: UploadFile = File(..., description="上传文件")):
     try:
-        process = Popen(["python3", "run_diagnose.py", "--anomaly_file", file_path], stdout=PIPE, text=True)
-        current_task["output"] = ""
-        while True:
-            output = process.stdout.readline()
-            if process.poll() is not None and output == '':
-                break
-            if output:
-                print('诊断输出:', output.strip())
-                current_task["output"] += f"{output.strip()}\n"
+        save_file_result = save_file(DIAGNOSTIC_FILES_PATH, file, True)
+        file_path = save_file_result["data"]["file_path"]
+        with open(file_path, "r") as f:
+            anomaly_json = json.load(f)
+        return BaseResponse(code=200, msg="Success", data={"file_path": file_path, "anomaly_json": anomaly_json})
     except Exception as e:
-        error_message = f"Error executing task: {e}"
-        logger.error(error_message)
-        current_task["output"] += error_message
+        return BaseResponse(code=500, msg=f"Failed to save file: {e}")
 
 
 def run_diagnose(file: UploadFile = File(..., description="上传文件，支持多文件")):
-    if current_task["thread"] and current_task["thread"].is_alive():
-        return BaseResponse(code=400, msg="A task is already running")
+
+    if status():
+        return BaseResponse(code=500, msg="A task is already running")
+
     save_file_result = save_file(DIAGNOSTIC_FILES_PATH, file, True)
     file_path = save_file_result["data"]["file_path"]
 
-    current_task["thread"] = threading.Thread(target=run_diagnose_script, args=(file_path,), name='Diagnose')
-    current_task["thread"].start()
-    current_task["thread"].join(5)
+    with open(DIAGNOSE_RUN_LOG_PATH, "w") as f:
+        f.write("")
 
-    # 检查线程是否仍在运行
-    if current_task["thread"].is_alive():
-        # 任务在2秒后仍在运行，因此我们假设它已成功启动并将继续运行
+    t = threading.Thread(
+        target=run_diagnose_script,
+        args=(file_path,),
+        name=THREADNAME)
+    t.start()
+
+    time.sleep(5)
+
+    if status():
         return BaseResponse(code=200, msg="Success")
     else:
-        # 任务在2秒后已经完成，可能是由于出错而结束
-        # 我们从输出中获取错误消息，如果没有输出，那就默认一个错误消息
-        error_message = current_task["output"] if current_task["output"] else "An unknown error occurred."
-        return BaseResponse(code=500, msg=error_message)
+        return BaseResponse(code=500, msg="Failed to start diagnose task, error is " + log_output())
 
+
+def stop_diagnose():
+    current_run_pid = open(DIAGNOSE_RUN_PID_PATH, "r+")
+    pid = current_run_pid.readline()
+    subprocess.run("kill -9 " + pid + "", shell=True)
+    current_run_pid.close()
+    time.sleep(3)
+    if status():
+        return BaseResponse(code=500, msg="Failed to stop diagnose task, Please try again")
+    else:
+        return BaseResponse(code=200, msg="Success")
+
+def log_output():
+    with open(DIAGNOSE_RUN_LOG_PATH, "r") as config_file:
+        lines = config_file.readlines()
+        content = ""
+        for line in lines:
+            content += line
+        return content
 
 def get_diagnose_output():
-    is_alive = current_task["thread"] and current_task["thread"].is_alive()
-    msg = "Success" if is_alive else "No task is running"
-    return BaseResponse(code=200, msg=msg, data={"is_alive": is_alive, "output": current_task["output"]})
+    return BaseResponse(code=200, msg="Success", data={"output": log_output()})
 

@@ -13,10 +13,6 @@ from multiagents.memory import memory_registry
 from multiagents.custom_parser import output_parser_registry
 from multiagents.tools.api_retrieval import APICaller, register_functions_from_module
 
-import multiagents.tools.metric_monitor.api as metric_monitor
-import multiagents.tools.query_advisor.api as query_advisor
-import multiagents.tools.index_advisor.api as index_advisor
-
 import importlib
 
 if TYPE_CHECKING:

@@ -19,12 +19,26 @@ alert_results/
 configs/*.py
 chromadb_search_results.txt
 knowledge_base/info.db
+diagnose_run_log.txt
+diagnose_run_pid.txt
 
 */node_modules/
 */.idea
 
 m3e-base/
 chroma_db/
+*/node_modules/
+
+*/.DS_Store
+*/dist
+# Editor directories and files
+*/.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 multiagents/localized_llms/sentence_embedding/
 

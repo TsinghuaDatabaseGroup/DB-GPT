@@ -40,6 +40,8 @@ class MultiAgents:
         # Candidate experts
         expert_names = fetch_expert_kb_names()
 
+        print(f"<flow>{{'title': '初始化专家角色', 'content': '初始化的专家为：{'、'.join(expert_names)}', 'isCompleted': 1, 'isRuning': 0}}</flow>")
+
         for expert_name in expert_names:
             agent_type_name = "solver"
             agent_type = AGENT_TYPES(agent_type_name)
@@ -48,10 +50,10 @@ class MultiAgents:
             
             agent_args = agent_templates[2].copy()
 
-            expert_name = expert_name.replace("_expert", "")
+            expert_name = expert_name.replace("Expert", "")
             expert_name = expert_name.strip()
 
-            agent_args['name'] = agent_args['name'].replace("${agent_name}", expert_name)
+            agent_args['name'] = agent_args['name'].replace("${agent_name}", expert_name).lower()
             agent_args['role_description'] = agent_args['role_description'].replace("${agent_name}", expert_name)
             agent_args['prompt_template'] = agent_args['prompt_template'].replace("${agent_name}", expert_name)
                         
@@ -59,7 +61,6 @@ class MultiAgents:
                 agents[agent_type] = [load_agent(agent_args)]
             else:
                 agents[agent_type].append(load_agent(agent_args))
-
 
         '''
         for agent_config in task_config["agents"]:
