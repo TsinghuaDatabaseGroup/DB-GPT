@@ -30,11 +30,14 @@ def histories(start: str = Body(default=None, description="诊断文件开始时
                 continue
             # 打开文件并读取JSON数据
             with open(file_path, "r") as file:
-                json_data = json.load(file)
-                json_data["time"] = datetime.fromtimestamp(int(json_data.get("time", ""))).strftime("%Y-%m-%d %H:%M:%S")
-                json_data["file_name"] = file_name
-                # 将JSON数据添加到列表中
-                json_list.append(json_data)
+                try:
+                    json_data = json.load(file)
+                    json_data["time"] = datetime.fromtimestamp(int(json_data.get("time", ""))).strftime("%Y-%m-%d %H:%M:%S")
+                    json_data["file_name"] = file_name
+                    # 将JSON数据添加到列表中
+                    json_list.append(json_data)
+                except:
+                    continue
     return BaseResponse(code=200, msg="Success", data=json_list)
 
 
