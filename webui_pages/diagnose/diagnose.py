@@ -1,3 +1,5 @@
+import copy
+import json
 import time
 import re
 import streamlit as st
@@ -176,7 +178,8 @@ NODE_DATA = {
             'targetNode': 'F',
             'type': 'endpoint'
         }
-    ]
+    ],
+    'isDiagnosing': False
 }
 
 def diagnose_page(api: ApiRequest, is_lite: bool = None):
@@ -212,7 +215,6 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
     with col2:
 
         st.session_state['diagnose_file'] = st.file_uploader('Upload Anomaly File：', [i for ls in DIAGNOSE_FILE_DICT.values() for i in ls], accept_multiple_files=False, disabled=st.session_state['diagnosing'])
-
         if st.session_state['diagnose_file']:
             with st.status(label='Anomaly File Content', expanded=False):
                 with st.container(height=400):
@@ -225,16 +227,26 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
                     except ValueError:
                         content_container.warning('Invalid JSON file.')
 
-        if st.session_state['diagnose_file']:
-            if st.button('Upload and Diagnosis'):
-                filename = st.session_state['diagnose_file'].name
-                st.session_state['diagnose_file'].seek(0)
-                file_content = st.session_state['diagnose_file'].read()
-                resp = api.diagnose_file(filename, file_content)
-                if msg := check_error_msg(resp):
-                    st.error(msg)
-                    return
-                diagnose_process(api)
+        if st.session_state['diagnosing']:
+            if st.session_state['diagnosing']:
+                if st.button('Stop Diagnosis'):
+                    resp = api.stop_diagnose()
+                    if msg := check_error_msg(resp):
+                        st.error(msg)
+                    else:
+                        st.session_state['diagnosing'] = False
+        else:
+            if st.session_state['diagnose_file']:
+                if st.button('Upload and Diagnosis'):
+                    filename = st.session_state['diagnose_file'].name
+                    st.session_state['diagnose_file'].seek(0)
+                    file_content = st.session_state['diagnose_file'].read()
+                    resp = api.diagnose_file(filename, file_content)
+                    if msg := check_error_msg(resp):
+                        st.error(msg)
+                    st.session_state['diagnosing'] = True
+                    deal_node_data()
+
 
         diagnose_process(api)
 
@@ -268,38 +280,46 @@ def deal_node_data():
     text = st.session_state['task_output']
     flows = extract_flows(text)
     flows = remove_duplicates(flows)
-    if not flows or len(flows) == 0:
-        st.session_state['node_data'] = NODE_DATA
-        return
-    for (index, node) in enumerate(st.session_state['node_data']['nodes']):
-        user_data = node['userData']
-        for flow in flows:
-            if user_data.get('title') == flow.get("title"):
-                node['userData'] = flow
-                st.session_state['node_data']['nodes'][index] = node
-                continue
-
+    if not flows:
+        if st.session_state['node_data'] != NODE_DATA:
+            st.session_state['node_data'] = copy.deepcopy(NODE_DATA)
+            st.rerun()
+    else:
+        new_node_data = copy.deepcopy(NODE_DATA)
+        for (index, node) in enumerate(new_node_data['nodes']):
+            user_data = node['userData']
+            for flow in flows:
+                if user_data.get('title') == flow.get("title"):
+                    node['userData'] = flow
+                    new_node_data['nodes'][index] = node
+                    continue
+        new_node_data['isDiagnosing'] = st.session_state['diagnosing']
+        if st.session_state['node_data'] != new_node_data:
+            st.session_state['node_data'] = copy.deepcopy(new_node_data)
+            st.rerun()
 
 def diagnose_process(r_api):
     with (st.status(label='Diagnosing...', expanded=True) as status):
         with st.container(height=500):
             code_placeholder = st.empty()
             while True:
-                response = r_api.diagnose_output()
-                if msg := check_error_msg(response):
-                    st.error(msg)
-                    break
-                st.session_state['task_output'] = str(response['output'])
-                code_placeholder.code(st.session_state['task_output'], language='powershell')
-                deal_node_data()
                 status_response = r_api.diagnose_status()
                 if msg := check_error_msg(status_response):
                     st.error(msg)
                 if not status_response['is_alive']:
                     st.session_state['diagnosing'] = False
                     status.update(label='No diagnosis task is running...', expanded=True, state='complete')
-                    break
                 else:
                     st.session_state['diagnosing'] = True
+
+                response = r_api.diagnose_output()
+                if msg := check_error_msg(response):
+                    st.error(msg)
+                st.session_state['task_output'] = str(response['output'])
+                code_placeholder.code(st.session_state['task_output'], language='powershell')
+                deal_node_data()
+
+                if not st.session_state['diagnosing']:
+                    break
                 time.sleep(2)
-                st.rerun()
+

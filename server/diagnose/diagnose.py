@@ -29,7 +29,7 @@ def diagnose_status():
 
 
 def run_diagnose_script(file_path: str):
-    with open(DIAGNOSE_RUN_LOG_PATH, 'w') as log_txt, open(DIAGNOSE_RUN_PID_PATH, "w") as pid_file:
+    with open(DIAGNOSE_RUN_LOG_PATH, 'w') as log_txt:
         print("=-======:", os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
         cmd = [
             "python3",
@@ -42,7 +42,8 @@ def run_diagnose_script(file_path: str):
             shell=False,
             stdout=log_txt,
             stderr=log_txt)
-        pid_file.write(str(process.pid))
+        with open(DIAGNOSE_RUN_PID_PATH, "w") as pid_file:
+            pid_file.write(str(process.pid))
         process.wait(3600)
 
 
@@ -64,6 +65,9 @@ def run_diagnose(file: UploadFile = File(..., description="上传文件，支持
 
     save_file_result = save_file(DIAGNOSTIC_FILES_PATH, file, True)
     file_path = save_file_result["data"]["file_path"]
+
+    with open(DIAGNOSE_RUN_LOG_PATH, "w") as f:
+        f.write("")
 
     t = threading.Thread(
         target=run_diagnose_script,

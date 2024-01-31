@@ -58,6 +58,7 @@ export default {
         const jsonData = newVal.args.nodeData
         jsonData.nodes.forEach(node => {
           node.render = classMap[node.render];
+          node['isDiagnosing'] = jsonData.isDiagnosing;
         });
         jsonData.edges.forEach(edge => {
           edge.Class = classMap[edge.Class];

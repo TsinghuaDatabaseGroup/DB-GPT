@@ -6,13 +6,21 @@
     <div class="group_content">
       <div v-for="(item, index) in expertData" :style="expertUsedData.indexOf(item.subTitle) >= 0 ? '' : 'opacity: 0.5'" :key="index"
            class="group_content_item">
-        <div :class="expertUsedData.indexOf(item.subTitle) >= 0 ? 'blinking-avatar-dot' : '' ">
-          <img class="group_content_item_avatar" :src="require(`@/assets/${item.avatar}`)">
-        </div>
+        <template v-if="itemData.isDiagnosing">
+          <div :class="expertUsedData.indexOf(item.subTitle) >= 0 ? 'blinking-avatar-dot' : '' ">
+            <img class="group_content_item_avatar" :src="require(`@/assets/${item.avatar}`)">
+          </div>
+        </template>
+        <template v-else>
+          <div :class="expertUsedData.indexOf(item.subTitle) >= 0 ? 'avatar-dot' : '' ">
+            <img class="group_content_item_avatar" :src="require(`@/assets/${item.avatar}`)">
+          </div>
+        </template>
+
         <div class="group_content_item_text">{{item.title}}</div>
       </div>
     </div>
-    <div v-if="itemData.userData.isRuning" class="blinking-dot"></div>
+    <div v-if="itemData.userData.isRuning && itemData.isDiagnosing" class="blinking-dot"></div>
   </div>
 </template>
 
@@ -91,12 +99,23 @@ export default {
 
 <style>
 
+.avatar-dot {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #67C23A;
+}
+
 .blinking-avatar-dot {
   position: relative;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: red;
   display: flex;
   flex-direction: row;
   align-items: center;
