@@ -189,14 +189,11 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
     if 'diagnose_file' not in st.session_state:
         st.session_state['diagnose_file'] = None
 
+    if 'diagnose_file_content' not in st.session_state:
+        st.session_state['diagnose_file_content'] = {}
+
     if 'task_output' not in st.session_state:
         st.session_state['task_output'] = ''
-
-    if 'upload_and_diagnose_clicked' not in st.session_state:
-        st.session_state['upload_and_diagnose_clicked'] = False
-
-    if 'upload_and_diagnose_clicked' not in st.session_state:
-        st.session_state['upload_and_diagnose_clicked'] = False
 
     if 'diagnose_component' not in st.session_state:
         st.session_state['diagnose_component'] = False
@@ -216,25 +213,30 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
 
         st.session_state['diagnose_file'] = st.file_uploader('Upload Anomaly File：', [i for ls in DIAGNOSE_FILE_DICT.values() for i in ls], accept_multiple_files=False, disabled=st.session_state['diagnosing'])
 
-        if st.button('Upload and Diagnosis'):
-            st.session_state['upload_and_diagnose_clicked'] = True
+        if st.session_state['diagnose_file']:
+            with st.status(label='Anomaly File Content', expanded=False):
+                with st.container(height=400):
+                    content_container = st.empty()
+                    file_bytes_data = st.session_state['diagnose_file'].read()
+                    file_str_data = file_bytes_data.decode()
+                    try:
+                        json_data = json.loads(file_str_data)
+                        content_container.code(json.dumps(json_data, indent=4), language='json')
+                    except ValueError:
+                        content_container.warning('Invalid JSON file.')
 
-        if st.session_state['upload_and_diagnose_clicked']:
-            if st.session_state['diagnose_file']:
+        if st.session_state['diagnose_file']:
+            if st.button('Upload and Diagnosis'):
                 filename = st.session_state['diagnose_file'].name
+                st.session_state['diagnose_file'].seek(0)
                 file_content = st.session_state['diagnose_file'].read()
                 resp = api.diagnose_file(filename, file_content)
                 if msg := check_error_msg(resp):
                     st.error(msg)
-                    reset_session_state()
                     return
-            st.write('Upload Success, Start Diagnosis!')
-            st.session_state['diagnosing'] = True
-            diagnose_process(api)
+                diagnose_process(api)
 
-        if st.session_state['diagnosing']:
-            diagnose_process(api)
-
+        diagnose_process(api)
 
 def extract_flows(log_text):
     pattern = r'<flow>(.*?)</flow>'
@@ -279,28 +281,25 @@ def deal_node_data():
 
 
 def diagnose_process(r_api):
-    with st.container(height=500):
-        with (st.status(label='Diagnosing...', expanded=True) as status):
+    with (st.status(label='Diagnosing...', expanded=True) as status):
+        with st.container(height=500):
             code_placeholder = st.empty()
             while True:
                 response = r_api.diagnose_output()
                 if msg := check_error_msg(response):
                     st.error(msg)
-                    reset_session_state()
-                    return
-                if not response['is_alive']:
-                    status.update(label='No diagnosis task is being executed...', expanded=True, state='complete')
                     break
                 st.session_state['task_output'] = str(response['output'])
                 code_placeholder.code(st.session_state['task_output'], language='powershell')
-                time.sleep(2)
                 deal_node_data()
+                status_response = r_api.diagnose_status()
+                if msg := check_error_msg(status_response):
+                    st.error(msg)
+                if not status_response['is_alive']:
+                    st.session_state['diagnosing'] = False
+                    status.update(label='No diagnosis task is running...', expanded=True, state='complete')
+                    break
+                else:
+                    st.session_state['diagnosing'] = True
+                time.sleep(2)
                 st.rerun()
-                print("=============st.rerun()==============")
-                # wait for 2 seconds before polling again
-            reset_session_state()
-
-def reset_session_state():
-    st.session_state['diagnosing'] = False
-    st.session_state['upload_and_diagnose_clicked'] = False
-    st.session_state['diagnose_file'] = None

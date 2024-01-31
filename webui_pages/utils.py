@@ -371,12 +371,21 @@ class ApiRequest:
         )
         return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", {}))
 
+    def diagnose_status(self):
+        '''
+        获取诊断状态
+        '''
+        response = self.get(
+            "/diagnose/diagnose_status",
+            stream=False,
+        )
+        return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", {}))
 
     def stop_diagnose(self):
         '''
         结束异常诊断
         '''
-        response = self.get(
+        response = self.post(
             "/diagnose/stop_diagnose",
             stream=False,
         )

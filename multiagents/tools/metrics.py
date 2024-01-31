@@ -10,19 +10,16 @@ import json
 # [anomaly script]
 
 with open(args.anomaly_file, 'r') as f:
-    anomalies_list = json.load(f)
-    for i in anomalies_list:
-        exceptions = {}
+    anomaly = json.load(f)
+    exceptions = {}
+    if "exceptions" not in anomaly:
+        raise Exception(f"No metric values found for anomaly {i} in the file {args.anomaly_file}!")
 
-        if "exceptions" not in anomalies_list[i]:
-            raise Exception(f"No metric values found for anomaly {i} in the file {args.anomaly_file}!")
-
-        for c in anomalies_list[i]["exceptions"]:
-            for k, v in anomalies_list[i]["exceptions"][c].items():
-                if k not in exceptions:
-                    exceptions[k] = v
-
-        anomalies_list[i]["exceptions"] = exceptions
+    for c in anomaly["exceptions"]:
+        for k, v in anomaly["exceptions"][c].items():
+            if k not in exceptions:
+                exceptions[k] = v
+    anomaly["exceptions"] = exceptions
 
 def update_current_time():
     current_diag_time = time.localtime()
@@ -51,13 +48,13 @@ def get_workload_statistics():
 def get_slow_queries(diag_id):
     with open(args.anomaly_file, 'r') as f:
         info = json.load(f)
-    return info[diag_id]["slow_queries"]
+    return info["slow_queries"]
 
 
 def get_workload_sqls(diag_id):
     with open(args.anomaly_file, 'r') as f:
         info = json.load(f)
-    return info[diag_id]["workload"]
+    return info["workload"]
 
 
 # [functions]
@@ -66,8 +63,8 @@ def obtain_values_of_metrics(i, metrics, start_time, end_time):
 
     for metric in metrics:
         match_metric = metric.split("{")[0]
-        if match_metric in anomalies_list[i]["exceptions"]:
-            required_values[match_metric] = anomalies_list[i]["exceptions"][match_metric]
+        if match_metric in anomaly["exceptions"]:
+            required_values[match_metric] = anomaly["exceptions"][match_metric]
         else:
             # print(colored(f"No metric values found for {start_time}-{end_time} of {metric}", "red"))
             pass
