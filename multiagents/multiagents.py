@@ -50,10 +50,7 @@ class MultiAgents:
             
             agent_args = agent_templates[2].copy()
 
-            expert_name = expert_name.replace("Expert", "")
-            expert_name = expert_name.strip()
-
-            agent_args['name'] = agent_args['name'].replace("${agent_name}", expert_name).lower()
+            agent_args['name'] = agent_args['name'].replace("${agent_name}", expert_name)
             agent_args['role_description'] = agent_args['role_description'].replace("${agent_name}", expert_name)
             agent_args['prompt_template'] = agent_args['prompt_template'].replace("${agent_name}", expert_name)
                         

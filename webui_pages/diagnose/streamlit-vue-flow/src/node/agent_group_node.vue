@@ -41,42 +41,42 @@ export default {
       expertData: [
         {
           title: 'CpuExpert',
-          subTitle: 'cpu expert',
+          subTitle: 'CpuExpert',
           avatar: 'cpu_robot.webp',
         },
         {
           title: 'MemoryExpert',
-          subTitle: 'memory expert',
+          subTitle: 'MemoryExpert',
           avatar: 'mem_robot.webp',
         },
         {
           title: 'IoExpert',
-          subTitle: 'io expert',
+          subTitle: 'IoExpert',
           avatar: 'io_robot.webp',
         },
         {
           title: 'IndexExpert',
-          subTitle: 'index expert',
+          subTitle: 'IndexExpert',
           avatar: 'index_robot.webp',
         },
         {
           title: 'ConfigExpert',
-          subTitle: 'configuration expert',
+          subTitle: 'ConfigurationExpert',
           avatar: 'configuration_robot.webp',
         },
         {
           title: 'QueryExpert',
-          subTitle: 'query expert',
+          subTitle: 'QueryExpert',
           avatar: 'query_robot.webp',
         },
         {
           title: 'WorkloadExpert',
-          subTitle: 'workload expert',
+          subTitle: 'WorkloadExpert',
           avatar: 'workload_robot.webp',
         },
         {
           title: 'WriteExpert',
-          subTitle: 'write expert',
+          subTitle: 'WriteExpert',
           avatar: 'mem_robot.webp',
         },
       ],
