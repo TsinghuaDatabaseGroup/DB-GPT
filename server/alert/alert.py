@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 import json
 import os
@@ -36,7 +37,8 @@ def histories(start: str = Body(default=None, description="诊断文件开始时
                     json_data["file_name"] = file_name
                     # 将JSON数据添加到列表中
                     json_list.append(json_data)
-                except:
+                except Exception as e:
+                    logging.error(f"读取Json文件{file_path}失败: {e}")
                     continue
     return BaseResponse(code=200, msg="Success", data=json_list)
 
