@@ -30,7 +30,6 @@ def diagnose_status():
 
 def run_diagnose_script(file_path: str):
     with open(DIAGNOSE_RUN_LOG_PATH, 'w') as log_txt:
-        print("=-======:", os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
         cmd = [
             "python3",
             f"{os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))}/run_diagnose.py",

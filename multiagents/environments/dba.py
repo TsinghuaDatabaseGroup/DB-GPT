@@ -282,6 +282,19 @@ class DBAEnvironment(BaseModel):
             self.reporter.record["report"] = report_markdown
 
             pbar.update(1)
+        print(self.reporter.record)
+
+        for expert in expert_data:
+            # find the matched key in the record
+            matched_key = next((k for k in self.reporter.record['anomalyAnalysis'].keys()
+                                if k.lower() == expert['name'].lower()), '')
+            if matched_key:
+                expert['messages'] = self.reporter.record['anomalyAnalysis'][matched_key]['messages']
+
+        print(f"<flow>{{'title': '根据异常分配诊断专家', 'content': '{anomaly_description}', 'messages': '{json.dumps(self.reporter.record['anomalyAnalysis']['RoleAssigner']['messages'])}', 'isCompleted': 1, 'isRuning': 0}}</flow>")
+        print(f"<flow>{{'title': '专家诊断', 'content': '', 'messages': '[]' , 'expertData': {str(expert_data)}, 'isCompleted': 1, 'isRuning': 0}}</flow>")
+        print(f"<flow>{{'title': '圆桌讨论', 'content': '圆桌讨论结束', 'messages': '{json.dumps(self.reporter.record['brainstorming']['messages'])}' , 'isCompleted': 1, 'isRuning': 0}}</flow>")
+        print(f"<flow>{{'title': '报告生成', 'content': '报告已经生成', 'messages': '{self.reporter.record['report']}' , 'isCompleted': 1, 'isRuning': 0}}</flow>")
 
         return report, self.reporter.record
 

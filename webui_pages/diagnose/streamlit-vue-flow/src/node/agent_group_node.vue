@@ -4,17 +4,19 @@
       {{itemData.userData.title}}
     </div>
     <div class="group_content">
-      <div v-for="(item, index) in expertData" :style="expertUsedDataTitle.indexOf(item.subTitle) >= 0 ? '' : 'opacity: 0.5'" :key="index"
+      <div v-for="(item, index) in expertData" :style="item.isRuning ? '' : 'opacity: 0.5'" :key="index"
            class="group_content_item">
 
-        <template v-if="expertUsedDataTitle.indexOf(item.subTitle) >= 0">
+        <template v-if="item.isRuning">
           <el-popover
               placement="top-start"
               title=""
               width="200"
               trigger="hover"
              >
-            <div style="font-size: 12px; color: #666666; white-space: pre-wrap; word-break: break-all"></div>
+            <div style="font-size: 12px; color: #666666; white-space: pre-wrap; word-break: break-all">
+              {{ item.role }}
+            </div>
             <div slot="reference" :class="itemData.isDiagnosing ? 'blinking-avatar-dot' : 'avatar-dot' ">
               <img class="group_content_item_avatar" :src="require(`@/assets/${item.avatar}`)">
             </div>
@@ -46,56 +48,81 @@ export default {
   },
   data() {
     return {
-      expertData: [
+      defaultExpertData: [
         {
           title: 'CpuExpert',
           subTitle: 'CpuExpert',
           avatar: 'cpu_robot.webp',
+          isRuning: false,
+          role: ''
         },
         {
           title: 'MemoryExpert',
           subTitle: 'MemoryExpert',
           avatar: 'mem_robot.webp',
+          isRuning: false,
+          role: ''
         },
         {
           title: 'IoExpert',
           subTitle: 'IoExpert',
           avatar: 'io_robot.webp',
+          isRuning: false,
+          role: ''
         },
         {
           title: 'IndexExpert',
           subTitle: 'IndexExpert',
           avatar: 'index_robot.webp',
+          isRuning: false,
+          role: ''
         },
         {
           title: 'ConfigExpert',
           subTitle: 'ConfigurationExpert',
           avatar: 'configuration_robot.webp',
+          isRuning: false,
+          role: ''
         },
         {
           title: 'QueryExpert',
           subTitle: 'QueryExpert',
           avatar: 'query_robot.webp',
+          isRuning: false,
+          role: ''
         },
         {
           title: 'WorkloadExpert',
           subTitle: 'WorkloadExpert',
           avatar: 'workload_robot.webp',
+          isRuning: false,
+          role: ''
         },
         {
           title: 'WriteExpert',
           subTitle: 'WriteExpert',
           avatar: 'mem_robot.webp',
+          isRuning: false,
+          role: ''
         },
       ],
-      expertUsedDataTitle: []
+      expertData: []
     }
   },
   watch: {
     itemData: {
       handler(newVal, oldVal) {
+        this.expertData = JSON.parse(JSON.stringify(this.defaultExpertData));
         if(newVal.userData.expertData) {
-          this.expertUsedDataTitle = newVal.userData.expertData.map(item => item.name.lowerCase());
+          // 将expertData中的name和role提取出来，如果expertData中的name和expertData中的subTitle相同，则将role赋值给expertData中的role，且将isRuning设置为true, 否则设置为false
+          this.expertData.forEach((item) => {
+            newVal.userData.expertData.forEach((expertItem) => {
+              if(item.subTitle === expertItem.name) {
+                item.role = expertItem.role;
+                item.isRuning = true;
+              }
+            })
+          })
         }
         console.log('Args changed from', oldVal, 'to', newVal);
       },
