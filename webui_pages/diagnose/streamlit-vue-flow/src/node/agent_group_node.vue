@@ -4,19 +4,27 @@
       {{itemData.userData.title}}
     </div>
     <div class="group_content">
-      <div v-for="(item, index) in expertData" :style="expertUsedData.indexOf(item.subTitle) >= 0 ? '' : 'opacity: 0.5'" :key="index"
+      <div v-for="(item, index) in expertData" :style="item.isRuning ? '' : 'opacity: 0.5'" :key="index"
            class="group_content_item">
-        <template v-if="itemData.isDiagnosing">
-          <div :class="expertUsedData.indexOf(item.subTitle) >= 0 ? 'blinking-avatar-dot' : '' ">
-            <img class="group_content_item_avatar" :src="require(`@/assets/${item.avatar}`)">
-          </div>
+
+        <template v-if="item.isRuning">
+          <el-popover
+              placement="top-start"
+              title=""
+              trigger="click"
+             >
+            <OneChat style="width: 360px; height: 400px; border-radius: 8px; overflow: hidden; z-index: 9999999999" :messages="item.messages"
+                     :sender="item.title"></OneChat>
+            <div slot="reference" :class="itemData.isDiagnosing ? 'blinking-avatar-dot' : 'avatar-dot' ">
+              <img class="group_content_item_avatar" :src="require(`@/assets/${item.avatar}`)">
+            </div>
+          </el-popover>
         </template>
         <template v-else>
-          <div :class="expertUsedData.indexOf(item.subTitle) >= 0 ? 'avatar-dot' : '' ">
+          <div>
             <img class="group_content_item_avatar" :src="require(`@/assets/${item.avatar}`)">
           </div>
         </template>
-
         <div class="group_content_item_text">{{item.title}}</div>
       </div>
     </div>
@@ -26,8 +34,13 @@
 
 <script>
 
+import OneChat from "@/chat/OneChat";
+
 export default {
   name: "agent_group_node",
+  components: {
+    OneChat
+  },
   props: {
     itemData: {
       type: Object,
@@ -38,55 +51,82 @@ export default {
   },
   data() {
     return {
-      expertData: [
+      defaultExpertData: [
         {
           title: 'CpuExpert',
-          subTitle: 'cpu expert',
+          subTitle: 'CpuExpert',
           avatar: 'cpu_robot.webp',
+          isRuning: false,
+          role: ''
         },
         {
           title: 'MemoryExpert',
-          subTitle: 'memory expert',
+          subTitle: 'MemoryExpert',
           avatar: 'mem_robot.webp',
+          isRuning: false,
+          role: ''
         },
         {
           title: 'IoExpert',
-          subTitle: 'io expert',
+          subTitle: 'IoExpert',
           avatar: 'io_robot.webp',
+          isRuning: false,
+          role: ''
         },
         {
           title: 'IndexExpert',
-          subTitle: 'index expert',
+          subTitle: 'IndexExpert',
           avatar: 'index_robot.webp',
+          isRuning: false,
+          role: ''
         },
         {
           title: 'ConfigExpert',
-          subTitle: 'configuration expert',
+          subTitle: 'ConfigurationExpert',
           avatar: 'configuration_robot.webp',
+          isRuning: false,
+          role: ''
         },
         {
           title: 'QueryExpert',
-          subTitle: 'query expert',
+          subTitle: 'QueryExpert',
           avatar: 'query_robot.webp',
+          isRuning: false,
+          role: ''
         },
         {
           title: 'WorkloadExpert',
-          subTitle: 'workload expert',
+          subTitle: 'WorkloadExpert',
           avatar: 'workload_robot.webp',
+          isRuning: false,
+          role: ''
         },
         {
           title: 'WriteExpert',
-          subTitle: 'write expert',
+          subTitle: 'WriteExpert',
           avatar: 'mem_robot.webp',
+          isRuning: false,
+          role: ''
         },
       ],
-      expertUsedData: []
+      expertData: []
     }
   },
   watch: {
     itemData: {
       handler(newVal, oldVal) {
-        this.expertUsedData = newVal.userData.expertData || []
+        this.expertData = JSON.parse(JSON.stringify(this.defaultExpertData));
+        if(newVal.userData.expertData) {
+          // 将expertData中的name和role提取出来，如果expertData中的name和expertData中的subTitle相同，则将role赋值给expertData中的role，且将isRuning设置为true, 否则设置为false
+          this.expertData.forEach((item) => {
+            newVal.userData.expertData.forEach((expertItem) => {
+              if(item.subTitle === expertItem.name) {
+                item.isRuning = true;
+                item.messages = expertItem.messages;
+              }
+            })
+          })
+        }
         console.log('Args changed from', oldVal, 'to', newVal);
       },
       deep: true,
@@ -98,6 +138,12 @@ export default {
 </script>
 
 <style>
+
+.el-popover {
+  background: transparent!important;
+  padding: 0!important;
+  border: none!important;
+}
 
 .avatar-dot {
   position: relative;

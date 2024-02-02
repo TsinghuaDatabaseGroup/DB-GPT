@@ -22,7 +22,7 @@ async def main(args):
     global current_diag_time
 
     create_dir_if_not_exists(f"./alert_results/{str(current_diag_time)}")
-    print("<flow>{'title': '初始化专家角色', 'content': '', 'isCompleted': 0, 'isRuning': 1}</flow>")
+    print('<flow>{"title": "初始化专家角色", "content": "", "isCompleted": 0, "isRuning": 1}</flow>')
 
     multi_agents, model_type = MultiAgents.from_task(args.agent_conf_name, args)
 

@@ -47,7 +47,7 @@ def whether_is_abnormal_metric(
 def match_diagnose_knowledge(
         start_time: int,
         end_time: int,
-        metric_name: str = "cpu expert",
+        metric_name: str = "CpuExpert",
         alert_metric: str = "",
         diag_id: str = "",
         enable_prometheus: bool = True):
