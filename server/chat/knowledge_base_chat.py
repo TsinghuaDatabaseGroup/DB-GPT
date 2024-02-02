@@ -91,8 +91,15 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
             callbacks=[callback],
         )
         docs = search_docs(query, knowledge_base_name, top_k, score_threshold)
-        print("******search_docs*******:", docs)
-        context = "\n".join([doc.page_content for doc in docs])
+        
+        context = ""
+        for doc in docs:
+            if 'desc' in doc.metadata:
+                context += doc.metadata['desc'] + "\n"
+            else:
+                context += doc.page_content + "\n"
+
+        print("******search_docs*******: ", context)
 
         if len(docs) == 0:  # 如果没有找到相关文档，使用empty模板
             prompt_template = get_prompt_template(
