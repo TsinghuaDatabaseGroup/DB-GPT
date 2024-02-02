@@ -15,8 +15,8 @@ prompts:
     
     # Response Format Guidance
     You should respond with a list of expert names (one expert name can only occur for one time). For example:
-    1. cpu expert
-    2. query expert
+    1. CpuExpert
+    2. QueryExpert
     ...
     
     Only respond with the names of selected experts (separated by spaces). Do not include your reason.
@@ -195,7 +195,7 @@ agents:
       type: role_assigner
   -
     agent_type: solver
-    name: ${agent_name} expert
+    name: ${agent_name}
     role_description: You are a ${agent_name} agent that can use the tool apis to check resource usage (whether_is_abnormal_metric), analyze the root causes of high resource usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection, enable_or_disable_nestloop_operator). Note the response should be in markdown format.
     prompt_template: *expert_agent_format_prompt
     memory:

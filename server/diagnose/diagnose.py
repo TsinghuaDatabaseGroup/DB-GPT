@@ -95,6 +95,11 @@ def stop_diagnose():
         return BaseResponse(code=200, msg="Success")
 
 def log_output():
+
+    if not os.path.exists(DIAGNOSE_RUN_LOG_PATH):
+        with open(DIAGNOSE_RUN_LOG_PATH, "w") as f:
+            f.write("")
+
     with open(DIAGNOSE_RUN_LOG_PATH, "r") as config_file:
         lines = config_file.readlines()
         content = ""
