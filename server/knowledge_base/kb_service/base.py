@@ -126,6 +126,7 @@ class KBService(ABC):
                     source = doc.metadata.get("source", "")
                     rel_path = Path(source).relative_to(self.doc_path)
                     doc.metadata["source"] = str(rel_path.as_posix().strip("/"))
+                    
                 except Exception as e:
                     print(f"cannot convert absolute path ({source}) to relative path. error is : {e}")
             self.delete_doc(kb_file)
