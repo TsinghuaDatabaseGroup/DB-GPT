@@ -160,6 +160,9 @@ def get_loader(loader_name: str, file_path: str, loader_kwargs: Dict = None):
         document_loaders_module = importlib.import_module('langchain.document_loaders')
         DocumentLoader = getattr(document_loaders_module, "UnstructuredFileLoader")
 
+    def metadata_func(sample: Dict, additional_fields: Dict) -> Dict:
+        return {**sample, **additional_fields}
+
     if loader_name == "UnstructuredFileLoader":
         loader_kwargs.setdefault("autodetect_encoding", True)
     elif loader_name == "CSVLoader":
@@ -171,11 +174,12 @@ def get_loader(loader_name: str, file_path: str, loader_kwargs: Dict = None):
                 encode_detect = {"encoding": "utf-8"}
             loader_kwargs["encoding"] = encode_detect["encoding"]
         ## TODO：支持更多的自定义CSV读取逻辑
-
+  
     elif loader_name == "JSONLoader":
         loader_kwargs.setdefault("jq_schema", ".[]")
         loader_kwargs.setdefault("content_key", "metrics")
         loader_kwargs.setdefault("text_content", True)
+        loader_kwargs.setdefault("metadata_func", metadata_func)
     elif loader_name == "JSONLinesLoader":
         loader_kwargs.setdefault("jq_schema", ".")
         loader_kwargs.setdefault("text_content", True)
@@ -293,6 +297,7 @@ class KnowledgeFile:
                                 file_path=self.filepath,
                                 loader_kwargs=self.loader_kwargs)
             self.docs = loader.load()
+
         return self.docs
 
     def docs2texts(

@@ -1,8 +1,10 @@
+import logging
 from multiagents.tools.metric_monitor.anomaly_detection import detect_anomalies
 from multiagents.tools.metrics import *
 from multiagents.tools.metric_monitor.anomaly_analysis import metric_analysis_results, slow_query_analysis_results, workload_analysis_results
 from multiagents.utils.markdown_format import generate_prometheus_chart_content
 from prometheus_service.prometheus_abnormal_metric import prometheus_metrics
+from server.knowledge_base.kb_doc_api import search_docs, fetch_expert_kb_names
 
 
 def whether_is_abnormal_metric(
@@ -52,8 +54,18 @@ def match_diagnose_knowledge(
 
     agent_name = metric_name.lower()
 
+    candidate_agent_name = str(agent_name.split(" ")[0])
+    expert_names = fetch_expert_kb_names()
+    kb_name = ""
+    for expert_name in expert_names:
+        if candidate_agent_name in expert_name.lower():
+            kb_name = expert_name
+            break
+    if kb_name == "":
+        logging.error(f"The expert name {candidate_agent_name} is not found in knowledge base!")    
+
     # alerts and metrics
-    alert_and_metric_str, abnormal_metric_detailed_values = metric_analysis_results(agent_name, alert_metric, diag_id, enable_prometheus, start_time, end_time)
+    alert_and_metric_str, abnormal_metric_detailed_values = metric_analysis_results(agent_name, kb_name, alert_metric, diag_id, enable_prometheus, start_time, end_time)
     
     if "network" in agent_name:
         return """The {} relevant metric values from Prometheus are:\n 
@@ -61,10 +73,10 @@ def match_diagnose_knowledge(
             alert_and_metric_str)
 
     # slow queries
-    slow_queries_str = slow_query_analysis_results(agent_name, diag_id)
+    slow_queries_str = slow_query_analysis_results(agent_name, kb_name, diag_id)
 
     # workload
-    workload_str = workload_analysis_results(agent_name, diag_id)
+    workload_str = workload_analysis_results(agent_name, kb_name, diag_id)
     
     
     knowledge_str = alert_and_metric_str + workload_str + slow_queries_str

@@ -2,10 +2,10 @@ from multiagents.tools.metric_monitor.anomaly_detection import detect_anomalies
 from prometheus_service.prometheus_abnormal_metric import prometheus_metrics
 from multiagents.tools.metrics import *
 from multiagents.utils.markdown_format import generate_prometheus_chart_content
-from server.knowledge_base.kb_doc_api import search_docs
+from server.knowledge_base.kb_doc_api import search_docs, fetch_expert_kb_names
 
 
-def metric_analysis_results(agent_name, alert_metric, diag_id, enable_prometheus, start_time, end_time):
+def metric_analysis_results(agent_name, kb_name, alert_metric, diag_id, enable_prometheus, start_time, end_time):
 
     if "cpu" in agent_name or "workload" in agent_name or "index" in agent_name or "query" in agent_name:
         metric_prefix = "cpu"
@@ -94,13 +94,15 @@ def metric_analysis_results(agent_name, alert_metric, diag_id, enable_prometheus
         metric_str = metric_str + "\n"
 
     docs_query = [metric_name for metric_name in top5_abnormal_metrics]
-    matched_docs = search_docs(str(docs_query), knowledge_base_name=str(agent_name.split(" ")[0]), top_k=2, score_threshold=0.3)
+
+    matched_docs = search_docs(str(docs_query), knowledge_base_name=kb_name, top_k=5, score_threshold=0.4)
 
     docs_str = ""
     if matched_docs != []:
         matched_docs_str = ""
         for i, matched_doc in enumerate(matched_docs):
-            matched_docs_str = matched_docs_str + f"{i+1}. {matched_doc.metadata['content']} \n"
+            if 'desc' in matched_doc.metadata:
+                matched_docs_str = matched_docs_str + f"{i+1}. {matched_doc.metadata['desc']} \n"
 
         docs_str = """The matched knowledge for analyzing above abnormal metrics is:\n{}\n\n""".format(matched_docs_str)
 
@@ -126,7 +128,7 @@ def metric_analysis_results(agent_name, alert_metric, diag_id, enable_prometheus
     #     docs_str = ""
 
 
-def workload_analysis_results(agent_name, diag_id):
+def workload_analysis_results(agent_name, kb_name, diag_id):
 
     workload_state = get_workload_sqls(diag_id)
 
@@ -156,10 +158,17 @@ def workload_analysis_results(agent_name, diag_id):
     if workload_state != "":
         workload_str = """The workload queries are:\n{}\n\n""".format(workload_state)
 
-        matched_docs = search_docs("workload", knowledge_base_name=str(agent_name.split(" ")[0]), top_k=2, score_threshold=0.3)
+        matched_docs = search_docs("workload", knowledge_base_name=kb_name, top_k=5, score_threshold=0.4)
 
         if matched_docs != []:
-            docs_str = """The matched knowledge for analyzing above workload queries is:\n{}\n\n""".format(str(matched_docs))
+            docs_str = ""
+            if matched_docs != []:
+                matched_docs_str = ""
+                for i, matched_doc in enumerate(matched_docs):
+                    if 'desc' in matched_doc.metadata:
+                        matched_docs_str = matched_docs_str + f"{i+1}. {matched_doc.metadata['desc']} \n"
+
+                docs_str = """The matched knowledge for analyzing above workload queries is:\n{}\n\n""".format(matched_docs_str)
             
             workload_str = workload_str + docs_str
     else:
@@ -168,7 +177,7 @@ def workload_analysis_results(agent_name, diag_id):
     return workload_str
 
 
-def slow_query_analysis_results(agent_name, diag_id):
+def slow_query_analysis_results(agent_name, kb_name, diag_id):
 
     # get the slow queries from the anomaly file
     slow_queries = get_slow_queries(diag_id)
@@ -184,12 +193,17 @@ def slow_query_analysis_results(agent_name, diag_id):
 
         slow_queries_str = """The slow queries that should be optimized are:\n{}\n\n""".format(concat_slow_queries)
 
-
-        matched_docs = search_docs("slow query", knowledge_base_name=str(agent_name.split(" ")[0]), top_k=2, score_threshold=0.3)
+        matched_docs = search_docs("slow query", knowledge_base_name=kb_name, top_k=5, score_threshold=0.4)
 
         if matched_docs != []:
-            docs_str = """The matched knowledge for analyzing above slow queries is:
-        {}\n\n""".format(str(matched_docs))
+            docs_str = ""
+            if matched_docs != []:
+                matched_docs_str = ""
+                for i, matched_doc in enumerate(matched_docs):
+                    if 'desc' in matched_doc.metadata:
+                        matched_docs_str = matched_docs_str + f"{i+1}. {matched_doc.metadata['desc']} \n"
+
+                docs_str = """The matched knowledge for analyzing above slow queries is:\n{}\n\n""".format(matched_docs_str)
 
             slow_queries_str = slow_queries_str + docs_str
         else:

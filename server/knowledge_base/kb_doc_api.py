@@ -54,13 +54,21 @@ def search_docs(
         if kb is None:
             continue
         docs = kb.search_docs(query, top_k, score_threshold)
+
         no_replicate_docs = []
         for i, doc in enumerate(docs):
-            if i == 0 or ('content' not in doc[0].metadata) or (
-                    doc[0].metadata['content'] != docs[i - 1][0].metadata['content']):
-                no_replicate_docs.append(doc)
+            if 'cause_name' in doc[0].metadata:
+                not_exist = True
+                for compare_doc in no_replicate_docs:
+                    if doc[0].metadata['cause_name'] == compare_doc[0].metadata['cause_name']:
+                        not_exist = False
+                        break
+                
+                if not_exist == True:
+                    no_replicate_docs.append(doc)
 
-        data.extend([DocumentWithScore(page_content=x[0].page_content, metadata=x[0].dict()['metadata'], score=x[1]) for x in docs])
+        data.extend([DocumentWithScore(page_content=x[0].page_content, metadata=x[0].dict()['metadata'], score=x[1]) for x in no_replicate_docs])
+    
     return data
 
 
