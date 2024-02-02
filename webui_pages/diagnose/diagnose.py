@@ -15,6 +15,7 @@ NODE_DATA = {
             'userData': {
                 'title': '初始化专家角色',
                 'content': '',
+                'messages': [],
                 'isCompleted': False,
                 'isRuning': False
             },
@@ -33,6 +34,7 @@ NODE_DATA = {
             'userData': {
                 'title': '初始化诊断报告',
                 'content': '',
+                'messages': [],
                 'isCompleted': False,
                 'isRuning': False
             },
@@ -55,6 +57,7 @@ NODE_DATA = {
             'userData': {
                 'title': '根据异常分配诊断专家',
                 'content': '',
+                'messages': [],
                 'isCompleted': False,
                 'isRuning': False
             },
@@ -100,6 +103,7 @@ NODE_DATA = {
             'userData': {
                 'title': '圆桌讨论',
                 'content': '',
+                'messages': [],
                 'isCompleted': False,
                 'isRuning': False,
                 'expertData': []
@@ -123,6 +127,7 @@ NODE_DATA = {
             'userData': {
                 'title': '报告生成',
                 'content': '',
+                'messages': '',
                 'isCompleted': False,
                 'isRuning': False
             },
@@ -207,8 +212,8 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
     col1, col2 = st.columns([2, 3])
 
     with col1:
-        # diagnose_component = declare_component('my_component', path=os.path.join(os.path.dirname(__file__), 'streamlit-vue-flow/build_dist'))
-        diagnose_component = declare_component('my_component', url='http://localhost:3001')
+        diagnose_component = declare_component('my_component', path=os.path.join(os.path.dirname(__file__), 'streamlit-vue-flow/build_dist'))
+        # diagnose_component = declare_component('my_component', url='http://localhost:3001')
         args = {'width': '500px', 'height': '860px', 'nodeData': st.session_state['node_data']}
         diagnose_component(args=args)
 
@@ -256,12 +261,13 @@ def extract_flows(log_text):
 
     flow_jsons = []
     for match in matches:
-        match = match.replace("'", '"')
+        # match = match.replace("'", '"')
         try:
             flow_json = json.loads(match)
             flow_jsons.append(flow_json)
-        except json.JSONDecodeError:
-            print("Could not decode string to json: {match}")
+        except json.JSONDecodeError as error:
+            print(error)
+            print(f"Could not decode string to json: {match[0: 100]}")
 
     return flow_jsons
 
@@ -291,6 +297,7 @@ def deal_node_data():
             for flow in flows:
                 if user_data.get('title') == flow.get("title"):
                     node['userData'] = flow
+                    # print(node['userData'].get('messages', []))
                     new_node_data['nodes'][index] = node
                     continue
         new_node_data['isDiagnosing'] = st.session_state['diagnosing']

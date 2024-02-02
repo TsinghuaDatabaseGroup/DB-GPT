@@ -11,12 +11,10 @@
           <el-popover
               placement="top-start"
               title=""
-              width="200"
-              trigger="hover"
+              trigger="click"
              >
-            <div style="font-size: 12px; color: #666666; white-space: pre-wrap; word-break: break-all">
-              {{ item.role }}
-            </div>
+            <OneChat style="width: 360px; height: 400px; border-radius: 8px; overflow: hidden; z-index: 9999999999" :messages="item.messages"
+                     :sender="item.title"></OneChat>
             <div slot="reference" :class="itemData.isDiagnosing ? 'blinking-avatar-dot' : 'avatar-dot' ">
               <img class="group_content_item_avatar" :src="require(`@/assets/${item.avatar}`)">
             </div>
@@ -36,8 +34,13 @@
 
 <script>
 
+import OneChat from "@/chat/OneChat";
+
 export default {
   name: "agent_group_node",
+  components: {
+    OneChat
+  },
   props: {
     itemData: {
       type: Object,
@@ -118,8 +121,8 @@ export default {
           this.expertData.forEach((item) => {
             newVal.userData.expertData.forEach((expertItem) => {
               if(item.subTitle === expertItem.name) {
-                item.role = expertItem.role;
                 item.isRuning = true;
+                item.messages = expertItem.messages;
               }
             })
           })
@@ -135,6 +138,12 @@ export default {
 </script>
 
 <style>
+
+.el-popover {
+  background: transparent!important;
+  padding: 0!important;
+  border: none!important;
+}
 
 .avatar-dot {
   position: relative;
