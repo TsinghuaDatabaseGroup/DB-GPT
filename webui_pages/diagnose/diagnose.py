@@ -131,7 +131,7 @@ NODE_DATA = {
                 'isCompleted': False,
                 'isRuning': False
             },
-            'render': 'titleContentNode',
+            'render': 'clickContentNode',
             'top': 750,
             'left': 120,
             'endpoints': [

@@ -15,11 +15,13 @@
 import {ButterflyVue} from './index.js';
 import titleContentNode from './node/title-content-node';
 import agentGroupNode from './node/agent_group_node';
+import clickContentNode from './node/click_content_node';
 import Edge from './util/edge';
 
 const classMap = {
   'titleContentNode': titleContentNode,
   'agentGroupNode': agentGroupNode,
+  'clickContentNode': clickContentNode,
   'Edge': Edge
 };
 
