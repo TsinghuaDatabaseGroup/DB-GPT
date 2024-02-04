@@ -11,7 +11,7 @@
           <el-popover
               placement="top-start"
               title=""
-              trigger="click"
+              trigger="hover"
              >
             <OneChat style="width: 360px; height: 400px; border-radius: 8px; overflow: hidden; z-index: 9999999999" :messages="item.messages"
                      :sender="item.title"></OneChat>
@@ -127,7 +127,6 @@ export default {
             })
           })
         }
-        console.log('Args changed from', oldVal, 'to', newVal);
       },
       deep: true,
       immediate: true

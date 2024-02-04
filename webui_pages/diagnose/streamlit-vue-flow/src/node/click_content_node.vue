@@ -12,9 +12,13 @@
       <el-popover
           placement="top-start"
           title=""
-          trigger="click"
+          trigger="hover"
       >
-        <div style="width: 360px; height: 400px; border-radius: 8px; overflow: hidden; z-index: 9999999999; background-color: RGBA(242, 246, 255, 1)" v-html="report" />
+        <div
+            style="width: auto; height: 800px; border-radius: 8px; overflow-y: scroll; overflow-x: scroll;
+             z-index: 9999999999; background-color: RGBA(242, 246, 255, 1); padding: 20px">
+          <div style="transform: scale(0.8); width: 100%; height: 100%" v-html="report"></div>
+        </div>
         <div slot="reference" class="content">
           {{itemData.userData.content}}
         </div>
@@ -40,8 +44,7 @@ export default {
   watch: {
     itemData: {
       handler: function (val) {
-        console.log("-==---------:", val);
-        const report = val.userData.report;
+        const report = val.userData.messages;
         if (!report || report.trim().length === 0) {
           this.report = '';
         }else {

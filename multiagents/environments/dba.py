@@ -321,7 +321,7 @@ class DBAEnvironment(BaseModel):
         print(
             f'<flow>{{"title": "圆桌讨论", "content": "圆桌讨论结束", "messages": {json.dumps(self.reporter.record["brainstorming"]["messages"])} , "isCompleted": 1, "isRuning": 0}}</flow>')
         print(
-            f'<flow>{{"title": "报告生成", "content": "报告已经生成", "messages": "{self.reporter.record["report"]}" , "isCompleted": 1, "isRuning": 0}}</flow>')
+            f'<flow>{{"title": "报告生成", "content": "报告已经生成, 请查看", "messages": "{self.reporter.record["report"]}" , "isCompleted": 1, "isRuning": 0}}</flow>')
 
         return report, self.reporter.record
 
@@ -571,10 +571,16 @@ class DBAEnvironment(BaseModel):
                 #     "data":"#diagnose /n xxxxxx /n  # solution /n XXXXXX/n   # knowledge /n  XXXXX/n  下面展示图表 ```chart xxczxczxczczxc ```` ",
                 #     "time":"message sending time"
                 # }
+        print(
+            f'<flow>{{"title": "圆桌讨论", "content": "圆桌讨论结束", "isCompleted": 1, "isRuning": 0}}</flow>')
+        # review the diagnosis results by the reporter
+        print(
+            '<flow>{"title": "报告生成", "content": "", "isCompleted": 0, "isRuning": 1}</flow>')
         self.reporter.update_diagnosis()
         self.reporter.add_diagnosis_labels()
         self.reporter.update_solutions()
-
+        print(
+            f'<flow>{{"title": "报告生成", "content": "报告已经生成, 请查看", "isCompleted": 1, "isRuning": 0}}</flow>')
 
         return self.reporter.report
 

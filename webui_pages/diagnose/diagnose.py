@@ -256,9 +256,8 @@ def diagnose_page(api: ApiRequest, is_lite: bool = None):
         diagnose_process(api)
 
 def extract_flows(log_text):
-    pattern = r'<flow>(.*?)</flow>'
+    pattern = re.compile(r'<flow>(.*?)</flow>', re.DOTALL)
     matches = re.findall(pattern, log_text)
-
     flow_jsons = []
     for match in matches:
         # match = match.replace("'", '"')
@@ -267,7 +266,10 @@ def extract_flows(log_text):
             flow_jsons.append(flow_json)
         except json.JSONDecodeError as error:
             print(error)
-            print(f"Could not decode string to json: {match[0: 100]}")
+            if '{"title": "报告生成", "content": "报告已经生成, 请查看", "messages":' in match:
+                flow_json = json.loads('{"title": "报告生成", "content": "报告已经生成, 请查看", "isCompleted": 1, "isRuning": 0}')
+                flow_json['messages'] = match[match.find('"messages":') + 13:match.find('isCompleted') - 2]
+                flow_jsons.append(flow_json)
 
     return flow_jsons
 
@@ -297,7 +299,6 @@ def deal_node_data():
             for flow in flows:
                 if user_data.get('title') == flow.get("title"):
                     node['userData'] = flow
-                    # print(node['userData'].get('messages', []))
                     new_node_data['nodes'][index] = node
                     continue
         new_node_data['isDiagnosing'] = st.session_state['diagnosing']

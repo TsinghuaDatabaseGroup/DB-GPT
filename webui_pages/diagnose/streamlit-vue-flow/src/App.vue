@@ -63,4 +63,62 @@ body {
   background: #67C23A !important;
   border: 1px solid #67C23A !important;
 }
+
+ .hljs {
+   word-break: break-all;
+   white-space: pre-wrap;
+   padding: 10px;
+   border-radius: 4px;
+ }
+
+.severity {
+  width: 16px;
+  height: 16px;
+  border-radius: 16px;
+  margin-right: 6px
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #333;
+  font-weight: bold;
+}
+
+table {
+  max-width: 100%;
+  background-color: transparent;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table th,
+table td {
+  padding: 8px;
+  line-height: 1.5;
+  text-align: left;
+  vertical-align: top;
+  border: 1px solid #e1e1e1;
+}
+
+table th {
+  font-weight: bold;
+}
+
+table caption + thead tr:first-child th,
+table caption + thead tr:first-child td,
+table colgroup + thead tr:first-child th,
+table colgroup + thead tr:first-child td,
+table thead:first-child tr:first-child th,
+table thead:first-child tr:first-child td {
+  border: 1px solid #e1e1e1;
+  background-color: #f5f5f5;
+}
+
+.el-carousel__button {
+  background-color: #999999 !important;
+}
+
+.el-carousel__container {
+  height: 260px!important;
+}
+
 </style>

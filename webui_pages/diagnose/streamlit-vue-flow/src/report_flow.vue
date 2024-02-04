@@ -66,7 +66,6 @@ export default {
           edge.Class = classMap[edge.Class];
         });
         this.nodeData = jsonData;
-        console.log('Args changed from', oldVal, 'to', newVal);
       },
       deep: true,
       immediate: true
