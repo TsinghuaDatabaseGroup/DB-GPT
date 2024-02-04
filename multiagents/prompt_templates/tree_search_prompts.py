@@ -1,4 +1,4 @@
-CHOSING_NODE_PROMPT='''Do the following tasks as best you can. Use the following format:
+CHOOSING_NODE_PROMPT='''Do the following tasks as best you can. Use the following format:
 Task: the task you must handle
 Thought: analyze the situation now, and think what to do next or "give up".
 Action: the action to take, should be exactly one of following strings: [{tool_names}]
@@ -7,7 +7,7 @@ Observation: the result of the action
 ... (this Thought/Action/Action Input/Observation can repeat N times)
 Thought: I now know the final answer. (or) I give up and retry.
 Final Answer: the final answer to the original input question. (or) I give up and try again.
-Remember, this is not your first try, you have tried this task before and make some (thought-action) chains. So in each postion of the (thought-action) chain, you first look at the former choices and former reflections, and then decide whether to go down a former choice or to make a new choice here.
+Remember, this is not your first try, you have tried this task before and make some (thought-action) chains. So in each position of the (thought-action) chain, you first look at the former choices and former reflections, and then decide whether to go down a former choice or to make a new choice here.
 {task_description}
 {input_description}
 This is Not my first try, I have tried this task for many times. This time I first follow one of the former trices:
@@ -31,14 +31,14 @@ When you give your vote, You must follow the following principles:
 2.If you want to restart the task with one of the candidates' trice, and make some different choice in the middle, you may want to follow the best candidates' trice.
 3.Remember, longer action chain doesn't mean is closer to success, because the process can not rollback, you may refer to the example as "what is  a success". 
 Begin:
-1.it's your turn to first analyze each candidates. One candiate one sentence.
+1.it's your turn to first analyze each candidates. One candidate one sentence.
 2.Then you can tell me who do you think is most close to success, and why.
 3.Finally you must tell which is the best in one Word. with the following format:
 analyze candidate 1: xxx
 analyze candidate 2: xxx
 ...
 analyze candidate n: xxx
-most close to succeess: xxx
+most close to success: xxx
 best candidate: "candidate x" / "tied"
 Begin!
 '''
@@ -73,7 +73,7 @@ Before you generate my thought for this state, I will first show you your previo
 {previous_candidate}
 Remember you are now in the intermediate state of a trail, you will first analyze the now state and previous action candidates, then make actions that is different from all the previous.'''
 
-MAKE_REFLECTION_RPOMPT='''
+MAKE_REFLECTION_PROMPT= '''
 Do the following tasks as best you can. Use the following format:
 Task: the task you must handle
 Thought: you should always think about what to do
@@ -140,7 +140,7 @@ When you give your vote, You must follow the following principles:
 2.If you want to restart the task with one of the candidates' trice, and make some different choice in the middle, you may want to follow the best candidates' trice.
 3.Remember, longer action chain doesn't mean is closer to success, because the process can not rollback, you may refer to the example as "what is  a success". 
 Begin:
-1.it's your turn to first analyze each candidates. One candiate one sentence.
+1.it's your turn to first analyze each candidates. One candidate one sentence.
 2.Then you can tell me who do you think is most close to success, and the reason.
 3.Finally you must tell which is the best in one Word. 
 Your output should with the following format:
@@ -148,7 +148,7 @@ Your output should with the following format:
 - analyze candidate 1: xxx
 ...
 - analyze candidate n: xxx
-- most close to succeess: xxx
+- most close to success: xxx
 -  "<candidate_x>"
 Begin!
 '''
