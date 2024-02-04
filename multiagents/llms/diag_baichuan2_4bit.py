@@ -1,8 +1,6 @@
 from multiagents.llms.local_chat_model import LocalChatModel
 from . import llm_registry
-import sys
-sys.path.append("../../../")
-from localized_llms.inference import baichuan2_4bit_inference
+from multiagents.localized_llms.inference import baichuan2_4bit_inference
 
 @llm_registry.register("diag-baichuan2-4bit")
 class DiagBaichuan2_4bitChat(LocalChatModel):

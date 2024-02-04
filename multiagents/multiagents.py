@@ -33,7 +33,7 @@ class MultiAgents:
 
         # Reporter
         reporter = load_agent(agent_templates[0])
-
+        
         # Assigner for expert selection
         agents[AGENT_TYPES("role_assigner")] = [load_agent(agent_templates[1])]
 

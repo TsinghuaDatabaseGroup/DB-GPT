@@ -1,8 +1,6 @@
 from multiagents.llms.local_chat_model import LocalChatModel
 from . import llm_registry
-import sys
-sys.path.append("../../../")
-from localized_llms.inference import codellama_inference
+from multiagents.localized_llms.inference import codellama_inference
 
 @llm_registry.register("diag-codellama")
 class DiagCodeLlamaChat(LocalChatModel):
