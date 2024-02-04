@@ -81,6 +81,6 @@ def match_diagnose_knowledge(
     
     knowledge_str = alert_and_metric_str + workload_str + slow_queries_str
 
-    print(" == knowledge_str == ", knowledge_str)
+    # print(" == knowledge_str == ", knowledge_str)
 
     return knowledge_str, abnormal_metric_detailed_values

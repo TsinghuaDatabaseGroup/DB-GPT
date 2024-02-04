@@ -68,6 +68,12 @@ def search_docs(
                     no_replicate_docs.append(doc)
 
         data.extend([DocumentWithScore(page_content=x[0].page_content, metadata=x[0].dict()['metadata'], score=x[1]) for x in no_replicate_docs])
+
+        print(f"知识库采用其中的{len(no_replicate_docs)}条相关文档：")
+        # print no_replicate_docs separated by \n
+        for doc in no_replicate_docs:
+            print(doc[0].metadata)
+        print('*' * 100)
     
     return data
 

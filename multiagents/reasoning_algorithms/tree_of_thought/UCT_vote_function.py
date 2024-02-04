@@ -289,9 +289,9 @@ class UCT_vote_function(base_search_method):
                 self.llm.change_messages("", messages)
 
                 print(colored(f"- Voting ...","grey"))
-                with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-                    message = self.llm.parse()
-                    pbar.update(1)
+                #with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
+                message = self.llm.parse()
+                #    pbar.update(1)
 
                 vote = message["content"]
                 # print(vote)
@@ -381,12 +381,12 @@ class UCT_vote_function(base_search_method):
 
         self.llm.change_messages(self.role_description, message_list)
 
-        print(colored(f"- Reflecting ...","grey"))
-        with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-            new_message = self.llm.parse()
-            pbar.update(1)
+        # with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
+        new_message = self.llm.parse()
+        #    pbar.update(1)
 
         reflection = new_message['content']
+        print(colored(f"- 反思内容： {reflection}","grey"))
         print(colored(f"Reflexion: {reflection}","green"))
 
         now_time = datetime.datetime.now()
@@ -463,10 +463,10 @@ class UCT_vote_function(base_search_method):
             self.llm.change_messages(self.role_description, now_node.messages)
             # self.llm.display_conversation()
 
-            print(colored(f"- Analyzing with tools ...","grey"))
-            with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-                new_message = self.llm.parse()
-                pbar.update(1)
+            # print(colored(f"- Analyzing with tools ...","grey"))
+            #with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
+            new_message = self.llm.parse()
+            #    pbar.update(1)
 
             # print(f"New message:\t{new_message['content']}")
             assert new_message["role"] == "assistant"
@@ -493,10 +493,10 @@ class UCT_vote_function(base_search_method):
                     if parsed_response != None:
                         break
 
-                    print(colored(f"- Analyzing with tools ...","grey"))
-                    with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-                        new_message = self.llm.parse()
-                        pbar.update(1)
+                    # print(colored(f"- Analyzing with tools ...","grey"))
+                    # with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
+                    new_message = self.llm.parse()
+                    #    pbar.update(1)
 
                     time.sleep(0.5)
 
@@ -562,6 +562,7 @@ class UCT_vote_function(base_search_method):
                     if "obtain_start_and_end_time_of_anomaly" in parsed_response.tool and self.alert_dict != [] and self.alert_dict != None:
                         observation = f"The start time is {self.start_time}, and the end time is {self.end_time}."
                     else:
+                        print(f"- 使用工具API ...\n  Name: {parsed_response.tool}\n  Parameters: {parameters}")
                         if isinstance(parameters, list):
                             observation = []
                             for parameter in parameters:
