@@ -52,7 +52,7 @@ class ChromaKBService(KBService):
                   top_k: int,
                   score_threshold: float = SCORE_THRESHOLD,
                   ) -> List[Document]:
-        print(f"server.knowledge_base.kb_service.chroma_kb_service.do_search 输入的query参数为:{query}")
+        # print(f"server.knowledge_base.kb_service.chroma_kb_service.do_search 输入的query参数为:{query}")
         self._load_chroma()
         # TODO: 取消score_threshold_process，使用chromadb自己的距离计算
         docs = self.chroma.similarity_search_with_score(query, top_k)
@@ -74,7 +74,7 @@ class ChromaKBService(KBService):
 
             if byte_count >= VS_TYPE_PROMPT_TOTAL_BYTE_SIZE:
                 break
-        print(f"ChromaDB搜索到{len(info_docs)}个结果：")
+        print(f"ChromaDB搜索到{len(info_docs)}个结果")
         # 将结果写入文件
         result_file = open("chromadb_search_results.txt", "w", encoding="utf-8")
         result_file.write(f"query:{query}")
@@ -85,9 +85,9 @@ class ChromaKBService(KBService):
             result_file.write("*" * 20)
             result_file.write("\n")
             result_file.flush()
-            print(doc.page_content + "\n")
-            print("*" * 20)
-            print("\n")
+            # print(doc.page_content + "\n")
+            # print("*" * 20)
+            # print("\n")
         result_file.close()
         # print(f"server.knowledge_base.kb_service.chroma_kb_service.do_search 输出的info_docs参数为:{info_docs}")
         return info_docs

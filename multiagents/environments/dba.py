@@ -170,12 +170,16 @@ class DBAEnvironment(BaseModel):
         self.reporter.alert_str = alert_str
         self.reporter.alert_dict = alert_dict
 
-        print("Report Initialization!")
+        # print("Report Initialization!")
         print(
             f'<flow>{{"title": "初始化诊断报告", "content": "诊断报告已经初始化", "isCompleted": 1, "isRuning": 0}}</flow>')
-        with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-            self.reporter.initialize_report()
-            pbar.update(1)
+        # with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
+        self.reporter.initialize_report()
+        #    pbar.update(1)
+
+        # print self.reporter.report in pretty dict format
+        pretty_report = json.dumps(self.reporter.report, indent=4)
+        print(pretty_report + "\n")
 
         # ================== vanilla model ==================
         # self.reporter.report["anomaly description"]
@@ -237,17 +241,19 @@ class DBAEnvironment(BaseModel):
         self.role_assigner.alert_dict = self.reporter.alert_dict
 
         # ================== Expert Assignment ==================
-        print(colored(f"\nRole Assignment!", "green"))
+        # print(colored(f"\nRole Assignment!", "green"))
 
-        with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-            selected_experts = self.role_assign(
-                advice=advice, alert_info=self.role_assigner.alert_str)
-            pbar.update(1)
+        #with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
+        selected_experts = self.role_assign(
+            advice=advice, alert_info=self.role_assigner.alert_str)
+        #    pbar.update(1)
 
         # append the names of selected_experts (e.g., selected_experts[0].name)
         # to the task description by \n
         if len(selected_experts) > args.max_hired_experts:
             selected_experts = selected_experts[:args.max_hired_experts]
+
+        print("Assigned Experts: ", [expert.name for expert in selected_experts])
 
         expert_data = []
         for expert in selected_experts:
@@ -538,7 +544,7 @@ class DBAEnvironment(BaseModel):
 
         print(
             '<flow>{"title": "圆桌讨论", "content": "", "isCompleted": 0, "isRuning": 1}</flow>')
-        print(colored(f"Cross Review!", "yellow"))
+        # print(colored(f"Cross Review!", "yellow"))
 
         # discuss over the summarized initial_diags results
         for agent in agents:
@@ -566,6 +572,8 @@ class DBAEnvironment(BaseModel):
                 else:
                     self.reporter.record["brainstorming"]["messages"].append(
                         {"sender": agent.name, "data": review["content"], "time": review['time']})
+                    
+                print(f"{agent.name}评审意见：", review["content"])
                 # {
                 #     "sender":"ChiefDBA",
                 #     "data":"#diagnose /n xxxxxx /n  # solution /n XXXXXX/n   # knowledge /n  XXXXX/n  下面展示图表 ```chart xxczxczxczczxc ```` ",
