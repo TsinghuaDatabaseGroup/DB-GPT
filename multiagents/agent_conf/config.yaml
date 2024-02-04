@@ -107,7 +107,7 @@ prompts:
     After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
     Thought: I now know the root cause of the anomaly.
     Action: Speak
-    Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes splitted by '\n', "knowledge": the diagnosis knowledge you used})
+    Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes split by '\n', "knowledge": the diagnosis knowledge you used})
 
     ===============
 
@@ -157,7 +157,7 @@ agents:
     name: ChiefDBA
     role_description: |-
       You are a Chief DBA with much database diagnosis experience. Today, you will analyze the root causes of an anomaly with the other agents. Here is the outline of the procedure:
-      1. Chat and ask how to diangose the root causes of the anomaly with other agents.
+      1. Chat and ask how to diagnose the root causes of the anomaly with other agents.
       2. Summarize the root causes and detailed solutions spoken by other agents.
 
       Your answer needs to be concise and accurate.

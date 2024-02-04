@@ -1,5 +1,5 @@
 # MAKE_REFLEXION_PROMPT ='''I failed in the former tries, and I need to rethink the task.
-# Then I will analyze the steps I took former and tell the reason I failed in the last try. I wiil make a reflexion.
+# Then I will analyze the steps I took former and tell the reason I failed in the last try. I will make a reflexion.
 # The "Reflexion" ends with pattern "END REFLEXION"
 # Reflexion: '''
 
@@ -32,7 +32,7 @@ The reflection information can be inherit to later trails:
 Begin!
 '''
 
-CAT_REFLEXION_USER_PROMPT = '''Now, let's start over and follow the revised plan. Hope you can do better. The enviornment restarted.'''
+CAT_REFLEXION_USER_PROMPT = '''Now, let's start over and follow the revised plan. Hope you can do better. The environment restarted.'''
 
 
 CAT_REFLEXION_PROMPT = '''

@@ -1,6 +1,6 @@
 
 DIAGNOSIS_SUMMARYY_PROMPT='''
-Please provide a searchable summary of the input diagnosis procedures or recommended solutions without lossing important information. The input is as follows:
+Please provide a searchable summary of the input diagnosis procedures or recommended solutions without losing important information. The input is as follows:
 {diagnosis_messages}
 
 =============
