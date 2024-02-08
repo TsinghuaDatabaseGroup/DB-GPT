@@ -370,7 +370,20 @@ We support AlertManager for Prometheus. You can find more information about how 
 
 #### Script-Triggered Anomalies
 
-We offer scripts that could incur typical anomalies. Check out different anomaly cases in [http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)
+We offer scripts that could incur typical anomalies. Check out different anomaly cases in [http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn).We trigger the anomalies by highly concurrent inserts(deletes,updates,etc) combined with the test benches.You can trigger the  [anomalies](./anomaly_trigger/) we provide in the following way:
+```shell
+# single root causes
+$ python anomaly_trigger/main.py --anomaly MISSING_INDEXES --threads 100 --ncolumn 20 --colsize 100 --nrow 20000
+# --anomaly The type of the anomaly
+# --threads The numbers of the clients
+# --columns The numbers of the columns
+# --colsize The size of the column
+# --nrow The numbers of the rows
+
+#multiple causes
+$ python anomaly_trigger/multi_anomalies.py
+# change the code to trigger different kinds of anomalies as you wish
+```
 
 | Root Cause          | Description                                           | Potential Alerts                 |
 |---------------------|-------------------------------------------------------|----------------------|
