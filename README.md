@@ -370,7 +370,33 @@ We support AlertManager for Prometheus. You can find more information about how 
 
 #### Script-Triggered Anomalies
 
-We offer scripts that could incur typical anomalies. Check out different anomaly cases in [http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)
+We provide scripts that trigger typical anomalies ([anomalies directory](./anomaly_trigger/)) using highly concurrent operations (e.g., inserts, deletes, updates) in combination with specific test benches. 
+
+**Single Root Cause Anomalies:**
+
+Execute the following command to trigger a single type of anomaly with customized parameters:
+
+```shell
+python anomaly_trigger/main.py --anomaly MISSING_INDEXES --threads 100 --columns 20 --colsize 100 --nrow 20000
+```
+
+Parameters:
+- `--anomaly`: Specifies the type of anomaly to trigger.
+- `--threads`: Sets the number of concurrent clients.
+- `--columns`: Defines the number of columns.
+- `--colsize`: Determines the size of each column (in bytes).
+- `--nrow`: Indicates the number of rows.
+
+**Multiple Root Cause Anomalies:**
+
+To trigger anomalies caused by multiple factors, use the following command:
+
+```shell
+python anomaly_trigger/multi_anomalies.py
+```
+
+Modify the script as needed to simulate different types of anomalies.
+
 
 | Root Cause          | Description                                           | Potential Alerts                 |
 |---------------------|-------------------------------------------------------|----------------------|
@@ -386,6 +412,7 @@ We offer scripts that could incur typical anomalies. Check out different anomaly
 | COMMIT_CONTENTION | Highly concurrent commits affecting SQL execution        |   ![](https://img.shields.io/badge/-NodeLoadHigh-Informational) ![](https://img.shields.io/badge/-NodeOutOfMem-informational)   |
 | SMALL_MEMORY_ALLOC    | Too small allocated memory space              |                      |
 
+Check detailed use cases at [http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn).
 
 #### Manually Designed Anomalies
 
