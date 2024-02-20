@@ -66,7 +66,7 @@ if __name__ == "__main__":
         # /var/lib/pgsql/12/data/pg_log/postgresql-Mon.log
         slow_queries = anomaly_json["slow_queries"]
     if args.enable_workload_statistics_view == True:
-        workload_statistics = db.obtain_historical_slow_queries()
+        workload_statistics = db.obtain_historical_queries_statistics(topn=50)
     if args.enable_workload_sqls == True:
         workload_sqls = anomaly_json["workload"]
 
