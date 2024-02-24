@@ -54,6 +54,10 @@
 
 🦾 Build your personal database administrator (D-Bot)🧑‍💻, which is good at solving database problems by  *reading documents, using various tools, writing analysis reports!* 
 
+
+<a href="#-news">*Undergoing An Upgrade!*</a>
+
+
 <!-- **An important, major [version update](https://github.com/TsinghuaDatabaseGroup/DB-GPT/tree/chatchat) is coming soon, stay tuned!** 📣 🔜 -->
 
 
@@ -93,6 +97,8 @@
 <span id="-news"></span>
 
 ## 📰 Updates
+
+- [ ] Human Feedback 🔥🔥🔥
 
 - [ ] New Frontend
 
