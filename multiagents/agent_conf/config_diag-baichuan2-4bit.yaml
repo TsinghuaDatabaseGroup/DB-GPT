@@ -1,0 +1,208 @@
+max_turn: &max_turn 3
+
+llm_type: diag-baichuan2-4bit
+
+prompts:
+  role_assigner_prompt: &role_assigner_prompt |-
+    # Role Description
+    You are the leader of a group of diagnosis experts. Currently, the database in your company may meet problems. The anomaly alert is:
+    ${alert_info}
+    
+    Now you need to select experts with diverse identity to correctly analyze the root causes of the given alert. The names of available experts are:
+    ${task_description}
+    
+    Which experts will you recruit to generate an accurate solution? Note you can only select one to three experts!!!
+    
+    # Response Format Guidance
+    You should respond with a list of expert names (one expert name can only occur for one time). For example:
+    1. CpuExpert
+    2. QueryExpert
+    ...
+    
+    Only respond with the names of selected experts (separated by spaces). Do not include your reason.
+
+  chief_dba_format_prompt: &chief_dba_format_prompt |-
+    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. It depends on you to collaborate with other agents to diagnose the root causes. The anomaly alert is:
+    ${alert_info}
+    
+    # Rules and Format Instructions for Response
+    
+    ===============
+
+    - Must listen to the advice of the user, and respond to the user's advice in the following format:
+    Thought: I now know the advice of the user, and i need to consider it during the diagnosis and optimization solutions
+    Action: Speak
+    Action Input: ({"diagnose": response to the advice, "solution": [], "knowledge": ""})
+
+    - You can detect and diagnose anomaly as follows to use tool:
+    Thought: (your thought)
+    Action: (an action name, it can be one of [Speak], pay attention to the capitalization)
+    Action Input: (argument for the action)
+
+    After you obtain the start and end time of the anomaly, announce it to the agents, and use the following format:
+    Thought: I now know the start and end time of the anomaly.
+    Action: Speak
+    Action Input: ({"diagnose": the start and end time of the anomaly are ${start_time} and ${end_time}, "solution": [], "knowledge": ""})
+
+    After all the agents have announced the root causes they found, you should summarize all the mentioned root causes and optimization solutions point by point:
+    Thought: I now know the root causes and optimization solutions from other agents, and i need to conclude them point by point
+    Action: Speak
+    Action Input: ({"diagnose": The identified root causes of the anomaly are ..., "solution": The suggested optimization solutions are ..., "knowledge": ""})
+
+    ===============
+
+    Here is the conversation history
+    ${chat_history}
+
+    Here is the execution log of tools
+    ${tool_observation}
+
+    - Once an agent has announced the root causes he found, it is your responsibility to memorize the root causes. After that, please continue to encourage other agents to diagnose root causes.
+
+    - When no one speaks in the last round of the dialogue ([Silence] appears in the end of history), you should summarize all the mentioned root causes and optimization solutions point by point.
+
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! And do not easily give root causes if there is no clear evidence or responses from other agents.
+    Based on the above history, what will you, ${agent_name}, do next?
+
+  # - During diagnosis, you can listen to the chief dba by responding:
+  # Thought: (your thought)
+  # Action: Listen
+  # Action Input: "None"
+  expert_agent_format_prompt: &expert_agent_format_prompt |-
+    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. The anomaly alert is:
+    ${alert_info}
+
+    # Rules and Format Instructions for Response
+
+    - During diagnosis, you have access to the following tools:
+    ${tools}
+
+    ===============
+
+    - You can respond as follows to use tool:
+    Thought: (your thought)
+    Action: (an action name, it can be one of [whether_is_abnormal_metric, match_diagnose_knowledge, optimize_index_selection, Speak], pay attention to the capitalization)
+    Action Input: (argument for the action)
+
+    - You can give optimization solutions as follows to use tool:
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time":"xxxx","end_time":"xxxx"}
+
+    You can first determine abnormal metrics by using the tools, and use the following format:
+    Thought: Now that I have obtained the start and end time of the anomaly, check whether the CPU usage is abnormal during that time period.
+    Action: whether_is_abnormal_metric
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu_usage"}
+
+    Next you must diagnose root causes by using the tools, and must use the following format (any other choice is not allowed):
+    Thought: No matter cpu usage is abnormal or normal, I must to diagnose the cause of the anomaly using the metrics, queries and knowledge gained from match_diagnose_knowledge.
+    Action: match_diagnose_knowledge
+    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu"}
+
+    Besides, if you find that the indexes are missing, you need to call the optimize_index_selection API to obtain the recommended indexes.
+    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
+    Action: optimize_index_selection
+    Action Input: {"start_time": ${start_time},"end_time": ${end_time}}
+
+    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
+    Thought: I now know the root cause of the anomaly.
+    Action: Speak
+    Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes split by '\n', "knowledge": the diagnosis knowledge you used})
+
+    ===============
+
+    Here is the conversation history
+    ${chat_history}
+
+    Here is the execution log of tools
+    ${tool_observation}
+
+    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
+    Based on the above history, what will you, ${agent_name}, do next?
+
+
+monitor_tools: &monitor_tools
+-
+  tool_name: metric_monitor
+
+expert_tools: &expert_tools
+-
+  tool_name: metric_monitor
+-  
+  tool_name: index_advisor
+-  
+  tool_name: query_advisor
+
+
+name: 8 DBAs with Tools
+
+environment:
+  env_type: dba
+  max_turns: *max_turn
+  rule:
+    order:
+      type: sequential
+    visibility:
+      type: all
+    selector:
+      type: basic
+    updater:
+      type: basic
+    describer:
+      type: basic
+
+agents:
+  - 
+    agent_type: reporter
+    name: ChiefDBA
+    role_description: |-
+      You are a Chief DBA with much database diagnosis experience. Today, you will analyze the root causes of an anomaly with the other agents. Here is the outline of the procedure:
+      1. Chat and ask how to diagnose the root causes of the anomaly with other agents.
+      2. Summarize the root causes and detailed solutions spoken by other agents.
+
+      Your answer needs to be concise and accurate.
+    prompt_template: *chief_dba_format_prompt
+    memory:
+      memory_type: chat_history
+    tool_memory:
+      memory_type: chat_history
+      llm:
+        llm_type: diag-baichuan2-4bit
+        model: diag-baichuan2-4bit
+      recursive: true
+    llm:
+      llm_type: diag-baichuan2-4bit
+      model: diag-baichuan2-4bit
+    tools: *monitor_tools
+    verbose: true
+  - 
+    agent_type: role_assigner
+    name: role assigner
+    role_description: |-
+      You are a role assigner. Your task is to select experts with diverse identity to correctly analyze the root causes of the given alerts.
+    prompt_template: *role_assigner_prompt
+    memory:
+      memory_type: chat_history
+    llm:
+      llm_type: diag-baichuan2-4bit
+      model: diag-baichuan2-4bit
+    output_parser:
+      type: role_assigner
+  -
+    agent_type: solver
+    name: ${agent_name}
+    role_description: You are a ${agent_name} agent that can use the tool apis to check resource usage (whether_is_abnormal_metric), analyze the root causes of high resource usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection, enable_or_disable_nestloop_operator). Note the response should be in markdown format.
+    prompt_template: *expert_agent_format_prompt
+    memory:
+      memory_type: chat_history
+    tool_memory:
+      memory_type: chat_history
+      llm:
+        llm_type: diag-baichuan2-4bit
+        model: diag-baichuan2-4bit
+      recursive: true
+    llm:
+      llm_type: diag-baichuan2-4bit
+      model: diag-baichuan2-4bit
+    tools: *expert_tools
+    verbose: true

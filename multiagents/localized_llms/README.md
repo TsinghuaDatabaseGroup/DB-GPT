@@ -11,13 +11,7 @@ A demo of comparing diagnosis performance of <font color=magenta>D-Bot(GPT-4)</f
 
 ## 🕹 QuickStart
 
-Step 1: Install python packages.
-
-```bash
-pip install -r requirements.txt
-```
-
-(Optional) Step 2: Download Pretrained Model Parameters: 
+(optional) Step 1: Download Pretrained Model Parameters: 
 * [diag-baichuan2](https://huggingface.co/curtis-sun/diag-baichuan2/tree/main), fine-tuned from Baichuan2-13B
 * [diag-baichuan2-4bit](https://huggingface.co/curtis-sun/diag-baichuan2-4bit/tree/main), a 4bit version of diag-baichuan2
 * [diag-codellama](https://huggingface.co/curtis-sun/diag-codellama/tree/main), fine-tuned from CodeLlama-13B
@@ -29,6 +23,6 @@ class DiagBaichuan2Args(BaseModel):
     load: str = Field(default="curtis-sun/diag-baichuan2")
 ```
 
-Step 3: Configure Agents Equipped with localized LLM, e.g., rename [config_diag_baichuan2.yaml](../multiagents/agent_conf/config_diag_baichuan2.yaml) as config.yaml.
+Step 2: Configure Agents Equipped with localized LLM, e.g., rename [config_diag-baichuan2-4bit.yaml](../agent_conf/config_diag-baichuan2-4bit.yaml) as config.yaml.
 
 Then run the project the same as with OpenAI APIs.

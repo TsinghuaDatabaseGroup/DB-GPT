@@ -189,25 +189,42 @@ $ pip3 install -r requirements_api.txt # If only running the API, you can just i
   > Note pg_stat_statements accumulates query statistics over time. Therefore, you need to regularly clear the statistics: 1) to discard all statistics, execute "SELECT pg_stat_statements_reset();"; 2) to discard statistics for a specific query, execute "SELECT pg_stat_statements_reset(userid, dbid, queryid);".
 
 
-+ Download the model parameters of [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1)
++ (optional) If you need to run this project locally or in an offline environment, you first need to download the required models to your local machine and then correctly adapt some configurations.
+
+1. Download the model parameters of [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1)
 
   > Create a new directory ./multiagents/localized_llms/sentence_embedding/
 
   > Place the downloaded sentence-transformer.zip in the ./multiagents/localized_llms/sentence_embedding/ directory; unzip the archive.
 
-
-
-### 2. Model Download
-
-If you need to run this project locally or in an offline environment, you first need to download the required models to your local machine, usually open-source LLM and Embedding models can be downloaded from [HuggingFace](https://huggingface.co/models).
+2. Download LLM and embedding models from [HuggingFace](https://huggingface.co/models).
 
 To download models, first install [Git LFS](https://docs.github.com/zh/repositories/working-with-files/managing-large-files/installing-git-large-file-storage), then run
 
 ```Shell
 $ git lfs install
 $ git clone https://huggingface.co/moka-ai/m3e-base
+$ git clone https://huggingface.co/Qwen/Qwen-1_8B-Chat
 ```
-### 3. Initialize Knowledge Base and Configuration Files
+
+3. Adapt the [model configuration](configs/model_config.py.example) to the download model paths, e.g., 
+
+```Python
+EMBEDDING_MODEL = "m3e-base"
+LLM_MODELS = ["Qwen-1_8B-Chat"]
+MODEL_PATH = {
+    "embed_model": {
+        "m3e-base": "m3e-base", # Download path of embedding model.
+    },
+
+    "llm_model": {
+        "Qwen-1_8B-Chat": "Qwen-1_8B-Chat", # Download path of LLM.
+    },
+}
+```
+
+4. Download and config [localized LLMs](multiagents/localized_llms).
+### 2. Initialize Knowledge Base and Configuration Files
 
 Copy the configuration files
 ```shell
@@ -227,14 +244,14 @@ Initialize the knowledge base
 $ python init_database.py --recreate-vs
  ```
 
-### 4. One-click Start
+### 3. One-click Start
 
 Start the project with the following commands
 ```shell
 $ python startup.py -a
 ```
 
-### 5. Launch Interface Examples
+### 4. Launch Interface Examples
 
 If started correctly, you will see the following interface
 
@@ -582,7 +599,7 @@ We thank all the contributors to this project. Do not hesitate if you would like
 ## Contact Information
 👏🏻Welcome to our wechat group!
 <div align= "center">
-<img src="img/chat-2024-02-06.png" width="400px">
+<img src="img/chat-2024-02-19.png" width="400px">
 </div>
 
 <!-- ## ⭐️ Star History

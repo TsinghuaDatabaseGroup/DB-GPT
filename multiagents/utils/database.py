@@ -435,7 +435,3 @@ class Database():
         self.conn.commit()
         self.conn.close()
         return
-
-
-
-
