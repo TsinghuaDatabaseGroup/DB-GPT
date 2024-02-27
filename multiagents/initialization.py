@@ -63,7 +63,7 @@ def prepare_task_config(task, args):
     """Read the yaml config of the given task in `tasks` directory."""
     
     task_path = os.path.join(os.path.dirname(__file__), task)
-    config_path = os.path.join(task_path, "config.yaml")
+    config_path = os.path.join(task_path, args.config_file)
     
     if not os.path.exists(task_path):
         raise ValueError(f"Config {task} not found.")

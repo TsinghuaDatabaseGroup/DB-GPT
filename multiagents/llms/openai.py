@@ -115,7 +115,10 @@ class OpenAIChat(BaseChatModel):
 
     def parse(self):
         #messages = self._construct_messages(prompt) # TODO add history messages
-        client = OpenAI(api_key=ONLINE_LLM_MODEL["openai-api"]["api_key"])
+        client = OpenAI(
+            api_key=ONLINE_LLM_MODEL["openai-api"]["api_key"],
+            base_url=ONLINE_LLM_MODEL["openai-api"]["api_base_url"]
+        )
         self.args.model = ONLINE_LLM_MODEL["openai-api"]["model_name"]
         messages = self.conversation_history
 
