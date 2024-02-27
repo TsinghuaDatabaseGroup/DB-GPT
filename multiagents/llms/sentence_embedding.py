@@ -2,10 +2,11 @@ import os
 import time
 from openai import OpenAI
 from sentence_transformers import SentenceTransformer
+from typing import List
 
 
 #def sentence_embedding(sentence: str, model: str = "text-embedding-ada-002"):
-def sentence_embedding(sentence: str, model: str = "sentence-transformer"):
+def sentence_embedding(sentence: str, model: str = "sentence-transformer") -> List[float]:
 
     if model == "sentence-transformer":
 
@@ -16,7 +17,7 @@ def sentence_embedding(sentence: str, model: str = "sentence-transformer"):
             # load from remote
             embedder = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 
-        embedding = embedder.encode([sentence], convert_to_tensor=True)[0]
+        embedding = embedder.encode(sentence, convert_to_numpy=True).tolist()
 
     elif model == "text-embedding-ada-002":
         api_key = os.environ.get("OPENAI_API_KEY")

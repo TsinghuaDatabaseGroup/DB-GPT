@@ -250,8 +250,29 @@ class SolverAgent(BaseAgent):
         relevant_tools = self.tool_matcher.query(Template(self.prompt_template).safe_substitute(
             {"chat_history": self.memory.to_string(add_sender_prefix=True)}))
 
-        tools = "\n".join(
-            [f"> {tool}: {relevant_tools[tool]}" for tool in relevant_tools])
+        # 目前openai给的函数调用方式是在发请求的时候作为入参，但是不太适合这里需要Thought的过程，且改动会较大，所以先不改了
+        # https://github.com/openai/openai-cookbook/blob/main/examples/How_to_call_functions_with_chat_models.ipynb
+        # tools = [{"type": "function", "function": v} for v in relevant_tools.values()]
+
+        # 和qwen的格式对齐，应该gpt4/其他llm也能理解这个格式
+        tool_desc_template = {
+            'zh':
+                '### {name}\n\n{name}: {description} 输入参数：{parameters}',
+            'en':
+                '### {name}\n\n{name}: {description} Parameters：{parameters}'
+        }
+        tool_desc = tool_desc_template['zh']  # 我这里默认用中文模板了
+
+        tools = "\n\n".join(
+            [
+                tool_desc.format(
+                    name=tool_definition['name'],
+                    description=tool_definition['description'],
+                    parameters=json.dumps(tool_definition['parameters'], ensure_ascii=False)
+                ).rstrip()
+                for tool_definition in relevant_tools.values()
+            ]
+        )
 
         tools = tools.replace("{{", "{").replace("}}", "}")
 
