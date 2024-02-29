@@ -602,7 +602,7 @@ We thank all the contributors to this project. Do not hesitate if you would like
 ## Contact Information
 👏🏻Welcome to our wechat group!
 <div align= "center">
-<img src="img/chat-2024-02-19.png" width="400px">
+<img src="img/chat-2024-02-29.jpg" width="400px">
 </div>
 
 <!-- ## ⭐️ Star History
