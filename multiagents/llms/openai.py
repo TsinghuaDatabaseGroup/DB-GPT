@@ -138,6 +138,7 @@ class OpenAIChat(BaseChatModel):
             # pop the time key-value from the message
             if "time" in new_message:
                 new_message.pop("time")
+            # openai最新版不需要改成assistant了，这里应该无所谓，我推荐不改，log看起来更清晰点
             # if new_message["role"] == "function":
             #     new_message["role"] = "assistant"
             new_messages.append(new_message)
@@ -153,11 +154,12 @@ class OpenAIChat(BaseChatModel):
                 try:
                     output = response.choices[0].message.content
 
-                    saved_msgs = messages + [{'role': "assistant", "content": output}]
-                    if not os.path.exists(r"saved_msg_gpt4"):
-                        os.mkdir(r"saved_msg_gpt4")
-                    with open(f"saved_msg_gpt4/msg_{time.strftime('%H_%M_%S', time.localtime())}.json", "w", encoding='utf8') as f:
-                        json.dump(saved_msgs, f, ensure_ascii=False, indent=4)
+                    # 保存所有原始调用记录以便debug
+                    # saved_msgs = messages + [{'role': "assistant", "content": output}]
+                    # if not os.path.exists(r"saved_msg_gpt4"):
+                    #     os.mkdir(r"saved_msg_gpt4")
+                    # with open(f"saved_msg_gpt4/msg_{time.strftime('%H_%M_%S', time.localtime())}.json", "w", encoding='utf8') as f:
+                    #     json.dump(saved_msgs, f, ensure_ascii=False, indent=4)
                 except:
                     output = None
 
