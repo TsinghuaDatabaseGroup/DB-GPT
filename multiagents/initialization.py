@@ -72,7 +72,7 @@ def prepare_task_config(task, args):
             "You should include the config.yaml file in the task directory"
         )
     
-    task_config = yaml.safe_load(open(config_path))
+    task_config = yaml.safe_load(open(config_path,encoding='utf8'))
     
     # Build the output parser
     parser = output_parser_registry.build(task)
@@ -90,6 +90,11 @@ def prepare_task_config(task, args):
 
         agent_configs["name"] = agent_configs['name']
 
-        agent_configs["output_parser"] = task_config["output_parser"]
+        # 给qwen写了个output parser, 不会影响之前的
+        if agent_configs.get("output_parser", None):
+            if isinstance(agent_configs["output_parser"], str):
+                agent_configs["output_parser"] = output_parser_registry.build(agent_configs["output_parser"])
+        else:
+            agent_configs["output_parser"] = task_config["output_parser"]
 
     return task_config

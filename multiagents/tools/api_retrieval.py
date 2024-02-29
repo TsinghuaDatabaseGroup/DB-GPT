@@ -68,8 +68,8 @@ def register_functions_from_module(module, caller, max_api_num, agent_name):
             name, _, func = member
 
         if func.__module__ == module.__name__:
-            tools_definition = getattr(module, "tools_definition", {})
-            func_definition = tools_definition.get(name, None)
+            functions = getattr(module, "FUNCTION_DEFINITION", {})
+            func_definition = functions.get(name, None)
 
             if name in necessary_names:
                 params = get_function_parameters(func)

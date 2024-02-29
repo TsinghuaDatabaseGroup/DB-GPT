@@ -8,7 +8,7 @@ from multiagents.tools.metrics import advisor
 from multiagents.tools.metrics import get_workload_statistics
 import ast
 
-tools_definition = {
+FUNCTION_DEFINITION = {
     "optimize_index_selection": {
         "name": "optimize_index_selection",
         "description": "执行索引优化，不需要输入参数，返回推荐的索引",
@@ -17,7 +17,7 @@ tools_definition = {
 }
 
 
-def optimize_index_selection(start_time: int, end_time: int):
+def optimize_index_selection():
     """optimize_index_selection(start_time : int, end_time : int) returns the recommended index by running the algorithm 'Extend'.
         This method uses a recursive algorithm that considers only a limited subset of index candidates.
         The method exploits structures and properties that are typical for real-world workloads and the performance of indexes.

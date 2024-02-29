@@ -278,6 +278,14 @@ class SolverAgent(BaseAgent):
 
         tool_names = ", ".join([tool for tool in relevant_tools])
 
+        self.role_description = Template(self.role_description).safe_substitute(
+            {
+                "agent_name": self.name,
+                "tools": tools,
+                "tool_names": tool_names,
+            }
+        )
+
         input_arguments = {
             "alert_info": self.alert_str,
             "agent_name": self.name,

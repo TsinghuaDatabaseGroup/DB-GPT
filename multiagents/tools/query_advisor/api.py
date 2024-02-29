@@ -2,7 +2,7 @@ from configs import POSTGRESQL_CONFIG
 from multiagents.utils.database import DBArgs, Database
 from multiagents.tools.query_advisor.rewrite_class import rule_is_valid
 
-rewrite_rules_list = [
+REWRITE_RULES = [
     "AGGREGATE_ANY_PULL_UP_CONSTANTS",
     "AGGREGATE_EXPAND_DISTINCT_AGGREGATES",
     "AGGREGATE_EXPAND_DISTINCT_AGGREGATES_TO_JOIN",
@@ -49,7 +49,7 @@ rewrite_rules_list = [
     "UNION_PULL_UP_CONSTANTS",
     "UNION_TO_DISTINCT",
 ]
-knob_operators_list = [
+KNOB_OPERATORS = [
     "bitmapscan",
     "gathermerge",
     "hashagg",
@@ -67,7 +67,7 @@ knob_operators_list = [
     "tidscan"
 ]
 
-tools_definition = {
+FUNCTION_DEFINITION = {
     "sql_rewrite_based_on_rule": {
         "name": "sql_rewrite_based_on_rule",
         "description": "给定sql和改写规则，判断改写是否有效。有效则返回改写后的sql，否则返回原sql。",
@@ -76,7 +76,7 @@ tools_definition = {
             "properties": {
                 "rule": {
                     "type": "string",
-                    "enum": rewrite_rules_list,
+                    "enum": REWRITE_RULES,
                     "description": "改写规则，根据上下文信息推理出它。",
                 },
                 "query": {
@@ -89,19 +89,19 @@ tools_definition = {
     },
     "explain_query_after_changing_knob": {
         "name": "explain_query_after_changing_knob",
-        "description": "允许或者禁用某个算子，返回解释的查询计划。",
+        "description": "启用或禁用某个算子，返回解释的查询计划。",
         "parameters": {
             "type": "object",
             "properties": {
                 "operator": {
                     "type": "string",
-                    "enum": knob_operators_list,
+                    "enum": KNOB_OPERATORS,
                     "description": "算子名称",
                 },
                 "action": {
                     "type": "string",
                     "enum": ["on", "off"],
-                    "description": "允许或者禁用",
+                    "description": "启用或禁用",
                 },
                 "query": {
                     "type": "string",
@@ -122,17 +122,13 @@ def explain_query_after_changing_knob(operator, action, query):
     dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)  # todo assign database name
     db = Database(dbargs, timeout=-1)
     # add hint to the query
-    new_query = f"set {operator} to \"{action}\"; " + query.replace("\n", "")
+    new_query = f"set enable_{operator} to \"{action}\"; " + query.replace("\n", "")
 
     # execute the new query
     new_query_plan = db.pgsql_query_plan(new_query)
 
     if new_query_plan is None:
-        # raise error
-        raise Exception(
-            status_code=400,
-            detail=f"Failed to explain the query after changing the {operator} knob."
-        )
+        text_output = f"Failed to explain the query after changing the {operator} knob."
     else:
         if "on" in action.lower():
             total_cost, operators = db.query_plan_statistics(new_query_plan)

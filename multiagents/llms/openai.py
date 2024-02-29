@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from typing import List, Optional, Union
@@ -11,6 +12,7 @@ import time
 import random
 import re
 from openai import OpenAI
+import openai
 
 
 def remove_charts(text):
@@ -99,6 +101,17 @@ class OpenAIChat(BaseChatModel):
             logging.warning(f"Unused arguments: {kwargs}")
         super().__init__(args=args, max_retry=max_retry)
 
+        assert not openai.__version__.startswith('0.')
+        api_kwargs = {}
+        api_key = ONLINE_LLM_MODEL["openai-api"].get("api_key", None)
+        api_base = ONLINE_LLM_MODEL["openai-api"].get("api_base_url", None)
+        if api_base:
+            api_kwargs['base_url'] = api_base
+        if api_key:
+            api_kwargs['api_key'] = api_key
+        self.client = openai.OpenAI(**api_kwargs)
+
+
     def _construct_system_messages(self, prompt: str):
         return [{"role": "system", "content": prompt}]
 
@@ -115,10 +128,6 @@ class OpenAIChat(BaseChatModel):
 
     def parse(self):
         #messages = self._construct_messages(prompt) # TODO add history messages
-        client = OpenAI(
-            api_key=ONLINE_LLM_MODEL["openai-api"]["api_key"],
-            base_url=ONLINE_LLM_MODEL["openai-api"]["api_base_url"]
-        )
         self.args.model = ONLINE_LLM_MODEL["openai-api"]["model_name"]
         messages = self.conversation_history
 
@@ -129,20 +138,26 @@ class OpenAIChat(BaseChatModel):
             # pop the time key-value from the message
             if "time" in new_message:
                 new_message.pop("time")
-            if new_message["role"] == "function":
-                new_message["role"] = "assistant"
+            # if new_message["role"] == "function":
+            #     new_message["role"] = "assistant"
             new_messages.append(new_message)
         messages = new_messages
 
         for i in range(self.TRY_TIME):
             
             try:
-                response = client.chat.completions.create(
+                response = self.client.chat.completions.create(
                     messages=messages,
                     **self.args.dict()
                 )   
                 try:
                     output = response.choices[0].message.content
+
+                    saved_msgs = messages + [{'role': "assistant", "content": output}]
+                    if not os.path.exists(r"saved_msg_gpt4"):
+                        os.mkdir(r"saved_msg_gpt4")
+                    with open(f"saved_msg_gpt4/msg_{time.strftime('%H_%M_%S', time.localtime())}.json", "w", encoding='utf8') as f:
+                        json.dump(saved_msgs, f, ensure_ascii=False, indent=4)
                 except:
                     output = None
 
@@ -183,7 +198,6 @@ class OpenAIChat(BaseChatModel):
                 continue
 
         return {"role": "assistant", "content": "OpenAI service is unavailable. Please try again."}
-
 
     def generate_response(self, prompt: str) -> LLMResult:
         messages = self._construct_messages(prompt)
@@ -236,7 +250,6 @@ class OpenAIChat(BaseChatModel):
                 recv_tokens=response["usage"]["completion_tokens"],
                 total_tokens=response["usage"]["total_tokens"],
             )
-
     async def agenerate_response(self, prompt: str) -> LLMResult:
         messages = self._construct_messages(prompt)
 

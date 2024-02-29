@@ -130,8 +130,9 @@ expert_tools: &expert_tools
   tool_name: metric_monitor
 -  
   tool_name: index_advisor
--  
-  tool_name: query_advisor
+# 在查询优化函数没确定好之前不建议调用
+#-
+#  tool_name: query_advisor
 
 
 name: 8 DBAs with Tools
@@ -191,6 +192,7 @@ agents:
       model: "gpt-3.5-turbo"
       temperature: 0
       max_tokens: 256
+# 现在的output parser暂时还没适配
     output_parser:
       type: role_assigner
   -

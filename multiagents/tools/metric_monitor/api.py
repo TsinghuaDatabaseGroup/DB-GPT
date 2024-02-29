@@ -7,7 +7,7 @@ from multiagents.utils.markdown_format import generate_prometheus_chart_content
 from prometheus_service.prometheus_abnormal_metric import prometheus_metrics
 from server.knowledge_base.kb_doc_api import search_docs, fetch_expert_kb_names
 
-tools_definition = {
+FUNCTION_DEFINITION = {
     "whether_is_abnormal_metric": {
         "name": "whether_is_abnormal_metric",
         "description": "判断指标是否异常。不需要输入参数，返回判断结果。",

@@ -3,6 +3,7 @@ import argparse
 def main_parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--anomaly_file', type=str, default="", required=True, help='the file name of batch anomaly flie name')
+    parser.add_argument('--config_file', type=str, default="config.yaml", required=False, help='the config file')
     parser.add_argument('--latest_alert_file', type=str, default="", required=False, help='the file name of latest alert information')
     parser.add_argument('--agent_conf_name', type=str, default="agent_conf", required=False, help='the file name of llm agent settings')
     parser.add_argument('--max_hired_experts', type=int, default=2, required=False, help='the maximum number of hired experts')
