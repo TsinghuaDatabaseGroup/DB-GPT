@@ -1,6 +1,6 @@
 max_turn: &max_turn 3
 
-llm_type: GPT4-0613
+llm_type: Qwen1.5-14B-Chat
 
 prompts:
   role_assigner_prompt: &role_assigner_prompt |-
@@ -68,57 +68,37 @@ prompts:
   # Thought: (your thought)
   # Action: Listen
   # Action Input: "None"
-  expert_agent_format_prompt: &expert_agent_format_prompt |-
-    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. The anomaly alert is:
-    ${alert_info}
+  expert_agent_role_description: &expert_agent_role_description |-
+    You are a ${agent_name} agent that can use the tool apis to check resource usage (whether_is_abnormal_metric), analyze the root causes of high resource usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection). Note the response should be in markdown format.
+    
+    You have access to the following tools:
 
-    # Rules and Format Instructions for Response
-
-    - During diagnosis, you have access to the following tools:
     ${tools}
+    
+    Use the following format:
+    
+    Thought: you should always think about what to do
+    Action: the action to take, should be one of [${tool_names}]
+    Action Input: the input to the action
+    Observation: the result of the action
+    ... (this Thought/Action/Action Input/Observation can be repeated zero or more times)
+    Thought: I now know the final answer
+    Final Answer: the final answer to the original input question
+    
 
-    ===============
+  expert_agent_format_prompt: &expert_agent_format_prompt |-
+    现在公司的数据库触发了告警。告警的具体内容是:
+    ${alert_info}
+    
+    -你的分析必须基于以下步骤：
+    首先使用工具"whether_is_abnormal_metric"判断是否有异常指标。
+    其次使用工具"match_diagnose_knowledge"进行故障分析。
+    然后，基于你的思考，你可以选择是否使用工具优化查询或者优化索引，这一步可以重复0次或者多次。
+    
+    最后，基于上述分析，给出最终的根因和解决方案，回答必须是字典格式，模板如下：
+    Thought: 我现在知道异常的根因了
+    Final Answer: {"diagnose": "你诊断的根因", "solution": "你得到的最优解决方案", "knowledge": "你参考的诊断知识"}
 
-    - You can respond as follows to use tool:
-    Thought: (your thought)
-    Action: (an action name, it can be one of [whether_is_abnormal_metric, match_diagnose_knowledge, optimize_index_selection, Speak], pay attention to the capitalization)
-    Action Input: (argument for the action)
-
-    - You can give optimization solutions as follows to use tool:
-    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
-    Action: optimize_index_selection
-    Action Input: {"start_time":"xxxx","end_time":"xxxx"}
-
-    You can first determine abnormal metrics by using the tools, and use the following format:
-    Thought: Now that I have obtained the start and end time of the anomaly, check whether the CPU usage is abnormal during that time period.
-    Action: whether_is_abnormal_metric
-    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu_usage"}
-
-    Next you must diagnose root causes by using the tools, and must use the following format (any other choice is not allowed):
-    Thought: No matter cpu usage is abnormal or normal, I must to diagnose the cause of the anomaly using the metrics, queries and knowledge gained from match_diagnose_knowledge.
-    Action: match_diagnose_knowledge
-    Action Input: {"start_time": ${start_time}, "end_time": ${end_time}, "metric_name": "cpu"}
-
-    Besides, if you find that the indexes are missing, you need to call the optimize_index_selection API to obtain the recommended indexes.
-    Thought: Since indexes are missing, I need to call the optimize_index_selection API to obtain the recommended indexes.
-    Action: optimize_index_selection
-    Action Input: {"start_time": ${start_time},"end_time": ${end_time}}
-
-    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
-    Thought: I now know the root cause of the anomaly.
-    Action: Speak
-    Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes split by '\n', "knowledge": the diagnosis knowledge you used})
-
-    ===============
-
-    Here is the conversation history
-    ${chat_history}
-
-    Here is the execution log of tools
-    ${tool_observation}
-
-    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! 
-    Based on the above history, what will you, ${agent_name}, do next?
 
 
 monitor_tools: &monitor_tools
@@ -130,7 +110,6 @@ expert_tools: &expert_tools
   tool_name: metric_monitor
 -  
   tool_name: index_advisor
-# 在查询优化函数没确定好之前不建议调用
 #-
 #  tool_name: query_advisor
 
@@ -168,15 +147,10 @@ agents:
     tool_memory:
       memory_type: chat_history
       llm:
-        llm_type: gpt-4
-        model: gpt-4
-        temperature: 0.7
+        llm_type: qwen2_server
       recursive: true
     llm:
-      llm_type: gpt-4
-      model: gpt-4
-      temperature: 0.7
-      max_tokens: 2048
+      llm_type: qwen2_server
     tools: *monitor_tools
     verbose: true
   - 
@@ -188,31 +162,21 @@ agents:
     memory:
       memory_type: chat_history
     llm:
-      llm_type: gpt-3.5-turbo
-      model: "gpt-3.5-turbo"
-      temperature: 0
-      max_tokens: 256
-# 现在的output parser暂时还没适配
-    output_parser:
-      type: role_assigner
+      llm_type: qwen2_server
   -
     agent_type: solver
+    output_parser: qwen_output_parser
     name: ${agent_name}
-    role_description: You are a ${agent_name} agent that can use the tool apis to check resource usage (whether_is_abnormal_metric), analyze the root causes of high resource usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection, enable_or_disable_nestloop_operator). Note the response should be in markdown format.
+    role_description: *expert_agent_role_description
     prompt_template: *expert_agent_format_prompt
     memory:
       memory_type: chat_history
     tool_memory:
       memory_type: chat_history
       llm:
-        llm_type: gpt-4
-        model: gpt-4
-        temperature: 0.7
+        llm_type: qwen2_server
       recursive: true
     llm:
-      llm_type: gpt-4
-      model: gpt-4
-      temperature: 0.7
-      max_tokens: 2048
+      llm_type: qwen2_server
     tools: *expert_tools
     verbose: true

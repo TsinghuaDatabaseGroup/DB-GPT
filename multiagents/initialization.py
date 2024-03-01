@@ -63,7 +63,7 @@ def prepare_task_config(task, args):
     """Read the yaml config of the given task in `tasks` directory."""
     
     task_path = os.path.join(os.path.dirname(__file__), task)
-    config_path = os.path.join(task_path, "config.yaml")
+    config_path = os.path.join(task_path, args.config_file)
     
     if not os.path.exists(task_path):
         raise ValueError(f"Config {task} not found.")
@@ -72,7 +72,7 @@ def prepare_task_config(task, args):
             "You should include the config.yaml file in the task directory"
         )
     
-    task_config = yaml.safe_load(open(config_path))
+    task_config = yaml.safe_load(open(config_path,encoding='utf8'))
     
     # Build the output parser
     parser = output_parser_registry.build(task)
@@ -90,6 +90,10 @@ def prepare_task_config(task, args):
 
         agent_configs["name"] = agent_configs['name']
 
-        agent_configs["output_parser"] = task_config["output_parser"]
+        # 临时给qwen写了个output parser, 不会影响之前的（主要是role assigner的config里有个dict）
+        if isinstance(agent_configs.get("output_parser", None), str):
+            agent_configs["output_parser"] = output_parser_registry.build(agent_configs["output_parser"])
+        else:
+            agent_configs["output_parser"] = task_config["output_parser"]
 
     return task_config

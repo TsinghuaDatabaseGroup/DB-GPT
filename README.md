@@ -357,7 +357,7 @@ python openai_test.py
 #### 2. Test typical cases
 We put multiple test cases under the test_case folder. You can select a case file on the front-end page for diagnosis or use the command line.
 ```shell
-python3 run_diagnose.py --anomaly_file ./test_cases/testing_cases_5.json
+python3 run_diagnose.py --anomaly_file ./test_cases/testing_cases_5.json --config_file config.yaml 
 ```
 
 <!-- - Test single case
