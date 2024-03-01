@@ -114,6 +114,7 @@ class UCT_vote_function(base_search_method):
         tool_observation = [self.tree.root.env.tool_memory.to_string()]
         #prompt = agent._fill_prompt_template(self.tree.root.env.tool, self.tree.root.env.task_description, tool_observation, self.tree.root.messages)
         prompt = agent._fill_prompt_template(self.tree.root.env.task_description, tool_observation)
+        self.role_description = agent.role_description
 
         now_time = datetime.datetime.now()
         now_time = now_time.strftime("%H:%M:%S")

@@ -238,7 +238,12 @@ $ python startup.py -a
 - 测试单个案例
 我们在test_case文件夹下面放了多个测试案例。可以通过前端页面选择案例文件，进行诊断，也可以通过命令行进行诊断。
 ```shell
-python3 run_diagnose.py --anomaly_file ./test_cases/testing_cases_5.json
+python3 run_diagnose.py --anomaly_file ./test_cases/testing_cases_5.json --config_file config.yaml
+```
+
+- 尝鲜功能：qwen调用诊断。提供了本地模型和用openai_api的调用方式。首先根据你自己的使用方式，在config_qwen.yaml里面选择是qwen2_local（本人没测过，肯定有bug）还是qwen2_server（推荐用这种，本人测过），然后在/multiagents/localized_llms/qwen2_inference.py中修改本地模型路径或者服务地址。目前也只能跑solver的初始诊断部分。后续会陆续完善。默认会在saved_msg_qwen文件里保存所有调用的log，方便看看到底生成了什么乱七八糟的东西出来（可能莫名其妙蹦出韩文）
+```shell
+python3 run_diagnose.py --anomaly_file ./test_cases/testing_cases_5.json --config_file config_qwen.yaml
 ```
 
 <span id="-anomalies"></span>

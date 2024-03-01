@@ -20,17 +20,18 @@ class api_matcher:
 
             self.apis[str(api)] = {
                 "desc": str(api_content["desc"]),
-                "embedding": api_content["embedding"]
+                "embedding": api_content["embedding"],
+                "definition": api_content["definition"]
             }
 
-    def query(self, query: str, topk: int = 5) -> List[str]:
+    def query(self, query: str, topk: int = 5) -> Dict[str, Dict]:
         query_embedding = sentence_embedding(sentence=query)
         
         queue = PriorityQueue()
         for api_name, api_info in self.apis.items():
             api_embedding = api_info["embedding"]
             api_sim = self.similarity(query_embedding, api_embedding)
-            queue.put([-api_sim, api_name, api_info["desc"]])
+            queue.put([-api_sim, api_name, api_info["definition"]])
 
         result = {}
         for i in range(min(topk, len(queue.queue))):
@@ -39,5 +40,6 @@ class api_matcher:
         
         return result
 
-    def similarity(self, query: List[float], document: List[float]) -> float:
+    @staticmethod
+    def similarity(query: List[float], document: List[float]) -> float:
         return sum([i * j for i, j in zip(query, document)])
