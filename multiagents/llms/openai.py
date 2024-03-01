@@ -139,9 +139,9 @@ class OpenAIChat(BaseChatModel):
             # pop the time key-value from the message
             if "time" in new_message:
                 new_message.pop("time")
-            # openai最新版不需要改成assistant了，这里应该无所谓，我推荐不改，log看起来更清晰点
-            # if new_message["role"] == "function":
-            #     new_message["role"] = "assistant"
+            # openai最新版如果role是function，必须有name(函数名)
+            if new_message["role"] == "function":
+                new_message["role"] = "assistant"
             new_messages.append(new_message)
         messages = new_messages
 
