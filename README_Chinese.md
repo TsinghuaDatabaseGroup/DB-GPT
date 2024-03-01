@@ -74,6 +74,8 @@
 
 - [ ] 用户反馈机制 🔥🔥🔥
 
+- [ ] 语言支持 (英文 / 中文)
+
 - [ ] 前端
     
     * [x] 知识库 + chat问答 + 异常诊断 + 报告回放
@@ -81,6 +83,8 @@
 - [ ] 加速本地模型（极速版dbot）
 
     * [x] [*4-bit* 量化LLM](https://huggingface.co/curtis-sun/diag-baichuan2-4bit/tree/main) (推理时间减少1/3)
+
+    * [x] [vllm推理加速](https://github.com/vllm-project/vllm) (qwen)
 
     * [ ] Tiny LLM
 

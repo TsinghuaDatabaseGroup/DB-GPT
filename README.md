@@ -97,6 +97,8 @@
 
 - [ ] Human Feedback 🔥🔥🔥
 
+- [ ] Language Support (english / chinese)
+
 - [ ] New Frontend
 
     * [x] Knowledgebase + Chat Q&A + Diagnosis + Report Replay
@@ -104,6 +106,8 @@
 - [ ] Extreme Speed Version for localized llms
 
     * [x] [*4-bit* quantized LLM](https://huggingface.co/curtis-sun/diag-baichuan2-4bit/tree/main) (reducing inference time by 1/3)
+
+    * [x] [vllm for fast inference](https://github.com/vllm-project/vllm) (qwen)
 
     * [ ] Tiny LLM
 
