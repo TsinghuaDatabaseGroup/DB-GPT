@@ -90,10 +90,9 @@ def prepare_task_config(task, args):
 
         agent_configs["name"] = agent_configs['name']
 
-        # 给qwen写了个output parser, 不会影响之前的
-        if agent_configs.get("output_parser", None):
-            if isinstance(agent_configs["output_parser"], str):
-                agent_configs["output_parser"] = output_parser_registry.build(agent_configs["output_parser"])
+        # 临时给qwen写了个output parser, 不会影响之前的（主要是role assigner的config里有个dict）
+        if isinstance(agent_configs.get("output_parser", None), str):
+            agent_configs["output_parser"] = output_parser_registry.build(agent_configs["output_parser"])
         else:
             agent_configs["output_parser"] = task_config["output_parser"]
 

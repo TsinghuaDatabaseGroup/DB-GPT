@@ -85,6 +85,7 @@ class OpenAIChat(BaseChatModel):
     args: OpenAIChatArgs = Field(default_factory=OpenAIChatArgs)
     conversation_history: dict = []
     TRY_TIME: int = 1000
+    client: None = None
 
     def __init__(self, max_retry: int = 100, **kwargs):
         super().__init__(**kwargs)  # Call the constructor of the base class
