@@ -11,7 +11,7 @@ class APICaller:
     def __init__(self):
         self.functions = {}
     
-    def register_function(self, func_name, params, func):
+    def register_function(self, func_name, params, func, definition):
 
         query = func_name + " " + " ".join(params)
 
@@ -19,10 +19,15 @@ class APICaller:
         if os.path.exists(embedding_file_name):
             api_embedding = list(np.load(embedding_file_name))
         else:
-            api_embedding  = sentence_embedding(query)
+            api_embedding = sentence_embedding(query)
             np.save(embedding_file_name, api_embedding)
 
-        self.functions[func_name] = {"func": func, "desc": params, "embedding": api_embedding}
+        self.functions[func_name] = {
+            "func": func,
+            "desc": params,
+            "embedding": api_embedding,
+            "definition": definition
+        }
     
     def call_function(self, func_name, *args, **kwargs):
         if func_name in self.functions:
@@ -63,12 +68,15 @@ def register_functions_from_module(module, caller, max_api_num, agent_name):
             name, _, func = member
 
         if func.__module__ == module.__name__:
+            functions = getattr(module, "FUNCTION_DEFINITION", {})
+            func_definition = functions.get(name, None)
+
             if name in necessary_names:
                 params = get_function_parameters(func)
-                caller.register_function(name, params, func)
+                caller.register_function(name, params, func, func_definition)
             elif name not in necessary_names and api_cnt < max_api_num:
 
                 api_cnt = api_cnt + 1
                         
                 params = get_function_parameters(func)
-                caller.register_function(name, params, func)
+                caller.register_function(name, params, func, func_definition)

@@ -74,6 +74,10 @@
 
 - [ ] 用户反馈机制 🔥🔥🔥
 
+- [ ] 语言支持 (英文 / 中文)
+    * [x] 默认英文
+    * [x] 中文需要在配置config.yaml文件里加上language: zh
+
 - [ ] 前端
     
     * [x] 知识库 + chat问答 + 异常诊断 + 报告回放
@@ -81,6 +85,8 @@
 - [ ] 加速本地模型（极速版dbot）
 
     * [x] [*4-bit* 量化LLM](https://huggingface.co/curtis-sun/diag-baichuan2-4bit/tree/main) (推理时间减少1/3)
+
+    * [x] [vllm推理加速](https://github.com/vllm-project/vllm) (qwen)
 
     * [ ] Tiny LLM
 
@@ -238,7 +244,12 @@ $ python startup.py -a
 - 测试单个案例
 我们在test_case文件夹下面放了多个测试案例。可以通过前端页面选择案例文件，进行诊断，也可以通过命令行进行诊断。
 ```shell
-python3 run_diagnose.py --anomaly_file ./test_cases/testing_cases_5.json
+python3 run_diagnose.py --anomaly_file ./test_cases/testing_cases_5.json --config_file config.yaml
+```
+
+- 支持中文qwen调用诊断。请先用vllm在你的gpu机器上部署一个服务，参数配置在configs的model_config修改。如何部署服务请参考[Qwen1.5官方介绍](https://github.com/QwenLM/Qwen1.5)
+```shell
+python3 run_diagnose.py --anomaly_file ./test_cases/testing_cases_5.json --config_file config_qwen.yaml
 ```
 
 <span id="-anomalies"></span>

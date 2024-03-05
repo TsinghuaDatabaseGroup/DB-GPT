@@ -97,6 +97,10 @@
 
 - [ ] Human Feedback 🔥🔥🔥
 
+- [ ] Language Support (english / chinese)
+    * [x] english : default
+    * [x] chinese : add "language: zh" in config.yaml
+
 - [ ] New Frontend
 
     * [x] Knowledgebase + Chat Q&A + Diagnosis + Report Replay
@@ -104,6 +108,8 @@
 - [ ] Extreme Speed Version for localized llms
 
     * [x] [*4-bit* quantized LLM](https://huggingface.co/curtis-sun/diag-baichuan2-4bit/tree/main) (reducing inference time by 1/3)
+
+    * [x] [vllm for fast inference](https://github.com/vllm-project/vllm) (qwen)
 
     * [ ] Tiny LLM
 
@@ -357,7 +363,7 @@ python openai_test.py
 #### 2. Test typical cases
 We put multiple test cases under the test_case folder. You can select a case file on the front-end page for diagnosis or use the command line.
 ```shell
-python3 run_diagnose.py --anomaly_file ./test_cases/testing_cases_5.json
+python3 run_diagnose.py --anomaly_file ./test_cases/testing_cases_5.json --config_file config.yaml 
 ```
 
 <!-- - Test single case

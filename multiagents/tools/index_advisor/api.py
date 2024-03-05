@@ -8,7 +8,16 @@ from multiagents.tools.metrics import advisor
 from multiagents.tools.metrics import get_workload_statistics
 import ast
 
-def optimize_index_selection(start_time: int, end_time: int):
+FUNCTION_DEFINITION = {
+    "optimize_index_selection": {
+        "name": "optimize_index_selection",
+        "description": "执行索引优化，不需要输入参数，返回推荐的索引",
+        "parameters": {}
+    }
+}
+
+
+def optimize_index_selection(**kwargs):
     """optimize_index_selection(start_time : int, end_time : int) returns the recommended index by running the algorithm 'Extend'.
         This method uses a recursive algorithm that considers only a limited subset of index candidates.
         The method exploits structures and properties that are typical for real-world workloads and the performance of indexes.
@@ -35,22 +44,22 @@ def optimize_index_selection(start_time: int, end_time: int):
 
         if database_name not in databases:
             databases[database_name] = []
-        
+
         databases[database_name].append({"sql": query_template["sql"], "frequency": query_template["calls"]})
 
     index_advice = f"Recommended indexes: \n"
 
     for dbname in databases:
-        
+
         # 2. load db settings
         db_config = {"postgresql": POSTGRESQL_CONFIG}
         db_config["postgresql"]["dbname"] = dbname
         connector = PostgresDatabaseConnector(db_config, autocommit=True)
 
-        tables, columns = selec_com.get_columns_from_db(connector) # todo sample data for each column
+        tables, columns = selec_com.get_columns_from_db(connector)  # todo sample data for each column
 
         # 3. read the workload queries
-        workload = databases[dbname] # list of dict
+        workload = databases[dbname]  # list of dict
 
         # script_path = os.path.abspath(__file__)
         # script_dir = os.path.dirname(script_path)

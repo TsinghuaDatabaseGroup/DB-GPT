@@ -1,0 +1,129 @@
+max_turn: &max_turn 3
+
+llm_type: Qwen1.5-14B-Chat
+
+language: zh
+
+prompts:
+  role_assigner_role_description: &role_assigner_role_description |-
+    你是一个角色分配者。你的任务是选择具有不同身份的专家，以正确分析给定告警的根因。
+
+  role_assigner_prompt: &role_assigner_prompt |-
+    你是一组诊断专家的领导者。现在数据库触发了告警，告警信息为：
+    ${alert_info}
+    
+    你需要选择具有不同身份的专家来分析告警的根因。可选专家的名字为：
+    ${task_description}
+    
+    请注意，你只能选择最多3位专家。你只能回复选择的专家的名字，不要包括其他信息。你的回复必须按照如下格式：
+    1. CpuExpert
+    2. QueryExpert
+    ...
+
+  chief_dba_role_description: &chief_dba_role_description |-
+    你是一个拥有丰富数据库诊断经验的首席DBA。你的任务是和其他专家一起分析异常的根因。以下是你的任务概述：
+    1. 与其他专家交流，询问如何诊断异常的根因。
+    2. 总结故障根因和详细的解决方案。
+    注意，你的回答必须简明扼要。
+
+#  chief_dba_format_prompt: &chief_dba_format_prompt |-
+
+  expert_agent_role_description: &expert_agent_role_description |-
+    你是一个${agent_name}，可以使用多种工具来进行故障诊断。
+
+    ## 你拥有如下工具:
+
+    ${tools}
+    
+    ## 你可以在回复中插入零次、一次或多次以下命令以调用工具：
+    
+    Thought: 你的思考
+    Action: 工具名称，必须是[${tool_names}]之一
+    Action Input: 工具输入
+    Observation: 工具结果
+    ...
+    Thought: 我知道最终答案了
+    Final Answer: 原始问题的最终答案
+  
+
+  expert_agent_format_prompt: &expert_agent_format_prompt |-
+    现在公司的数据库触发了告警。告警的具体内容是:
+    ${alert_info}
+    
+    -你的分析必须基于以下步骤：
+    首先使用工具"whether_is_abnormal_metric"判断是否有异常指标。
+    其次使用工具"match_diagnose_knowledge"进行故障分析。
+    根据上面几步结果，只要还能够继续往下深入诊断，就使用工具优化查询或者优化索引。
+    最后，基于上述所有结果，给出最终的根因和解决方案，按照如下模板，不要说多余的话。其中Final Answer是字典格式：
+    Thought: 我现在知道异常的根因了
+    Final Answer: {"diagnose": "你诊断的根因", "solution": "你得到的最优解决方案", "knowledge": "你参考的诊断知识"}
+
+
+
+monitor_tools: &monitor_tools
+  - tool_name: metric_monitor
+
+expert_tools: &expert_tools
+  - tool_name: metric_monitor
+  - tool_name: index_advisor
+#-
+#  tool_name: query_advisor
+
+
+name: 8 DBAs with Tools
+
+environment:
+  env_type: dba
+  max_turns: *max_turn
+  rule:
+    order:
+      type: sequential
+    visibility:
+      type: all
+    selector:
+      type: basic
+    updater:
+      type: basic
+    describer:
+      type: basic
+
+agents:
+  - agent_type: reporter
+    name: ChiefDBA
+    role_description: *chief_dba_role_description
+#    prompt_template: *chief_dba_format_prompt
+    memory:
+      memory_type: chat_history
+    tool_memory:
+      memory_type: chat_history
+      llm:
+        llm_type: qwen1.5_vllm
+      recursive: true
+    llm:
+      llm_type: qwen1.5_vllm
+    tools: *monitor_tools
+    verbose: true
+  - agent_type: role_assigner
+    name: role assigner
+    role_description: *role_assigner_role_description
+    prompt_template: *role_assigner_prompt
+    memory:
+      memory_type: chat_history
+    llm:
+      llm_type: qwen1.5_vllm
+  - agent_type: solver
+    output_parser: qwen_output_parser
+    name: ${agent_name}
+    role_description: *expert_agent_role_description
+    prompt_template: *expert_agent_format_prompt
+    memory:
+      memory_type: chat_history
+    tool_memory:
+      memory_type: chat_history
+      llm:
+        llm_type: qwen1.5_vllm
+      recursive: true
+    llm:
+      llm_type: qwen1.5_vllm
+    tools: *expert_tools
+    verbose: true
