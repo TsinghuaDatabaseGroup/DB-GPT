@@ -5,7 +5,10 @@ from typing import List
 from multiagents.message import SolverMessage, Message
 from multiagents.agents import agent_registry
 from multiagents.agents.base import BaseAgent
-from multiagents.prompt_templates.report_prompts import ANOMALY_DESC_PROMPT, ANOMALY_TITLE_PROMPT
+from multiagents.prompt_templates.report_prompts import (
+    ANOMALY_DESC_PROMPT, ANOMALY_TITLE_PROMPT,
+    ANOMALY_DESC_PROMPT_zh, ANOMALY_TITLE_PROMPT_zh
+)
 
 @agent_registry.register("reporter") # solver is also tool agent by default
 class ReporterAgent(BaseAgent):
@@ -23,11 +26,14 @@ class ReporterAgent(BaseAgent):
     messages: List[dict] = []
 
     report: dict = {"title": "", "anomaly date": "", "anomaly description": "", "root cause": "", "labels": "", "diagnosis process": "", "solutions": ""}
-    
+
     record: dict = {"anomalyAnalysis": {"RoleAssigner":{"messages":[]},"Solver":{"messages":[]}}, "brainstorming": {"messages":[]}, "report":{}, "title":"alert name", "time":"alert time", "topMetrics": []} # type: bar / line
 
     def initialize_report(self):
-        
+        if self.language == 'zh':
+            self.anomaly_desc_prompt = ANOMALY_DESC_PROMPT_zh
+            self.anomaly_title_prompt = ANOMALY_TITLE_PROMPT_zh
+
         seconds = int(self.start_time)
         start_date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(seconds))
         self.report["anomaly date"] = start_date
@@ -36,10 +42,10 @@ class ReporterAgent(BaseAgent):
         if self.alert_str == "":
             return
 
-        
+
         anomaly_desc_prompt = self.anomaly_desc_prompt.replace("{anomaly_str}", self.alert_str)
         anomaly_desc_message = self.llm._construct_messages(anomaly_desc_prompt)
-        
+
         self.llm.change_messages(self.role_description, anomaly_desc_message)
 
         anomaly_desc = self.llm.parse()
@@ -56,7 +62,7 @@ class ReporterAgent(BaseAgent):
         self.record["title"] = anomaly_title.replace('\\"','')
         self.record["title"] = anomaly_title.replace('"','')
 
-        self.record["severity"] = []        
+        self.record["severity"] = []
         self.record["status"] = []
         alert_names = []
         for alert in self.alert_dict:
@@ -76,7 +82,17 @@ class ReporterAgent(BaseAgent):
         self.record["alerts"] = alert_names
 
     def update_diagnosis(self):
-        prompt = "You are writing a report. Please give the refined root cause analysis based on the above review advice. The root cause analysis is as follows:\n" + self.report["root cause"] + "\n ===== \n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the anomaly diagnosis description based on the above advice. 3. Do not add anything about solutions!!!'\n"
+        if self.language == 'zh':
+            prompt = f'''你正在撰写故障诊断报告。请根据上述审查建议，对下列根因分析过程进行精炼。原始根因分析过程如下：
+            {self.report["root cause"]}
+
+            请注意：
+            1. 输出必须是markdown格式。
+            2. 不要说多余的内容。
+            3. 只精炼根因分析过程，不要提任何和解决方案有关的内容。
+            '''
+        else:
+            prompt = "You are writing a report. Please give the refined root cause analysis based on the above review advice. The root cause analysis is as follows:\n" + self.report["root cause"] + "\n ===== \n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the anomaly diagnosis description based on the above advice. 3. Do not add anything about solutions!!!'\n"
 
         prompt_message = {"role": "user", "content": prompt, "time": time.strftime("%H:%M:%S", time.localtime())}
 
@@ -84,7 +100,7 @@ class ReporterAgent(BaseAgent):
 
         self.llm.change_messages(self.role_description, self.messages + [prompt_message])
         new_message = self.llm.parse()
-        
+
         if isinstance(new_message, dict):
             self.report["root cause"] = new_message["content"]
         else:
@@ -107,7 +123,20 @@ class ReporterAgent(BaseAgent):
         for cause in root_causes:
             labels += root_causes[cause]
 
-        prompt = "Based on the description\n" + self.report["root cause"] + "\n\n Output all the labels mentioned in the description. The available labels are  \n" + str(labels) + "===== \n Note 1. the output should be in list format. And do not output any additional information (output \"None\" if no label mentioned in the description)\n2. the output should strictly exclude labels not mentioned in the description."
+        if self.language == 'zh':
+            prompt = f"""以下是一段根因分析过程：
+            {self.report["root cause"]}
+            
+            以下是以列表形式列出的一些根因的标签：
+            {labels}
+            
+            请基于根因分析过程的描述，选出对应的标签。请注意：
+            1. 输出必须是列表格式，不要附加任何多余内容。
+            2. 输出应严格排除根因分析中没有提及的标签。
+            3. 如果没有相关标签，请返回None。
+            """
+        else:
+            prompt = "Based on the description\n" + self.report["root cause"] + "\n\n Output all the labels mentioned in the description. The available labels are  \n" + str(labels) + "===== \n Note 1. the output should be in list format. And do not output any additional information (output \"None\" if no label mentioned in the description)\n2. the output should strictly exclude labels not mentioned in the description."
 
         prompt_message = {"role": "user", "content": prompt, "time": time.strftime("%H:%M:%S", time.localtime())}
 
@@ -123,7 +152,18 @@ class ReporterAgent(BaseAgent):
 
 
     def update_solutions(self):
-        prompt = "You are writing a report. Please optimize the following solutions based on the above review advice. The solutions are:\n" + self.report["solutions"] + "\n ===== \n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the solutions based on the above advice'. 3. Do not add anything about root causes!!!\n"
+        if self.language == 'zh':
+            prompt = f"""
+            你正在撰写故障诊断报告。请根据上述审查建议，对下列解决方案进行优化。原始解决方案如下：
+            {self.report["solutions"]}
+
+            请注意：
+            1. 输出必须是markdown格式。
+            2. 不要说多余的内容。
+            3. 只优化解决方案，不要提任何和根因分析有关的内容。
+            """
+        else:
+            prompt = "You are writing a report. Please optimize the following solutions based on the above review advice. The solutions are:\n" + self.report["solutions"] + "\n ===== \n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the solutions based on the above advice'. 3. Do not add anything about root causes!!!\n"
 
         prompt_message = {"role": "user", "content": prompt, "time": time.strftime("%H:%M:%S", time.localtime())}
 

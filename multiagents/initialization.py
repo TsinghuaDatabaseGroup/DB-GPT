@@ -96,4 +96,6 @@ def prepare_task_config(task, args):
         else:
             agent_configs["output_parser"] = task_config["output_parser"]
 
+        agent_configs["language"] = task_config.get("language", "en")
+
     return task_config

@@ -11,7 +11,9 @@ from multiagents.utils.utils import AGENT_TYPES
 from multiagents.agents.conversation_agent import BaseAgent
 from multiagents.message import Message, SolverMessage
 from multiagents.tools.metrics import current_diag_time
-from multiagents.prompt_templates.diagnosis_smmary_prompts import DIAGNOSIS_SUMMARYY_PROMPT
+from multiagents.prompt_templates.diagnosis_summary_prompts import (
+    DIAGNOSIS_SUMMARY_PROMPT, DIAGNOSIS_SUMMARY_PROMPT_zh
+)
 from multiagents.environments.decision_maker import (
     BaseDecisionMaker,
     decision_maker_registry,
@@ -499,8 +501,10 @@ class DBAEnvironment(BaseModel):
             agent.messages = []
 
         for i, diag in enumerate(initial_diags):
-
-            prompt = DIAGNOSIS_SUMMARYY_PROMPT
+            if self.reporter.language == 'zh':
+                prompt = DIAGNOSIS_SUMMARY_PROMPT_zh
+            else:
+                prompt = DIAGNOSIS_SUMMARY_PROMPT
 
             diag_process = ""
             pre_content = ""

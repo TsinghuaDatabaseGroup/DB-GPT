@@ -17,7 +17,7 @@ FUNCTION_DEFINITION = {
 }
 
 
-def optimize_index_selection():
+def optimize_index_selection(**kwargs):
     """optimize_index_selection(start_time : int, end_time : int) returns the recommended index by running the algorithm 'Extend'.
         This method uses a recursive algorithm that considers only a limited subset of index candidates.
         The method exploits structures and properties that are typical for real-world workloads and the performance of indexes.

@@ -98,6 +98,8 @@
 - [ ] Human Feedback 🔥🔥🔥
 
 - [ ] Language Support (english / chinese)
+    * [x] english : default
+    * [x] chinese : add "language: zh" in config.yaml
 
 - [ ] New Frontend
 
