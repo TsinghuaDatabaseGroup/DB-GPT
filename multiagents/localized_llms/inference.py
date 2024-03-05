@@ -6,6 +6,16 @@ from pydantic import BaseModel, Field
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers.generation.utils import GenerationConfig
 
+def classify(messages):
+    marks = ["Please describe the following anomaly event in natural language:", "Please give a title for the following anomaly event within 15 words:", "You are mento-carlo-choice-GPT.", "Remember that you are performing a mento-carlo search.", "Analyze the diagnosed root causes based on above discussions in details.", "Give the solutions only based on above messages in details.", "Please provide a searchable summary of the input", "Please review the above diagnosis results, ", "Please optimize the following solutions based on the above review advice.", "Please give the refined root cause analysis based on the above review advice.", "Output all the labels mentioned in the description.", "Now you need to select experts with diverse identity to correctly analyze the root causes of the given alert.", "You can respond as follows to use tool:"]
+
+    for idx,mark in enumerate(marks):
+        for message in messages:
+            content = message["content"]
+            if mark in content:
+                return idx
+    assert False, messages
+
 class Inference:
     def __init__(self, args):
         self.args = args
@@ -73,16 +83,6 @@ class Inference:
             new_messages.append({"role": "assistant", "content": "\n\n".join(contents)})
             flag |= (cnt > 1)
         return new_messages if flag else messages
-    
-    def classify(self, messages):
-        marks = ["Please describe the following anomaly event in natural language:", "Please give a title for the following anomaly event within 15 words:", "You are mento-carlo-choice-GPT.", "Remember that you are performing a mento-carlo search.", "Analyze the diagnosed root causes based on above discussions in details.", "Give the solutions only based on above messages in details.", "Please provide a searchable summary of the input", "Please review the above diagnosis results, ", "Please optimize the following solutions based on the above review advice.", "Please give the refined root cause analysis based on the above review advice.", "Output all the labels mentioned in the description.", "Now you need to select experts with diverse identity to correctly analyze the root causes of the given alert.", "You can respond as follows to use tool:"]
-
-        for idx,mark in enumerate(marks):
-            for message in messages:
-                content = message["content"]
-                if mark in content:
-                    return idx
-        assert False, messages
 
     def get_model(self):
         raise NotImplementedError

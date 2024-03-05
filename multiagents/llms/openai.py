@@ -273,3 +273,9 @@ class OpenAIChat(BaseChatModel):
                 recv_tokens=response["usage"]["completion_tokens"],
                 total_tokens=response["usage"]["total_tokens"],
             )
+        
+def call_openai(messages):
+    call_openai.chat.change_messages("", messages)
+    reply = call_openai.chat.parse()
+    return reply['content']
+call_openai.chat = OpenAIChat()
