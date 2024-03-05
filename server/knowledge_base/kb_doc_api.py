@@ -12,7 +12,7 @@ from fastapi.responses import StreamingResponse, FileResponse
 from server.knowledge_base.kb_service.base import get_kb_details
 from pydantic import Json
 import json
-from server.knowledge_base.kb_service.base import KBServiceFactory
+from server.knowledge_base.kb_service.base import KBServiceFactory, get_kb_file_details
 from server.db.repository.knowledge_file_repository import get_file_detail
 from langchain.docstore.document import Document
 from typing import List
@@ -21,6 +21,18 @@ from typing import List
 class DocumentWithScore(Document):
     score: float = None
 
+def api_search_docs(
+        query: str = Body(..., description="用户输入", examples=["你好"]),
+        knowledge_base_name: str = Body(..., description="知识库名称", examples=["samples"]),
+        top_k: int = Body(VECTOR_SEARCH_TOP_K, description="匹配向量数"),
+        score_threshold: float = Body(SCORE_THRESHOLD,
+                                      description="知识库匹配相关度阈值，取值范围在0-1之间，"
+                                                  "SCORE越小，相关度越高，"
+                                                  "取到1相当于不筛选，建议设置在0.5左右",
+                                      ge=0, le=1),
+) -> List[DocumentWithScore]:
+    data = search_docs(query, knowledge_base_name, top_k, score_threshold)
+    return BaseResponse(code=200, msg="Success", data=data)
 
 def search_docs(
         query: str = Body(..., description="用户输入", examples=["你好"]),
@@ -76,6 +88,22 @@ def search_docs(
         print('*' * 100)
     
     return data
+
+
+def kb_file_details(
+        knowledge_base_name: str
+) -> ListResponse:
+    if not validate_kb_name(knowledge_base_name):
+        return BaseResponse(code=403, msg="Don't attack me", data=[])
+
+    knowledge_base_name = urllib.parse.unquote(knowledge_base_name)
+
+    details = get_kb_file_details(knowledge_base_name)
+
+    if not details:
+        return BaseResponse(code=404, msg=f"未找到知识库 {knowledge_base_name} 的文件", data=[])
+    else:
+        return BaseResponse(code=200, msg=f"查询到知识库 {knowledge_base_name} 的文件", data=details)
 
 
 def list_files(

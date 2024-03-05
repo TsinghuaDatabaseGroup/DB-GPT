@@ -115,9 +115,9 @@ class="columnSS"
         size="calc(100% - 300px)"
         :append-to-body="true"
     >
-      <ul v-loading="reviewDrawerLoading" class="infinite-list">
-        <li v-for="(item, index) in fileSplitContents.value" :key="index" class="infinite-list-item">
-          <div class="columnSS">
+      <ul v-loading="reviewDrawerLoading" class="infinite-list columnSS" style="width: 100%">
+        <li v-for="(item, index) in fileSplitContents.value" :key="index" class="infinite-list-item" style="width: calc(100% - 20px)">
+          <div class="columnSS" style="width: 100%;">
             <div class="rowBC infinite-list-item-header">
               <div style="color: var(--el-color-primary);">#{{ index + 1 }}</div>
               <div class="rowSC" style="color: #666666; margin-left: 10px">
@@ -125,7 +125,7 @@ class="columnSS"
                 <span style="margin-left: 5px">{{ item.length }}</span>
               </div>
             </div>
-            <div class="infinite-list-item-content">
+            <div class="infinite-list-item-content" style="width: 100%">
               {{ item }}
             </div>
           </div>

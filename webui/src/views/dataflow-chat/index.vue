@@ -261,11 +261,11 @@ interface DataflowMessage {
   queryChatOption: object;
 }
 
-const DATAFLOW_CHAT_HISTORY_KEY = 'data-flow-history'
+const DATAFLOW_CHAT_HISTORY_KEY = 'dbgpt-data-flow-history'
 
-const DATAFLOW_OPTIONS_KEY = 'dataflow-options'
+const DATAFLOW_OPTIONS_KEY = 'dbgpt-dataflow-options'
 
-const DATAFLOW_PROMPT_KEY = 'dataflow-prompt'
+const DATAFLOW_PROMPT_KEY = 'dbgpt-dataflow-prompt'
 
 const llmModel: Ref<string> = ref('')
 

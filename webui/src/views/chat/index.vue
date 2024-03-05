@@ -48,7 +48,7 @@ interface Message {
   loading: boolean;
 }
 
-const CHAT_HISTORY_KEY = 'chat-history'
+const CHAT_HISTORY_KEY = 'dbgpt-chat-history'
 
 const router = useRouter()
 

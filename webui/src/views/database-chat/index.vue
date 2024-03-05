@@ -177,11 +177,11 @@ interface DatabaseMessage {
   queryChatOption: object;
 }
 
-const DATABASE_CHAT_HISTORY_KEY = 'database-chat-history'
+const DATABASE_CHAT_HISTORY_KEY = 'dbgpt-database-chat-history'
 
-const DATABASE_OPTIONS_KEY = 'database-options'
+const DATABASE_OPTIONS_KEY = 'dbgpt-database-options'
 
-const DATABASE_PROMPT_KEY = 'database-prompt'
+const DATABASE_PROMPT_KEY = 'dbgpt-database-prompt'
 
 const router = useRouter()
 

@@ -8,7 +8,7 @@ from server.utils import (
     get_prompt_template)
 from server.llm_api import (list_running_models, list_config_models,
                             change_llm_model, stop_llm_model,
-                            get_model_config, list_search_engines)
+                            get_model_config, list_search_engines, llm_model)
 from server.embeddings_api import embed_texts_endpoint
 from server.chat.feedback import chat_feedback
 from server.chat.completion import completion
@@ -93,6 +93,22 @@ def mount_app_routes(app: FastAPI, run_mode: str = None):
     # 异常诊断相关接口
     mount_diagnose_routes(app)
     # LLM模型相关接口
+
+    # LLM模型相关接口
+    from server.utils import all_embed_models
+
+    app.get("/llm_model/list_models",
+            response_model=BaseResponse,
+            tags=["LLM Model Management"],
+            summary="列出所有配置好的LLM模型",
+            )(llm_model)
+
+    app.get("/llm_model/embed_models",
+            response_model=BaseResponse,
+            tags=["LLM Model Management"],
+            summary="列出所有Embed模型",
+            )(all_embed_models)
+
     app.post("/llm_model/list_running_models",
              tags=["LLM Model Management"],
              summary="列出当前已加载的模型",
@@ -199,16 +215,16 @@ def mount_knowledge_routes(app: FastAPI):
     from server.chat.knowledge_base_chat import knowledge_base_chat
     from server.chat.file_chat import upload_temp_docs, file_chat
     from server.chat.agent_chat import agent_chat
-    from server.knowledge_base.kb_api import list_kbs, create_kb, delete_kb
+    from server.knowledge_base.kb_api import list_kbs, create_kb, delete_kb, kb_detail
     from server.knowledge_base.kb_doc_api import (
         list_files,
+        kb_file_details,
         upload_docs,
         delete_docs,
         update_docs,
         download_doc,
         recreate_vector_store,
-        search_docs,
-        DocumentWithScore,
+        api_search_docs,
         update_info,
         docs_text_split_content)
 
@@ -225,10 +241,14 @@ def mount_knowledge_routes(app: FastAPI):
              tags=["Chat"],
              summary="与agent对话")(agent_chat)
 
-    # Tag: Knowledge Base Management
+    app.get("/knowledge_base/kb_file_details",
+            tags=["Knowledge Base Management"],
+            response_model=BaseResponse,
+            summary="获取知识库文件")(kb_file_details)
+
     app.get("/knowledge_base/list_knowledge_bases",
             tags=["Knowledge Base Management"],
-            response_model=ListResponse,
+            response_model=BaseResponse,
             summary="获取知识库列表")(list_kbs)
 
     app.post("/knowledge_base/create_knowledge_base",
@@ -243,6 +263,12 @@ def mount_knowledge_routes(app: FastAPI):
              summary="删除知识库"
              )(delete_kb)
 
+    app.get("/knowledge_base/detail",
+             tags=["Knowledge Base Management"],
+             response_model=BaseResponse,
+             summary="知识库详情"
+             )(kb_detail)
+
     app.get("/knowledge_base/list_files",
             tags=["Knowledge Base Management"],
             response_model=ListResponse,
@@ -251,9 +277,9 @@ def mount_knowledge_routes(app: FastAPI):
 
     app.post("/knowledge_base/search_docs",
              tags=["Knowledge Base Management"],
-             response_model=List[DocumentWithScore],
+             response_model=BaseResponse,
              summary="搜索知识库"
-             )(search_docs)
+             )(api_search_docs)
 
     app.post("/knowledge_base/upload_docs",
              tags=["Knowledge Base Management"],

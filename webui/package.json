@@ -1,8 +1,8 @@
 {
-  "name": "vue3-admin-template",
-  "version": "2.2.0",
+  "name": "dbgpt",
+  "version": "0.0.2",
   "license": "MIT",
-  "author": "kuanghua",
+  "author": "",
   "packageManager": "pnpm@7.9.0",
   "scripts": {
     "dev": "vite --mode serve-dev",

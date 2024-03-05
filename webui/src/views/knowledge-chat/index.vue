@@ -80,8 +80,8 @@ interface KnowledgeMessage {
   cacheData: object[]
 }
 
-const KNOWLEDGE_CHAT_HISTORY_KEY = 'knowledge-chat-history'
-const KNOWLEDGE_CHAT_USR_CACHE_KEY = 'knowledge-chat-use-cache'
+const KNOWLEDGE_CHAT_HISTORY_KEY = 'dbgpt-knowledge-chat-history'
+const KNOWLEDGE_CHAT_USR_CACHE_KEY = 'dbgpt-knowledge-chat-use-cache'
 
 const router = useRouter()
 

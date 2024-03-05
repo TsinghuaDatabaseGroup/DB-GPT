@@ -30,7 +30,7 @@ export default defineConfig(({ command, mode }) => {
     clearScreen: false, //设为 false 可以避免 Vite 清屏而错过在终端中打印某些关键信息
     server: {
       hmr: { overlay: false }, //设置 server.hmr.overlay 为 false 可以禁用开发服务器错误的屏蔽。方便错误查看
-      port: 5003, // 类型： number 指定服务器端口;
+      port: 5004, // 类型： number 指定服务器端口;
       open: false, // 类型： boolean | string在服务器启动时自动在浏览器中打开应用程序；
       host: true,
       https: false,
