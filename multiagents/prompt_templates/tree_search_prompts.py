@@ -130,6 +130,20 @@ Let's Begin!
 Task description: {task_description}
 '''
 
+VOTE_BEST_SYSTEM_PROMPT_zh = '''你是一个精通蒙特卡洛树搜索的专家。用户会给出一条或多条实验轨迹候选，每个候选以<candidate_i>标记，其中i表示第i条候选。你的任务是：
+1. 对每条候选轨迹，依次用一句话概括其内容
+2. 给出你认为的最好的轨迹
+
+假设一共有n个候选，回复模板如下：
+- 分析 candidate 0: xxx
+- 分析 candidate 1: xxx
+...
+- 分析 candidate n: xxx
+- 选择 "<candidate_i>"
+
+如果只有1个候选，分析那条轨迹并选择它。
+'''
+
 VOTE_BEST_USER_PROMPT='''
 {input_description}
 Here are some former trails:
@@ -151,4 +165,10 @@ Your output should with the following format:
 - most close to success: xxx
 -  "<candidate_x>"
 Begin!
+'''
+
+VOTE_BEST_USER_PROMPT_zh = '''
+这是一些候选轨迹：
+********************************
+{candidate_description}
 '''

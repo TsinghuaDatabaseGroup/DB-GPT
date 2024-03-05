@@ -39,8 +39,8 @@ async def main(args):
 
     records["report_generate_time"] = current_diag_time
 
-    with open(f"./alert_results/{model_type}/{str(cur_time)}.jsonl", "w") as f:
-        json.dump(records, f, indent=4)
+    with open(f"./alert_results/{model_type}/{str(cur_time)}.jsonl", "w", encoding='utf8') as f:
+        json.dump(records, f, ensure_ascii=False, indent=4)
 
     if os.path.exists(f"./alert_results/{str(current_diag_time)}"):
         os.system(f"rm -rf ./alert_results/{str(current_diag_time)}")
