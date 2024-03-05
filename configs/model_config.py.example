@@ -45,6 +45,11 @@ ONLINE_LLM_MODEL = {
         "api_base_url": "https://api.openai.com/v1",
         "api_key": "",
         "openai_proxy": "",
+    },
+    "qwen1.5-vllm": {
+        "model_name": "/root/autodl-tmp/models/Qwen1.5-14B-Chat/",
+        "api_base_url": "http://127.0.0.1:8000/v1",
+        "api_key": "EMPTY"
     }
 }
 
