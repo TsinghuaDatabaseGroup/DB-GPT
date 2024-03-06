@@ -266,8 +266,11 @@ class DBAEnvironment(BaseModel):
             })
 
         print(f'<flow>{{"title": "专家诊断", "content": "", "expertData": {json.dumps(expert_data)}, "isCompleted": 0, "isRuning": 1}}</flow>')
-        expert_select_desc = "Based on the task description, I decide to select the following experts to diagnose the problem:\n" + \
-            "\n".join([expert.name for expert in selected_experts])
+        if self.reporter.language == "zh":
+            expert_select_desc = "基于上述任务描述，我决定选择下列专家来诊断：\n"
+        else:
+            expert_select_desc = "Based on the task description, I decide to select the following experts to diagnose the problem:\n"
+        expert_select_desc += "\n".join([expert.name for expert in selected_experts])
 
         self.reporter.record["anomalyAnalysis"]["RoleAssigner"]["messages"].append(
             {"data": expert_select_desc, "time": time.strftime("%H:%M:%S", time.localtime())})
@@ -400,8 +403,12 @@ class DBAEnvironment(BaseModel):
 
             root_causes = str(diag["root cause"]).replace('\n', '<br>')
 
+            if self.reporter.language == "zh":
+                add_str = f"<br>由{diag['sender']}判断的根因是：<br>"
+            else:
+                add_str = f"<br>The root causes identified by {diag['sender']}:<br>"
             self.reporter.report["root cause"] = str(
-                self.reporter.report["root cause"]) + f"<br>The root causes identified by {diag['sender']}:<br>" + root_causes + "<br>"
+                self.reporter.report["root cause"]) + add_str + root_causes + "<br>"
 
             # # solution = str(diag["solutions"]).replace("\"","")
             # # solution = solution.replace("\\n", "\n")
@@ -421,11 +428,19 @@ class DBAEnvironment(BaseModel):
 
             solutions = str(diag["solutions"]).replace('\n', '<br>')
 
+            if self.reporter.language == "zh":
+                add_str = f"<br>由{diag['sender']}推荐的解决方案是：<br>"
+            else:
+                add_str = f"<br>The solutions recommended by {diag['sender']}:<br>"
             self.reporter.report["solutions"] = str(
-                self.reporter.report["solutions"]) + f"<br>The solutions recommended by {diag['sender']}:<br>" + solutions + "<br>"
+                self.reporter.report["solutions"]) + add_str + solutions + "<br>"
 
+            if self.reporter.language == "zh":
+                add_str = f"<br>{i+1}. {diag['sender']}的诊断过程是：<br>"
+            else:
+                add_str = f"<br>{i+1}. The diagnosis process of {diag['sender']}:<br>"
             self.reporter.report["diagnosis process"] = str(
-                self.reporter.report["diagnosis process"]) + f"<br>{i+1}. The diagnosis process of {diag['sender']}:<br>"
+                self.reporter.report["diagnosis process"]) + add_str
 
             for i, m_response in enumerate(diag["diagnosis process"]):
                 if m_response['role'] != "user":
