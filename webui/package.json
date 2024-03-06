@@ -39,6 +39,7 @@
     "path-to-regexp": "^6.2.1",
     "pinia": "^2.0.16",
     "pinia-plugin-persistedstate": "2.3.0",
+    "typed.js": "^2.1.0",
     "vue": "^3.2.37",
     "vue-clipboard3": "^2.0.0",
     "vue-echarts": "latest",

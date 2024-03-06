@@ -8,6 +8,7 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     BottomInputContainer: typeof import('./../src/components/BottomInputContainer.vue')['default']
+    Chat: typeof import('./../src/components/Chat.vue')['default']
     ChatItem: typeof import('./../src/components/ChatItem.vue')['default']
     Code_demo: typeof import('./../src/components/code_demo.vue')['default']
     DatabaseChart: typeof import('./../src/components/DatabaseChart.vue')['default']
@@ -15,6 +16,9 @@ declare module '@vue/runtime-core' {
     DataflowDataShow: typeof import('./../src/components/DataflowDataShow.vue')['default']
     ElSvgIcon: typeof import('./../src/components/ElSvgIcon.vue')['default']
     KnowledgeChatItem: typeof import('./../src/components/KnowledgeChatItem.vue')['default']
+    OneChat: typeof import('./../src/components/OneChat.vue')['default']
+    ReportChat: typeof import('./../src/components/ReportChat.vue')['default']
+    ReportOneChat: typeof import('./../src/components/ReportOneChat.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SvgIcon: typeof import('./../src/icons/SvgIcon.vue')['default']

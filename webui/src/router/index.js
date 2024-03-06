@@ -3,17 +3,6 @@ import Layout from '@/layout/index.vue'
 
 export const constantRoutes = [
   {
-    path: '/redirect',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: '/redirect/:path(.*)',
-        component: () => import('@/views/redirect')
-      }
-    ]
-  },
-  {
     path: '/login',
     component: () => import('@/views/login/index.vue'),
     hidden: true
@@ -56,28 +45,28 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/database/chat',
+    path: '/diagnosis',
     component: Layout,
     children: [
       {
-        path: '/database/chat',
-        name: 'DatabaseChat',
-        component: () => import('@/views/database-chat/index.vue'),
+        path: '/diagnosis',
+        name: 'Diagnosis',
+        component: () => import('@/views/diagnosis/index.vue'),
         //using el svg icon, the elSvgIcon first when at the same time using elSvgIcon and icon
-        meta: { title: 'DatabaseChat', elSvgIcon: 'Coin', affix: true }
+        meta: { title: 'Diagnosis', elSvgIcon: 'MagicStick', affix: true }
       }
     ]
   },
   {
-    path: '/dataflow/chat',
+    path: '/reports',
     component: Layout,
     children: [
       {
-        path: '/dataflow/chat',
-        name: 'DataflowChat',
-        component: () => import('@/views/dataflow-chat/index.vue'),
+        path: '/reports',
+        name: 'Reports',
+        component: () => import('@/views/reports/index.vue'),
         //using el svg icon, the elSvgIcon first when at the same time using elSvgIcon and icon
-        meta: { title: 'DataflowChat', elSvgIcon: 'Menu', affix: true }
+        meta: { title: 'Reports', elSvgIcon: 'Menu', affix: true }
       }
     ]
   },
