@@ -284,9 +284,15 @@ class SolverAgent(BaseAgent):
             ]
         )
 
-        tools = tools.replace("{{", "{").replace("}}", "}")
+        # tools = tools.replace("{{", "{").replace("}}", "}")
 
         tool_names = ", ".join([tool for tool in relevant_tools])
+        tool_choice = ", ".join(
+            [
+                tool for tool in relevant_tools
+                if tool not in ["match_diagnose_knowledge", "whether_is_abnormal_metric"]
+            ]
+        )
 
         self.role_description = Template(self.role_description).safe_substitute(
             {
@@ -305,6 +311,7 @@ class SolverAgent(BaseAgent):
             "tools": tools,
             "tool_names": tool_names,
             "tool_observation": "\n".join(tool_observation),
+            "tool_choice": tool_choice
         }
 
         return Template(self.prompt_template).safe_substitute(input_arguments)

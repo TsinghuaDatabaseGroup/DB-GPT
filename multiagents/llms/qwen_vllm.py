@@ -1,4 +1,3 @@
-import openai
 from multiagents.llms import llm_registry
 from multiagents.llms.base import BaseChatModel
 import time
@@ -7,6 +6,7 @@ from typing import List, Dict
 import os
 import re
 import json
+import requests
 
 
 def remove_charts(text):
@@ -19,25 +19,19 @@ def remove_charts(text):
 @llm_registry.register("qwen1.5_vllm")
 class QwenVllmChat(BaseChatModel):
     conversation_history: List = []
-    client: None = None
-    model_name_or_path: str = "Qwen1.5-14B-Chat"
-    generate_cfg: Dict = {'stop': ['Observation:', 'Observation:\n'], 'temperature': 0}
+    url: str = ""
+    model_name_or_path: str = ""
+    generate_cfg: Dict = {
+        'stop': ['Observation:', 'Observation:\n', '<|im_end|>'],
+        'temperature': 0,
+        'skip_special_tokens': False,
+    }
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        import openai
 
-        assert not openai.__version__.startswith('0.')
-        api_kwargs = {}
-        api_key = ONLINE_LLM_MODEL["qwen1.5-vllm"].get("api_key", None)
-        api_base = ONLINE_LLM_MODEL["qwen1.5-vllm"].get("api_base_url", None)
-        if api_base:
-            api_kwargs['base_url'] = api_base
-        if api_key:
-            api_kwargs['api_key'] = api_key
-
-        self.client = openai.OpenAI(**api_kwargs)
-        self.model_name_or_path = ONLINE_LLM_MODEL["qwen1.5-vllm"].get("model_name", None)
+        self.url = ONLINE_LLM_MODEL["qwen1.5-vllm"]["api_base_url"] + "/chat/completions"
+        self.model_name_or_path = ONLINE_LLM_MODEL["qwen1.5-vllm"]["model_name"]
         self.generate_cfg.update(kwargs)
 
     @staticmethod
@@ -79,16 +73,15 @@ class QwenVllmChat(BaseChatModel):
         return {"role": "assistant", "content": output, "time": time.strftime("%H:%M:%S", time.localtime())}
 
     def chat(self, messages, **kwargs):
-        generate_cfg = self.generate_cfg.copy()
-        generate_cfg.update(kwargs)
+        cfg = self.generate_cfg.copy()
+        cfg.update(kwargs)
+        cfg["model"] = self.model_name_or_path
+        cfg["messages"] = messages
 
-        response = self.client.chat.completions.create(
-            model=self.model_name_or_path,
-            messages=messages,
-            **generate_cfg
-        )
+        response = requests.post(self.url, json=cfg)
+        response = json.loads(response.text)
 
-        output = response.choices[0].message.content
+        output = response['choices'][0]['message']['content']
 
         if not os.path.exists(r"saved_msg_qwen"):
             os.mkdir(r"saved_msg_qwen")
