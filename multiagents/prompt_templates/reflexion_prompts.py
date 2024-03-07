@@ -32,6 +32,15 @@ The reflection information can be inherit to later trails:
 Begin!
 '''
 
+MAKE_REFLEXION_USER_PROMPT_zh = '''
+请注意，你正在执行蒙特卡洛搜索。现在你对前一次的尝试不太满意，请进行反思。
+反思的信息可以继承到后续的尝试，反思的信息必须满足：
+1. 反思信息比较短，最多不超过5句话。
+2. 反思能让你更了解自己执行的任务。
+反思的回复无需调用工具，无需按照模板，没有固定格式。
+'''
+
+
 CAT_REFLEXION_USER_PROMPT = '''Now, let's start over and follow the revised plan. Hope you can do better. The environment restarted.'''
 
 

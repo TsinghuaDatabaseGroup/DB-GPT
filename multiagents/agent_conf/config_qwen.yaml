@@ -2,89 +2,49 @@ max_turn: &max_turn 3
 
 llm_type: Qwen1.5-14B-Chat
 
+language: zh
+
 prompts:
+  role_assigner_role_description: &role_assigner_role_description |-
+    你是一个角色分配者。你的任务是选择具有不同身份的专家，以正确分析给定告警的根因。
+
   role_assigner_prompt: &role_assigner_prompt |-
-    # Role Description
-    You are the leader of a group of diagnosis experts. Currently, the database in your company may meet problems. The anomaly alert is:
+    你是一组诊断专家的领导者。现在数据库触发了告警，告警信息为：
     ${alert_info}
     
-    Now you need to select experts with diverse identity to correctly analyze the root causes of the given alert. The names of available experts are:
+    你需要选择具有不同身份的专家来分析告警的根因。可选专家的名字为：
     ${task_description}
     
-    Which experts will you recruit to generate an accurate solution? Note you can only select one to three experts!!!
-    
-    # Response Format Guidance
-    You should respond with a list of expert names (one expert name can only occur for one time). For example:
+    请注意，你只能选择最多3位专家。你只能回复选择的专家的名字，不要包括其他信息。你的回复必须按照如下格式：
     1. CpuExpert
     2. QueryExpert
     ...
-    
-    Only respond with the names of selected experts (separated by spaces). Do not include your reason.
 
-  chief_dba_format_prompt: &chief_dba_format_prompt |-
-    You are in a company whose databases meet an anomaly. The anomaly's start_time is ${start_time} and end_time is ${end_time}. It depends on you to collaborate with other agents to diagnose the root causes. The anomaly alert is:
-    ${alert_info}
-    
-    # Rules and Format Instructions for Response
-    
-    ===============
+  chief_dba_role_description: &chief_dba_role_description |-
+    你是一个拥有丰富数据库诊断经验的首席DBA。你的任务是和其他专家一起分析异常的根因。以下是你的任务概述：
+    1. 与其他专家交流，询问如何诊断异常的根因。
+    2. 总结故障根因和详细的解决方案。
+    注意，你的回答必须简明扼要。
 
-    - Must listen to the advice of the user, and respond to the user's advice in the following format:
-    Thought: I now know the advice of the user, and i need to consider it during the diagnosis and optimization solutions
-    Action: Speak
-    Action Input: ({"diagnose": response to the advice, "solution": [], "knowledge": ""})
+#  chief_dba_format_prompt: &chief_dba_format_prompt |-
 
-    - You can detect and diagnose anomaly as follows to use tool:
-    Thought: (your thought)
-    Action: (an action name, it can be one of [Speak], pay attention to the capitalization)
-    Action Input: (argument for the action)
-
-    After you obtain the start and end time of the anomaly, announce it to the agents, and use the following format:
-    Thought: I now know the start and end time of the anomaly.
-    Action: Speak
-    Action Input: ({"diagnose": the start and end time of the anomaly are ${start_time} and ${end_time}, "solution": [], "knowledge": ""})
-
-    After all the agents have announced the root causes they found, you should summarize all the mentioned root causes and optimization solutions point by point:
-    Thought: I now know the root causes and optimization solutions from other agents, and i need to conclude them point by point
-    Action: Speak
-    Action Input: ({"diagnose": The identified root causes of the anomaly are ..., "solution": The suggested optimization solutions are ..., "knowledge": ""})
-
-    ===============
-
-    Here is the conversation history
-    ${chat_history}
-
-    Here is the execution log of tools
-    ${tool_observation}
-
-    - Once an agent has announced the root causes he found, it is your responsibility to memorize the root causes. After that, please continue to encourage other agents to diagnose root causes.
-
-    - When no one speaks in the last round of the dialogue ([Silence] appears in the end of history), you should summarize all the mentioned root causes and optimization solutions point by point.
-
-    Remember to pay attention to the response format instructions, and strictly follow the rules specified above! And do not easily give root causes if there is no clear evidence or responses from other agents.
-    Based on the above history, what will you, ${agent_name}, do next?
-
-  # - During diagnosis, you can listen to the chief dba by responding:
-  # Thought: (your thought)
-  # Action: Listen
-  # Action Input: "None"
   expert_agent_role_description: &expert_agent_role_description |-
-    You are a ${agent_name} agent that can use the tool apis to check resource usage (whether_is_abnormal_metric), analyze the root causes of high resource usage using the metrics, queries and knowledge gained from (match_diagnose_knowledge), and give optimization solutions (e.g., optimize_index_selection). Note the response should be in markdown format.
-    
-    You have access to the following tools:
+    你是一个${agent_name}，可以使用多种工具来进行故障诊断。
+
+    ## 你拥有如下工具:
 
     ${tools}
     
-    Use the following format:
+    ## 你可以在回复中插入零次、一次或多次以下命令以调用工具：
     
-    Thought: you should always think about what to do
-    Action: the action to take, should be one of [${tool_names}]
-    Action Input: the input to the action
-    Observation: the result of the action
-    ... (this Thought/Action/Action Input/Observation can be repeated zero or more times)
-    Thought: I now know the final answer
-    Final Answer: the final answer to the original input question
-    
+    Thought: 你的思考
+    Action: 工具名称，必须是[${tool_names}]之一
+    Action Input: 工具输入
+    Observation: 工具结果
+    ...
+    Thought: 我知道最终答案了
+    Final Answer: 原始问题的最终答案
+  
 
   expert_agent_format_prompt: &expert_agent_format_prompt |-
     现在公司的数据库触发了告警。告警的具体内容是:
@@ -93,23 +53,19 @@ prompts:
     -你的分析必须基于以下步骤：
     首先使用工具"whether_is_abnormal_metric"判断是否有异常指标。
     其次使用工具"match_diagnose_knowledge"进行故障分析。
-    然后，基于你的思考，你可以选择是否使用工具优化查询或者优化索引，这一步可以重复0次或者多次。
-    
-    最后，基于上述分析，给出最终的根因和解决方案，回答必须是字典格式，模板如下：
+    根据上面几步结果，只要还能够继续往下深入诊断，就使用工具优化查询或者优化索引。
+    最后，基于上述所有结果，给出最终的根因和解决方案，按照如下模板，不要说多余的话。其中Final Answer是字典格式：
     Thought: 我现在知道异常的根因了
     Final Answer: {"diagnose": "你诊断的根因", "solution": "你得到的最优解决方案", "knowledge": "你参考的诊断知识"}
 
 
 
 monitor_tools: &monitor_tools
--
-  tool_name: metric_monitor
+  - tool_name: metric_monitor
 
 expert_tools: &expert_tools
--
-  tool_name: metric_monitor
--  
-  tool_name: index_advisor
+  - tool_name: metric_monitor
+  - tool_name: index_advisor
 #-
 #  tool_name: query_advisor
 
@@ -132,39 +88,30 @@ environment:
       type: basic
 
 agents:
-  - 
-    agent_type: reporter
+  - agent_type: reporter
     name: ChiefDBA
-    role_description: |-
-      You are a Chief DBA with much database diagnosis experience. Today, you will analyze the root causes of an anomaly with the other agents. Here is the outline of the procedure:
-      1. Chat and ask how to diagnose the root causes of the anomaly with other agents.
-      2. Summarize the root causes and detailed solutions spoken by other agents.
-
-      Your answer needs to be concise and accurate.
-    prompt_template: *chief_dba_format_prompt
+    role_description: *chief_dba_role_description
+#    prompt_template: *chief_dba_format_prompt
     memory:
       memory_type: chat_history
     tool_memory:
       memory_type: chat_history
       llm:
-        llm_type: qwen2_server
+        llm_type: qwen1.5_vllm
       recursive: true
     llm:
-      llm_type: qwen2_server
+      llm_type: qwen1.5_vllm
     tools: *monitor_tools
     verbose: true
-  - 
-    agent_type: role_assigner
+  - agent_type: role_assigner
     name: role assigner
-    role_description: |-
-      You are a role assigner. Your task is to select experts with diverse identity to correctly analyze the root causes of the given alerts.
+    role_description: *role_assigner_role_description
     prompt_template: *role_assigner_prompt
     memory:
       memory_type: chat_history
     llm:
-      llm_type: qwen2_server
-  -
-    agent_type: solver
+      llm_type: qwen1.5_vllm
+  - agent_type: solver
     output_parser: qwen_output_parser
     name: ${agent_name}
     role_description: *expert_agent_role_description
@@ -174,9 +121,9 @@ agents:
     tool_memory:
       memory_type: chat_history
       llm:
-        llm_type: qwen2_server
+        llm_type: qwen1.5_vllm
       recursive: true
     llm:
-      llm_type: qwen2_server
+      llm_type: qwen1.5_vllm
     tools: *expert_tools
     verbose: true

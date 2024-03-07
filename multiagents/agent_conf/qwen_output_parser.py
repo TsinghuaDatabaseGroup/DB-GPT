@@ -24,71 +24,74 @@ class QwenDBDiag(OutputParser):
             except:
                 raise OutputParserError("llm output is not str or dict")
 
-        special_func_token = '\nAction:'
-        special_args_token = '\nAction Input:'
-        special_obs_token = '\nObservation:'
-        special_answer_token = '\nFinal Answer:'
-        i = text.rfind(special_func_token)
-        j = text.rfind(special_args_token)
-        k = text.rfind(special_obs_token)
-        l = text.rfind(special_answer_token)
-        if 0 <= i < j:  # If the text has `Action` and `Action input`,
-            if k < j:  # but does not contain `Observation`,
-                # then it is likely that `Observation` is omitted by the LLM,
-                # （在inference的refine_messages里有处理，这里保险起见还是保持）
-                # because the output text may have discarded the stop word.
-                text = text.rstrip() + special_obs_token  # Add it back.
-            k = text.rfind(special_obs_token)
-            action = text[i + len(special_func_token):j].strip()
-            action_input = text[j + len(special_args_token):k].strip()
-            text = text[:k]  # Discard '\nObservation:'.
+        # 需要解析的内容通常只含有Thought / Action / Action Input / Final Answer
+        special_thought_token = 'Thought:'
+        special_func_token = 'Action:'
+        special_args_token = 'Action Input:'
+        special_obs_token = 'Observation:'
+        special_answer_token = 'Final Answer:'
+        i = text.rfind(special_thought_token)
+        j = text.rfind(special_func_token)
+        k = text.rfind(special_args_token)
+        m = text.rfind(special_obs_token)
+        n = text.rfind(special_answer_token)
 
+        assert m == -1  # 必须没有Observation
+
+        if i < j < k:  # 有Thought / Action / Action Input
+            assert n == -1
+            action = text[j + len(special_func_token):k].strip()
+            action_input = text[k + len(special_args_token):].strip()
             return AgentAction(action.lower(), action_input, text)
 
-        else:
-            assert l > 0
-            action_input = text[l + len(special_answer_token):]
+        elif i < n:  # 有Thought / Final Answer
+            assert j == -1 and k == -1
+            final_answer = text[n + len(special_answer_token):]
             # 防止生成了final answer后还乱说其他的，可能还会有问题 TODO
-            left = action_input.find("{")
-            right = action_input.find("}")
-            action_input = action_input[left:right+1]
+            # left = final_answer.find("{")
+            # right = final_answer.find("}")
+            # final_answer = final_answer[left:right + 1]
+            # final_answer = re.match(r"Final Answer: ({.*?})", final_answer, flags=re.DOTALL)
 
             try:
 
-                action_input = json.loads(action_input)
+                final_answer = json.loads(final_answer)
             except:
                 print("Error in parsing diagnosis results")
                 return None
 
-            action_json = {"diagnose": "", "solution": [], "knowledge": ""}
+            final_answer_json = {"diagnose": "", "solution": [], "knowledge": ""}
 
-            for key in action_input:
+            for key in final_answer:
                 if "diagnose" in key:
-                    if type(action_input[key]) == list and action_input[key] != []:
-                        action_input[key] = combine_similar_answers(action_input[key], output_format='list')
-                    elif type(action_input[key]) == str and action_input[key] != "":
-                        action_input[key] = combine_similar_answers(action_input[key])
+                    if type(final_answer[key]) == list and final_answer[key] != []:
+                        final_answer[key] = combine_similar_answers(final_answer[key], output_format='list')
+                    elif type(final_answer[key]) == str and final_answer[key] != "":
+                        final_answer[key] = combine_similar_answers(final_answer[key])
 
-                    action_json["diagnose"] = action_input[key]
+                    final_answer_json["diagnose"] = final_answer[key]
                 elif "solution" in key:  # list
-                    if type(action_input[key]) == list and action_input[key] != []:
-                        action_input[key] = combine_similar_answers(action_input[key], output_format='list')
-                    elif type(action_input[key]) == str and action_input[key] != "":
-                        action_input[key] = combine_similar_answers(action_input[key])
-                    potential_solutions = action_input[key]
+                    if type(final_answer[key]) == list and final_answer[key] != []:
+                        final_answer[key] = combine_similar_answers(final_answer[key], output_format='list')
+                    elif type(final_answer[key]) == str and final_answer[key] != "":
+                        final_answer[key] = combine_similar_answers(final_answer[key])
+                    potential_solutions = final_answer[key]
 
                     if isinstance(potential_solutions, str):
                         potential_solutions = potential_solutions.strip()
                         potential_solutions = re.sub(r"\n+", "\n", potential_solutions)
                         potential_solutions = potential_solutions.split("\n")
 
-                    action_json["solution"] = potential_solutions
+                    final_answer_json["solution"] = potential_solutions
                 elif "knowledge" in key:
-                    if type(action_input[key]) == list and action_input[key] != []:
-                        action_input[key] = combine_similar_answers(action_input[key], output_format='list')
-                    elif type(action_input[key]) == str and action_input[key] != "":
-                        action_input[key] = combine_similar_answers(action_input[key])
+                    if type(final_answer[key]) == list and final_answer[key] != []:
+                        final_answer[key] = combine_similar_answers(final_answer[key], output_format='list')
+                    elif type(final_answer[key]) == str and final_answer[key] != "":
+                        final_answer[key] = combine_similar_answers(final_answer[key])
 
-                    action_json["knowledge"] = action_input[key]
+                    final_answer_json["knowledge"] = final_answer[key]
 
-            return AgentFinish({"output": action_json}, text)
+            return AgentFinish({"output": final_answer_json}, text)
+
+        else:
+            raise OutputParserError(message=text)
