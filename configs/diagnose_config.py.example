@@ -11,6 +11,13 @@ DIAGNOSTIC_FILES_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)),
 if not os.path.exists(DIAGNOSTIC_FILES_PATH):
     os.mkdir(DIAGNOSTIC_FILES_PATH)
 
+# 诊断运行日志文件
+DIAGNOSE_RUN_LOG_PATH = "./diagnose_run_log.txt"
+# 诊断运行pid文件
+DIAGNOSE_RUN_PID_PATH = "./diagnose_run_pid.txt"
+# 诊断用户输入文件
+DIAGNOSE_USER_FEEDBACK_PATH = "./diagnose_user_feedback.txt"
+
 # 数据库配置
 
 POSTGRESQL_CONFIG = {

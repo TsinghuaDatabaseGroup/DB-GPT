@@ -1,3 +1,6 @@
+import time
+
+from configs import DIAGNOSE_USER_FEEDBACK_PATH
 from . import llm_registry
 from .openai import OpenAIChat, call_openai
 from multiagents.spade.candidate_gen import generate_candidate_assertions
@@ -10,6 +13,8 @@ from langchain.docstore.document import Document
 from rank_bm25 import BM25Okapi
 import logging
 from server.utils import run_async
+
+USERINPUTREADFROMFILE = True
 
 FEEDBACK_ITERATIONS = 3
 
@@ -196,14 +201,34 @@ class FeedbackOpenAIChat(OpenAIChat):
                 valid_rules.append(rule[ls:])
 
         return valid_rules
-    
+
+    def user_input(self, placeholder):
+        if USERINPUTREADFROMFILE:
+            print(placeholder)
+            while True:
+                time.sleep(2)
+                try:
+                    with open(DIAGNOSE_USER_FEEDBACK_PATH, 'r+') as f:
+                        content = f.read().strip()
+                        if len(content) > 0:
+                            input_content = content
+                            # 清空文件内容
+                            f.seek(0)
+                            f.truncate()
+                            break
+                except:
+                    pass
+        else:
+            input_content = input(placeholder)
+        return input_content
+
     def interact(self, instruction, res):
         print('='*10 + 'INPUT' + '='*10)
         print(self.conversation_history)
         print('='*10 + 'OUTPUT' + '='*9)
         print(res)
         print('='*25)
-        feedback = input('Please input your feedback of the D-Bot response.\n')
+        feedback = self.user_input('Please input your feedback of the D-Bot response.\n')
         print(f'Feedback: {feedback}')
 
         if feedback.strip() == '':
@@ -215,14 +240,14 @@ class FeedbackOpenAIChat(OpenAIChat):
             print('='*6 + 'REFINED OUPUT' + '='*6)
             print(refined_reply)
             print('=' * 25)
-            eval = input('Are you satisfied with our refined response? Please answer yes or no.\n')
+            eval = self.user_input('Are you satisfied with our refined response? Please answer yes or no.\n')
             if eval.lower() != 'yes':
-                refined_reply = input('Please input your preferred response in details.\n')
+                refined_reply = self.user_input('Please input your preferred response in details.\n')
         else:
-            refined_reply = input('We are sorry that we cannot refine our response based on your feedback. Please input your preferred response in details.\n')
+            refined_reply = self.user_input('We are sorry that we cannot refine our response based on your feedback. Please input your preferred response in details.\n')
 
         return refined_reply
-    
+
     def remove_conflict_identical(self, new_doc, relevant_doc):
         flag = 0
         doc_rules = relevant_doc.metadata['rules'].split('\n')

@@ -2,17 +2,14 @@ import json
 import os
 import time
 import subprocess
-from fastapi import File, UploadFile
-from configs import (DIAGNOSTIC_FILES_PATH, )
+from fastapi import File, UploadFile, Body
+from configs import (DIAGNOSTIC_FILES_PATH, DIAGNOSE_RUN_LOG_PATH, DIAGNOSE_RUN_PID_PATH, DIAGNOSE_USER_FEEDBACK_PATH)
 import threading
 from server.utils import BaseResponse, save_file
 
 current_task = {"thread": None, "output": "", "process": None}
 
 THREADNAME = "run_diagnose"
-DIAGNOSE_RUN_LOG_PATH = "./diagnose_run_log.txt"
-DIAGNOSE_RUN_PID_PATH = "./diagnose_run_pid.txt"
-
 
 def status():
     threads = threading.enumerate()
@@ -109,3 +106,12 @@ def log_output():
 def get_diagnose_output():
     return BaseResponse(code=200, msg="Success", data={"output": log_output()})
 
+
+def diagnose_user_feedback(user_input: str = Body(default="")):
+    if not status():
+        return BaseResponse(code=500, msg="Diagnose is not running")
+    if not user_input:
+        return BaseResponse(code=500, msg="User input is empty")
+    with open(DIAGNOSE_USER_FEEDBACK_PATH, "w") as f:
+        f.write(user_input)
+    return BaseResponse(code=200, msg="Success")

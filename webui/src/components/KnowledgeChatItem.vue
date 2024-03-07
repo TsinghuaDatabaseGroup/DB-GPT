@@ -86,21 +86,8 @@ fill="#333333"
 </template>
 
 <script setup lang="ts">
-// 获取store和router
-import { Marked } from "marked";
-import { markedHighlight } from "marked-highlight";
-import "highlight.js/styles/gruvbox-dark.css";
-import hljs from 'highlight.js';
 
-const marked = new Marked(
-    markedHighlight({
-      langPrefix: 'hljs language-',
-      highlight(code, lang, info) {
-        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-        return hljs.highlight(code, { language }).value;
-      }
-    })
-);
+import marked from '@/utils/markdownConfig.js'
 
 const props = defineProps({
   message: {required:true, type: Object, default: null },
