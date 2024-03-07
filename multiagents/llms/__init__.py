@@ -9,3 +9,4 @@ from .diag_baichuan2 import DiagBaichuan2Chat
 from .diag_codellama import DiagCodeLlamaChat
 from .diag_llama2 import DiagLlama2Chat
 from .qwen import QwenLocalChat, QwenServerChat
+from .feedback_openai import FeedbackOpenAIChat
