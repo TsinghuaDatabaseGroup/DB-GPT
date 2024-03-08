@@ -142,7 +142,7 @@ class FeedbackOpenAIChat(OpenAIChat):
 
         _, assertions = await generate_candidate_assertions([instruction, instruction_feedback], [output, reply])
 
-        print(f'Generated assertions: {assertions}')
+        print(f'Generated assertions: {assertions}', flush=True)
         assertions_str = assertions[0]
 
         exec(assertions_str, globals())
@@ -162,14 +162,14 @@ class FeedbackOpenAIChat(OpenAIChat):
             failed_assertions = []
             for row, result in zip(rows, results):
                 if isinstance(result, Exception):
-                    print(f"Error: {result} from {row['function_name']}")
+                    print(f"Error: {result} from {row['function_name']}", flush=True)
                     row["result"] = f"Error: {result} from {row['function_name']}"
                     continue
 
                 row["result"] = result
                 if not row["result"]:
                     failed_assertions.append(row["function_code"])
-            print(f'Iteration {iter} check results: {rows}')
+            print(f'Iteration {iter} check results: {rows}', flush=True)
 
             if all([isinstance(row["result"], bool) and row['result'] for row in rows]):
                 break
@@ -225,13 +225,13 @@ class FeedbackOpenAIChat(OpenAIChat):
         return input_content
 
     def interact(self, instruction, res):
-        print('='*10 + 'INPUT' + '='*10)
-        print(self.conversation_history)
-        print('='*10 + 'OUTPUT' + '='*9)
-        print(res)
-        print('='*25)
+        print('='*10 + 'INPUT' + '='*10, flush=True)
+        print(self.conversation_history, flush=True)
+        print('='*10 + 'OUTPUT' + '='*9, flush=True)
+        print(res, flush=True)
+        print('='*25, flush=True)
         feedback = self.user_input('Please input your feedback of the D-Bot response.\n')
-        print(f'Feedback: {feedback}')
+        print(f'Feedback: {feedback}', flush=True)
 
         if feedback.strip() == '':
             return None
@@ -239,9 +239,9 @@ class FeedbackOpenAIChat(OpenAIChat):
         refined_reply = pool.submit(asyncio.run, self.feedback(copy.deepcopy(self.conversation_history), instruction, res['content'], feedback)).result()
 
         if refined_reply is not None:
-            print('='*6 + 'REFINED OUPUT' + '='*6)
-            print(refined_reply)
-            print('=' * 25)
+            print('='*6 + 'REFINED OUPUT' + '='*6, flush=True)
+            print(refined_reply, flush=True)
+            print('=' * 25, flush=True)
             eval = self.user_input('Are you satisfied with our refined response? Please answer yes or no.\n')
             if eval.lower() != 'yes':
                 refined_reply = self.user_input('Please input your preferred response in details.\n')
