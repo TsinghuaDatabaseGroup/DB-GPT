@@ -133,7 +133,9 @@ class SolverAgent(BaseAgent):
             output_parser=self.output_parser,
             alert_dict=self.alert_dict,
             alert_str=self.alert_str,
-            agent=self)
+            agent=self,
+            language=self.language
+        )
 
         print(f"\n[{self.name}] 开始诊断!")
 
@@ -142,11 +144,16 @@ class SolverAgent(BaseAgent):
 
         if result_node is None:
             return {}
-
-        prompt = "Analyze the diagnosed root causes based on above discussions in details. Note the analysis should be only about root causes in markdown format!!! And do not mention anything about the solutions!!!"
+        if self.language == 'zh':
+            prompt = "基于上述内容，详细分析诊断的根因。请注意，分析应仅针对根因，不要提及任何解决方案。以markdown格式返回。"
+        else:
+            prompt = "Analyze the diagnosed root causes based on above discussions in details. Note the analysis should be only about root causes in markdown format!!! And do not mention anything about the solutions!!!"
         diag_message = self.llm._construct_messages(prompt)
         diag_messages = [result_node.messages[-1]] + diag_message
-        self.llm.change_messages("You are a database expert", diag_messages)
+        if self.language == 'zh':
+            self.llm.change_messages("你是一个数据库专家。", diag_messages)
+        else:
+            self.llm.change_messages("You are a database expert", diag_messages)
         root_causes = self.llm.parse()
         if isinstance(root_causes, dict):
             root_causes = root_causes["content"]
@@ -154,13 +161,16 @@ class SolverAgent(BaseAgent):
             root_causes = root_causes.content
 
         # print(colored(f"\nDetected Root Causes: {root_causes}","blue"))
-
-        prompt = "Give the solutions only based on above messages in details. Note do not mention anything about **root causes**!!! The solutions (not root causes) should be in markdown format. If there are no solutions in above messages, please answer 'No solution available'"
+        if self.language == 'zh':
+            prompt = "基于上述内容，详细给出解决方案。请注意，只给出解决方案，不要提及任何根因。以markdown格式返回。如果上述消息无解决方案，请回答\"无可靠解决方案\"。"
+        else:
+            prompt = "Give the solutions only based on above messages in details. Note do not mention anything about **root causes**!!! The solutions (not root causes) should be in markdown format. If there are no solutions in above messages, please answer 'No solution available'"
         solution_message = self.llm._construct_messages(prompt)
         solution_messages = [result_node.messages[-1]] + solution_message
-        self.llm.change_messages(
-            "You are a database expert",
-            solution_messages)
+        if self.language == 'zh':
+            self.llm.change_messages("你是一个数据库专家。", solution_messages)
+        else:
+            self.llm.change_messages("You are a database expert", solution_messages)
         solutions = self.llm.parse()
         if isinstance(solutions, dict):
             solutions = solutions["content"]
@@ -213,7 +223,10 @@ class SolverAgent(BaseAgent):
 
     async def review_step(self) -> CriticMessage:
         """Asynchronous version of step"""
-        prompt = "Please review the above diagnosis results, and give necessary advice to correct the unclear diagnosis and proposed solutions. Note the review should be in markdown format"
+        if self.language == 'zh':
+            prompt = "请检查上述诊断结果，并给出必要的建议，以纠正不清晰的诊断和解决方案。无需调用工具，没有固定模板，但请注意，回复必须为markdown格式。"
+        else:
+            prompt = "Please review the above diagnosis results, and give necessary advice to correct the unclear diagnosis and proposed solutions. Note the review should be in markdown format"
 
         prompt_message = {
             "role": "user",
@@ -254,14 +267,11 @@ class SolverAgent(BaseAgent):
         # https://github.com/openai/openai-cookbook/blob/main/examples/How_to_call_functions_with_chat_models.ipynb
         # tools = [{"type": "function", "function": v} for v in relevant_tools.values()]
 
-        # 和qwen的格式对齐，应该gpt4/其他llm也能理解这个格式
-        tool_desc_template = {
-            'zh':
-                '### {name}\n\n{name}: {description} 输入参数：{parameters}',
-            'en':
-                '### {name}\n\n{name}: {description} Parameters：{parameters}'
-        }
-        tool_desc = tool_desc_template['zh']  # 我这里默认用中文模板了
+        # qwen_agent里给的模板
+        if self.language == 'zh':
+            tool_desc = '### {name}\n\n{name}: {description} 输入参数：{parameters}'
+        else:
+            tool_desc = '### {name}\n\n{name}: {description} Parameters：{parameters}'
 
         tools = "\n\n".join(
             [

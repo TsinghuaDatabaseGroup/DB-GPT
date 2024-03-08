@@ -1,8 +1,14 @@
 from multiagents.reasoning_algorithms.tree_of_thought.Tree.Tree import my_tree, tree_node
 from copy import deepcopy
 from multiagents.reasoning_algorithms import base_search_method
-from multiagents.prompt_templates.tree_search_prompts import  MAKE_REFLECTION_PROMPT,DIVERSITY_PROMPT,VOTE_BEST_SYSTEM_PROMPT,VOTE_BEST_USER_PROMPT,DEFAULT_POLICY_SYSTEM_PROMPT, DEFAULT_POLICY_USER_PROMPT
-from multiagents.prompt_templates.reflexion_prompts import MAKE_REFLEXION_USER_PROMPT
+from multiagents.prompt_templates.tree_search_prompts import (
+    DIVERSITY_PROMPT,
+    VOTE_BEST_SYSTEM_PROMPT, VOTE_BEST_SYSTEM_PROMPT_zh,
+    VOTE_BEST_USER_PROMPT, VOTE_BEST_USER_PROMPT_zh,
+)
+from multiagents.prompt_templates.reflexion_prompts import (
+    MAKE_REFLEXION_USER_PROMPT, MAKE_REFLEXION_USER_PROMPT_zh
+)
 from termcolor import colored
 from multiagents.utils.utils import AgentAction
 from multiagents.memory import BaseMemory
@@ -50,7 +56,9 @@ class UCT_vote_function(base_search_method):
         arbitrary_types_allowed = True
     memory: BaseMemory = Field
 
-    def __init__(self, diag_id, enable_prometheus, start_time, end_time, agent_name, role_description, prompt_template, llm,env, output_parser, alert_dict, alert_str, agent):
+    def __init__(self, diag_id, enable_prometheus, start_time, end_time,
+                 agent_name, role_description, prompt_template, llm, env,
+                 output_parser, alert_dict, alert_str, agent, language='en'):
         super(UCT_vote_function, self).__init__()
         '''
         偏序驱动的信心上限树算法:
@@ -72,6 +80,7 @@ class UCT_vote_function(base_search_method):
         self.alert_str = alert_str
 
         self.restart(agent)
+        self.language = language
 
     # def to_json(self):
     
@@ -236,19 +245,19 @@ class UCT_vote_function(base_search_method):
             choices = ordered[:vote_candidates] #随机选择，然后从小到大排序
             choices.sort()
             messages = []
-            prompt = VOTE_BEST_SYSTEM_PROMPT
+            prompt = VOTE_BEST_SYSTEM_PROMPT_zh if self.language == 'zh' else VOTE_BEST_SYSTEM_PROMPT
             prompt = prompt.replace("{task_description}",self.env.task_description)
 
             now_time = datetime.datetime.now()
             now_time = now_time.strftime("%H:%M:%S")
 
             messages.append({
-                "role":"system",
+                "role": "system",
                 "content": prompt,
                 "time": str(now_time)                
             })
 
-            prompt = VOTE_BEST_USER_PROMPT
+            prompt = VOTE_BEST_USER_PROMPT_zh if self.language == 'zh' else VOTE_BEST_USER_PROMPT
             prompt = prompt.replace("{input_description}",self.env.input_description)
 
             candidates_description = ""
@@ -264,7 +273,7 @@ class UCT_vote_function(base_search_method):
             now_time = now_time.strftime("%H:%M:%S")
 
             messages.append({
-                "role":"user",
+                "role": "user",
                 "content": prompt,
                 "time": str(now_time)                
             })
@@ -296,10 +305,11 @@ class UCT_vote_function(base_search_method):
 
                 vote = message["content"]
                 # print(vote)
-                best_candiate_line = vote.split("\n")[-1]
+                # best_candiate_line = vote.split("\n")[-1]
                 # print(best_candiate_line)
-                re_pattern = r"\"?candidate[ \_](\d+)\"?"
-                re_result = re.findall(re_pattern,best_candiate_line.lower())
+                re_pattern = r"[\"<]?candidate[ \_](\d+)[\">]?"
+                # re_result = re.findall(re_pattern,best_candiate_line.lower())
+                re_result = re.findall(re_pattern, vote)[-1:]  # 直接把最后的拿到
                 if re_result != []:
                     if not len(re_result) == 1:
                         # print(best_candiate_line)
@@ -366,14 +376,17 @@ class UCT_vote_function(base_search_method):
         '''
         从start_node开始生成了新儿子，一路走到了end_node,对于过去的自己start_node有没有什么想说的
         '''
-        make_reflection_prompt = MAKE_REFLEXION_USER_PROMPT
+        if self.language == "zh":
+            make_reflection_prompt = MAKE_REFLEXION_USER_PROMPT_zh
+        else:
+            make_reflection_prompt = MAKE_REFLEXION_USER_PROMPT
 
         now_time = datetime.datetime.now()
         now_time = now_time.strftime("%H:%M:%S")
 
         new_message = {
             "role": "user",
-            "content":make_reflection_prompt,
+            "content": make_reflection_prompt,
             "time": str(now_time)
         }
 
@@ -623,10 +636,14 @@ class UCT_vote_function(base_search_method):
 
                     now_time = datetime.datetime.now()
                     now_time = now_time.strftime("%H:%M:%S")
-                    temp_message = {"role": "function", "content": f'{observation}', "time": str(now_time)}
+                    temp_message = {
+                        "role": "assistant",
+                        "content": f'Observation: {observation}',
+                        "time": str(now_time)
+                    }
                     if temp_message not in temp_node.messages:
                         temp_node.messages.append(temp_message)
-                    
+
                     temp_node.father = now_node
                     now_node.children.append(temp_node)
                     now_node = temp_node
