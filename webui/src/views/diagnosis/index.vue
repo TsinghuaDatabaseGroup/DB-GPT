@@ -1,21 +1,48 @@
 <template>
   <div class="relative columnSC diagnose-container">
-    <div ref="messagesScrollDiv" class="diagnose-messages-container">
-      <div style="white-space: pre-wrap" v-html="diagnoseOutputHtml" />
+    <div class="header">
+      <el-upload
+          :class="diagnoseStatus ? 'upload upload-disabled' : 'upload'"
+          drag
+          action=""
+          :disabled="diagnoseStatus"
+          accept=".json,.jsonl"
+          :http-request="uploadFile"
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">
+          Drop file here or <em>click to upload</em>
+        </div>
+        <template #tip>
+          <div class="el-upload__tip">
+            jpg/png files with a size less than 500kb
+          </div>
+        </template>
+      </el-upload>
     </div>
-    <BottomInputContainer style="width: calc(100% - 20px)" placeholder="Ask anything" @send-click="onSendClick" />
+    <div ref="messagesScrollDiv" class="diagnose-messages-container">
+      <div style="white-space: pre-wrap; word-break: break-all" v-html="diagnoseOutputHtml" />
+      <div v-if="diagnoseStatus" style="position: fixed; right: 30px; bottom: 100px">
+        <el-icon class="is-loading" size="26" style="color: limegreen; font-weight: bold" ><Loading/></el-icon>
+      </div>
+    </div>
+    <BottomInputContainer style="width: calc(100% - 20px)" placeholder="Ask anything" @send-click="onSendClick">
+      <template v-if="diagnoseStatus" #right>
+        <div style="margin-left: 10px; cursor: pointer" @click="onStopDiagnoseClick">
+          <svg t="1709818874544" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4540" width="32" height="32"><path d="M512 1024a512 512 0 1 1 512-512 512 512 0 0 1-512 512z m0-896a384 384 0 1 0 384 384A384 384 0 0 0 512 128z m128 576h-256a64 64 0 0 1-64-64v-256a64 64 0 0 1 64-64h256a64 64 0 0 1 64 64v256a64 64 0 0 1-64 64z" fill="#d81e06" p-id="4541"/></svg>
+        </div>
+      </template>
+    </BottomInputContainer>
   </div>
 </template>
 
 <script setup lang="ts" name="Index">
 
-import {diagnoseStatusReq, diagnoseOutputReq} from "@/api/diagnose.js";
+import {diagnoseOutputReq, diagnoseStatusReq, diagnoseStopDiagnoseReq, diagnoseUserFeedbackReq, runDiagnoseReq} from "@/api/diagnose.js";
 import {ElMessage} from "element-plus";
 import BottomInputContainer from "@/components/BottomInputContainer.vue";
 import { reactive, ref } from 'vue'
 import marked from '@/utils/markdownConfig.js'
-
-const CHAT_HISTORY_KEY = 'dbgpt-chat-history'
 
 const router = useRouter()
 
@@ -40,82 +67,38 @@ watch(() => diagnoseOutput.value, () => {
 onMounted(() => {
   nextTick(() => {
     getDiagnoseStatus()
-    getDiagnoseOutput()
   })
 });
 
 const getDiagnoseStatus = async () => {
   diagnoseStatusReq().then(res => {
     diagnoseStatus.value = res.data.is_alive;
+    if (diagnoseStatus.value) {
+      setTimeout(() => {
+        getDiagnoseStatus()
+      }, 5000)
+    }
+  }).finally(() => {
+    getDiagnoseOutput()
   })
 }
 
 const getDiagnoseOutput = async () => {
   diagnoseOutputReq().then(res => {
     diagnoseOutput.value = res.data.output;
-    console.log('===res==:', diagnoseOutput.value)
   })
 }
 
-const addUserMessage = (content: string) => {
-  const userMessage: Message = {
-    role: 'user',
-    content,
-    time: moment().format('YYYY-MM-DD HH:mm:ss'),
-    loading: false
-  }
-  messageList.value.push(userMessage)
-}
+const uploadFile = (files) => {
+  runDiagnoseReq(files.file).then(() => {
+    ElMessage({
+      type: 'success',
+      message: 'Upload Successfully!',
+    })
+    getDiagnoseStatus()
+  }).finally(() => {
 
-const addRobotMessage = (content: string) => {
-  const robotMessage: Message = {
-    role: 'assistant',
-    content,
-    time: moment().format('YYYY-MM-DD HH:mm:ss'),
-    loading: true
-  }
-  messageList.value.push(robotMessage)
-}
-
-const updateLastRobotMessage = (content: string) => {
-  const lastMessageIndex = messageList.value.length - 1;
-  const lastMessage = messageList.value[lastMessageIndex];
-  const updatedMessage = {
-    ...lastMessage,
-    content,
-    loading:false
-  };
-  messageList.value[lastMessageIndex] = updatedMessage;
-}
-
-const updateLastRobotMessageLoading = (loading: boolean) => {
-  const lastMessage = messageList.value[messageList.value.length - 1]
-  lastMessage.loading = loading
-}
-
-const getHistoryMessages = () => {
-  return messageList.value.slice(-historyLength.value).map(item => {
-    return {
-      role: item.role,
-      content: item.content
-    }
   })
-}
-
-const saveHistoryMessagesToLocal = () => {
-  localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(messageList.value))
-}
-
-const getLocalHistoryMessages = () => {
-  const historyMessages = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]')
-  return historyMessages.map((item: Message) => {
-    return {
-      role: item.role,
-      content: item.content,
-      time: item.time,
-      loading: item.loading
-    };
-  });
 }
 
 const onSendClick = (value) => {
@@ -123,30 +106,37 @@ const onSendClick = (value) => {
     ElMessage.error('Please input something')
     return
   }
-  const userInputValue = value
-  const historyMessages = getHistoryMessages() || []
-  addUserMessage(userInputValue)
-  saveHistoryMessagesToLocal()
-  addRobotMessage('')
-  saveHistoryMessagesToLocal()
-  chatReq(userInputValue,"",llmModel.value,historyMessages,historyLength.value).then(res => {
-    console.log(res)
-    updateLastRobotMessage(res.text)
+  diagnoseUserFeedbackReq(value).then(() => {
+    ElMessage({
+      type: 'success',
+      message: 'Feedback Successfully!',
+    })
   }).finally(() => {
-    updateLastRobotMessageLoading(false)
-    saveHistoryMessagesToLocal()
+  })
+}
+
+const onStopDiagnoseClick = () => {
+  diagnoseStopDiagnoseReq().then(() => {
+    ElMessage({
+      type: 'success',
+      message: 'Stop Successfully!',
+    })
+  }).finally(() => {
+    getDiagnoseStatus()
   })
 }
 
 </script>
 
 <style>
-.llm-select .el-select__wrapper {
-  background-color: transparent!important;
-  box-shadow: None!important;
+.el-upload {
+  --el-upload-dragger-padding-horizontal: 0px!important;
+}
+.el-upload-dragger {
+  border: none;
+  background: transparent;;
 }
 </style>
-
 
 <style lang="scss" scoped>
 .diagnose-container {
@@ -154,21 +144,46 @@ const onSendClick = (value) => {
   overflow: hidden;
   .header {
     width: 100%;
-    border-bottom: 1px solid #eeeeee;
-    display: flex;
-    align-items: center;
-    padding: 10px 20px;
-    flex-wrap: wrap;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    grid-gap: 10px 20px;
+    .upload-disabled {
+      background: #e2e2e2;
+    }
+    .upload {
+      width: 100%;
+      border: 2px dashed var(--el-color-primary);
+      border-radius: 15px;
+      .el-icon--upload {
+        font-size: 30px;
+        color: var(--el-color-primary);
+        margin-bottom: 0!important;
+        line-height: 1;
+      }
+      .el-upload__text {
+        font-size: 14px;
+        color: var(--el-color-primary);
+        em {
+          color: var(--el-color-primary);
+          font-style: normal;
+        }
+      }
+      .el-upload__tip {
+        font-size: 12px;
+        color: #333333;
+        width: 100%;
+        text-align: center;
+      }
+    }
   }
   .diagnose-messages-container {
-    height: calc(100vh - 160px);
-    width: 100%;
+    position: relative;
+    height: calc(100vh - 110px);
+    width: calc(100% - 20px);
     flex-shrink: 1;
-    background: transparent;
+    color: #ffffff;
+    background: RGBA(8, 1, 30, 1.00);
     overflow-y: auto;
     padding: 20px;
+    border-radius: 10px;
+    margin: 10px;
   }
 }
 </style>

@@ -11,9 +11,9 @@ export const diagnoseStatusReq = () => {
 
 
 //上传文件并诊断
-export const runDiagnoseReq = (files) => {
+export const runDiagnoseReq = (file) => {
   const formData = new FormData()
-  formData.append('files', files)
+  formData.append('file', file)
   return axiosReq({
     url: 'diagnose/run_diagnose',
     data: formData,

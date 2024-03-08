@@ -204,9 +204,8 @@ class FeedbackOpenAIChat(OpenAIChat):
 
     def user_input(self, placeholder):
         if USERINPUTREADFROMFILE:
-            print(placeholder)
+            print('='*10 + 'USER FEEDBACK: ' + placeholder, flush=True)  # 参与前端逻辑，不能修改
             while True:
-                time.sleep(2)
                 try:
                     with open(DIAGNOSE_USER_FEEDBACK_PATH, 'r+') as f:
                         content = f.read().strip()
@@ -216,8 +215,11 @@ class FeedbackOpenAIChat(OpenAIChat):
                             f.seek(0)
                             f.truncate()
                             break
-                except:
-                    pass
+                        else:
+                            time.sleep(1)
+                except Exception as err:
+                    print('Error: ', err, flush=True)
+                    time.sleep(1)
         else:
             input_content = input(placeholder)
         return input_content

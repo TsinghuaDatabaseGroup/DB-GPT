@@ -13,6 +13,9 @@
       />
       <el-button icon="Promotion" type="success" :disabled="sendBtnDisabled" circle size="default" style="font-size: 22px;" @click="onSendClick" />
     </div>
+    <slot name="right">
+      <div />
+    </slot>
   </div>
 </template>
 

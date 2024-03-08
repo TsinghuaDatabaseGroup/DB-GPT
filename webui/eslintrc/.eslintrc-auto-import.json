@@ -37,6 +37,7 @@
     "isRef": true,
     "langTitle": true,
     "markRaw": true,
+    "markdownConfig": true,
     "nextTick": true,
     "onActivated": true,
     "onBeforeMount": true,

@@ -38,6 +38,7 @@ declare global {
   const isRef: typeof import('vue')['isRef']
   const langTitle: typeof import('../src/hooks/use-common.js')['langTitle']
   const markRaw: typeof import('vue')['markRaw']
+  const markdownConfig: typeof import('../src/utils/markdownConfig.js')['default']
   const nextTick: typeof import('vue')['nextTick']
   const onActivated: typeof import('vue')['onActivated']
   const onBeforeMount: typeof import('vue')['onBeforeMount']
