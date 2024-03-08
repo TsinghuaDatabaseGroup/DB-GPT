@@ -1,22 +1,28 @@
 import logging
 from multiagents.tools.metric_monitor.anomaly_detection import detect_anomalies
 from multiagents.tools.metrics import *
-from multiagents.tools.metric_monitor.anomaly_analysis import metric_analysis_results, slow_query_analysis_results, \
+from multiagents.tools.metric_monitor.anomaly_analysis import (
+    metric_analysis_results,
+    slow_query_analysis_results,
     workload_analysis_results
+)
 from multiagents.utils.markdown_format import generate_prometheus_chart_content
 from prometheus_service.prometheus_abnormal_metric import prometheus_metrics
 from server.knowledge_base.kb_doc_api import search_docs, fetch_expert_kb_names
+from multiagents.initialization import LANGUAGE
 
 FUNCTION_DEFINITION = {
     "whether_is_abnormal_metric": {
         "name": "whether_is_abnormal_metric",
-        "description": "判断指标是否异常。不需要输入参数，返回判断结果。",
-        "parameters": {}
+        "description": "检测是否存在异常指标。" if LANGUAGE == "zh"
+        else "detect if there is an abnormal metric.",
+        "parameters": {'type': 'object', 'properties': {}}
     },
     "match_diagnose_knowledge": {
         "name": "match_diagnose_knowledge",
-        "description": "匹配历史故障诊断知识库。不需要输入参数，返回匹配到的知识",
-        "parameters": {}
+        "description": "在诊断知识库中搜索相关的故障诊断知识。" if LANGUAGE == "zh"
+        else "search the relevant diagnosis knowledge from diagnosis knowledge base.",
+        "parameters": {'type': 'object', 'properties': {}}
     }
 }
 
@@ -52,10 +58,12 @@ def whether_is_abnormal_metric(
 
     if is_abnormal:
         # print(f"{metric_name} is abnormal")
-        return f"The metric {metric_name} is abnormal \n " + f"[chart] ./alert_results/{current_diag_time}/{metric_name}.html"
+        result_str = f"指标{metric_name}是异常的。\n" if LANGUAGE == "zh" else f"The metric {metric_name} is abnormal \n "
+        return result_str + f"[chart] ./alert_results/{current_diag_time}/{metric_name}.html"
     else:
         # print(f"{metric_name} is normal")
-        return f"Cannot decide whether the metric {metric_name} is abnormal.\n"  # + f"[chart] ./alert_results/{current_diag_time}/{metric_name}.html"
+        return f"无法判断指标{metric_name}是否异常。\n" if LANGUAGE == "zh" \
+            else f"Cannot decide whether the metric {metric_name} is abnormal.\n"  # + f"[chart] ./alert_results/{current_diag_time}/{metric_name}.html"
 
 
 def match_diagnose_knowledge(
@@ -83,9 +91,10 @@ def match_diagnose_knowledge(
                                                                                     start_time, end_time)
 
     if "network" in agent_name:
-        return """The {} relevant metric values from Prometheus are:\n 
-        {}""".format(agent_name,
-                     alert_and_metric_str)
+        if LANGUAGE == "zh":
+            return f"从Prometheus中查找到的与{agent_name}相关的指标是：\n {alert_and_metric_str}"
+        else:
+            return f"The {agent_name} relevant metric values from Prometheus are:\n {alert_and_metric_str}"
 
     # slow queries
     slow_queries_str = slow_query_analysis_results(agent_name, kb_name, diag_id)

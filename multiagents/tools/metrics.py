@@ -1,7 +1,6 @@
 from configs import POSTGRESQL_CONFIG
 from multiagents.our_argparse import args
 import warnings
-from multiagents.tools.metrics import *
 import numpy as np
 from multiagents.utils.database import DBArgs, Database
 import time
@@ -13,7 +12,7 @@ with open(args.anomaly_file, 'r') as f:
     anomaly = json.load(f)
     exceptions = {}
     if "exceptions" not in anomaly:
-        raise Exception(f"No metric values found for anomaly {i} in the file {args.anomaly_file}!")
+        raise Exception(f"No metric values found for anomaly in the file {args.anomaly_file}!")
 
     for c in anomaly["exceptions"]:
         for k, v in anomaly["exceptions"][c].items():
@@ -72,7 +71,7 @@ def obtain_values_of_metrics(i, metrics, start_time, end_time):
     return required_values
 
 
-def processed_values(data):
+def processed_values(data, language="en"):
     if data == []:
         raise Exception("No metric values found for the given time range")
 
@@ -89,4 +88,7 @@ def processed_values(data):
     evenly_sampled_values = [round(data[i], 2) for i in range(0, len(data), len(data) // 10)]
 
     # describe the above five values in a string
-    return f"the max value is {max_value}, the min value is {min_value}, the mean value is {mean_value}, the deviation value is {deviation_value}, and the evenly_sampled_values are {evenly_sampled_values}."
+    if language == "zh":
+        return f"最大值是{max_value}，最小值是{min_value}，平均值是{mean_value}，标准差是{deviation_value}，均匀采样值是{evenly_sampled_values}。"
+    else:
+        return f"the max value is {max_value}, the min value is {min_value}, the mean value is {mean_value}, the deviation value is {deviation_value}, and the evenly_sampled_values are {evenly_sampled_values}."
