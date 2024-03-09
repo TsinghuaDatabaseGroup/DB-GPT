@@ -2,16 +2,18 @@ import json
 import os
 import time
 import subprocess
-from fastapi import File, UploadFile
-from configs import (DIAGNOSTIC_FILES_PATH, )
+from fastapi import File, UploadFile, Body
+from configs import (
+    DIAGNOSTIC_FILES_PATH,
+    DIAGNOSE_RUN_LOG_PATH,
+    DIAGNOSE_RUN_PID_PATH,
+    DIAGNOSE_USER_FEEDBACK_PATH)
 import threading
 from server.utils import BaseResponse, save_file
 
 current_task = {"thread": None, "output": "", "process": None}
 
 THREADNAME = "run_diagnose"
-DIAGNOSE_RUN_LOG_PATH = "./diagnose_run_log.txt"
-DIAGNOSE_RUN_PID_PATH = "./diagnose_run_pid.txt"
 
 
 def status():
@@ -34,8 +36,7 @@ def run_diagnose_script(file_path: str):
             "python3",
             f"{os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))}/run_diagnose.py",
             "--anomaly_file",
-            file_path
-        ]
+            file_path]
         process = subprocess.Popen(
             cmd,
             shell=False,
@@ -52,7 +53,12 @@ def save_diagnose_file(file: UploadFile = File(..., description="上传文件"))
         file_path = save_file_result["data"]["file_path"]
         with open(file_path, "r") as f:
             anomaly_json = json.load(f)
-        return BaseResponse(code=200, msg="Success", data={"file_path": file_path, "anomaly_json": anomaly_json})
+        return BaseResponse(
+            code=200,
+            msg="Success",
+            data={
+                "file_path": file_path,
+                "anomaly_json": anomaly_json})
     except Exception as e:
         return BaseResponse(code=500, msg=f"Failed to save file: {e}")
 
@@ -79,7 +85,10 @@ def run_diagnose(file: UploadFile = File(..., description="上传文件，支持
     if status():
         return BaseResponse(code=200, msg="Success")
     else:
-        return BaseResponse(code=500, msg="Failed to start diagnose task, error is " + log_output())
+        return BaseResponse(
+            code=500,
+            msg="Failed to start diagnose task, error is " +
+            log_output())
 
 
 def stop_diagnose():
@@ -89,9 +98,12 @@ def stop_diagnose():
     current_run_pid.close()
     time.sleep(3)
     if status():
-        return BaseResponse(code=500, msg="Failed to stop diagnose task, Please try again")
+        return BaseResponse(
+            code=500,
+            msg="Failed to stop diagnose task, Please try again")
     else:
         return BaseResponse(code=200, msg="Success")
+
 
 def log_output():
 
@@ -106,6 +118,18 @@ def log_output():
             content += line
         return content
 
+
 def get_diagnose_output():
     return BaseResponse(code=200, msg="Success", data={"output": log_output()})
 
+
+def diagnose_user_feedback(
+        user_input: str = Body(..., description="用户输入", examples=["yes"], embed=True),
+) -> BaseResponse:
+    if not status():
+        return BaseResponse(code=500, msg="Diagnose is not running")
+    if not user_input:
+        return BaseResponse(code=500, msg="User input is empty")
+    with open(DIAGNOSE_USER_FEEDBACK_PATH, "w") as f:
+        f.write(user_input)
+    return BaseResponse(code=200, msg="Success")
