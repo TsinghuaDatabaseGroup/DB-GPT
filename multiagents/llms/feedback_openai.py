@@ -204,6 +204,11 @@ class FeedbackOpenAIChat(OpenAIChat):
 
         return valid_rules
 
+    def judge_feedback(self, feedback):
+        judge_messages = [{'role': 'system', 'content': JUDGE_FEEDBACK_PROMPT}, {'role': 'user', 'content': feedback}]
+        reply = call_openai(judge_messages)
+        return "yes" in reply.lower()
+
     def user_input(self, placeholder):
         if USERINPUTREADFROMFILE:
             print('='*10 + 'USER FEEDBACK: ' + placeholder, flush=True)  # 参与前端逻辑，不能修改
