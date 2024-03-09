@@ -15,7 +15,7 @@ FEEDBACK_ITERATIONS = 3
 
 REFLECTION_PROMPT = 'Your previous response failed some checks, and you should improve it to pass the checks. Here are the checks you failed:\n{failed_assertions}'
 
-EXTRACT_RULE_PROMPMT = 'I am not satisfied with your response. I shall give you a response I prefer. Please compare their differences, and summarize the differences into rules for providing better response, using the format of \"if..., then...\". Give it in sections. Each is an independent rule. Directly give the content of the rule. Do not answer anything else. Be precise and concise.\n\nBelow is my preferred response:\n{preferred_output}'
+EXTRACT_RULE_PROMPT = 'I am not satisfied with your response. I shall give you a response I prefer. Please compare their differences, and summarize the differences into rules for providing better response, using the format of \"if..., then...\". Give it in sections. Each is an independent rule. Directly give the content of the rule. Do not answer anything else. Be precise and concise.\n\nBelow is my preferred response:\n{preferred_output}'
 
 COMPARE_CONTRADICTORY_PROMPT = "\
 I will give you two rules. \
@@ -28,6 +28,8 @@ I will give you two rules. \
 Please help me classify whether the contents of these two rules are exactly identical. \
 You are only allowed to give me the answer, selecting from \"identical\" and \"not identical\".\n\n\
 "
+
+JUDGE_FEEDBACK_PROMPT = "You will be given a user feedback on a response. Please judge whether it includes any suggestions on how to improve the content and format of the response.\nOnly answer yes or no."
 
 def parse_assertions(assertions):
     assertions_code = {}
@@ -183,7 +185,7 @@ class FeedbackOpenAIChat(OpenAIChat):
     
     def extract_rules_from_feedback(self, messages, output, preferred_output):
         messages.append({"role": "assistant", "content": output})
-        messages.append({"role": "user", "content": EXTRACT_RULE_PROMPMT.format(preferred_output=preferred_output)})
+        messages.append({"role": "user", "content": EXTRACT_RULE_PROMPT.format(preferred_output=preferred_output)})
         reply = call_openai(messages)
 
         raw_rules = reply.split('\n')
@@ -197,6 +199,12 @@ class FeedbackOpenAIChat(OpenAIChat):
 
         return valid_rules
     
+    def judge_feedback(self, feedback):
+        judge_messages = [{'role': 'system', 'content': JUDGE_FEEDBACK_PROMPT}, {'role': 'user', 'content': feedback}]
+        reply = call_openai(judge_messages)
+
+        return "yes" in reply.lower()
+    
     def interact(self, instruction, res):
         print('='*10 + 'INPUT' + '='*10)
         print(self.conversation_history)
@@ -204,9 +212,12 @@ class FeedbackOpenAIChat(OpenAIChat):
         print(res)
         print('='*25)
         feedback = input('Please input your feedback of the D-Bot response.\n')
-        print(f'Feedback: {feedback}')
 
         if feedback.strip() == '':
+            return None
+        
+        if not self.judge_feedback(feedback):
+            print('We do not recognize suggestions in your feedback. Let\'s continue our diagnosis.')
             return None
         
         refined_reply = pool.submit(asyncio.run, self.feedback(copy.deepcopy(self.conversation_history), instruction, res['content'], feedback)).result()
@@ -216,9 +227,12 @@ class FeedbackOpenAIChat(OpenAIChat):
             print(refined_reply)
             print('=' * 25)
             eval = input('Are you satisfied with our refined response? Please answer yes or no.\n')
-            if eval.lower() != 'yes':
+            if "yes" not in eval.lower():
                 refined_reply = input('Please input your preferred response in details.\n')
         else:
+            print('='*10 + 'OUTPUT' + '='*9)
+            print(res)
+            print('='*25)
             refined_reply = input('We are sorry that we cannot refine our response based on your feedback. Please input your preferred response in details.\n')
 
         return refined_reply

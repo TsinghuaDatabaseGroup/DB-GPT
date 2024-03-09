@@ -53,7 +53,7 @@ prompts:
     -你的分析必须基于以下步骤：
     首先使用工具"whether_is_abnormal_metric"判断是否有异常指标。
     其次使用工具"match_diagnose_knowledge"进行故障分析。
-    根据上面几步结果，只要还能够继续往下深入诊断，就使用工具优化查询或者优化索引。
+    根据上面几步结果，只要还能够继续往下深入诊断，就使用工具优化查询或者优化索引，工具名必须是[${tool_choice}]之一。
     最后，基于上述所有结果，给出最终的根因和解决方案，按照如下模板，不要说多余的话。其中Final Answer是字典格式：
     Thought: 我现在知道异常的根因了
     Final Answer: {"diagnose": "你诊断的根因", "solution": "你得到的最优解决方案", "knowledge": "你参考的诊断知识"}

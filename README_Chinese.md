@@ -445,5 +445,5 @@ https://github.com/chatchat-space/Langchain-Chatchat
 ## 联系我们
 👏🏻欢迎加入我们的微信群
 <div align= "center">
-<img src="img/chat-2024-02-29.jpg" width="400px">
+<img src="https://demo-show-1258191275.cos.ap-beijing.myqcloud.com/dbgpt_group.jpg" width="400px">
 </div>

@@ -46,15 +46,10 @@ class QwenDBDiag(OutputParser):
 
         elif i < n:  # 有Thought / Final Answer
             assert j == -1 and k == -1
-            final_answer = text[n + len(special_answer_token):]
-            # 防止生成了final answer后还乱说其他的，可能还会有问题 TODO
-            # left = final_answer.find("{")
-            # right = final_answer.find("}")
-            # final_answer = final_answer[left:right + 1]
-            # final_answer = re.match(r"Final Answer: ({.*?})", final_answer, flags=re.DOTALL)
+            final_answer = text[n + len(special_answer_token):].strip()
 
             try:
-
+                # final_answer = re.match(r"({.*?})", final_answer, flags=re.DOTALL).group()
                 final_answer = json.loads(final_answer)
             except:
                 print("Error in parsing diagnosis results")
