@@ -1,5 +1,3 @@
-import os
-
 from configs import POSTGRESQL_CONFIG
 from multiagents.tools.index_advisor.index_selection.selection_utils.postgres_dbms import PostgresDatabaseConnector
 from multiagents.tools.index_advisor.index_selection.selection_utils import selec_com
@@ -7,12 +5,15 @@ from multiagents.tools.index_advisor.configs import get_index_result
 from multiagents.tools.metrics import advisor
 from multiagents.tools.metrics import get_workload_statistics
 import ast
+from multiagents.initialization import LANGUAGE
 
 FUNCTION_DEFINITION = {
     "optimize_index_selection": {
         "name": "optimize_index_selection",
-        "description": "执行索引优化，不需要输入参数，返回推荐的索引",
-        "parameters": {}
+        "description":
+            "使用索引选择算法返回推荐的索引。" if LANGUAGE == "zh"
+            else "returns the recommended index by running the index selection algorithm.",
+        "parameters": {'type': 'object', 'properties': {}}
     }
 }
 
@@ -47,7 +48,7 @@ def optimize_index_selection(**kwargs):
 
         databases[database_name].append({"sql": query_template["sql"], "frequency": query_template["calls"]})
 
-    index_advice = f"Recommended indexes: \n"
+    index_advice = "推荐的索引是：\n" if LANGUAGE == "zh" else f"Recommended indexes: \n"
 
     for dbname in databases:
 
@@ -74,6 +75,9 @@ def optimize_index_selection(**kwargs):
         indexes, total_no_cost, total_ind_cost = get_index_result(advisor, workload, connector, columns)
 
         if len(indexes) != 0:
-            index_advice += f"\t For {dbname}, the recommended indexes are: {indexes}, which reduces cost from {total_no_cost} to {total_ind_cost}.\n"
+            index_advice += (
+                f"对数据库{dbname}，推荐的索引是：{indexes}，cost从原来的{total_no_cost}减少到{total_ind_cost}。\n" if LANGUAGE == "zh"
+                else f"\t For {dbname}, the recommended indexes are: {indexes}, which reduces cost from {total_no_cost} to {total_ind_cost}.\n"
+            )
 
     return index_advice

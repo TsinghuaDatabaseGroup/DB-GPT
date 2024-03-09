@@ -18,6 +18,7 @@ import importlib
 if TYPE_CHECKING:
     from agents import BaseAgent
 
+LANGUAGE = "en"
 
 def load_llm(llm_config: Dict):
     llm_type = llm_config.pop("llm_type", "xxxx")
@@ -31,28 +32,28 @@ def load_memory(memory_config: Dict):
 
 
 def load_tools(tool_config: List[Dict], max_api_num, agent_name):
-    
+
     if len(tool_config) == 0:
         return []
-    
+
     caller = APICaller()
 
     for tool in tool_config:
 
         api_module = importlib.import_module(f"""multiagents.tools.{tool["tool_name"]}.api""")
         register_functions_from_module(api_module, caller, max_api_num, agent_name)
-    
+
     return caller
 
 
 def load_environment(env_config: Dict) -> BaseEnvironment:
-    
+
     env_type = env_config.pop("env_type", "basic")
     return env_registry.build(env_type, **env_config)
 
 
 def load_agent(agent_config: Dict) -> BaseAgent:
-    
+
     agent_type = agent_config.pop("agent_type", "conversation")
     agent = agent_registry.build(agent_type, **agent_config)
 
@@ -61,19 +62,21 @@ def load_agent(agent_config: Dict) -> BaseAgent:
 
 def prepare_task_config(task, args):
     """Read the yaml config of the given task in `tasks` directory."""
-    
+
     task_path = os.path.join(os.path.dirname(__file__), task)
     config_path = os.path.join(task_path, args.config_file)
-    
+
     if not os.path.exists(task_path):
         raise ValueError(f"Config {task} not found.")
     if not os.path.exists(config_path):
         raise ValueError(
             "You should include the config.yaml file in the task directory"
         )
-    
-    task_config = yaml.safe_load(open(config_path,encoding='utf8'))
-    
+
+    task_config = yaml.safe_load(open(config_path, encoding='utf8'))
+    global LANGUAGE
+    LANGUAGE = task_config.get("language", LANGUAGE)
+
     # Build the output parser
     parser = output_parser_registry.build(task)
     task_config["output_parser"] = parser
@@ -85,7 +88,7 @@ def prepare_task_config(task, args):
             agent_configs["tool_memory"] = load_memory(agent_configs["tool_memory"])
         llm = load_llm(agent_configs.get("llm", "xxxx"))
         agent_configs["llm"] = llm
-        
+
         agent_configs["tools"] = load_tools(agent_configs.get("tools", []), args.max_api_num, agent_configs['name'])
 
         agent_configs["name"] = agent_configs['name']

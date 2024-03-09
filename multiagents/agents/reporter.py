@@ -83,14 +83,7 @@ class ReporterAgent(BaseAgent):
 
     def update_diagnosis(self):
         if self.language == 'zh':
-            prompt = f'''你正在撰写故障诊断报告。请根据上述审查建议，对下列根因分析过程进行精炼。原始根因分析过程如下：
-            {self.report["root cause"]}
-
-            请注意：
-            1. 输出必须是markdown格式。
-            2. 不要说多余的内容。
-            3. 只精炼根因分析过程，不要提任何和解决方案有关的内容。
-            '''
+            prompt = f'''你正在撰写故障诊断报告，现在需要给出最终的根因分析。请参考上述审查建议，并参考下列根因分析：\n{self.report["root cause"]} \n请注意：\n1. 输出必须是markdown格式，但不要说类似"这是markdown格式"等多余的内容。\n2. 只给出根因分析，不要提任何和解决方案有关的内容。\n'''
         else:
             prompt = "You are writing a report. Please give the refined root cause analysis based on the above review advice. The root cause analysis is as follows:\n" + self.report["root cause"] + "\n ===== \n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the anomaly diagnosis description based on the above advice. 3. Do not add anything about solutions!!!'\n"
 
@@ -124,17 +117,7 @@ class ReporterAgent(BaseAgent):
             labels += root_causes[cause]
 
         if self.language == 'zh':
-            prompt = f"""以下是一段根因分析过程：
-            {self.report["root cause"]}
-            
-            以下是以列表形式列出的一些根因的标签：
-            {labels}
-            
-            请基于根因分析过程的描述，选出对应的标签。请注意：
-            1. 输出必须是列表格式，不要附加任何多余内容。
-            2. 输出应严格排除根因分析中没有提及的标签。
-            3. 如果没有相关标签，请返回None。
-            """
+            prompt = f"""以下是一段根因分析过程：\n{self.report["root cause"]}\n以下是以列表形式列出的一些根因的标签：\n{labels}\n请基于根因分析过程的描述，选出对应的标签。\n请注意：\n1. 输出必须是列表格式，不要附加任何多余内容。\n2. 输出应严格排除根因分析中没有提及的标签。\n3. 如果没有相关标签，请返回None。\n"""
         else:
             prompt = "Based on the description\n" + self.report["root cause"] + "\n\n Output all the labels mentioned in the description. The available labels are  \n" + str(labels) + "===== \n Note 1. the output should be in list format. And do not output any additional information (output \"None\" if no label mentioned in the description)\n2. the output should strictly exclude labels not mentioned in the description."
 
@@ -153,15 +136,7 @@ class ReporterAgent(BaseAgent):
 
     def update_solutions(self):
         if self.language == 'zh':
-            prompt = f"""
-            你正在撰写故障诊断报告。请根据上述审查建议，对下列解决方案进行优化。原始解决方案如下：
-            {self.report["solutions"]}
-
-            请注意：
-            1. 输出必须是markdown格式。
-            2. 不要说多余的内容。
-            3. 只优化解决方案，不要提任何和根因分析有关的内容。
-            """
+            prompt = f"""你正在撰写故障诊断报告，现在需要给出最终的解决方案。请参考上述审查建议，并参考下列解决方案：\n{self.report["solutions"]} \n请注意：\n1. 输出必须是markdown格式，但不要说类似"这是markdown格式"等多余的内容。\n2. 只给出解决方案，不要提任何和根因分析有关的内容。\n"""
         else:
             prompt = "You are writing a report. Please optimize the following solutions based on the above review advice. The solutions are:\n" + self.report["solutions"] + "\n ===== \n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the solutions based on the above advice'. 3. Do not add anything about root causes!!!\n"
 
