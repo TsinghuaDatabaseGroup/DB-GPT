@@ -106,12 +106,6 @@ def parse_messages(messages, mark_idx):
         pre_idx = messages[-1]['content'].find(pre_instruction) + len(pre_instruction)
         post_idx = messages[-1]['content'].find(post_instruction)
         return messages[1]['content'][pre_idx:post_idx].strip() + messages[-1]['content'][pre_idx:post_idx].strip(), pre_instruction + '\n\n' + post_instruction
-    
-    if mark_idx == 11:
-        post_instruction = "Now you need to select experts with diverse identity to correctly analyze the root causes of the given alert. The names of available experts are:\n['CpuExpert', 'MemoryExpert', 'IoExpert', 'WorkloadExpert', 'QueryExpert', 'WriteExpert', 'IndexExpert', 'ConfigurationExpert']\n\nWhich experts will you recruit to generate an accurate solution? Note you can only select one to three experts!!!\n\n# Response Format Guidance\nYou should respond with a list of expert names. For example:\n1. CpuExpert\n2. QueryExpert\n...\n\nOnly respond with the names of selected experts (separated by spaces). Do not include your reason."
-
-        post_idx = messages[-1]['content'].find(post_instruction)
-        return messages[-1]['content'][:post_idx].strip(), post_instruction
 
     return  None, None
 
@@ -206,18 +200,15 @@ class FeedbackOpenAIChat(OpenAIChat):
         return "yes" in reply.lower()
     
     def interact(self, instruction, res):
-        print('='*10 + 'INPUT' + '='*10)
-        print(self.conversation_history)
-        print('='*10 + 'OUTPUT' + '='*9)
-        print(res)
-        print('='*25)
-        feedback = input('Please input your feedback of the D-Bot response.\n')
-
-        if feedback.strip() == '':
-            return None
+        print('='*10 + 'INPUT' + '='*10, flush=True)
+        print(self.conversation_history, flush=True)
+        print('='*10 + 'OUTPUT' + '='*9, flush=True)
+        print(res, flush=True)
+        print('='*25, flush=True)
+        feedback = self.user_input('Please input your feedback of the D-Bot response (e.g., "you should response in xxx format.", "you should provide more details on xxx.").\n')
         
-        if not self.judge_feedback(feedback):
-            print('We do not recognize suggestions in your feedback. Let\'s continue our diagnosis.')
+        if feedback.strip() == '' or not self.judge_feedback(feedback):
+            print('We do not recognize suggestions in your feedback. Let\'s continue our diagnosis.', flush=True)
             return None
         
         refined_reply = pool.submit(asyncio.run, self.feedback(copy.deepcopy(self.conversation_history), instruction, res['content'], feedback)).result()
