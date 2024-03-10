@@ -1,3 +1,6 @@
+import time
+
+from configs import DIAGNOSE_USER_FEEDBACK_PATH
 from . import llm_registry
 from .openai import OpenAIChat, call_openai
 from multiagents.spade.candidate_gen import generate_candidate_assertions
@@ -10,6 +13,8 @@ from langchain.docstore.document import Document
 from rank_bm25 import BM25Okapi
 import logging
 from server.utils import run_async
+
+USERINPUTREADFROMFILE = True
 
 FEEDBACK_ITERATIONS = 3
 
@@ -133,7 +138,7 @@ class FeedbackOpenAIChat(OpenAIChat):
 
         _, assertions = await generate_candidate_assertions([instruction, instruction_feedback], [output, reply])
 
-        print(f'Generated assertions: {assertions}')
+        print(f'Generated assertions: {assertions}', flush=True)
         assertions_str = assertions[0]
 
         exec(assertions_str, globals())
@@ -153,14 +158,14 @@ class FeedbackOpenAIChat(OpenAIChat):
             failed_assertions = []
             for row, result in zip(rows, results):
                 if isinstance(result, Exception):
-                    print(f"Error: {result} from {row['function_name']}")
+                    print(f"Error: {result} from {row['function_name']}", flush=True)
                     row["result"] = f"Error: {result} from {row['function_name']}"
                     continue
 
                 row["result"] = result
                 if not row["result"]:
                     failed_assertions.append(row["function_code"])
-            print(f'Iteration {iter} check results: {rows}')
+            print(f'Iteration {iter} check results: {rows}', flush=True)
 
             if all([isinstance(row["result"], bool) and row['result'] for row in rows]):
                 break
@@ -192,13 +197,34 @@ class FeedbackOpenAIChat(OpenAIChat):
                 valid_rules.append(rule[ls:])
 
         return valid_rules
-    
+
     def judge_feedback(self, feedback):
         judge_messages = [{'role': 'system', 'content': JUDGE_FEEDBACK_PROMPT}, {'role': 'user', 'content': feedback}]
         reply = call_openai(judge_messages)
-
         return "yes" in reply.lower()
-    
+
+    def user_input(self, placeholder):
+        if USERINPUTREADFROMFILE:
+            print('='*10 + 'USER FEEDBACK: ' + placeholder, flush=True)  # 参与前端逻辑，不能修改
+            while True:
+                try:
+                    with open(DIAGNOSE_USER_FEEDBACK_PATH, 'r+') as f:
+                        content = f.read().strip()
+                        if len(content) > 0:
+                            input_content = content
+                            # 清空文件内容
+                            f.seek(0)
+                            f.truncate()
+                            break
+                        else:
+                            time.sleep(1)
+                except Exception as err:
+                    print('Error: ', err, flush=True)
+                    time.sleep(1)
+        else:
+            input_content = input(placeholder)
+        return input_content
+
     def interact(self, instruction, res):
         print('='*10 + 'INPUT' + '='*10, flush=True)
         print(self.conversation_history, flush=True)
@@ -214,17 +240,17 @@ class FeedbackOpenAIChat(OpenAIChat):
         refined_reply = pool.submit(asyncio.run, self.feedback(copy.deepcopy(self.conversation_history), instruction, res['content'], feedback)).result()
 
         if refined_reply is not None:
-            print('='*6 + 'REFINED OUPUT' + '='*6)
-            print(refined_reply)
-            print('=' * 25)
-            eval = input('Are you satisfied with our refined response? Please answer yes or no.\n')
+            print('='*6 + 'REFINED OUPUT' + '='*6, flush=True)
+            print(refined_reply, flush=True)
+            print('=' * 25, flush=True)
+            eval = self.user_input('Are you satisfied with our refined response? Please answer yes or no.\n')
             if "yes" not in eval.lower():
-                refined_reply = input('Please input your preferred response in details.\n')
+                refined_reply = self.user_input('Please input your preferred response in details.\n')
         else:
-            print('='*10 + 'OUTPUT' + '='*9)
-            print(res)
-            print('='*25)
-            refined_reply = input('We are sorry that we cannot refine our response based on your feedback. Please input your preferred response in details.\n')
+            print('='*10 + 'OUTPUT' + '='*9, flush=True)
+            print(res, flush=True)
+            print('='*25, flush=True)
+            refined_reply = self.user_input('We are sorry that we cannot refine our response based on your feedback. Please input your preferred response in details.\n')
 
         return refined_reply
     

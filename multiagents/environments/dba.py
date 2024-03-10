@@ -317,7 +317,6 @@ class DBAEnvironment(BaseModel):
             self.reporter.record["report"] = report_markdown
 
             pbar.update(1)
-        print(self.reporter.record)
 
         for expert in expert_data:
             # find the matched key in the record

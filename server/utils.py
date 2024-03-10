@@ -285,6 +285,9 @@ def MakeFastAPIOffline(
 
 # 从model_config中获取模型信息
 
+def all_embed_models() -> List[str]:
+    return BaseResponse(code=200, msg="get all embed models success", data=list_embed_models()+list_online_embed_models())
+
 def list_embed_models() -> List[str]:
     '''
     get names of configured embedding models
