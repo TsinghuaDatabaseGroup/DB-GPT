@@ -5,13 +5,7 @@
         "sender": "RoleAssigner"
     },
     "expertDiagnosis": {
-        "experts": [
-            {
-                "name": "CpuExpert",
-                "messages": [],
-                "complete": true
-            }
-        ]
+        "experts": []
     },
     "groupDiscussion": {
         "messages": []
