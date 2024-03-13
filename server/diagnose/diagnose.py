@@ -7,7 +7,8 @@ from configs import (
     DIAGNOSTIC_FILES_PATH,
     DIAGNOSE_RUN_LOG_PATH,
     DIAGNOSE_RUN_PID_PATH,
-    DIAGNOSE_USER_FEEDBACK_PATH)
+    DIAGNOSE_USER_FEEDBACK_PATH,
+    DIAGNOSE_RUN_DATA_PATH)
 import threading
 from server.utils import BaseResponse, save_file
 
@@ -119,9 +120,21 @@ def log_output():
         return content
 
 
-def get_diagnose_output():
+def get_diagnose_terminal_output():
     return BaseResponse(code=200, msg="Success", data={"output": log_output()})
 
+
+def get_diagnose_serialization_output():
+    file_path = DIAGNOSE_RUN_DATA_PATH
+    if not os.path.exists(file_path):
+        return BaseResponse(code=404, msg="无对应的诊断文件")
+    if file_path.endswith(".json") or file_path.endswith(".jsonl"):
+        # 打开文件并读取JSON数据
+        with open(file_path, "r") as file:
+            json_data = json.load(file)
+            return BaseResponse(code=200, msg="Success", data=json_data)
+    else:
+        return BaseResponse(code=400, msg="无对应的文件")
 
 def diagnose_user_feedback(
         user_input: str = Body(..., description="用户输入", examples=["yes"], embed=True),

@@ -266,11 +266,6 @@ const getIgnoreCacheKnowledgeChat = (userInputValue) => {
   background-color: transparent !important;
   box-shadow: None !important;
 }
-
-.input-container .el-input__wrapper {
-  border: None !important;
-  box-shadow: None !important;
-}
 </style>
 
 
@@ -297,22 +292,6 @@ const getIgnoreCacheKnowledgeChat = (userInputValue) => {
     background: transparent;
     overflow-y: auto;
     padding-bottom: 20px;
-  }
-
-  .input-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: calc(100% - 40px);
-    height: 60px;
-    flex-shrink: 0;
-    border-radius: 15px;
-    background: white;
-    overflow: hidden;
-    padding: 10px;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.04);
   }
 }
 </style>

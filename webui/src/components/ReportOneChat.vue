@@ -3,16 +3,11 @@
     <div :id="componentId + '-scroll-container'" class="scroll-container c-relative">
       <div
         class="message-header c-relative c-flex-row c-align-items-center"
-        :style="headerStyle[sender]"
+        :style="'background-color: ' + headerStyles[(sender || 'A').charCodeAt(0) % headerStyles.length]"
       >
-        <img v-if="sender === 'RoleAssigner'" src="@/assets/dba_robot.webp" class="face"/>
-        <img v-if="sender === 'CpuExpert'" src="@/assets/cpu_robot.webp" class="face"/>
-        <img v-if="sender === 'MemoryExpert'" src="@/assets/mem_robot.webp" class="face"/>
-        <img v-if="sender === 'IoExpert'" src="@/assets/io_robot.webp" class="face"/>
-        <img v-if="sender === 'IndexExpert'" src="@/assets/index_robot.webp" class="face"/>
-        <img v-if="sender === 'ConfigurationExpert'" src="@/assets/configuration_robot.webp" class="face"/>
-        <img v-if="sender === 'QueryExpert'" src="@/assets/query_robot.webp" class="face"/>
-        <img v-if="sender === 'WorkloadExpert'" src="@/assets/workload_robot.webp" class="face"/>
+        <span class="face">
+          {{ sender.slice(0, 1) }}
+        </span>
         <span style="font-size: 16px; color: #FFFFFF; margin-left: 10px">{{ sender }}</span>
       </div>
     </div>
@@ -32,19 +27,10 @@ const props = defineProps({
 
 const emit = defineEmits(['playback-complete'])
 
-const headerStyle = {
-  'RoleAssigner': 'background-color: #01B77E;',
-  'CpuExpert': 'background-color: #0F2F5F;',
-  'MemoryExpert': 'background-color: #FB9996;',
-  'IoExpert': 'background-color: #7649af;',
-  'IndexExpert': 'background-color: #ecb42b;',
-  'ConfigurationExpert': 'background-color: #67C23A;',
-  'QueryExpert': 'background-color: #FFC2E3;',
-  'WorkloadExpert': 'background-color: #D51374;'
-};
+const headerStyles = ["#01B77E", "#0F2F5F", "#FB9996", "#7649af", "#ecb42b", "#67C23A", "#FFC2E3", "#D51374"]
+
 const typedObjs = ref([])
 const componentId = `report-one-chat-${Math.random().toString(36).slice(2, 11)}`
-const chats = ref([])
 let scrollObserver = undefined
 // watch props changes
 watch(() => props.messages, (newVal, oldVal) => {
@@ -150,7 +136,7 @@ const dealMessage = async (index) => {
   color: #333333;
   font-size: 14px;
   min-height: 20px;
-  border-radius: 20px;
+  border-radius: 8px;
   padding: 6px 12px;
   line-height: 20px;
   background-color: #ffffff;
@@ -171,18 +157,6 @@ const dealMessage = async (index) => {
   width: 100%;
 }
 
-.bottom-input-container {
-  background: #ffffff;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-  position: absolute;
-}
-
 .message-header {
   position: sticky;
   top: 0;
@@ -199,7 +173,6 @@ const dealMessage = async (index) => {
   padding-bottom: 20px;
   width: 100%;
   height: 100%;
-  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
 
   .item-space {
     height: 15px;
@@ -223,8 +196,15 @@ const dealMessage = async (index) => {
   .face {
     width: 40px;
     height: 40px;
+    line-height: 40px;
     border-radius: 40px;
     margin-right: 7px;
+    background-color: #ffffff;
+    text-align: center;
+    color: #333333;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
   }
 }
 </style>

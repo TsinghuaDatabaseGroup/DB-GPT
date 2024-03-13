@@ -1,0 +1,29 @@
+{
+    "currentTask": "reportDemonstration",
+    "roleAssignment": {
+        "messages": [],
+        "sender": "RoleAssigner"
+    },
+    "expertDiagnosis": {
+        "experts": [
+            {
+                "name": "CpuExpert",
+                "messages": [],
+                "complete": true
+            }
+        ]
+    },
+    "groupDiscussion": {
+        "messages": []
+    },
+    "reportGeneration": {
+        "sender": "RoleAssigner",
+        "messages": []
+    },
+    "reportDemonstration": {
+        "report": '',
+    },
+    "placeholder": "请输入你的反馈意见",
+    "needMessageInput": true,
+    "needInput": false
+}

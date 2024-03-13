@@ -17,6 +17,10 @@ DIAGNOSE_RUN_LOG_PATH = "./diagnose_run_log.txt"
 DIAGNOSE_RUN_PID_PATH = "./diagnose_run_pid.txt"
 # 诊断用户输入文件
 DIAGNOSE_USER_FEEDBACK_PATH = "./diagnose_user_feedback.txt"
+# 诊断输出信息
+DIAGNOSE_RUN_DATA_PATH = "./diagnose_run_data.jsonl"
+# 诊断输出原始信息
+DIAGNOSE_RUN_DATA_COPY_PATH = "./diagnose_run_data_copy.jsonl"
 
 # 数据库配置
 

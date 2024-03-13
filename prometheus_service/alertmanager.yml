@@ -7,7 +7,7 @@ route:
 receivers:
   - name: 'db-gpt'
     webhook_configs:
-      - url: 'http://172.27.58.65:8023/alert/alert'
+      - url: 'http://172.27.58.65:8023/alert'
 inhibit_rules:
   - source_match:
       severity: 'critical'

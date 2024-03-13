@@ -211,7 +211,7 @@ class FeedbackOpenAIChat(OpenAIChat):
 
     def user_input(self, placeholder):
         if USERINPUTREADFROMFILE:
-            print('='*10 + 'USER FEEDBACK: ' + placeholder, flush=True)  # 参与前端逻辑，不能修改
+            print('='*10 + 'USER FEEDBACK: ' + placeholder, flush=True)
             while True:
                 try:
                     with open(DIAGNOSE_USER_FEEDBACK_PATH, 'r+') as f:
