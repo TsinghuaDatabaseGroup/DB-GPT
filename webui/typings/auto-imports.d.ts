@@ -20,6 +20,7 @@ declare global {
   const elLoading: typeof import('../src/hooks/use-element.js')['elLoading']
   const elMessage: typeof import('../src/hooks/use-element.js')['elMessage']
   const elNotify: typeof import('../src/hooks/use-element.js')['elNotify']
+  const fetchData: typeof import('../src/utils/fetchData.js')['fetchData']
   const filterAsyncRouter: typeof import('../src/hooks/use-permission.js')['filterAsyncRouter']
   const filterAsyncRouterByCodes: typeof import('../src/hooks/use-permission.js')['filterAsyncRouterByCodes']
   const filterAsyncRoutesByMenuList: typeof import('../src/hooks/use-permission.js')['filterAsyncRoutesByMenuList']

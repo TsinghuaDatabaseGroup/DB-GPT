@@ -73,7 +73,7 @@ service.interceptors.response.use(
     }
 
     if (res.config.type === 'chat') {
-      return res.data
+      return res
     }
 
     const { code, msg } = res.data

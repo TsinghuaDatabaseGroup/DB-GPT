@@ -203,7 +203,7 @@ const ignoreMessageCache = (message: KnowledgeMessage) => {
   updateLastRobotMessage("", [], [], false, [])
   updateLastRobotMessageLoading(true)
   saveHistoryMessagesToLocal()
-  getIgnoreCacheKnowledgeChat(userInputValue)
+  knowledgeChat(userInputValue, true, true)
 }
 
 const getLocalHistoryMessages = () => {
@@ -229,34 +229,39 @@ const onSendClick = (value) => {
     return
   }
   const userInputValue = value
-  const historyMessages = getHistoryMessages() || []
   addUserMessage(userInputValue)
   saveHistoryMessagesToLocal()
   addRobotMessage('', userInputValue)
   saveHistoryMessagesToLocal()
-  knowledgeChatReq(userInputValue, !userCache.value, userCache.value, knowledgeBase.value, llmModel.value, historyMessages, historyLength.value).then(res => {
-    console.log('res==000====:', res)
-    if (res.answer === 'No Cache') {
-      getIgnoreCacheKnowledgeChat(userInputValue)
-      return
-    }
-    updateLastRobotMessage(res.answer, res.docs || [], res.docsDetail || [], res.cache || false, res.cacheData || [])
-    saveHistoryMessagesToLocal()
-  }).catch(() => {
-    updateLastRobotMessageLoading(false)
-    saveHistoryMessagesToLocal()
-  })
+  knowledgeChat(userInputValue, !userCache.value, userCache.value)
 }
 
-const getIgnoreCacheKnowledgeChat = (userInputValue) => {
+const knowledgeChat = (userInputValue, ignoreCache, answerCache,) => {
   const historyMessages = getHistoryMessages() || []
-  knowledgeChatReq(userInputValue, true, true, knowledgeBase.value, llmModel.value, historyMessages, historyLength.value).then(res => {
-    console.log('res==1111====:', res)
-    updateLastRobotMessage(res.answer, res.docs || [], res.docsDetail || [], false, res.cacheData || [])
-  }).finally(() => {
-    updateLastRobotMessageLoading(false)
-    saveHistoryMessagesToLocal()
-  })
+  const { isDone, fetchResult } = knowledgeChatReq(userInputValue, ignoreCache, answerCache, knowledgeBase.value, llmModel.value, historyMessages, historyLength.value)
+  watch([isDone, fetchResult], ([done, result]) => {
+    let answer = ''
+    let docs = []
+    let docsDetail = []
+    let cache = false
+    let cacheData = []
+    result.forEach((item) => {
+      answer += (item.answer || '')
+      docs = docs.concat(item.docs || [])
+      docsDetail = docsDetail.concat(item.docsDetail || [])
+      cache = item.cache || false
+      cacheData = cacheData.concat(item.cacheData || [])
+    })
+    if(done){
+      updateLastRobotMessageLoading(false)
+      saveHistoryMessagesToLocal()
+    }
+    if (!answer.includes('No Cache')) {
+      updateLastRobotMessage(answer, docs || [], docsDetail || [], cache || false, cacheData || [])
+    }else {
+      knowledgeChat(userInputValue, true, true)
+    }
+  }, {deep: true})
 }
 
 </script>

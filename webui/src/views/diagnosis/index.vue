@@ -120,7 +120,6 @@ import DiagnosisGroupChat from '@/components/DiagnosisGroupChat.vue'
 import marked from '@/utils/markdownConfig.js'
 import {ElMessage, ElMessageBox} from "element-plus";
 import {ref} from 'vue'
-import { langTitle } from '@/hooks/use-common'
 const router = useRouter()
 
 const tasks = [
@@ -198,7 +197,6 @@ const getDiagnoseStatus = async () => {
 const getDiagnoseTerminalOutput = async () => {
   diagnoseTerminalOutputReq().then(res => {
     diagnoseTerminalOutput.value = res.data.output;
-    console.log('=====:', diagnoseTerminalOutput.value)
   })
 }
 
@@ -206,7 +204,6 @@ const getDiagnoseTerminalOutput = async () => {
 const getDiagnoseSerializationOutputReq = async () => {
   diagnoseSerializationOutputReq().then(res => {
     diagnoseData.value = res.data
-    console.log('=====:', diagnoseData.value)
   })
 }
 
