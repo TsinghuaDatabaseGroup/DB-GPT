@@ -16,6 +16,12 @@ def generate_tools_content(command_name, arguments, execution_results, command_s
 
     return div_str
 
+def generate_quote_content(name, content):
+
+    div_str = f'<details closed><summary><span style="font-size: 14px; font-weight: bold; color: #333333">{name}:</span></summary><div style="font-size: 14px; color: #676c90!important;">{content}</div></details>'
+
+    return div_str
+
 def generate_prometheus_chart_content(title, values, x_label_format="'%Y-%m-%d %H:%M:%S'", size=(400, 225)):
     x_values = []
     y_values = []
@@ -141,5 +147,8 @@ if __name__ == '__main__':
     # with open("test.html", "w") as f:
     #     f.write(chart_content)
 
-    tools_content = generate_tools_content('FileSystemEnv_read_from_file', {'a': 1, 'b': 2}, '0: The Iris dataset was analyzed using Python libraries such as pandas, seaborn, and sklearn. The analysis involved loading the dataset, ge', 'TOOL_CALL_SUCCESS')
-    print(tools_content)
+    # tools_content = generate_tools_content('FileSystemEnv_read_from_file', {'a': 1, 'b': 2}, '0: The Iris dataset was analyzed using Python libraries such as pandas, seaborn, and sklearn. The analysis involved loading the dataset, ge', 'TOOL_CALL_SUCCESS')
+    # print(tools_content)
+
+    quote_content = generate_quote_content('FileSystemEnv_read_from_file', 'The Iris dataset was analyzed using Python libraries such as pandas, seaborn, and sklearn. The analysis involved loading the dataset, ge')
+    print(quote_content)
