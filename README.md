@@ -608,7 +608,7 @@ We thank all the contributors to this project. Do not hesitate if you would like
 ## Contact Information
 👏🏻Welcome to our wechat group!
 <div align= "center">
-<img src="https://demo-show-1258191275.cos.ap-beijing.myqcloud.com/dbgpt_group.jpg" width="400px">
+<img src="https://demo-show-1258191275.cos.ap-beijing.myqcloud.com/dbgpt_group.jpg?V=2024-03-15" width="400px">
 </div>
 
 <!-- ## ⭐️ Star History
