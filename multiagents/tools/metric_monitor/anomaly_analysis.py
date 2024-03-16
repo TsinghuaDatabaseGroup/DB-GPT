@@ -4,6 +4,7 @@ from multiagents.tools.metrics import *
 from multiagents.utils.markdown_format import generate_prometheus_chart_content
 from server.knowledge_base.kb_doc_api import search_docs, fetch_expert_kb_names
 from multiagents.initialization import LANGUAGE
+import copy
 
 
 def metric_analysis_results(agent_name, kb_name, alert_metric, diag_id, enable_prometheus, start_time, end_time):
@@ -104,17 +105,22 @@ def metric_analysis_results(agent_name, kb_name, alert_metric, diag_id, enable_p
     matched_docs = search_docs(str(docs_query), knowledge_base_name=kb_name, top_k=5, score_threshold=0.4)
 
     docs_str = ""
+    knowledge_list = []
     if matched_docs != []:
         matched_docs_str = ""
         for i, matched_doc in enumerate(matched_docs):
             if 'desc' in matched_doc.metadata:
                 matched_docs_str = matched_docs_str + f"{i+1}. {matched_doc.metadata['desc']} \n"
+                knowledge = copy.deepcopy(matched_doc.metadata)
+                knowledge['kb_name'] = kb_name
+                knowledge['type'] = 'metric'
+                knowledge_list.append(knowledge)
         if LANGUAGE == "zh":
             docs_str = f"匹配到的与上述异常指标相关的知识为：\n{matched_docs_str}\n\n"
         else:
             docs_str = f"The matched knowledge for analyzing above abnormal metrics is:\n{matched_docs_str}\n\n"
 
-    return alert_metric_str + metric_str + docs_str, abnormal_metric_detailed_values
+    return alert_metric_str + metric_str + docs_str, abnormal_metric_detailed_values, knowledge_list
 
     # if metric_prefix == "cpu":
     #     docs_str = cpu_knowledge_matcher.match(top5_abnormal_metrics)
@@ -163,6 +169,7 @@ def workload_analysis_results(agent_name, kb_name, diag_id):
     # cache_kb = KBServiceFactory.get_service("cache", SupportedVSType.CHROMADB)
     # docs = cache_kb.search_docs(top5_abnormal_metrics, top_k=5)
 
+    knowledge_list = []
     if workload_state != "":
         if LANGUAGE == "zh":
             workload_str = f"工作负载是：\n{workload_state}\n\n"
@@ -178,6 +185,10 @@ def workload_analysis_results(agent_name, kb_name, diag_id):
                 for i, matched_doc in enumerate(matched_docs):
                     if 'desc' in matched_doc.metadata:
                         matched_docs_str = matched_docs_str + f"{i+1}. {matched_doc.metadata['desc']} \n"
+                        knowledge = copy.deepcopy(matched_doc.metadata)
+                        knowledge['kb_name'] = kb_name
+                        knowledge['type'] = 'workload'
+                        knowledge_list.append(knowledge)
                 if LANGUAGE == "zh":
                     docs_str = f"匹配到的与负载相关的知识是：\n{matched_docs_str}\n\n"
                 else:
@@ -187,7 +198,7 @@ def workload_analysis_results(agent_name, kb_name, diag_id):
     else:
         workload_str = ""
 
-    return workload_str
+    return workload_str, knowledge_list
 
 
 def slow_query_analysis_results(agent_name, kb_name, diag_id):
@@ -197,6 +208,7 @@ def slow_query_analysis_results(agent_name, kb_name, diag_id):
     if not isinstance(slow_queries, list):
         slow_queries = []
 
+    knowledge_list = []
     if slow_queries != []:
         # concate the sqls in the dict slow_queries into a string
 
@@ -217,6 +229,10 @@ def slow_query_analysis_results(agent_name, kb_name, diag_id):
                 for i, matched_doc in enumerate(matched_docs):
                     if 'desc' in matched_doc.metadata:
                         matched_docs_str = matched_docs_str + f"{i+1}. {matched_doc.metadata['desc']} \n"
+                        knowledge = copy.deepcopy(matched_doc.metadata)
+                        knowledge['kb_name'] = kb_name
+                        knowledge['type'] = 'slow_query'
+                        knowledge_list.append(knowledge)
 
                 if LANGUAGE == "zh":
                     docs_str = f"匹配到的与慢查询相关的知识是：\n{matched_docs_str}\n\n"
@@ -229,4 +245,4 @@ def slow_query_analysis_results(agent_name, kb_name, diag_id):
     else:
         slow_queries_str = ""
 
-    return slow_queries_str
+    return slow_queries_str, knowledge_list

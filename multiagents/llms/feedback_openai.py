@@ -1,20 +1,16 @@
 import time
 
-from configs import DIAGNOSE_USER_FEEDBACK_PATH
 from . import llm_registry
 from .openai import OpenAIChat, call_openai
 from multiagents.spade.candidate_gen import generate_candidate_assertions
 import asyncio, concurrent.futures
 import re
-from multiagents.localized_llms.inference import classify
 import copy
 from .doc_kb import DocKnowledgeBase
 from langchain.docstore.document import Document
 from rank_bm25 import BM25Okapi
 import logging
 from server.utils import run_async
-
-USERINPUTREADFROMFILE = True
 
 FEEDBACK_ITERATIONS = 3
 
@@ -75,15 +71,15 @@ async def ask_llm(prompt, response, question):
     # return prompt_tokens, completion_tokens, False
     return False
 
-def parse_messages(messages, mark_idx):
-    if mark_idx == 4:
-        return messages[1]['content'], "Analyze the diagnosed root causes based on above discussions in details. Note the analysis should be only about root causes in markdown format!!! And do not mention anything about the solutions!!!"
+def parse_messages(messages, task):
+    if task == 'expert_root_cause':
+        return messages[1]['content'], "Analyze the diagnosed root causes based on above discussions in details. And do not mention anything about the solutions!!!"
         
-    if mark_idx == 5:
-        return messages[1]['content'], "Give the solutions only based on above messages in details. Note do not mention anything about **root causes**!!! The solutions (not root causes) should be in markdown format."
+    if task == 'expert_solution':
+        return messages[1]['content'], "Give the solutions only based on above messages in details. Note do not mention anything about **root causes**!!!"
     
-    if mark_idx == 6:
-        pre_instruction = 'Please provide a searchable summary of the input diagnosis procedures or recommended solutions without lossing important information. The input is as follows:'
+    if task == 'summary':
+        pre_instruction = 'Please provide a searchable summary of the input diagnosis procedures or recommended solutions without losing important information. The input is as follows:'
 
         post_instruction = '===\nNote \n1. you are an expert and do not miss any important information!!!\n2. response with a list of key points of the input diagnosis procedures or recommended solutions (e.g. \"1. ...<br>2. ...<br>3. ...\"). Do not add any additional content!!!\n3. The key points should be strictly separated by <br> (\"1. ...<br>2. ...<br>3. ...\")!!!! Do not use markdown format and # headings!!!\n4. Do not mention anything about what are the charts like!! Ignore charts!!!\n5. Do not say anything like \"As an AI\"!!'
 
@@ -91,10 +87,10 @@ def parse_messages(messages, mark_idx):
         post_idx = messages[1]['content'].find(post_instruction)
         return messages[1]['content'][pre_idx:post_idx].strip(), pre_instruction + '\n\n' + post_instruction
     
-    if mark_idx == 7:
+    if task == 'review':
         return '\n\n'.join([m["content"] for m in messages[1:-1]]), messages[-1]["content"]
     
-    if mark_idx == 8:
+    if task == 'refine_solution':
         pre_instruction = 'You are writing a report. Please optimize the following solutions based on the above review advice. The solutions are:'
 
         post_instruction = "===\n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the solutions based on the above advice'. 3. Do not add anything about root causes!!!"
@@ -103,7 +99,46 @@ def parse_messages(messages, mark_idx):
         post_idx = messages[-1]['content'].find(post_instruction)
         return messages[1]['content'][pre_idx:post_idx].strip() + messages[-1]['content'][pre_idx:post_idx].strip(), pre_instruction + '\n\n' + post_instruction
     
-    if mark_idx == 9:
+    if task == 'refine_root_cause':
+        pre_instruction = 'You are writing a report. Please give the refined root cause analysis based on the above review advice. The root cause analysis is as follows:'
+
+        post_instruction = "===\n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the anomaly diagnosis description based on the above advice. 3. Do not add anything about solutions!!!'"
+
+        pre_idx = messages[-1]['content'].find(pre_instruction) + len(pre_instruction)
+        post_idx = messages[-1]['content'].find(post_instruction)
+        return messages[1]['content'][pre_idx:post_idx].strip() + messages[-1]['content'][pre_idx:post_idx].strip(), pre_instruction + '\n\n' + post_instruction
+
+    return  None, None
+
+def add_feedback_message(messages, task):
+    if task == 'expert_root_cause':
+        return messages[1]['content'], "Analyze the diagnosed root causes based on above discussions in details. And do not mention anything about the solutions!!!"
+        
+    if task == 'expert_solution':
+        return messages[1]['content'], "Give the solutions only based on above messages in details. Note do not mention anything about **root causes**!!!"
+    
+    if task == 'summary':
+        pre_instruction = 'Please provide a searchable summary of the input diagnosis procedures or recommended solutions without losing important information. The input is as follows:'
+
+        post_instruction = '===\nNote \n1. you are an expert and do not miss any important information!!!\n2. response with a list of key points of the input diagnosis procedures or recommended solutions (e.g. \"1. ...<br>2. ...<br>3. ...\"). Do not add any additional content!!!\n3. The key points should be strictly separated by <br> (\"1. ...<br>2. ...<br>3. ...\")!!!! Do not use markdown format and # headings!!!\n4. Do not mention anything about what are the charts like!! Ignore charts!!!\n5. Do not say anything like \"As an AI\"!!'
+
+        pre_idx = messages[1]['content'].find(pre_instruction) + len(pre_instruction)
+        post_idx = messages[1]['content'].find(post_instruction)
+        return messages[1]['content'][pre_idx:post_idx].strip(), pre_instruction + '\n\n' + post_instruction
+    
+    if task == 'review':
+        return '\n\n'.join([m["content"] for m in messages[1:-1]]), messages[-1]["content"]
+    
+    if task == 'refine_solution':
+        pre_instruction = 'You are writing a report. Please optimize the following solutions based on the above review advice. The solutions are:'
+
+        post_instruction = "===\n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the solutions based on the above advice'. 3. Do not add anything about root causes!!!"
+
+        pre_idx = messages[-1]['content'].find(pre_instruction) + len(pre_instruction)
+        post_idx = messages[-1]['content'].find(post_instruction)
+        return messages[1]['content'][pre_idx:post_idx].strip() + messages[-1]['content'][pre_idx:post_idx].strip(), pre_instruction + '\n\n' + post_instruction
+    
+    if task == 'refine_root_cause':
         pre_instruction = 'You are writing a report. Please give the refined root cause analysis based on the above review advice. The root cause analysis is as follows:'
 
         post_instruction = "===\n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the anomaly diagnosis description based on the above advice. 3. Do not add anything about solutions!!!'"
@@ -125,6 +160,7 @@ pool = concurrent.futures.ThreadPoolExecutor()
 @llm_registry.register("feedback-gpt-3.5-turbo")
 class FeedbackOpenAIChat(OpenAIChat):
     kb: DocKnowledgeBase = None
+    feedbacks: list = []
     def __init__(self, max_retry: int = 100, **kwargs):
         super().__init__(max_retry=max_retry, **kwargs)
         self.kb = DocKnowledgeBase()
@@ -203,35 +239,13 @@ class FeedbackOpenAIChat(OpenAIChat):
         reply = call_openai(judge_messages)
         return "yes" in reply.lower()
 
-    def user_input(self, placeholder):
-        if USERINPUTREADFROMFILE:
-            print('='*10 + 'USER FEEDBACK: ' + placeholder, flush=True)  # 参与前端逻辑，不能修改
-            while True:
-                try:
-                    with open(DIAGNOSE_USER_FEEDBACK_PATH, 'r+') as f:
-                        content = f.read().strip()
-                        if len(content) > 0:
-                            input_content = content
-                            # 清空文件内容
-                            f.seek(0)
-                            f.truncate()
-                            break
-                        else:
-                            time.sleep(1)
-                except Exception as err:
-                    print('Error: ', err, flush=True)
-                    time.sleep(1)
-        else:
-            input_content = input(placeholder)
-        return input_content
-
-    def interact(self, instruction, res):
+    def interact(self, instruction, res, task):
         print('='*10 + 'INPUT' + '='*10, flush=True)
         print(self.conversation_history, flush=True)
         print('='*10 + 'OUTPUT' + '='*9, flush=True)
         print(res, flush=True)
         print('='*25, flush=True)
-        feedback = self.user_input('Please input your feedback of the D-Bot response (e.g., "you should response in xxx format.", "you should provide more details on xxx.").\n')
+        feedback = input('Please input your feedback of the D-Bot response (e.g., "you should response in xxx format.", "you should provide more details on xxx.").\n')
         
         if feedback.strip() == '' or not self.judge_feedback(feedback):
             print('We do not recognize suggestions in your feedback. Let\'s continue our diagnosis.', flush=True)
@@ -246,11 +260,15 @@ class FeedbackOpenAIChat(OpenAIChat):
             eval = self.user_input('Are you satisfied with our refined response? Please answer yes or no.\n')
             if "yes" not in eval.lower():
                 refined_reply = self.user_input('Please input your preferred response in details.\n')
+                self.feedbacks.append({"feedback": feedback, "refined_response": refined_reply, "auto": False, "task": task})
+            else:
+                self.feedbacks.append({"feedback": feedback, "refined_response": refined_reply, "auto": True, "task": task})
         else:
             print('='*10 + 'OUTPUT' + '='*9, flush=True)
             print(res, flush=True)
             print('='*25, flush=True)
-            refined_reply = self.user_input('We are sorry that we cannot refine our response based on your feedback. Please input your preferred response in details.\n')
+            refined_reply = input('We are sorry that we cannot refine our response based on your feedback. Please input your preferred response in details.\n')
+            self.feedbacks.append({"feedback": feedback, "refined_response": refined_reply, "auto": False, "task": task})
 
         return refined_reply
     
@@ -314,24 +332,23 @@ class FeedbackOpenAIChat(OpenAIChat):
             self.kb.update_docs([updated_doc])
         return flag
 
-    def parse(self):
-        mark_idx = classify(self.conversation_history)
-        vars, instruction = parse_messages(self.conversation_history, mark_idx=mark_idx)
+    def parse(self, task=""):
+        vars, instruction = parse_messages(self.conversation_history, task=task)
         if vars is None:
-            return super().parse()
+            return super().parse(task=task)
         
         try:
-            relevant_docs = self.kb.search_docs(vars, metadata_filter={'task': mark_idx}, top_k=1)
+            relevant_docs = self.kb.search_docs(vars, metadata_filter={'task': task}, top_k=1)
             if len(relevant_docs) > 0:
                 relevant_rules = '\n'.join([doc.metadata['rules'] for doc in relevant_docs])
                 messages_backup = copy.deepcopy(self.conversation_history)
                 assert self.conversation_history[-1]["role"] == "user"
                 self.conversation_history[-1]['content'] += f"\n\nIn the following, we show you some rules that may help you improve your response:\n{relevant_rules}"
             
-            res = super().parse()
+            res = super().parse(task=task)
             if len(relevant_docs) > 0:
                 self.conversation_history = messages_backup
-            refined_reply = self.interact(instruction, res)
+            refined_reply = self.interact(instruction, res, task)
 
             if refined_reply is None:
                 return res
@@ -339,7 +356,7 @@ class FeedbackOpenAIChat(OpenAIChat):
             rules = self.extract_rules_from_feedback(copy.deepcopy(self.conversation_history), res['content'], refined_reply)
 
             flag = 0
-            new_doc = Document(page_content=vars, metadata={'rules': '\n'.join(rules), 'task': mark_idx, 'source': str(mark_idx) + vars})
+            new_doc = Document(page_content=vars, metadata={'rules': '\n'.join(rules), 'task': task, 'source': task + '|' + vars.replace('|', '\|'), 'messages': str(self.conversation_history), 'response': res['content'], 'refined_response': refined_reply, 'feedback': self.feedbacks[-1]['feedback'], 'auto': self.feedbacks[-1]['auto']})
             if len(relevant_docs) > 0:
                 for doc in relevant_docs:
                     flag += self.remove_conflict_identical(new_doc, doc)

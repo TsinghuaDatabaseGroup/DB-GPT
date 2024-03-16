@@ -5,9 +5,11 @@ import re
 from dateutil import parser, tz
 from datetime import datetime, timedelta
 import time
+import copy
 from termcolor import colored
 from tqdm import tqdm
 from multiagents.utils.utils import AGENT_TYPES
+from multiagents.utils.markdown_format import generate_quote_content
 from multiagents.agents.conversation_agent import BaseAgent
 from multiagents.message import Message, SolverMessage
 from multiagents.tools.metrics import current_diag_time
@@ -288,7 +290,27 @@ class DBAEnvironment(BaseModel):
         # count on these experts to diagnose for the alert        
         report = await self.decision_making(selected_experts, None, previous_plan, advice) # plans: the list of diagnosis messages
 
+        feedbacks = []
+        knowledge_list = []
+        for agent in selected_experts + [self.reporter]:
+            agent_knowledge_list = copy.deepcopy(agent.knowledge_list)
+            for e in agent_knowledge_list:
+                e["agent"] = agent.name
+            agent_feedbacks = []
+            if hasattr(agent.llm, "feedbacks"):
+                agent_feedbacks = copy.deepcopy(agent.llm.feedbacks)
+            for e in agent_feedbacks:
+                e["agent"] = agent.name
+            feedbacks.extend(agent_feedbacks)
+            knowledge_list.extend(agent_knowledge_list)
+
         print(colored(f"Report Generation!","blue"))
+
+        root_cause_cite, solutions_cite, citations_markdown = self.cite_report(self.reporter.report['root cause'], self.reporter.report['solutions'], knowledge_list, feedbacks)
+
+        self.reporter.report['root cause'] = root_cause_cite
+        self.reporter.report['solutions'] = solutions_cite
+        self.reporter.report['citations'] = citations_markdown
         
         with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
 
@@ -312,6 +334,7 @@ class DBAEnvironment(BaseModel):
 | Anomaly Description | {self.reporter.report['anomaly description']}  |
 | Root Cause          | {self.reporter.report['root cause']}  |
 | Solutions           | {self.reporter.report['solutions']}  |\n\n"""
+            report_markdown = report_markdown + f"## Citations\n" + self.reporter.report['citations'].strip() + '\n\n'
             report_markdown = report_markdown + f"## Diagnosis Process\n" + \
                 self.reporter.report['diagnosis process'].strip()
             self.reporter.record["report"] = report_markdown
@@ -334,6 +357,46 @@ class DBAEnvironment(BaseModel):
             f'<flow>{{"title": "报告生成", "content": "报告已经生成", "messages": {self.reporter.record["report"]} , "isCompleted": 1, "isRuning": 0}}</flow>')
 
         return report, self.reporter.record
+    
+    def gen_cite_report(self, report, citations_str):
+        messages = [{'role': 'system', 'content': 'You will be given a database anomaly diagnosis report, and a list of potential citations. Your task is to mark the citation index in the report. For instance, if a paragraph refers to the 2nd citation, you can append "[2]" to the paragraph. For each paragraph of the report, you should check the relativity of all the citations. If the paragraph actually refers to the citation, you can mark its index. Note that sometimes there may be no available citations, or more than one relative citations.\nOnly output the diagnosis report with citation indices.'}, {'role': 'user', 'content': f'Diagnosis Report:{report}\n\nCitations:\n{citations_str}'}]
+        self.reporter.llm.change_messages("", messages)
+        reply = self.reporter.llm.parse()
+        print(messages)
+        print(reply)
+        return reply['content']
+    
+    def cite_report(self, root_cause, solutions, knowledge_list, feedbacks):
+        citations = {}
+        for k in knowledge_list:
+            citations[k['desc']] = generate_quote_content('[{index}] ' + f'{k["source"]}.N.{k["seq_num"]}.', k["desc"])
+
+        for feedback in feedbacks:
+            if feedback['auto']:
+                citations[feedback["feedback"]] = generate_quote_content('[{index}] ' + f'{k["agent"]}.{k["task"]} feedback.', feedback["feedback"])
+            else:
+                citations[feedback["refined_response"]] = generate_quote_content('[{index}] ' + f'{k["agent"]}.{k["task"]} editted response.', feedback["refined_response"])
+
+        citations_list = []
+        for k in citations:
+            citations_list.append({'index': len(citations_list) + 1, 'citation': k})
+        citations_str = str(citations_list)
+
+        root_cause_cite = self.gen_cite_report(root_cause, citations_str)
+        solutions_cite = self.gen_cite_report(solutions, citations_str)
+
+        citations_markdown = ''
+
+        i = 1
+        for c in citations_list:
+            if f'[{c["index"]}]' in root_cause_cite or f'[{c["index"]}]' in solutions_cite:
+                root_cause_cite = root_cause_cite.replace(f'[{c["index"]}]', f'[{i}]')
+                solutions_cite = solutions_cite.replace(f'[{c["index"]}]', f'[{i}]')
+                citations_markdown += citations[c["citation"]].replace('[{index}]', f'[{i}]') + '<br>'
+                i += 1
+
+        return root_cause_cite, solutions_cite, citations_markdown
+
 
     def role_assign(
             self,
@@ -537,7 +600,7 @@ class DBAEnvironment(BaseModel):
             message = self.reporter.llm._construct_messages(prompt)
             self.reporter.llm.change_messages(
                 self.reporter.role_description, message)
-            summarized_diags = self.reporter.llm.parse()
+            summarized_diags = self.reporter.llm.parse(task='summary')
 
             # if summarized_diags is of dict type
             if isinstance(summarized_diags, dict):

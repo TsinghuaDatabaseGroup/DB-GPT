@@ -3,7 +3,6 @@ from multiagents.llms.base import LLMResult
 from .base import BaseChatModel, BaseCompletionModel, BaseModelArgs
 import time
 import re
-from multiagents.localized_llms.inference import classify
 
 def remove_charts(text):
     pattern = r'\[chart\].*?\.html'
@@ -33,7 +32,7 @@ class LocalChatModel(BaseChatModel):
         else:
             self.conversation_history = messages
 
-    def parse(self):
+    def parse(self, task=""):
         messages = self.conversation_history
 
         new_messages = []
@@ -46,8 +45,7 @@ class LocalChatModel(BaseChatModel):
                 role = "assistant"
             new_messages.append({"role": role, "content": self.inference.preprocess(message["content"])})
         
-        mark_idx = classify(new_messages)
-        new_messages = self.inference.refine_messages(new_messages, mark_idx)
+        new_messages = self.inference.refine_messages(new_messages, task=task)
         
         output = self.inference.inference(new_messages)
 
