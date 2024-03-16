@@ -1,4 +1,5 @@
 import axiosReq from '@/utils/axios-req'
+import {fetchData} from "@/utils/fetchData";
 
 //获取知识库列表
 export const knowledgeListReq = () => {
@@ -81,7 +82,7 @@ export const knowledgeBaseDetailReq = (knowledgeBaseName) => {
 export const knowledgeBaseUpdateInfoReq = (knowledgeBaseName, info) => {
   return axiosReq({
     url: 'knowledge_base/update_info',
-    data: {knowledge_base_name: knowledgeBaseName, kb_info:info},
+    data: {knowledge_base_name: knowledgeBaseName, kb_info: info},
     method: 'post'
   })
 }
@@ -107,32 +108,23 @@ export const createKnowledgeBaseReq = (knowledgeBaseName, info, embedModel) => {
 
 // LLm模型聊天
 export const chatReq = (query, conversationId, modelName, history, historyLen) => {
-  return axiosReq({
-    url: 'chat/chat',
-    data: {query, conversation_id: conversationId, model_name: modelName, history, prompt_name: 'default', temperature: 0.7, max_tokens: 0, history_len: historyLen},
-    method: 'post',
-    type: 'chat',
-    reqLoading: false,
-    timeout: 600000
+  return fetchData('chat/chat', {
+    query, conversation_id: conversationId, model_name: modelName, history,
+    prompt_name: 'default', temperature: 0.7, max_tokens: 0, history_len: historyLen, stream: true
   })
 }
 
 // 知识库聊天
 export const knowledgeChatReq = (query, ignoreCache, answerCache, knowledgeBaseName, modelName, history, historyLen) => {
-  return axiosReq({
-    url: 'chat/knowledge_base_chat',
-    data: {query, ignore_cache: ignoreCache, answer_cache: answerCache, knowledge_base_name: knowledgeBaseName,
-      model_name: modelName, history, prompt_name: 'default',
-      temperature: 0.7, max_tokens: 0, top_k: 3, score_threshold:0.5, history_len: historyLen},
-    method: 'post',
-    type: 'chat',
-    reqLoading: false,
-    timeout: 600000
+  return fetchData('chat/knowledge_base_chat', {
+    query, ignore_cache: ignoreCache, answer_cache: answerCache, knowledge_base_name: knowledgeBaseName,
+    model_name: modelName, history, prompt_name: 'default',
+    temperature: 0.7, max_tokens: 0, top_k: 3, score_threshold: 0.5, history_len: historyLen, stream: true
   })
 }
 
 //上传文件到知识库内
-export const knowledgeUploadDocsReq = (knowledgeBaseName, files, chunkSize=250, chunkOverlap=50, zhTitleEnhance=false) => {
+export const knowledgeUploadDocsReq = (knowledgeBaseName, files, chunkSize = 250, chunkOverlap = 50, zhTitleEnhance = false) => {
   const formData = new FormData()
   formData.append('knowledge_base_name', knowledgeBaseName)
   formData.append('files', files)

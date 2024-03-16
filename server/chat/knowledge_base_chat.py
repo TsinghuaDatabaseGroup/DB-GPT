@@ -4,7 +4,7 @@ from configs import (
     LLM_MODELS,
     VECTOR_SEARCH_TOP_K,
     SCORE_THRESHOLD,
-    TEMPERATURE, DEFAULT_VS_TYPES, KNOWLEDGE_USE_CACHE)
+    TEMPERATURE, DEFAULT_VS_TYPES)
 from server.utils import wrap_done, get_ChatOpenAI
 from server.utils import BaseResponse, get_prompt_template
 from langchain.chains import LLMChain
@@ -22,6 +22,7 @@ from server.knowledge_base.kb_doc_api import search_docs
 
 async def knowledge_base_chat(query: str = Body(..., description="用户输入", examples=["你好"]),
                               ignore_cache: bool = Body(True, description="是否忽略缓存"),
+                              answer_cache: bool = Body(False, description="是否缓存搜索结果"),
                               knowledge_base_name: str = Body(..., description="知识库名称", examples=["samples"]),
                               top_k: int = Body(VECTOR_SEARCH_TOP_K, description="匹配向量数"),
                               score_threshold: float = Body(
@@ -64,6 +65,7 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
             top_k: int,
             history: Optional[List[History]],
             ignore_cache: bool = True,
+            answer_cache: bool = False,
             model_name: str = LLM_MODELS[0],
             prompt_name: str = prompt_name,
     ) -> AsyncIterable[str]:
@@ -77,10 +79,27 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
                 "cache", SupportedVSType.CHROMADB)
             docs = cache_kb.search_docs(query, top_k)
             if len(docs) > 0:
-                for doc, score in docs:
-                    answer = doc.metadata.get("answer")
-                    if answer:
-                        yield json.dumps({"answer": f"<span style='word-break:break-all; color:#333333; font-size:16px; margin-bottom:10px;'>{doc.page_content}:<br><span style='color:#999999; font-size:14px;'>{answer}</span></span><br>"}, ensure_ascii=False)
+                if stream:
+                    cache_data = []
+                    for doc, score in docs:
+                        answer = doc.metadata.get("answer")
+                        if answer:
+                            yield json.dumps({"answer": f"<span style='word-break:break-all; color:#333333; font-size:16px; margin-bottom:10px;'>{doc.page_content}:<br><span style='color:#999999; font-size:14px;'>{answer}</span></span><br>", "cache": True}, ensure_ascii=False)
+                    cache_data.append({
+                        "answer": doc.metadata.get("answer"),
+                        "page_content": doc.page_content
+                    })
+                    yield json.dumps({"cacheData": cache_data, "cache": True}, ensure_ascii=False)
+                else:
+                    cache_data = []
+                    answers = ""
+                    for doc, score in docs:
+                        answers += f"<span style='word-break:break-all; color:#333333; font-size:16px; margin-bottom:10px;'>{doc.page_content}:<br><span style='color:#999999; font-size:14px;'>{doc.metadata.get('answer')}</span></span><br>"
+                        cache_data.append({
+                            "answer": doc.metadata.get("answer"),
+                            "page_content": doc.page_content
+                        })
+                    yield json.dumps({"cacheData": cache_data, "cache": True, "answer": answers}, ensure_ascii=False)
             else:
                 yield json.dumps({"answer": "No Cache"}, ensure_ascii=False)
             return
@@ -91,15 +110,7 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
             callbacks=[callback],
         )
         docs = search_docs(query, knowledge_base_name, top_k, score_threshold)
-        
-        context = ""
-        for doc in docs:
-            if 'desc' in doc.metadata:
-                context += doc.metadata['desc'] + "\n"
-            else:
-                context += doc.page_content + "\n"
-
-        print("******search_docs*******: ", context)
+        context = "\n".join([doc.page_content for doc in docs])
 
         if len(docs) == 0:  # 如果没有找到相关文档，使用empty模板
             prompt_template = get_prompt_template(
@@ -107,6 +118,7 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
         else:
             prompt_template = get_prompt_template(
                 "knowledge_base_chat", prompt_name)
+
         input_msg = History(
             role="user",
             content=prompt_template).to_msg_template(False)
@@ -122,6 +134,7 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
         )
 
         source_documents = []
+        source_documents_map = {}
         for inum, doc in enumerate(docs):
             filename = doc.metadata.get("source")
             parameters = urlencode(
@@ -130,6 +143,10 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
             url = f"{base_url}knowledge_base/download_doc?" + parameters
             text = f"""出处 [{inum + 1}] [{filename}]({url}) \n\n{doc.page_content}\n\n"""
             source_documents.append(text)
+            if filename in source_documents_map:
+                source_documents_map[filename]["contents"].append(doc.page_content)
+            else:
+                source_documents_map[filename] = {"filename": filename, "url": url, "contents": [doc.page_content]}
 
         if len(source_documents) == 0:  # 没有找到相关文档
             source_documents.append(
@@ -140,16 +157,16 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
                 # Use server-sent-events to stream the response
                 answer += token
                 yield json.dumps({"answer": token}, ensure_ascii=False)
-            yield json.dumps({"docs": source_documents}, ensure_ascii=False)
+            yield json.dumps({"docs": source_documents, "docsDetail": list(source_documents_map.values())}, ensure_ascii=False)
         else:
             answer = ""
             async for token in callback.aiter():
                 answer += token
             yield json.dumps({"answer": answer,
-                              "docs": source_documents},
+                              "docs": source_documents,
+                              "docsDetail": list(source_documents_map.values())},
                              ensure_ascii=False)
-
-        if KNOWLEDGE_USE_CACHE:
+        if answer_cache:
             cache_kb = KBServiceFactory.get_service(
                 "cache", SupportedVSType.CHROMADB)
             doc_infos = cache_kb.do_add_doc([Document(page_content=query, metadata={"source": "cache", "answer": answer})])
@@ -162,6 +179,7 @@ async def knowledge_base_chat(query: str = Body(..., description="用户输入",
             top_k=top_k,
             history=history,
             ignore_cache=ignore_cache,
+            answer_cache=answer_cache,
             model_name=model_name,
             prompt_name=prompt_name),
         media_type="text/event-stream")

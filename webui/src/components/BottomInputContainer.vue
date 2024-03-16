@@ -6,6 +6,7 @@
     <div class="input-container">
       <el-input
           v-model="userInput"
+          :disabled=inputDisabled
           :placeholder="placeholder"
           clearable
           size="default"
@@ -28,6 +29,11 @@ const props = defineProps({
     require: true,
     default: '请输入你的需求',
     type: String
+  },
+  inputDisabled: {
+    require: false,
+    default: false,
+    type: Boolean
   }
 })
 
@@ -73,7 +79,6 @@ const onSendClick = () => {
   overflow: hidden;
   padding: 10px;
   border: 1px solid rgba(0, 0, 0, 0.12);
-  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.04);
 }
 
 </style>

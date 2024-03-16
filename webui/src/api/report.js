@@ -3,7 +3,7 @@ import axiosReq from "@/utils/axios-req";
 
 export const alertHistories = (start, end, model) => {
   return axiosReq({
-    url: 'alert/report/histories',
+    url: 'report/histories',
     data: {start, end, model},
     method: 'post'
   })
@@ -11,7 +11,7 @@ export const alertHistories = (start, end, model) => {
 
 export const alertHistoryDetail = (file, model) => {
   return axiosReq({
-    url: 'alert/report/history_detail',
+    url: 'report/history_detail',
     data: {file, model},
     method: 'post'
   })
@@ -19,7 +19,7 @@ export const alertHistoryDetail = (file, model) => {
 
 export const diagnoseLlmModelList = () => {
   return axiosReq({
-    url: 'alert/report/diagnose_llm_model_list',
+    url: 'report/diagnose_llm_model_list',
     data: {},
     method: 'post'
   })

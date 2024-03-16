@@ -280,7 +280,6 @@ const marked = new Marked(
 );
 
 const timeRange = ref([]);
-const messages = ref([]);
 const openReport = ref('');
 const openIndex = ref(-1);
 const severityStyle = reactive({

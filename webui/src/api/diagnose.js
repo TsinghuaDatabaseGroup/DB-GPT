@@ -26,10 +26,19 @@ export const runDiagnoseReq = (file) => {
 }
 
 
-// 获取诊断输出
-export const diagnoseOutputReq = () => {
+// 获取诊断的终端输出
+export const diagnoseTerminalOutputReq = () => {
   return axiosReq({
-    url: 'diagnose/diagnose_output',
+    url: 'diagnose/terminal_output',
+    method: 'get',
+    reqLoading: false
+  })
+}
+
+// 获取诊断的格式化输出
+export const diagnoseSerializationOutputReq = () => {
+  return axiosReq({
+    url: 'diagnose/serialization_output',
     method: 'get',
     reqLoading: false
   })

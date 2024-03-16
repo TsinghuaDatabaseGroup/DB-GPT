@@ -1,34 +1,24 @@
 <template>
   <div class="c-flex-column c-relative" style="width: 100%; height: 100%;">
-    <div :id="componentId + '-scroll-container'" class="scroll-container c-relative" />
+    <div :id="componentId + '-scroll-container'" class="scroll-container c-relative"/>
   </div>
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue';
-
 import marked from '@/utils/markdownConfig.js'
+import {onBeforeUnmount, onMounted, ref} from 'vue';
 
 const props = defineProps({
-  messages: { type: Array, default: () => [] },
-  skipTyped: { type: Boolean, default: false },
-  typeSpeed: { type: Number, default: 100 }
+  messages: {type: Array, default: () => []},
+  skipTyped: {type: Boolean, default: false},
+  typeSpeed: {type: Number, default: 100}
 })
 
 const emit = defineEmits(['playback-complete'])
 
 const typedObjs = ref([])
 const componentId = `report-chat-${Math.random().toString(36).slice(2, 11)}`
-const faceMap = {
-  'RoleAssigner': new URL('../assets/dba_robot.webp', import.meta.url).href,
-  'CpuExpert': new URL('../assets/cpu_robot.webp', import.meta.url).href,
-  'MemoryExpert': new URL('../assets/mem_robot.webp', import.meta.url).href,
-  'IoExpert': new URL('../assets/io_robot.webp', import.meta.url).href,
-  'IndexExpert': new URL('../assets/index_robot.webp', import.meta.url).href,
-  'ConfigurationExpert': new URL('../assets/configuration_robot.webp', import.meta.url).href,
-  'QueryExpert': new URL('../assets/query_robot.webp', import.meta.url).href,
-  'WorkloadExpert': new URL('../assets/workload_robot.webp', import.meta.url).href
-}
+
 let scrollObserver = undefined
 
 // watch props changes
@@ -36,7 +26,7 @@ watch(() => props.messages, (newVal, oldVal) => {
   setTimeout(() => {
     dealMessage(0)
   })
-}, { deep: true, immediate: true })
+}, {deep: true, immediate: true})
 
 onBeforeUnmount(() => {
   if (scrollObserver) {
@@ -54,9 +44,9 @@ onMounted(() => {
     scrollObserver = new MutationObserver((mutationsList, observer) => {
       target.scrollTop = target.scrollHeight - target.clientHeight
     })
-    const config = { attributes: true, childList: true, subtree: true }
+    const config = {attributes: true, childList: true, subtree: true}
 
-    if(scrollObserver){ //检查scrollObserver是否存在
+    if (scrollObserver) { //检查scrollObserver是否存在
       scrollObserver.observe(target, config)
     } else {
       console.error('scrollObserver is undefined')
@@ -82,19 +72,19 @@ const dealMessage = (index) => {
     return
   }
 
-  const faceImage = faceMap[message.sender]
-
-  const divId = `message-${  Math.random().toString(36).slice(2, 11)}`
+  const divId = `message-${Math.random().toString(36).slice(2, 11)}`
 
   const messagesContainer = document.querySelector(`#${componentId}-scroll-container`);
-  messagesContainer.innerHTML = `${messagesContainer.innerHTML
-  }<div class="text-item c-flex-row left">
-          <img src="${faceImage}" class="face">
-          <div class="c-flex-column">
-            <span style="font-size: 1rem; color: #333333; margin-bottom: 5px">
-              ${message.sender}
-              <span style="margin-left: 5px; color: #666666">${message.time}</span>
-            </span>
+  messagesContainer.innerHTML = `${messagesContainer.innerHTML}
+        <div class="text-item left">
+            <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 10px">
+              <div class="face">${message.sender.slice(0, 1)}</div>
+              <div style="font-size: 1rem; color: #333333; margin-bottom: 5px">
+                ${message.sender}
+                <span style="margin-left: 5px; color: #666666">${message.time}</span>
+              </div>
+            </div>
+          <div style="display: flex; flex-direction: column">
             <div id="${divId}" class="content c-flex-column"></div>
           </div>
         </div>`
@@ -105,14 +95,15 @@ const dealMessage = (index) => {
         contentContainer.innerHTML = marked.parse(message.data)
         dealMessage(index + 1)
       } else {
-        const typedObj = new Typed(`#${  divId}`, {
+        const typedObj = new Typed(`#${divId}`, {
           strings: [marked.parse(message.data)],
           typeSpeed: 100 - props.typeSpeed,
           showCursor: false,
           contentType: 'html',
           onComplete: (self) => {
             dealMessage(index + 1)
-          } })
+          }
+        })
         typedObjs.value.push(typedObj)
       }
     } catch (e) {
@@ -125,45 +116,42 @@ const dealMessage = (index) => {
 
 .text-item {
   margin: 20px 0;
+  display: flex;
+  flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
 
-.face {
-  width: 40px;
-  height: 40px;
-  border-radius: 40px;
-  margin-right: 7px;
-}
+  .face {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 40px;
+    margin-right: 7px;
+    background-color: #ffffff;
+    text-align: center;
+    color: #333333;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.05);
+  }
 
-.content {
-  color: #111111;
-  font-size: 14px;
-  min-height: 20px;
-  border-radius: 20px;
-  padding: 6px 12px;
-  line-height: 20px;
-  background-color: #ffffff;
-  word-break: break-all;
-  word-wrap: break-word;
-  position: relative;
-}
+  .content {
+    color: #111111;
+    font-size: 14px;
+    min-height: 20px;
+    border-radius: 8px;
+    padding: 6px 12px;
+    line-height: 20px;
+    background-color: #ffffff;
+    word-break: break-all;
+    word-wrap: break-word;
+    position: relative;
+  }
 }
 
 </style>
 
 <style lang="scss" scoped>
-
-.bottom-input-container {
-  background: #ffffff;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-  position: absolute;
-}
 
 .scroll-container {
   transition: all 0.1s ease;

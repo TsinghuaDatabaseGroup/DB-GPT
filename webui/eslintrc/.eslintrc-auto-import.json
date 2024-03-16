@@ -19,6 +19,7 @@
     "elLoading": true,
     "elMessage": true,
     "elNotify": true,
+    "fetchData": true,
     "filterAsyncRouter": true,
     "filterAsyncRouterByCodes": true,
     "filterAsyncRoutesByMenuList": true,
