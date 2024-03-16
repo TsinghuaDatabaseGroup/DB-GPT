@@ -57,7 +57,7 @@ class DBDiag(OutputParser):
                     action_input = action_input[:-1]
                 action_input = json.loads(action_input)
             except:
-                print("Eerror in parsing diagnosis results from 'speak' action")
+                print("Error in parsing diagnosis results from 'speak' action")
                 
                 return None
 

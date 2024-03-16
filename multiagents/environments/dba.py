@@ -27,6 +27,7 @@ from multiagents.environments.role_assigner import (
 
 from . import env_registry as EnvironmentRegistry
 from pydantic import BaseModel
+from multiagents.utils.interact import set_cur_task, init_messages, add_report, add_experts
 
 
 def generate_tools_content(
@@ -129,6 +130,8 @@ class DBAEnvironment(BaseModel):
     success: bool = False
 
     def __init__(self, **kwargs):
+        init_messages()
+        
         def build_components(config: Dict, registry):
             component_type = config.pop("type")
             component = registry.build(component_type, **config)
@@ -231,6 +234,7 @@ class DBAEnvironment(BaseModel):
         # return summarized_diags, labels
 
         # ===================================================
+        set_cur_task("roleAssignment")
         print(
             '<flow>{"title": "根据异常分配诊断专家", "content": "", "isCompleted": 0, "isRuning": 1}</flow>')
         self.reporter.record["anomalyAnalysis"]["RoleAssigner"]["messages"].append(
@@ -257,7 +261,10 @@ class DBAEnvironment(BaseModel):
         if len(selected_experts) > args.max_hired_experts:
             selected_experts = selected_experts[:args.max_hired_experts]
 
-        print("Assigned Experts: ", [expert.name for expert in selected_experts])
+        selected_expert_names = [expert.name for expert in selected_experts]
+        add_experts(selected_expert_names)
+
+        print("Assigned Experts: ", selected_expert_names)
 
         expert_data = []
         for expert in selected_experts:
@@ -305,6 +312,7 @@ class DBAEnvironment(BaseModel):
             knowledge_list.extend(agent_knowledge_list)
 
         print(colored(f"Report Generation!","blue"))
+        set_cur_task("reportDemonstration")
 
         root_cause_cite, solutions_cite, citations_markdown = self.cite_report(self.reporter.report['root cause'], self.reporter.report['solutions'], knowledge_list, feedbacks)
 
@@ -338,6 +346,7 @@ class DBAEnvironment(BaseModel):
             report_markdown = report_markdown + f"## Diagnosis Process\n" + \
                 self.reporter.report['diagnosis process'].strip()
             self.reporter.record["report"] = report_markdown
+            add_report(report_markdown)
 
             pbar.update(1)
 
@@ -428,6 +437,7 @@ class DBAEnvironment(BaseModel):
         # TODO: plan should be string or a special type of object?
 
         # initial_diag: a list of diagnosis messages from selected experts
+        set_cur_task("expertDiagnosis")
         initial_diags = await self.decision_maker.astep(
             agents=agents,
             task_description=self.task_description,
@@ -600,7 +610,7 @@ class DBAEnvironment(BaseModel):
             message = self.reporter.llm._construct_messages(prompt)
             self.reporter.llm.change_messages(
                 self.reporter.role_description, message)
-            summarized_diags = self.reporter.llm.parse(task='summary')
+            summarized_diags = self.reporter.llm.parse(role=self.reporter.name, task='summary')
 
             # if summarized_diags is of dict type
             if isinstance(summarized_diags, dict):
@@ -625,6 +635,7 @@ class DBAEnvironment(BaseModel):
 
         print(
             '<flow>{"title": "圆桌讨论", "content": "", "isCompleted": 0, "isRuning": 1}</flow>')
+        set_cur_task("groupDiscussion")
         # print(colored(f"Cross Review!", "yellow"))
 
         # discuss over the summarized initial_diags results
@@ -665,6 +676,7 @@ class DBAEnvironment(BaseModel):
         # review the diagnosis results by the reporter
         print(
             '<flow>{"title": "报告生成", "content": "", "isCompleted": 0, "isRuning": 1}</flow>')
+        set_cur_task("reportGeneration")
         self.reporter.update_diagnosis()
         self.reporter.add_diagnosis_labels()
         self.reporter.update_solutions()

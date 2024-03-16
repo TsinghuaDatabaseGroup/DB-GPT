@@ -11,13 +11,13 @@
         "messages": []
     },
     "reportGeneration": {
-        "sender": "RoleAssigner",
+        "sender": "ChiefDBA",
         "messages": []
     },
     "reportDemonstration": {
-        "report": '',
+        "report": ""
     },
     "placeholder": "请输入你的反馈意见",
-    "needMessageInput": true,
+    "needMessageInput": false,
     "needInput": false
 }

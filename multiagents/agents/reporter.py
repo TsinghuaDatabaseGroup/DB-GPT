@@ -9,6 +9,7 @@ from multiagents.prompt_templates.report_prompts import (
     ANOMALY_DESC_PROMPT, ANOMALY_TITLE_PROMPT,
     ANOMALY_DESC_PROMPT_zh, ANOMALY_TITLE_PROMPT_zh
 )
+from multiagents.utils.interact import add_display_message
 
 @agent_registry.register("reporter") # solver is also tool agent by default
 class ReporterAgent(BaseAgent):
@@ -48,14 +49,14 @@ class ReporterAgent(BaseAgent):
 
         self.llm.change_messages(self.role_description, anomaly_desc_message)
 
-        anomaly_desc = self.llm.parse(task='desc')
+        anomaly_desc = self.llm.parse(role=self.name, task='desc')
         anomaly_desc = anomaly_desc['content']
         self.report["anomaly description"] = anomaly_desc
 
         anomaly_title_prompt = self.anomaly_title_prompt.replace("{anomaly_str}", self.alert_str)
         anomaly_title_message = self.llm._construct_messages(anomaly_title_prompt)
         self.llm.change_messages(self.role_description, anomaly_title_message)
-        anomaly_title = self.llm.parse(task='title')
+        anomaly_title = self.llm.parse(role=self.name, task='title')
         anomaly_title = anomaly_title['content']
         self.report["title"] = anomaly_title.replace('\\"','')
         self.report["title"] = anomaly_title.replace('"','')
@@ -92,7 +93,8 @@ class ReporterAgent(BaseAgent):
         # self.messages.append(prompt_message)
 
         self.llm.change_messages(self.role_description, self.messages + [prompt_message])
-        new_message = self.llm.parse(task='refine_root_cause')
+        add_display_message('reportGeneration', self.name, '\n\n'.join([m['content'] for m in self.messages] + [prompt]), prompt_message['time'], flag=False)
+        new_message = self.llm.parse(role=self.name, task='refine_root_cause')
 
         if isinstance(new_message, dict):
             self.report["root cause"] = new_message["content"]
@@ -124,7 +126,7 @@ class ReporterAgent(BaseAgent):
         prompt_message = {"role": "user", "content": prompt, "time": time.strftime("%H:%M:%S", time.localtime())}
 
         self.llm.change_messages(self.role_description, self.messages + [prompt_message])
-        new_message = self.llm.parse(task="label")
+        new_message = self.llm.parse(role=self.name, task="label")
         
         if isinstance(new_message, dict):
             self.report["labels"] = new_message["content"]
@@ -145,7 +147,8 @@ class ReporterAgent(BaseAgent):
         # self.messages.append(prompt_message)
 
         self.llm.change_messages(self.role_description, self.messages + [prompt_message])
-        new_message = self.llm.parse(task="refine_solution")
+        add_display_message('reportGeneration', self.name, '\n\n'.join([m['content'] for m in self.messages] + [prompt]), prompt_message['time'], flag=False)
+        new_message = self.llm.parse(role=self.name, task="refine_solution")
 
         if isinstance(new_message, dict):
             self.report["solutions"] = new_message["content"]

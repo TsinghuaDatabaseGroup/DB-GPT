@@ -19,6 +19,7 @@ from pydantic import Field
 import datetime
 import time
 from tqdm import tqdm
+from multiagents.utils.interact import add_display_message
 
 def node_to_chain(node):
     chain = {
@@ -300,7 +301,7 @@ class UCT_vote_function(base_search_method):
 
                 print(colored(f"- Voting ...","grey"))
                 #with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-                message = self.llm.parse(task='mcts_vote')
+                message = self.llm.parse(role=self.name, task='mcts_vote')
                 #    pbar.update(1)
 
                 vote = message["content"]
@@ -396,12 +397,16 @@ class UCT_vote_function(base_search_method):
         self.llm.change_messages(self.role_description, message_list)
 
         # with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-        new_message = self.llm.parse(task='mcts_reflect')
+        new_message = self.llm.parse(role=self.name, task='mcts_reflect')
         #    pbar.update(1)
 
         reflection = new_message['content']
-        print(colored(f"- 反思内容： {reflection}","grey"))
-        print(colored(f"Reflexion: {reflection}","green"))
+        if self.language == "zh":
+            reflect_message = f"反思内容：{reflection}"
+        else:
+            reflect_message = f"Reflection: {reflection}"
+        print(colored(reflect_message,"green"))
+        add_display_message('expertDiagnosis', self.name, reflect_message, time.strftime("%H:%M:%S", time.localtime()))
 
         now_time = datetime.datetime.now()
         now_time = now_time.strftime("%H:%M:%S")
@@ -479,7 +484,7 @@ class UCT_vote_function(base_search_method):
 
             # print(colored(f"- Analyzing with tools ...","grey"))
             #with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-            new_message = self.llm.parse(task="mcts_action")
+            new_message = self.llm.parse(role=self.name, task="mcts_action")
             #    pbar.update(1)
 
             # print(f"New message:\t{new_message['content']}")
@@ -509,7 +514,7 @@ class UCT_vote_function(base_search_method):
 
                     # print(colored(f"- Analyzing with tools ...","grey"))
                     # with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-                    new_message = self.llm.parse(task="mcts_action")
+                    new_message = self.llm.parse(role=self.name, task="mcts_action")
                     #    pbar.update(1)
 
                     time.sleep(0.5)
@@ -577,7 +582,9 @@ class UCT_vote_function(base_search_method):
                     if "obtain_start_and_end_time_of_anomaly" in parsed_response.tool and self.alert_dict != [] and self.alert_dict != None:
                         observation = f"The start time is {self.start_time}, and the end time is {self.end_time}."
                     else:
-                        print(f"- 使用工具API ...\n  Name: {parsed_response.tool}\n  Parameters: {parameters}")
+                        tool_calling_message = f"- 使用工具API ...\n  Name: {parsed_response.tool}\n  Parameters: {parameters}"
+                        add_display_message('expertDiagnosis', self.name, tool_calling_message, time.strftime("%H:%M:%S", time.localtime()))
+                        print(tool_calling_message)
                         if isinstance(parameters, list):
                             observation = []
                             for parameter in parameters:
