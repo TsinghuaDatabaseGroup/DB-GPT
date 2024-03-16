@@ -22,6 +22,7 @@ class BaseAgent(BaseModel):
     receiver: Set[str] = Field(default=set({"all"}))
     async_mode: bool = Field(default=True)
     language: str = Field(default="en")
+    knowledge_list: list = Field(default=[])
 
     @abstractmethod
     def step(self, env_description: str = "") -> Message:

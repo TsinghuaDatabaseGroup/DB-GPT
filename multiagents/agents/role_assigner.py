@@ -63,7 +63,7 @@ class RoleAssignerAgent(BaseAgent):
             try:
                 message = self.llm._construct_messages(prompt)
                 self.llm.change_messages(self.role_description, message)
-                response = self.llm.parse()
+                response = self.llm.parse(task="assign_role")
 
                 selected_names = self.parse_expert_names(response['content'], expert_names=expert_names)
                 if selected_names == []:

@@ -86,7 +86,7 @@ def match_diagnose_knowledge(
         logging.error(f"The expert name {candidate_agent_name} is not found in knowledge base!")
 
         # alerts and metrics
-    alert_and_metric_str, abnormal_metric_detailed_values = metric_analysis_results(agent_name, kb_name, alert_metric,
+    alert_and_metric_str, abnormal_metric_detailed_values, metrc_knowledge_list = metric_analysis_results(agent_name, kb_name, alert_metric,
                                                                                     diag_id, enable_prometheus,
                                                                                     start_time, end_time)
 
@@ -97,13 +97,14 @@ def match_diagnose_knowledge(
             return f"The {agent_name} relevant metric values from Prometheus are:\n {alert_and_metric_str}"
 
     # slow queries
-    slow_queries_str = slow_query_analysis_results(agent_name, kb_name, diag_id)
+    slow_queries_str, slow_query_knowledge_list = slow_query_analysis_results(agent_name, kb_name, diag_id)
 
     # workload
-    workload_str = workload_analysis_results(agent_name, kb_name, diag_id)
+    workload_str, workload_knowledge_list = workload_analysis_results(agent_name, kb_name, diag_id)
 
     knowledge_str = alert_and_metric_str + workload_str + slow_queries_str
+    knowledge_list = metrc_knowledge_list + workload_knowledge_list + slow_query_knowledge_list
 
     # print(" == knowledge_str == ", knowledge_str)
 
-    return knowledge_str, abnormal_metric_detailed_values
+    return knowledge_str, abnormal_metric_detailed_values, knowledge_list

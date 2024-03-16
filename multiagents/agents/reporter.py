@@ -48,14 +48,14 @@ class ReporterAgent(BaseAgent):
 
         self.llm.change_messages(self.role_description, anomaly_desc_message)
 
-        anomaly_desc = self.llm.parse()
+        anomaly_desc = self.llm.parse(task='desc')
         anomaly_desc = anomaly_desc['content']
         self.report["anomaly description"] = anomaly_desc
 
         anomaly_title_prompt = self.anomaly_title_prompt.replace("{anomaly_str}", self.alert_str)
         anomaly_title_message = self.llm._construct_messages(anomaly_title_prompt)
         self.llm.change_messages(self.role_description, anomaly_title_message)
-        anomaly_title = self.llm.parse()
+        anomaly_title = self.llm.parse(task='title')
         anomaly_title = anomaly_title['content']
         self.report["title"] = anomaly_title.replace('\\"','')
         self.report["title"] = anomaly_title.replace('"','')
@@ -92,7 +92,7 @@ class ReporterAgent(BaseAgent):
         # self.messages.append(prompt_message)
 
         self.llm.change_messages(self.role_description, self.messages + [prompt_message])
-        new_message = self.llm.parse()
+        new_message = self.llm.parse(task='refine_root_cause')
 
         if isinstance(new_message, dict):
             self.report["root cause"] = new_message["content"]
@@ -124,7 +124,7 @@ class ReporterAgent(BaseAgent):
         prompt_message = {"role": "user", "content": prompt, "time": time.strftime("%H:%M:%S", time.localtime())}
 
         self.llm.change_messages(self.role_description, self.messages + [prompt_message])
-        new_message = self.llm.parse()
+        new_message = self.llm.parse(task="label")
         
         if isinstance(new_message, dict):
             self.report["labels"] = new_message["content"]
@@ -145,7 +145,7 @@ class ReporterAgent(BaseAgent):
         # self.messages.append(prompt_message)
 
         self.llm.change_messages(self.role_description, self.messages + [prompt_message])
-        new_message = self.llm.parse()
+        new_message = self.llm.parse(task="refine_solution")
 
         if isinstance(new_message, dict):
             self.report["solutions"] = new_message["content"]

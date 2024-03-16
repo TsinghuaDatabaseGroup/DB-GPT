@@ -23,7 +23,7 @@ class QwenVllmChat(BaseChatModel):
     model_name_or_path: str = ""
     generate_cfg: Dict = {
         'stop': ['Observation:', 'Observation:\n', '<|im_end|>'],
-        'temperature': 0,
+        'temperature': 0.7,
         'skip_special_tokens': False,
     }
 
@@ -86,6 +86,8 @@ class QwenVllmChat(BaseChatModel):
         if not os.path.exists(r"saved_msg_qwen"):
             os.mkdir(r"saved_msg_qwen")
         saved_msgs = messages + [{'role': "assistant", "content": output}]
+        if os.path.exists(f"saved_msg_qwen/msg_{time.strftime('%H_%M_%S', time.localtime())}.json"):
+            time.sleep(1)
         with open(f"saved_msg_qwen/msg_{time.strftime('%H_%M_%S', time.localtime())}.json",
                   "w", encoding='utf8') as f:
             json.dump(saved_msgs, f, ensure_ascii=False, indent=4)
