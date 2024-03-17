@@ -1,7 +1,7 @@
 import os
 import time
 from openai import OpenAI
-from text_splitter.summary_llm.diagnosis_smmary_prompts import DIAGNOSIS_SUMMARYY_PROMPT
+from text_splitter.summary_llm.diagnosis_summary_prompts import DIAGNOSIS_SUMMARYY_PROMPT
 
 def prompt_generation(chunk, chunk_size):
     prompt = DIAGNOSIS_SUMMARYY_PROMPT.replace("{document text}", chunk)
