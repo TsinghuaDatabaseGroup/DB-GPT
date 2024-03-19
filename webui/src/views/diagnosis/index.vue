@@ -60,7 +60,9 @@
               <DiagnosisOneChat
                   :sender="diagnoseData?.roleAssignment?.sender"
                   :can-fold="false"
-                  :messages="diagnoseData?.roleAssignment?.messages"/>
+                  :messages="diagnoseData?.roleAssignment?.messages"
+                  @edit-click="onOneChatEditClick"
+              />
             </template>
             <template v-if="activeIndex === 'expertDiagnosis'">
               <div v-for="(item, index) in diagnoseData?.expertDiagnosis?.experts" :key="index">
@@ -82,8 +84,9 @@
               <div style="padding: 20px; background: #f2f2f2; border-radius: 8px" v-html="reportContent" />
             </template>
           </div>
-          <BottomInputContainer
+          <DiagnosisInputContainer
               style="width: 100%"
+              :edit-data="oneChatEditData"
               :placeholder="diagnoseData.placeholder || ''"
               :input-disabled="!(diagnoseStatus && needInput)"
               @send-click="onSendClick">
@@ -96,7 +99,7 @@
                 </svg>
               </div>
             </template>
-          </BottomInputContainer>
+          </DiagnosisInputContainer>
         </div>
       </el-main>
     </el-container>
@@ -114,7 +117,7 @@ import {
   diagnoseUserFeedbackReq,
   runDiagnoseReq
 } from "@/api/diagnose.js";
-import BottomInputContainer from "@/components/BottomInputContainer.vue";
+import DiagnosisInputContainer from "@/components/DiagnosisInputContainer.vue";
 import DiagnosisOneChat from '@/components/DiagnosisOneChat.vue'
 import DiagnosisGroupChat from '@/components/DiagnosisGroupChat.vue'
 import marked from '@/utils/markdownConfig.js'
@@ -141,6 +144,8 @@ const messagesScrollDiv = ref<HTMLElement | null>(null);
 const outputScrollDiv = ref<HTMLElement | null>(null);
 
 const diagnoseData: Ref<Object> = ref({})
+
+const oneChatEditData: Ref<Object> = ref(null)
 
 const diagnoseTerminalOutputHtml = computed(() => {
   return marked.parse(diagnoseTerminalOutput.value)
@@ -217,6 +222,10 @@ const uploadFile = (files) => {
   }).finally(() => {
 
   })
+}
+
+const onOneChatEditClick = (value) => {
+  oneChatEditData.value = value
 }
 
 const onSendClick = (value) => {

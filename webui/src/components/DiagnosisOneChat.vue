@@ -25,7 +25,38 @@
           <span v-if="item.time" style="font-size: 1rem; color: #666666; margin-bottom: 5px; margin-left: 5px; ">
             {{ item.time }}
           </span>
-          <div class="content columnSS" v-html="item.markdownContent"/>
+          <div class="relative content columnSS">
+            <template v-if="item.type === 'select'">
+              <el-select
+                  v-model="item.data"
+                  size="default"
+                  placeholder="Select"
+                  :disabled="editIndex !== index"
+                  multiple
+                  style="width: 400px; margin-bottom: 10px">
+                <el-option
+                    v-for="selectItem in item.selectList"
+                    :key="selectItem"
+                    :label="selectItem"
+                    :value="selectItem"
+                />
+              </el-select>
+            </template>
+            <template v-else>
+              <div :style="editIndex === index ? 'height: 0; overflow: hidden;' : ''" v-html="item.markdownContent"/>
+              <div v-show="editIndex === index" style="width: 100%; z-index: 2; margin: 10px 0">
+                <el-input
+                    v-model="item.data"
+                    style="width: 100%; font-size: 14px"
+                    type="textarea"
+                    :autosize="{ minRows: 2, maxRows: 4 }"
+                />
+              </div>
+            </template>
+            <div v-if="item.edit" class="footer">
+              <el-button type="primary" plain @click="onEditClick(item)">编辑</el-button>
+            </div>
+          </div>
         </div>
       </template>
     </div>
@@ -34,30 +65,36 @@
 
 <script setup>
 
+import {watch, ref} from 'vue'
+
 import marked from '@/utils/markdownConfig.js'
 
 const props = defineProps({
   messages: {type: Array, default: () => []},
-  sender: {required: true, type: String},
+  sender: {required: false, type: String, default: 'A'},
   canFold: {type: Boolean, default: true},
   isFold: {type: Boolean, default: false}
 })
 
 const fold = ref(false)
 
+const editIndex = ref(-1)
+
 const headerStyles = ["#01B77E", "#0F2F5F", "#FB9996", "#7649af", "#ecb42b", "#67C23A", "#FFC2E3", "#D51374"]
 
 const componentId = `diagnosis-one-chat-${Math.random().toString(36).slice(2, 11)}`
 let scrollObserver = undefined
 
-const messageMarkdownDatas = computed(() => {
-  return props.messages.map(item => {
-    return {
-      ...item,
-      markdownContent: marked.parse(item.data)
-    }
-  })
-})
+const messageMarkdownDatas = ref([])
+
+watch(() => props.messages, (newMessages) => {
+  messageMarkdownDatas.value = newMessages.map(item => ({
+    ...item,
+    markdownContent: marked.parse(item.data),
+    selectValue: ''
+  }))
+}, {immediate: true, deep: true})
+
 
 watch(() => props.isFold, (newVal) => {
   fold.value = newVal
@@ -69,6 +106,8 @@ onBeforeUnmount(() => {
     scrollObserver = undefined
   }
 })
+
+const emit = defineEmits(['edit-click'])
 
 onMounted(() => {
   const target = document.querySelector(`#${componentId}-scroll-container`)
@@ -89,6 +128,25 @@ onMounted(() => {
 
 const toggleFold = () => {
   fold.value = !fold.value
+}
+
+const onSaveClick = (item) => {
+  if (item.type === 'select') {
+    item.data = item.selectValue.split(',')
+  } else {
+    item.markdownContent = marked.parse(item.data || '')
+  }
+  editIndex.value = -1
+  console.log('save:', item)
+}
+
+const onEditClick = (item) => {
+  // if (editIndex.value === index) {
+  //   editIndex.value = -1
+  // } else {
+  //   editIndex.value = index
+  // }
+  emit('edit-click', item)
 }
 
 </script>
@@ -134,6 +192,7 @@ const toggleFold = () => {
     word-break: break-all;
     word-wrap: break-word;
     overflow-x: scroll;
+    position: relative;
 
     .content {
       color: #333333;
@@ -146,6 +205,18 @@ const toggleFold = () => {
       word-break: break-all;
       word-wrap: break-word;
       position: relative;
+
+      .footer {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+
+        .edit {
+          cursor: pointer;
+          color: var(--el-color-primary);
+        }
+      }
     }
   }
 

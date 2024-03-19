@@ -16,6 +16,7 @@ declare module '@vue/runtime-core' {
     DataflowDataShow: typeof import('./../src/components/DataflowDataShow.vue')['default']
     DiagnosisChat: typeof import('@/components/DiagnosisOneChat.vue')['default']
     DiagnosisGroupChat: typeof import('./../src/components/DiagnosisGroupChat.vue')['default']
+    DiagnosisInputContainer: typeof import('./../src/components/DiagnosisInputContainer.vue')['default']
     DiagnosisOneChat: typeof import('./../src/components/DiagnosisOneChat.vue')['default']
     ElSvgIcon: typeof import('./../src/components/ElSvgIcon.vue')['default']
     KnowledgeChatItem: typeof import('./../src/components/KnowledgeChatItem.vue')['default']
