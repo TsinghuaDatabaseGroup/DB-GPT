@@ -32,7 +32,7 @@ class LocalChatModel(BaseChatModel):
         else:
             self.conversation_history = messages
 
-    def parse(self, task=""):
+    def parse(self, role="", task=""):
         messages = self.conversation_history
 
         new_messages = []

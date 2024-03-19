@@ -1,6 +1,6 @@
 from multiagents.our_argparse import args
 from multiagents.multiagents import MultiAgents
-from multiagents.tools.metrics import db
+from multiagents.tools.metrics import db, current_diag_time
 from multiagents.tools.metrics import WORKLOAD_FILE_NAME
 import json
 import os

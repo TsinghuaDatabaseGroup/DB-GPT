@@ -11,6 +11,7 @@ from langchain.docstore.document import Document
 from rank_bm25 import BM25Okapi
 import logging
 from server.utils import run_async
+from multiagents.utils.interact import user_input, add_display_message, add_edit_message, add_feedback_message, finish_feedback_message, finish_select_edit_message
 
 FEEDBACK_ITERATIONS = 3
 
@@ -78,14 +79,14 @@ def parse_messages(messages, task):
     if task == 'expert_solution':
         return messages[1]['content'], "Give the solutions only based on above messages in details. Note do not mention anything about **root causes**!!!"
     
-    if task == 'summary':
-        pre_instruction = 'Please provide a searchable summary of the input diagnosis procedures or recommended solutions without losing important information. The input is as follows:'
+    # if task == 'summary':
+    #     pre_instruction = 'Please provide a searchable summary of the input diagnosis procedures or recommended solutions without losing important information. The input is as follows:'
 
-        post_instruction = '===\nNote \n1. you are an expert and do not miss any important information!!!\n2. response with a list of key points of the input diagnosis procedures or recommended solutions (e.g. \"1. ...<br>2. ...<br>3. ...\"). Do not add any additional content!!!\n3. The key points should be strictly separated by <br> (\"1. ...<br>2. ...<br>3. ...\")!!!! Do not use markdown format and # headings!!!\n4. Do not mention anything about what are the charts like!! Ignore charts!!!\n5. Do not say anything like \"As an AI\"!!'
+    #     post_instruction = '===\nNote \n1. you are an expert and do not miss any important information!!!\n2. response with a list of key points of the input diagnosis procedures or recommended solutions (e.g. \"1. ...<br>2. ...<br>3. ...\"). Do not add any additional content!!!\n3. The key points should be strictly separated by <br> (\"1. ...<br>2. ...<br>3. ...\")!!!! Do not use markdown format and # headings!!!\n4. Do not mention anything about what are the charts like!! Ignore charts!!!\n5. Do not say anything like \"As an AI\"!!'
 
-        pre_idx = messages[1]['content'].find(pre_instruction) + len(pre_instruction)
-        post_idx = messages[1]['content'].find(post_instruction)
-        return messages[1]['content'][pre_idx:post_idx].strip(), pre_instruction + '\n\n' + post_instruction
+    #     pre_idx = messages[1]['content'].find(pre_instruction) + len(pre_instruction)
+    #     post_idx = messages[1]['content'].find(post_instruction)
+    #     return messages[1]['content'][pre_idx:post_idx].strip(), pre_instruction + '\n\n' + post_instruction
     
     if task == 'review':
         return '\n\n'.join([m["content"] for m in messages[1:-1]]), messages[-1]["content"]
@@ -97,7 +98,7 @@ def parse_messages(messages, task):
 
         pre_idx = messages[-1]['content'].find(pre_instruction) + len(pre_instruction)
         post_idx = messages[-1]['content'].find(post_instruction)
-        return messages[1]['content'][pre_idx:post_idx].strip() + messages[-1]['content'][pre_idx:post_idx].strip(), pre_instruction + '\n\n' + post_instruction
+        return '\n\n'.join([m["content"] for m in messages[1:-1]] + [messages[-1]['content'][pre_idx:post_idx].strip()]), pre_instruction + '\n\n' + post_instruction
     
     if task == 'refine_root_cause':
         pre_instruction = 'You are writing a report. Please give the refined root cause analysis based on the above review advice. The root cause analysis is as follows:'
@@ -106,48 +107,24 @@ def parse_messages(messages, task):
 
         pre_idx = messages[-1]['content'].find(pre_instruction) + len(pre_instruction)
         post_idx = messages[-1]['content'].find(post_instruction)
-        return messages[1]['content'][pre_idx:post_idx].strip() + messages[-1]['content'][pre_idx:post_idx].strip(), pre_instruction + '\n\n' + post_instruction
+        return '\n\n'.join([m["content"] for m in messages[1:-1]] + [messages[-1]['content'][pre_idx:post_idx].strip()]), pre_instruction + '\n\n' + post_instruction
 
     return  None, None
 
-def add_feedback_message(messages, task):
-    if task == 'expert_root_cause':
-        return messages[1]['content'], "Analyze the diagnosed root causes based on above discussions in details. And do not mention anything about the solutions!!!"
-        
-    if task == 'expert_solution':
-        return messages[1]['content'], "Give the solutions only based on above messages in details. Note do not mention anything about **root causes**!!!"
-    
-    if task == 'summary':
-        pre_instruction = 'Please provide a searchable summary of the input diagnosis procedures or recommended solutions without losing important information. The input is as follows:'
-
-        post_instruction = '===\nNote \n1. you are an expert and do not miss any important information!!!\n2. response with a list of key points of the input diagnosis procedures or recommended solutions (e.g. \"1. ...<br>2. ...<br>3. ...\"). Do not add any additional content!!!\n3. The key points should be strictly separated by <br> (\"1. ...<br>2. ...<br>3. ...\")!!!! Do not use markdown format and # headings!!!\n4. Do not mention anything about what are the charts like!! Ignore charts!!!\n5. Do not say anything like \"As an AI\"!!'
-
-        pre_idx = messages[1]['content'].find(pre_instruction) + len(pre_instruction)
-        post_idx = messages[1]['content'].find(post_instruction)
-        return messages[1]['content'][pre_idx:post_idx].strip(), pre_instruction + '\n\n' + post_instruction
+def get_cur_task(task):
+    if task in ['expert_root_cause', 'expert_solution']:
+        return 'expertDiagnosis'
     
     if task == 'review':
-        return '\n\n'.join([m["content"] for m in messages[1:-1]]), messages[-1]["content"]
+        return 'groupDiscussion'
     
-    if task == 'refine_solution':
-        pre_instruction = 'You are writing a report. Please optimize the following solutions based on the above review advice. The solutions are:'
-
-        post_instruction = "===\n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the solutions based on the above advice'. 3. Do not add anything about root causes!!!"
-
-        pre_idx = messages[-1]['content'].find(pre_instruction) + len(pre_instruction)
-        post_idx = messages[-1]['content'].find(post_instruction)
-        return messages[1]['content'][pre_idx:post_idx].strip() + messages[-1]['content'][pre_idx:post_idx].strip(), pre_instruction + '\n\n' + post_instruction
+    if task in ['refine_root_cause', 'refine_solution']:
+        return 'reportGeneration'
     
-    if task == 'refine_root_cause':
-        pre_instruction = 'You are writing a report. Please give the refined root cause analysis based on the above review advice. The root cause analysis is as follows:'
+    raise ValueError(f'Invalid task: {task}')
 
-        post_instruction = "===\n Note 1. the output should be in markdown format.\n2. do not any additional content like 'Sure' and 'I will refine the anomaly diagnosis description based on the above advice. 3. Do not add anything about solutions!!!'"
-
-        pre_idx = messages[-1]['content'].find(pre_instruction) + len(pre_instruction)
-        post_idx = messages[-1]['content'].find(post_instruction)
-        return messages[1]['content'][pre_idx:post_idx].strip() + messages[-1]['content'][pre_idx:post_idx].strip(), pre_instruction + '\n\n' + post_instruction
-
-    return  None, None
+def get_time():
+    return time.strftime("%H:%M:%S", time.localtime())
 
 def compare_rules(rule1, rule2, compare_prompt):
 
@@ -239,16 +216,21 @@ class FeedbackOpenAIChat(OpenAIChat):
         reply = call_openai(judge_messages)
         return "yes" in reply.lower()
 
-    def interact(self, instruction, res, task):
+    def interact(self, instruction, res, role, task):
+        cur_task = get_cur_task(task)
         print('='*10 + 'INPUT' + '='*10, flush=True)
         print(self.conversation_history, flush=True)
         print('='*10 + 'OUTPUT' + '='*9, flush=True)
         print(res, flush=True)
         print('='*25, flush=True)
-        feedback = input('Please input your feedback of the D-Bot response (e.g., "you should response in xxx format.", "you should provide more details on xxx.").\n')
+        feedback_placeholder = 'Please input your feedback of the D-Bot response (e.g., "you should response in xxx format.", "you should provide more details on xxx.").'
+        add_feedback_message(cur_task, role, feedback_placeholder, res['content'], get_time())
+        feedback = user_input(feedback_placeholder + '\n')
         
         if feedback.strip() == '' or not self.judge_feedback(feedback):
-            print('We do not recognize suggestions in your feedback. Let\'s continue our diagnosis.', flush=True)
+            empty_feedback_placeholder = 'We do not recognize suggestions in your feedback. Let\'s continue our diagnosis.'
+            add_display_message(cur_task, role, empty_feedback_placeholder, get_time())
+            print(empty_feedback_placeholder + '\n', flush=True)
             return None
         
         refined_reply = pool.submit(asyncio.run, self.feedback(copy.deepcopy(self.conversation_history), instruction, res['content'], feedback)).result()
@@ -257,18 +239,27 @@ class FeedbackOpenAIChat(OpenAIChat):
             print('='*6 + 'REFINED OUPUT' + '='*6, flush=True)
             print(refined_reply, flush=True)
             print('=' * 25, flush=True)
-            eval = self.user_input('Are you satisfied with our refined response? Please answer yes or no.\n')
+            eval_placeholder = 'Are you satisfied with our refined response? Please answer yes or no.'
+            add_feedback_message(cur_task, role, eval_placeholder, refined_reply, get_time())
+            eval = user_input(eval_placeholder + '\n')
             if "yes" not in eval.lower():
-                refined_reply = self.user_input('Please input your preferred response in details.\n')
+                refine_placeholder = 'Please input your preferred response in details.'
+                add_edit_message(cur_task, role, res['content'], refine_placeholder, get_time())
+                refined_reply = user_input(refine_placeholder + '\n')
                 self.feedbacks.append({"feedback": feedback, "refined_response": refined_reply, "auto": False, "task": task})
+                finish_select_edit_message(cur_task, role)
             else:
                 self.feedbacks.append({"feedback": feedback, "refined_response": refined_reply, "auto": True, "task": task})
+                finish_feedback_message(cur_task, role)
         else:
             print('='*10 + 'OUTPUT' + '='*9, flush=True)
             print(res, flush=True)
             print('='*25, flush=True)
-            refined_reply = input('We are sorry that we cannot refine our response based on your feedback. Please input your preferred response in details.\n')
+            refine_placeholder = 'We are sorry that we cannot refine our response based on your feedback. Please input your preferred response in details.'
+            add_edit_message(cur_task, role, res['content'], refine_placeholder, get_time())
+            refined_reply = user_input(refine_placeholder + '\n')
             self.feedbacks.append({"feedback": feedback, "refined_response": refined_reply, "auto": False, "task": task})
+            finish_select_edit_message(cur_task, role)
 
         return refined_reply
     
@@ -332,10 +323,10 @@ class FeedbackOpenAIChat(OpenAIChat):
             self.kb.update_docs([updated_doc])
         return flag
 
-    def parse(self, task=""):
+    def parse(self, role="", task=""):
         vars, instruction = parse_messages(self.conversation_history, task=task)
         if vars is None:
-            return super().parse(task=task)
+            return super().parse(role=role, task=task)
         
         try:
             relevant_docs = self.kb.search_docs(vars, metadata_filter={'task': task}, top_k=1)
@@ -345,10 +336,10 @@ class FeedbackOpenAIChat(OpenAIChat):
                 assert self.conversation_history[-1]["role"] == "user"
                 self.conversation_history[-1]['content'] += f"\n\nIn the following, we show you some rules that may help you improve your response:\n{relevant_rules}"
             
-            res = super().parse(task=task)
+            res = super().parse(role=role, task=task)
             if len(relevant_docs) > 0:
                 self.conversation_history = messages_backup
-            refined_reply = self.interact(instruction, res, task)
+            refined_reply = self.interact(instruction, res, role, task)
 
             if refined_reply is None:
                 return res
