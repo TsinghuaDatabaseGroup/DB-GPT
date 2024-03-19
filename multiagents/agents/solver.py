@@ -14,6 +14,7 @@ from multiagents.tools.api_retrieval import APICaller
 from multiagents.reasoning_algorithms import UCT_vote_function, node_to_chain
 from multiagents.reasoning_algorithms import base_env
 from multiagents.tools.retriever import api_matcher
+from multiagents.utils.interact import add_display_message, finish_expert_diagnosis
 
 
 class ToolNotExistError(BaseException):
@@ -162,7 +163,8 @@ class SolverAgent(BaseAgent):
             self.llm.change_messages("你是一个数据库专家。", diag_messages)
         else:
             self.llm.change_messages("You are a database expert", diag_messages)
-        root_causes = self.llm.parse(task='expert_root_cause')
+        add_display_message('expertDiagnosis', self.name, result_node.messages[-1]['content'] + '\n\n' + prompt, diag_message[0]['time'], flag=False)
+        root_causes = self.llm.parse(role=self.name, task='expert_root_cause')
         if isinstance(root_causes, dict):
             root_causes = root_causes["content"]
         else:
@@ -179,12 +181,13 @@ class SolverAgent(BaseAgent):
             self.llm.change_messages("你是一个数据库专家。", solution_messages)
         else:
             self.llm.change_messages("You are a database expert", solution_messages)
-        solutions = self.llm.parse(task='expert_solution')
+        add_display_message('expertDiagnosis', self.name, result_node.messages[-1]['content'] + '\n\n' + prompt, solution_message[0]['time'], flag=False)
+        solutions = self.llm.parse(role=self.name, task='expert_solution')
         if isinstance(solutions, dict):
             solutions = solutions["content"]
         else:
             solutions = solutions.content
-
+        finish_expert_diagnosis(self.name)
         # print(colored(f"\nRecommended Solutions: {solutions}","white"))
 
         # thought = ""
@@ -246,7 +249,8 @@ class SolverAgent(BaseAgent):
         self.messages.append(prompt_message)
 
         self.llm.change_messages(self.role_description, self.messages)
-        review_message = self.llm.parse(task='review')
+        add_display_message('groupDiscussion', self.name, '\n\n'.join([m["content"] for m in self.messages]), self.messages[-1]['time'], flag=False)
+        review_message = self.llm.parse(role=self.name, task='review')
 
         return review_message
 

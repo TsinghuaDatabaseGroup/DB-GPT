@@ -127,7 +127,7 @@ class OpenAIChat(BaseChatModel):
         else:
             self.conversation_history = messages
 
-    def parse(self, task=""):
+    def parse(self, role="", task=""):
         #messages = self._construct_messages(prompt) # TODO add history messages
         self.args.model = ONLINE_LLM_MODEL["openai-api"]["model_name"]
         messages = self.conversation_history

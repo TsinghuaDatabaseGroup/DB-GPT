@@ -9,6 +9,9 @@ from multiagents.message import RoleAssignerMessage, Message
 
 from multiagents.agents import agent_registry
 from multiagents.agents.base import BaseAgent
+from multiagents.utils.interact import add_select_message, finish_select_edit_message, user_input
+
+import time
 
 # from multiagents.environments import PipelineEnvironment
 
@@ -34,12 +37,16 @@ class RoleAssignerAgent(BaseAgent):
     
     def user_select_experts(self, selected_names, expert_names):
         if len(selected_names) > 0:
-            print('='*5 + 'SELECTED EXPERTS' + '='*4, flush=True)
-            print(selected_names, flush=True)
-            print('='*25, flush=True)
-            experts_reply = input("If you are satisfied with the selected experts, please only answer \"continue\". Otherwise, please enter the experts you prefer.")
+            # print('='*5 + 'SELECTED EXPERTS' + '='*4, flush=True)
+            # print(selected_names, flush=True)
+            # print('='*25, flush=True)
+            select_placeholder = str(selected_names) + '\n\n' + 'If you are satisfied with the selected experts, please click \"continue\". Otherwise, please select the experts you prefer.'
         else:
-            experts_reply = input("We are sorry that we cannot select proper experts. Please enter the experts you prefer.")
+            select_placeholder = 'We are sorry that we cannot select proper experts. Please manually select the experts.'
+
+        add_select_message('roleAssignment', self.name, select_placeholder, time.strftime("%H:%M:%S", time.localtime()), expert_names)
+        experts_reply = user_input(select_placeholder + '\n')
+        finish_select_edit_message('roleAssignment', self.name)
         if experts_reply == "" or "continue" in experts_reply.lower():
             return selected_names
         selected_names = self.parse_strict_expert_names(experts_reply)
@@ -63,7 +70,7 @@ class RoleAssignerAgent(BaseAgent):
             try:
                 message = self.llm._construct_messages(prompt)
                 self.llm.change_messages(self.role_description, message)
-                response = self.llm.parse(task="assign_role")
+                response = self.llm.parse(role=self.name, task="assign_role")
 
                 selected_names = self.parse_expert_names(response['content'], expert_names=expert_names)
                 if selected_names == []:
