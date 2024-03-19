@@ -26,35 +26,9 @@
             {{ item.time }}
           </span>
           <div class="relative content columnSS">
-            <template v-if="item.type === 'select'">
-              <el-select
-                  v-model="item.data"
-                  size="default"
-                  placeholder="Select"
-                  :disabled="editIndex !== index"
-                  multiple
-                  style="width: 400px; margin-bottom: 10px">
-                <el-option
-                    v-for="selectItem in item.selectList"
-                    :key="selectItem"
-                    :label="selectItem"
-                    :value="selectItem"
-                />
-              </el-select>
-            </template>
-            <template v-else>
-              <div :style="editIndex === index ? 'height: 0; overflow: hidden;' : ''" v-html="item.markdownContent"/>
-              <div v-show="editIndex === index" style="width: 100%; z-index: 2; margin: 10px 0">
-                <el-input
-                    v-model="item.data"
-                    style="width: 100%; font-size: 14px"
-                    type="textarea"
-                    :autosize="{ minRows: 2, maxRows: 4 }"
-                />
-              </div>
-            </template>
+            <div v-html="item.markdownContent"/>
             <div v-if="item.edit" class="footer">
-              <el-button type="primary" plain @click="onEditClick(item)">编辑</el-button>
+              <el-button type="primary" plain @click="onEditClick(item)">{{ item.type === 'select' ? '选择' : '编辑' }}</el-button>
             </div>
           </div>
         </div>

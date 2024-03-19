@@ -26,6 +26,7 @@ export default {
   Diagnosis: 'Diagnosis',
   NoDiagnosisTask: 'No task is currently running. Please upload the abnormal file for diagnosis',
   SelectExceptionFile: 'Select Exception File',
+  StopDiagnosis: 'Stop Diagnose',
   RoleAssignment: 'Role Assignment',
   ExpertDiagnosis: 'Expert Diagnosis',
   GroupDiscussion: 'Group Discussion',

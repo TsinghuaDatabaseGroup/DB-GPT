@@ -1,9 +1,8 @@
 import time
-from configs import DIAGNOSE_USER_FEEDBACK_PATH, DIAGNOSE_RUN_DATA_PATH, DIAGNOSE_RUN_DATA_COPY_PATH
+from configs import DIAGNOSE_USER_FEEDBACK_PATH, DIAGNOSE_RUN_DATA_PATH, DIAGNOSE_RUN_DATA_COPY_PATH, USER_INTERACT_FILE
 import shutil
 import json
 
-USER_INTERACT_FILE = False
 
 def user_input(placeholder):
     if USER_INTERACT_FILE:

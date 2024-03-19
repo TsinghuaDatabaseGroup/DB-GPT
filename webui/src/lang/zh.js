@@ -26,6 +26,7 @@ export default {
   Diagnosis: '诊断',
   NoDiagnosisTask: '当前没有任务在运行，请上传异常文件进行诊断',
   SelectExceptionFile: '选择异常文件',
+  StopDiagnosis: '停止诊断',
   RoleAssignment: '分配任务',
   ExpertDiagnosis: '专家分析',
   GroupDiscussion: '圆桌讨论',
