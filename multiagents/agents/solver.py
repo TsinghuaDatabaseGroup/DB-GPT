@@ -141,6 +141,14 @@ class SolverAgent(BaseAgent):
 
         result_node, top_abnormal_metric_values = chain.start(
             simulation_count=1, epsilon_new_node=0.3, choice_count=1, vote_candidates=2, vote_count=1, single_chain_max_step=24)
+        
+        self.knowledge_list = []
+        cur_node = result_node
+        while cur_node is not None:
+            for knowledge in cur_node.knowledge_list:
+                if knowledge not in self.knowledge_list:
+                    self.knowledge_list.append(knowledge)
+            cur_node = cur_node.father
 
         if result_node is None:
             return {}
@@ -154,7 +162,7 @@ class SolverAgent(BaseAgent):
             self.llm.change_messages("你是一个数据库专家。", diag_messages)
         else:
             self.llm.change_messages("You are a database expert", diag_messages)
-        root_causes = self.llm.parse()
+        root_causes = self.llm.parse(task='expert_root_cause')
         if isinstance(root_causes, dict):
             root_causes = root_causes["content"]
         else:
@@ -171,7 +179,7 @@ class SolverAgent(BaseAgent):
             self.llm.change_messages("你是一个数据库专家。", solution_messages)
         else:
             self.llm.change_messages("You are a database expert", solution_messages)
-        solutions = self.llm.parse()
+        solutions = self.llm.parse(task='expert_solution')
         if isinstance(solutions, dict):
             solutions = solutions["content"]
         else:
@@ -238,7 +246,7 @@ class SolverAgent(BaseAgent):
         self.messages.append(prompt_message)
 
         self.llm.change_messages(self.role_description, self.messages)
-        review_message = self.llm.parse()
+        review_message = self.llm.parse(task='review')
 
         return review_message
 

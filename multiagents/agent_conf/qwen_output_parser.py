@@ -46,10 +46,10 @@ class QwenDBDiag(OutputParser):
 
         elif i < n:  # 有Thought / Final Answer
             assert j == -1 and k == -1
-            final_answer = text[n + len(special_answer_token):].strip()
+            # solution里可能会有换行符（如步骤1.2.3.4）导致解析出错
+            final_answer = text[n + len(special_answer_token):].replace('\n', '').strip()
 
             try:
-                # final_answer = re.match(r"({.*?})", final_answer, flags=re.DOTALL).group()
                 final_answer = json.loads(final_answer)
             except:
                 print("Error in parsing diagnosis results")

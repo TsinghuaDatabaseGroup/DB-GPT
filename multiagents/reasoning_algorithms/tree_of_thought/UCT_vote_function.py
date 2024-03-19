@@ -300,7 +300,7 @@ class UCT_vote_function(base_search_method):
 
                 print(colored(f"- Voting ...","grey"))
                 #with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-                message = self.llm.parse()
+                message = self.llm.parse(task='mcts_vote')
                 #    pbar.update(1)
 
                 vote = message["content"]
@@ -396,7 +396,7 @@ class UCT_vote_function(base_search_method):
         self.llm.change_messages(self.role_description, message_list)
 
         # with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-        new_message = self.llm.parse()
+        new_message = self.llm.parse(task='mcts_reflect')
         #    pbar.update(1)
 
         reflection = new_message['content']
@@ -479,7 +479,7 @@ class UCT_vote_function(base_search_method):
 
             # print(colored(f"- Analyzing with tools ...","grey"))
             #with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-            new_message = self.llm.parse()
+            new_message = self.llm.parse(task="mcts_action")
             #    pbar.update(1)
 
             # print(f"New message:\t{new_message['content']}")
@@ -509,7 +509,7 @@ class UCT_vote_function(base_search_method):
 
                     # print(colored(f"- Analyzing with tools ...","grey"))
                     # with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
-                    new_message = self.llm.parse()
+                    new_message = self.llm.parse(task="mcts_action")
                     #    pbar.update(1)
 
                     time.sleep(0.5)
@@ -535,6 +535,7 @@ class UCT_vote_function(base_search_method):
                     # If the response is an action, call the tool
                     # and append the observation to tool_observation
                     parameters = []
+                    knowledge_list = []
                     # import pdb; pdb.set_trace()
                     if "whether_is_abnormal_metric" in parsed_response.tool:
                         
@@ -584,6 +585,8 @@ class UCT_vote_function(base_search_method):
                                 if isinstance(result, (tuple, list)):
                                     observation.append(result[0])
                                     top_abnormal_metric_values = result[1]
+                                    if "match_diagnose_knowledge" in parsed_response.tool:
+                                        knowledge_list.extend(result[2])
                                 else:
                                     observation.append(result)                               
                         elif parameters != None:
@@ -593,6 +596,8 @@ class UCT_vote_function(base_search_method):
                             if isinstance(result, (tuple, list)):
                                 observation = result[0]
                                 top_abnormal_metric_values = result[1]
+                                if "match_diagnose_knowledge" in parsed_response.tool:
+                                    knowledge_list = result[2]
                             else:
                                 observation = result
 
@@ -630,6 +635,7 @@ class UCT_vote_function(base_search_method):
                     
                     # observation, status = child_env.step(action_name=now_node.description, action_input=function_input)
                     temp_node.observation = observation
+                    temp_node.knowledge_list = knowledge_list
                     temp_node.env = child_env
                     temp_node.is_terminal = False
                     temp_node.messages = now_node.messages.copy()

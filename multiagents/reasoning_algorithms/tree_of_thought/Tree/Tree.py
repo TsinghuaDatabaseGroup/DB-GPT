@@ -101,6 +101,7 @@ class tree_node:
         self.node_type = None
         self.description = ""
         self.observation = ""
+        self.knowledge_list = []
         self.children = []
 
         self.father = None
