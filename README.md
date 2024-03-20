@@ -69,7 +69,7 @@
 
 <!-- <p align="center">
   <a href="http://dbgpt.dbmind.cn">
-    <img src="img/demo-dbot_chatchat.gif" width="800px">
+    <img src="img/demo-dbot.jpg" width="800px">
   </a>
 </p> -->
 
@@ -162,6 +162,7 @@
 
 ### 1. Environment Setup
 
+#### 1.1 backend setup
 + First, ensure that your machine has Python (>= 3.10) installed.
 
 ```
@@ -230,6 +231,23 @@ MODEL_PATH = {
         "Qwen-1_8B-Chat": "Qwen-1_8B-Chat", # Download path of LLM.
     },
 }
+```
+
+#### 1.2 frontend setup
++ Ensure that your machine has Node (>= 18.15.0)
+```
+$ node -v
+v18.15.0
+```
+Install pnpm and dependencies
+```shell
+cd webui
+# pnpm address https://pnpm.io/zh/motivation
+# install dependency(Recommend use pnpm)
+# you can  use "npm -g i pnpm" to install pnpm 
+pnpm i
+# develop
+pnpm run dev
 ```
 
 4. Download and config [localized LLMs](multiagents/localized_llms).

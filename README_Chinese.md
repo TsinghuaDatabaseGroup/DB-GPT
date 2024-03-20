@@ -41,7 +41,7 @@
 
 <!-- <p align="center">
   <a href="http://dbgpt.dbmind.cn">
-    <img src="img/demo-dbot_chatchat.gif" width="800px">
+    <img src="img/demo-dbot.jpg" width="800px">
   </a>
 </p> -->
 
@@ -126,6 +126,7 @@
 
 ### 1. 环境配置
 
+#### 1.1 后端服务配置
 + 首先，确保你的机器安装了 Python (>= 3.10)
 ```
 $ python --version
@@ -161,7 +162,22 @@ $ pip3 install -r requirements_api.txt # 如果只运行API，可以只安装API
 
   > 将下载的sentence-transformer.zip压缩包放置在./multiagents/localized_llms/sentence_embedding/目录下；解压压缩包。
 
-
+#### 1.2 前端服务配置
++ 首先，确保你的机器安装了 Node (>= 18.15.0)
+```
+$ node -v
+v18.15.0
+```
+接着，安装项目依赖
+```shell
+cd webui
+# pnpm address https://pnpm.io/zh/motivation
+# install dependency(Recommend use pnpm)
+# you can  use "npm -g i pnpm" to install pnpm 
+pnpm i
+# develop
+pnpm run dev
+```
 
 ### 2. 模型下载
 
