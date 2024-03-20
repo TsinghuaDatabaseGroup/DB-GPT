@@ -22,6 +22,9 @@ DIAGNOSE_RUN_DATA_PATH = "./diagnose_run_data.jsonl"
 # 诊断输出原始信息
 DIAGNOSE_RUN_DATA_COPY_PATH = "./diagnose_run_data_copy.jsonl"
 
+# 用户反馈是使用交互文件还是终端
+USER_INTERACT_FILE = True
+
 # 数据库配置
 
 POSTGRESQL_CONFIG = {

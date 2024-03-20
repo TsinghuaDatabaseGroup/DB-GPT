@@ -1,3 +1,5 @@
+import re
+
 import pydantic
 from pydantic import BaseModel
 from typing import List
@@ -400,6 +402,18 @@ def fschat_model_worker_address(model_name: str = LLM_MODELS[0]) -> str:
     return ""
 
 
+def replace_ip(filepath, new_ip):
+    with open(filepath, 'r') as file:
+        content = file.read()
+
+    # 正则表达式匹配 http:// followed by any number (1 or more) of any character that's not a /
+    old_ip = re.findall(r'http://[^/]+/', content)[0]
+
+    content = content.replace(old_ip, f'http://{new_ip}/')
+
+    with open(filepath, 'w') as file:
+        file.write(content)
+
 def fschat_openai_api_address() -> str:
     from configs.server_config import FSCHAT_OPENAI_API
 
@@ -499,6 +513,18 @@ def set_httpx_config(
 
     # 自动检查torch可用的设备。分布式部署时，不运行LLM的机器上可以不装torch
 
+
+def replace_ip(filepath, new_ip):
+    with open(filepath, 'r') as file:
+        content = file.read()
+
+    # 正则表达式匹配 http:// followed by any number (1 or more) of any character that's not a /
+    old_ip = re.findall(r'http://[^/]+/', content)[0]
+
+    content = content.replace(old_ip, f'http://{new_ip}/')
+
+    with open(filepath, 'w') as file:
+        file.write(content)
 
 def detect_device() -> Literal["cuda", "mps", "cpu"]:
     try:

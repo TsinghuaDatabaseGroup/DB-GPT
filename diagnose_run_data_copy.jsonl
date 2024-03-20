@@ -14,9 +14,7 @@
         "sender": "ChiefDBA",
         "messages": []
     },
-    "reportDemonstration": {
-        "report": ""
-    },
+    "reportDemonstration": "",
     "placeholder": "请输入你的反馈意见",
     "needMessageInput": false,
     "needInput": false

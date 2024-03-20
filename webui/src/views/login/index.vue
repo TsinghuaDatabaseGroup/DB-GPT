@@ -55,7 +55,7 @@ const { settings } = useBasicStore()
 const formRules = useElement().formRules
 //form
 const subForm = reactive({
-  keyword: 'panda',
+  keyword: 'db-gpt',
   password: '123456'
 })
 const state = reactive({
