@@ -227,7 +227,7 @@ class FeedbackOpenAIChat(OpenAIChat):
         add_feedback_message(cur_task, role, feedback_placeholder, res['content'], get_time())
         feedback = user_input(feedback_placeholder + '\n')
         
-        if feedback.strip() == '' or not self.judge_feedback(feedback):
+        if feedback.strip() == '' or feedback.lower() == 'continue' or not self.judge_feedback(feedback):
             empty_feedback_placeholder = 'Let\'s continue our diagnosis.'
             add_display_message(cur_task, role, empty_feedback_placeholder, get_time())
             return None
