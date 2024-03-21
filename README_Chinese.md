@@ -174,9 +174,7 @@ cd webui
 # pnpm address https://pnpm.io/zh/motivation
 # install dependency(Recommend use pnpm)
 # you can  use "npm -g i pnpm" to install pnpm 
-pnpm i
-# develop
-pnpm run dev
+pnpm install
 ```
 
 ### 2. 模型下载

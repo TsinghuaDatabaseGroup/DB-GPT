@@ -233,6 +233,8 @@ MODEL_PATH = {
 }
 ```
 
+4. Download and config [localized LLMs](multiagents/localized_llms).
+
 #### 1.2 frontend setup
 + Ensure that your machine has Node (>= 18.15.0)
 ```
@@ -245,12 +247,9 @@ cd webui
 # pnpm address https://pnpm.io/zh/motivation
 # install dependency(Recommend use pnpm)
 # you can  use "npm -g i pnpm" to install pnpm 
-pnpm i
-# develop
-pnpm run dev
+pnpm install
 ```
 
-4. Download and config [localized LLMs](multiagents/localized_llms).
 ### 2. Initialize Knowledge Base and Configuration Files
 
 Copy the configuration files
