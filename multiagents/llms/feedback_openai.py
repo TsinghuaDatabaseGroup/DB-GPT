@@ -228,9 +228,8 @@ class FeedbackOpenAIChat(OpenAIChat):
         feedback = user_input(feedback_placeholder + '\n')
         
         if feedback.strip() == '' or not self.judge_feedback(feedback):
-            empty_feedback_placeholder = 'We do not recognize suggestions in your feedback. Let\'s continue our diagnosis.'
+            empty_feedback_placeholder = 'Let\'s continue our diagnosis.'
             add_display_message(cur_task, role, empty_feedback_placeholder, get_time())
-            print(empty_feedback_placeholder + '\n', flush=True)
             return None
         
         refined_reply = pool.submit(asyncio.run, self.feedback(copy.deepcopy(self.conversation_history), instruction, res['content'], feedback)).result()
