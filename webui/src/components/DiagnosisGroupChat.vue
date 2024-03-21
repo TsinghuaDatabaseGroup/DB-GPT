@@ -9,7 +9,12 @@
             <span style="margin-left: 5px; color: #666666">{{ item.time }}</span>
           </div>
         </div>
-        <div class="content columnSS" v-html="item.markdownContent"/>
+        <div class="relative content columnSS">
+            <div v-html="item.markdownContent"/>
+            <div v-if="item.edit" class="footer">
+              <el-button type="primary" plain @click="onEditClick(item)">{{ item.type === 'select' ? '选择' : '编辑' }}</el-button>
+            </div>
+        </div>
       </div>
     </div>
   </div>
@@ -24,6 +29,8 @@ const headerStyles = ["#01B77E", "#0F2F5F", "#FB9996", "#7649af", "#ecb42b", "#6
 const props = defineProps({
   messages: {type: Array, default: () => []}
 })
+
+const emit = defineEmits(['edit-click'])
 
 const componentId = `diagnosis-chat-${Math.random().toString(36).slice(2, 11)}`
 let scrollObserver = undefined
@@ -60,6 +67,10 @@ onMounted(() => {
     console.error('Element is not mounted yet')
   }
 })
+
+const onEditClick = (item) => {
+  emit('edit-click', item)
+}
 
 </script>
 

@@ -73,7 +73,7 @@
                   :sender="diagnoseData?.roleAssignment?.sender"
                   :can-fold="false"
                   :messages="diagnoseData?.roleAssignment?.messages"
-                  @edit-click="onOneChatEditClick"
+                  @edit-click="onEditClick"
               />
             </template>
             <template v-if="activeIndex === 'expertDiagnosis'">
@@ -84,26 +84,26 @@
                     :can-fold="true"
                     :is-fold="item.complete && index !== (diagnoseData?.expertDiagnosis?.experts.length - 1)"
                     :messages="item.messages"
-                    @edit-click="onOneChatEditClick"
+                    @edit-click="onEditClick"
                 />
               </div>
             </template>
             <template v-if="activeIndex === 'groupDiscussion'">
-              <DiagnosisGroupChat :messages="diagnoseData?.groupDiscussion?.messages"/>
+              <DiagnosisGroupChat :messages="diagnoseData?.groupDiscussion?.messages" @edit-click="onEditClick" />
             </template>
             <template v-if="activeIndex === 'reportGeneration'">
-              <DiagnosisOneChat :sender="diagnoseData?.reportGeneration?.sender" :can-fold="false" :messages="diagnoseData?.reportGeneration?.messages"/>
+              <DiagnosisOneChat :sender="diagnoseData?.reportGeneration?.sender" :can-fold="false" :messages="diagnoseData?.reportGeneration?.messages" @edit-click="onEditClick"/>
             </template>
             <template v-if="activeIndex === 'reportDemonstration'">
               <div style="padding: 20px; background: #f2f2f2; border-radius: 8px" v-html="reportContent"/>
             </template>
           </div>
           <DiagnosisInputContainer
-              v-if="oneChatEditData || needInput"
+              v-if="editData || needInput"
               style="width: 100%"
-              :edit-data="oneChatEditData"
+              :edit-data="editData"
               :placeholder="diagnoseData.placeholder || ''"
-              :input-disabled="diagnoseStatus"
+              :input-disabled="!diagnoseStatus"
               @send-click="onSendClick" />
         </div>
       </el-main>
@@ -151,7 +151,7 @@ const outputScrollDiv = ref<HTMLElement | null>(null);
 
 const diagnoseData: Ref<Object> = ref({})
 
-const oneChatEditData: Ref<Object> = ref(null)
+const editData: Ref<Object> = ref(null)
 
 const diagnoseTerminalOutputHtml = computed(() => {
   return marked.parse(diagnoseTerminalOutput.value || '')
@@ -240,8 +240,8 @@ const uploadFile = (files) => {
   })
 }
 
-const onOneChatEditClick = (value) => {
-  oneChatEditData.value = value
+const onEditClick = (value) => {
+  editData.value = value
 }
 
 const onSendClick = (value) => {
@@ -254,7 +254,7 @@ const onSendClick = (value) => {
       type: 'success',
       message: 'Feedback successful, please continue to wait.',
     })
-    oneChatEditData.value = null
+    editData.value = null
   }).finally(() => {
   })
 }

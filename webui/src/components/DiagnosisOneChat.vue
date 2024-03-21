@@ -104,22 +104,7 @@ const toggleFold = () => {
   fold.value = !fold.value
 }
 
-const onSaveClick = (item) => {
-  if (item.type === 'select') {
-    item.data = item.selectValue.split(',')
-  } else {
-    item.markdownContent = marked.parse(item.data || '')
-  }
-  editIndex.value = -1
-  console.log('save:', item)
-}
-
 const onEditClick = (item) => {
-  // if (editIndex.value === index) {
-  //   editIndex.value = -1
-  // } else {
-  //   editIndex.value = index
-  // }
   emit('edit-click', item)
 }
 

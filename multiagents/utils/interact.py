@@ -52,7 +52,6 @@ def add_display_message(cur_task, role, message, time, flag=True):
         state = json.loads(f.read())
         _add_message(state, cur_task, role, {"data": message, "time": time}, flag)
         state['needInput'] = False
-        state['needMessageInput'] = False
         f.seek(0)
         f.truncate()
         f.write(json.dumps(state))
@@ -62,7 +61,6 @@ def add_feedback_message(cur_task, role, placeholder, message, time):
         state = json.loads(f.read())
         _add_message(state, cur_task, role, {"data": message, "time": time})
         state['needInput'] = True
-        state['needMessageInput'] = True
         state['placeholder'] = placeholder
         f.seek(0)
         f.truncate()
@@ -72,7 +70,6 @@ def finish_feedback_message():
     with open(DIAGNOSE_RUN_DATA_PATH, 'r+') as f:
         state = json.loads(f.read())
         state['needInput'] = False
-        state['needMessageInput'] = False
         f.seek(0)
         f.truncate()
         f.write(json.dumps(state))
@@ -88,7 +85,6 @@ def finish_select_edit_message(cur_task, role):
         else:
             state[cur_task]['messages'][-1]['edit'] = False
         state['needInput'] = False
-        state['needMessageInput'] = False
         f.seek(0)
         f.truncate()
         f.write(json.dumps(state))
@@ -98,7 +94,6 @@ def add_select_message(cur_task, role, message, time, select_list):
         state = json.loads(f.read())
         _add_message(state, cur_task, role, {"data": message, "time": time, "edit": True, "type": "select", "selectList": select_list})
         state['needInput'] = False
-        state['needMessageInput'] = True
         f.seek(0)
         f.truncate()
         f.write(json.dumps(state))
@@ -108,7 +103,6 @@ def add_edit_message(cur_task, role, placeholder, message, time):
         state = json.loads(f.read())
         _add_message(state, cur_task, role, {"data": message, "time": time, "edit": True})
         state['needInput'] = False
-        state['needMessageInput'] = True
         state['placeholder'] = placeholder
         f.seek(0)
         f.truncate()
