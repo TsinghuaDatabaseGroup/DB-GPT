@@ -243,7 +243,7 @@ class FeedbackOpenAIChat(OpenAIChat):
             eval = user_input(eval_placeholder + '\n')
             if "yes" not in eval.lower():
                 refine_placeholder = 'Please input your preferred response in details.'
-                add_edit_message(cur_task, role, res['content'], refine_placeholder, get_time())
+                add_edit_message(cur_task, role, refine_placeholder, res['content'], get_time())
                 refined_reply = user_input(refine_placeholder + '\n')
                 self.feedbacks.append({"feedback": feedback, "refined_response": refined_reply, "auto": False, "task": task})
                 finish_select_edit_message(cur_task, role)
@@ -255,7 +255,7 @@ class FeedbackOpenAIChat(OpenAIChat):
             print(res, flush=True)
             print('='*25, flush=True)
             refine_placeholder = 'We are sorry that we cannot refine our response based on your feedback. Please input your preferred response in details.'
-            add_edit_message(cur_task, role, res['content'], refine_placeholder, get_time())
+            add_edit_message(cur_task, role, refine_placeholder, res['content'], get_time())
             refined_reply = user_input(refine_placeholder + '\n')
             self.feedbacks.append({"feedback": feedback, "refined_response": refined_reply, "auto": False, "task": task})
             finish_select_edit_message(cur_task, role)
