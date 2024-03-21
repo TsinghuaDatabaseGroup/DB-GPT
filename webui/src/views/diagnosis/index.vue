@@ -353,19 +353,19 @@ const onStopDiagnoseClick = () => {
 
 
 .blinking-dot {
-  width: 12px;
-  height: 12px;
+  width: 30px;
+  height: 30px;
   background-color: #67C23A;
   border-radius: 50%;
   position: absolute;
-  top: 1px;
-  right: -4px;
+  top: 0px;
+  right: -5px;
   animation: breathe 1.5s infinite;
 }
 
 @keyframes breathe {
   0%, 100% {
-    opacity: 1;
+    opacity: 0.8;
     transform: scale(1);
   }
   50% {
