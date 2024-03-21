@@ -31,7 +31,7 @@
             style="width: calc(100% - 40px); font-size: 14px"
         />
       </template>
-      <el-button icon="Promotion" type="success" :disabled="sendBtnDisabled" circle size="default" style="font-size: 22px; margin-left: 10px"
+      <el-button icon="Promotion" type="success" :disabled="sendBtnDisabled && inputDisabled" circle size="default" style="font-size: 22px; margin-left: 10px"
                  @click="onSendClick"/>
 
       <el-tooltip
@@ -40,9 +40,9 @@
           content="Continue Diagnosis"
           placement="top-start"
       >
-        <div style="margin-left: 10px; cursor: pointer" @click="onContinueClick">
+        <el-button style="margin-left: 10px;" :disabled="sendBtnDisabled && inputDisabled" circle size="default"  @click="onContinueClick">
           <svg t="1710861862028" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5408" width="32" height="32"><path d="M512 85.333333c235.264 0 426.666667 191.402667 426.666667 426.666667s-191.402667 426.666667-426.666667 426.666667S85.333333 747.264 85.333333 512 276.736 85.333333 512 85.333333z m0-85.333333C229.248 0 0 229.248 0 512s229.248 512 512 512 512-229.248 512-512S794.752 0 512 0z m42.666667 512l-256 170.624V341.376L554.666667 512z m0-170.624v341.248L810.666667 512l-256-170.624z" p-id="5409" fill="#4e8e2f"></path></svg>
-        </div>
+        </el-button>
       </el-tooltip>
 
     </div>
@@ -54,7 +54,7 @@
 
 <script setup lang="ts" name="DiagnosisInputContainer">
 
-import {ref} from "vue";
+import {ref, warn} from "vue";
 
 const props = defineProps({
   placeholder: {
@@ -81,6 +81,12 @@ const emit = defineEmits(['send-click'])
 const userInput: Ref<string> = ref('')
 
 const sendBtnDisabled = computed(() => userInput.value === '' && selectValues.value.length === 0)
+
+watch (() => props.editData, (newVal) => {
+  if (newVal && newVal.type !== 'select') {
+    userInput.value = props.editData?.data || ''
+  }
+}, {immediate: true, deep: true})
 
 const onSendClick = () => {
   if (props.editData && props.editData.type === 'select') {

@@ -83,7 +83,9 @@
                     :sender="item.name"
                     :can-fold="true"
                     :is-fold="item.complete && index !== (diagnoseData?.expertDiagnosis?.experts.length - 1)"
-                    :messages="item.messages"/>
+                    :messages="item.messages"
+                    @edit-click="onOneChatEditClick"
+                />
               </div>
             </template>
             <template v-if="activeIndex === 'groupDiscussion'">
@@ -101,7 +103,7 @@
               style="width: 100%"
               :edit-data="oneChatEditData"
               :placeholder="diagnoseData.placeholder || ''"
-              :input-disabled="!(diagnoseStatus && needInput)"
+              :input-disabled="diagnoseStatus"
               @send-click="onSendClick" />
         </div>
       </el-main>
