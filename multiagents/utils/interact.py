@@ -17,10 +17,10 @@ def user_input(placeholder):
                         f.truncate()
                         break
                     else:
-                        time.sleep(1)
+                        time.sleep(0.1)
             except Exception as err:
                 print('Error: ', err, flush=True)
-                time.sleep(1)
+                time.sleep(0.1)
     else:
         input_content = input(placeholder)
     return input_content
@@ -62,6 +62,14 @@ def add_feedback_message(cur_task, role, placeholder, message, time):
         _add_message(state, cur_task, role, {"data": message, "time": time})
         state['needInput'] = True
         state['placeholder'] = placeholder
+        f.seek(0)
+        f.truncate()
+        f.write(json.dumps(state))
+
+def close_feedback_needInput():
+    with open(DIAGNOSE_RUN_DATA_PATH, 'r+') as f:
+        state = json.loads(f.read())
+        state['needInput'] = False
         f.seek(0)
         f.truncate()
         f.write(json.dumps(state))

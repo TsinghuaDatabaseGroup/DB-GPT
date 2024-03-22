@@ -143,7 +143,7 @@ let loadingId = null
 export const elLoading = (msg) => {
   loadingId = ElLoading.service({
     lock: true,
-    text: msg || '数据载入中',
+    text: msg || '请稍后',
     // spinner: 'el-icon-loading',
     background: 'rgba(0, 0, 0, 0.1)'
   })

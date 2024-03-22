@@ -47,7 +47,7 @@ service.interceptors.request.use(
         lock: true,
         fullscreen: true,
         // spinner: 'CircleCheck',
-        text: '数据载入中...',
+        text: '请稍后...',
         background: 'rgba(0, 0, 0, 0.1)'
       })
     }

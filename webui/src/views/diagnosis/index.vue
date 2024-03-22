@@ -151,6 +151,8 @@ const outputScrollDiv = ref<HTMLElement | null>(null);
 
 const diagnoseData: Ref<Object> = ref({})
 
+const diagnoseDataDiffStr: Ref<string> = ref('')
+
 const editData: Ref<Object> = ref(null)
 
 const diagnoseTerminalOutputHtml = computed(() => {
@@ -166,6 +168,10 @@ const needInput = computed(() => {
 })
 
 watch(() => diagnoseData.value, () => {
+  if (diagnoseDataDiffStr.value === JSON.stringify(diagnoseData.value)) {
+    return
+  }
+  diagnoseDataDiffStr.value = JSON.stringify(diagnoseData.value)
   nextTick(() => {
     if (messagesScrollDiv.value) {
       messagesScrollDiv.value.scrollTop = messagesScrollDiv.value.scrollHeight;
@@ -249,6 +255,8 @@ const onSendClick = (value) => {
     ElMessage.error('Please input something')
     return
   }
+  editData.value = null
+  diagnoseData.value.needInput = false
   diagnoseUserFeedbackReq(value).then(() => {
     ElMessage({
       type: 'success',

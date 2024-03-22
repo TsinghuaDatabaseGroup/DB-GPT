@@ -115,7 +115,7 @@ let loadingId = null;
 export const elLoading = () => {
     loadingId = ElLoading.service({
         lock: true,
-        text: '数据载入中',
+        text: '请稍后',
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.1)'
     });
