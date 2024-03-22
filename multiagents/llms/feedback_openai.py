@@ -143,6 +143,7 @@ class FeedbackOpenAIChat(OpenAIChat):
         self.kb = DocKnowledgeBase()
 
     async def feedback(self, messages, instruction, output, feedback):
+        messages = copy.deepcopy(messages)
         instruction_feedback = f'{instruction}\n\n{feedback}'
 
         messages.append({"role": "assistant", "content": output})
@@ -196,6 +197,7 @@ class FeedbackOpenAIChat(OpenAIChat):
         return reply
     
     def extract_rules_from_feedback(self, messages, output, preferred_output):
+        messages = copy.deepcopy(messages)
         messages.append({"role": "assistant", "content": output})
         messages.append({"role": "user", "content": EXTRACT_RULE_PROMPT.format(preferred_output=preferred_output)})
         reply = call_openai(messages)
@@ -232,7 +234,7 @@ class FeedbackOpenAIChat(OpenAIChat):
             add_display_message(cur_task, role, empty_feedback_placeholder, get_time())
             return None
         
-        refined_reply = pool.submit(asyncio.run, self.feedback(copy.deepcopy(self.conversation_history), instruction, res['content'], feedback)).result()
+        refined_reply = pool.submit(asyncio.run, self.feedback(self.conversation_history, instruction, res['content'], feedback)).result()
 
         if refined_reply is not None:
             print('='*6 + 'REFINED OUPUT' + '='*6, flush=True)
@@ -343,7 +345,7 @@ class FeedbackOpenAIChat(OpenAIChat):
             if refined_reply is None:
                 return res
             
-            rules = self.extract_rules_from_feedback(copy.deepcopy(self.conversation_history), res['content'], refined_reply)
+            rules = self.extract_rules_from_feedback(self.conversation_history, res['content'], refined_reply)
 
             flag = 0
             new_doc = Document(page_content=vars, metadata={'rules': '\n'.join(rules), 'task': task, 'source': task + '|' + vars.replace('|', '\|'), 'messages': str(self.conversation_history), 'response': res['content'], 'refined_response': refined_reply, 'feedback': self.feedbacks[-1]['feedback'], 'auto': self.feedbacks[-1]['auto']})
