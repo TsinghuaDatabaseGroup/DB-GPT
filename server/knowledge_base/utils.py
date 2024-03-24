@@ -19,6 +19,7 @@ from langchain.text_splitter import TextSplitter
 from pathlib import Path
 from server.utils import run_in_thread_pool, get_model_worker_config
 import json
+import yaml
 from typing import List, Union,Dict, Tuple, Generator
 import chardet
 
@@ -290,6 +291,17 @@ class KnowledgeFile:
         self.document_loader_name = get_LoaderClass(self.ext)
         self.text_splitter_name = TEXT_SPLITTER_NAME
 
+    def convert_yaml_to_json(self, content):
+        try:
+            json.loads(content)
+            return content
+        except json.JSONDecodeError:
+            try:
+                yaml_content = yaml.safe_load(content)
+                return json.dumps(yaml_content)
+            except yaml.YAMLError:
+                return content
+
     def file2docs(self, refresh: bool = False):
         if self.docs is None or refresh:
             logger.info(f"{self.document_loader_name} used for {self.filepath}")
@@ -298,6 +310,15 @@ class KnowledgeFile:
                                 loader_kwargs=self.loader_kwargs)
             self.docs = loader.load()
 
+            # Standardize the metrics format for improved accuracy in the vector database.
+            if self.document_loader_name == 'JSONLoader':
+                for doc in self.docs:
+                    if hasattr(doc, 'metadata'):
+                        metadata = getattr(doc, 'metadata')
+                        if 'metrics' in metadata:
+                            metadata['metrics'] = self.convert_yaml_to_json(metadata['metrics'])
+                    if 'page_content' in doc:
+                        doc['page_content'] = self.convert_yaml_to_json(doc['page_content'])
         return self.docs
 
     def docs2texts(
