@@ -1,21 +1,30 @@
+import sys
+sys.path.insert(0, '/home/wuy/DB-GPT')
 from configs import POSTGRESQL_CONFIG
-from multiagents.tools.index_advisor.index_selection.selection_utils.postgres_dbms import PostgresDatabaseConnector
-from multiagents.tools.index_advisor.index_selection.selection_utils import selec_com
-from multiagents.tools.index_advisor.configs import get_index_result
+# from multiagents.tools.index_advisor.index_selection.selection_utils.postgres_dbms import PostgresDatabaseConnector
+# from multiagents.tools.index_advisor.index_selection.selection_utils import selec_com
+# from multiagents.tools.index_advisor.configs import get_index_result
 from multiagents.tools.metrics import advisor
 from multiagents.tools.metrics import get_workload_statistics
 import ast
 from multiagents.initialization import LANGUAGE
 
-FUNCTION_DEFINITION = {
-    "optimize_index_selection": {
-        "name": "optimize_index_selection",
-        "description":
-            "使用索引选择算法返回推荐的索引。" if LANGUAGE == "zh"
-            else "returns the recommended index by running the index selection algorithm.",
-        "parameters": {'type': 'object', 'properties': {}}
-    }
-}
+import re
+import json
+import sys
+import os
+import time
+# sys.path.insert(0,'./')
+from index_eab.eab_utils.workload import Workload, Table, Column, Query
+# from index_eab.eab_utils.common_utils import get_columns_from_schema, read_row_query
+from index_eab.eab_utils.postgres_dbms import PostgresDatabaseConnector
+
+from index_eab.index_advisor.extend_algorithm import ExtendAlgorithm
+from index_eab.index_advisor.drop_algorithm import DropAlgorithm
+
+# from multiagents.tools.index_advisor.configs import get_index_result
+
+from multiagents.tools.index_advisor.utils import *
 
 
 def optimize_index_selection(**kwargs):
@@ -33,6 +42,7 @@ def optimize_index_selection(**kwargs):
                     "args": {"workload": "SELECT A.col1 from A join B where A.col2 = B.col2 and B.col3 > 2 group by A.col1"}}
         Result: Command optimize_index_selection returned: "A#col2; B#col2,col3"
     """
+    # print(f"in optimize_index_selection, kwargs {kwargs}")  # kwargs are start_time and end_time.
 
     # 1. Split the workloads by database names
     databases = {}
@@ -40,6 +50,9 @@ def optimize_index_selection(**kwargs):
     if isinstance(workload_statistics, str):
         workload_statistics = ast.literal_eval(workload_statistics)
 
+    if workload_statistics==0:
+        raise ValueError("failed to get worklaod_statistics, thus fail to recommmend indexes.") # added by wuy
+    
     for query_template in workload_statistics:
         database_name = query_template["dbname"]
 
@@ -50,17 +63,22 @@ def optimize_index_selection(**kwargs):
 
     index_advice = "推荐的索引是：\n" if LANGUAGE == "zh" else f"Recommended indexes: \n"
 
+    # print(f"databases {databases}")
+
     for dbname in databases:
 
         # 2. load db settings
         db_config = {"postgresql": POSTGRESQL_CONFIG}
         db_config["postgresql"]["dbname"] = dbname
-        connector = PostgresDatabaseConnector(db_config, autocommit=True)
+        connector = PostgresDatabaseConnector(host=db_config['postgresql']['host'], port=db_config['postgresql']['port'], user=db_config['postgresql']['user'], password=db_config['postgresql']['password'], db_name=db_config['postgresql']['dbname'])
 
-        tables, columns = selec_com.get_columns_from_db(connector)  # todo sample data for each column
+        tables, columns, column_sampled_values = get_columns_from_db(connector)  # todo sample data for each column
+        # print(f"dbname {dbname}, tables {tables}, columns {columns}")
 
         # 3. read the workload queries
         workload = databases[dbname]  # list of dict
+        # print(f"workload {workload}")
+        
 
         # script_path = os.path.abspath(__file__)
         # script_dir = os.path.dirname(script_path)
@@ -72,12 +90,24 @@ def optimize_index_selection(**kwargs):
         #     for line in rf.readlines():
         #         workload.append(line.strip())
 
-        indexes, total_no_cost, total_ind_cost = get_index_result(advisor, workload, connector, columns)
+        indexes, total_no_cost, total_ind_cost = get_index_result(advisor, workload, connector, columns, column_sampled_values)
 
+        # if len(indexes) != 0:
+        #     index_advice += (
+        #         f"对数据库{dbname}，推荐的索引是：{indexes}，cost从原来的{total_no_cost}减少到{total_ind_cost}。\n" if LANGUAGE == "zh"
+        #         else f"\t For {dbname}, the recommended indexes are: {indexes}, which reduces cost from {total_no_cost} to {total_ind_cost}.\n"
+        #     )
         if len(indexes) != 0:
             index_advice += (
-                f"对数据库{dbname}，推荐的索引是：{indexes}，cost从原来的{total_no_cost}减少到{total_ind_cost}。\n" if LANGUAGE == "zh"
-                else f"\t For {dbname}, the recommended indexes are: {indexes}, which reduces cost from {total_no_cost} to {total_ind_cost}.\n"
+                f"对数据库{dbname}，推荐的索引是：{indexes}。代价从{total_no_cost}减少到{total_ind_cost}\n" if LANGUAGE == "zh"
+                else f"\t For {dbname}, the recommended indexes are: {indexes}, cost reduced from {total_no_cost} to {total_ind_cost}.\n"
             )
 
     return index_advice
+
+
+
+if __name__ == '__main__':
+    kwargs={'start_time': '2023-10-15 23:09:49', 'end_time': '2023-10-15 23:12:49'}
+    index_advice=optimize_index_selection(**kwargs)
+    print(index_advice)
