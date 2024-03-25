@@ -50,7 +50,7 @@ class QwenVllmChat(BaseChatModel):
         else:
             self.conversation_history = messages
 
-    def parse(self):
+    def parse(self, role="", task=""):
         messages = self.conversation_history
 
         new_messages = []

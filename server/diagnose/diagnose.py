@@ -37,7 +37,10 @@ def run_diagnose_script(file_path: str):
             "python3",
             f"{os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))}/run_diagnose.py",
             "--anomaly_file",
-            file_path]
+            file_path,
+            "--config_file",
+            "config_qwen.yaml"
+        ]
         process = subprocess.Popen(
             cmd,
             shell=False,

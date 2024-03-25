@@ -97,10 +97,10 @@ agents:
     tool_memory:
       memory_type: chat_history
       llm:
-        llm_type: qwen1.5_vllm
+        llm_type: feedback_qwen
       recursive: true
     llm:
-      llm_type: qwen1.5_vllm
+      llm_type: feedback_qwen
     tools: *monitor_tools
     verbose: true
   - agent_type: role_assigner
@@ -110,7 +110,7 @@ agents:
     memory:
       memory_type: chat_history
     llm:
-      llm_type: qwen1.5_vllm
+      llm_type: feedback_qwen
   - agent_type: solver
     output_parser: qwen_output_parser
     name: ${agent_name}
@@ -121,9 +121,9 @@ agents:
     tool_memory:
       memory_type: chat_history
       llm:
-        llm_type: qwen1.5_vllm
+        llm_type: feedback_qwen
       recursive: true
     llm:
-      llm_type: qwen1.5_vllm
+      llm_type: feedback_qwen
     tools: *expert_tools
     verbose: true
