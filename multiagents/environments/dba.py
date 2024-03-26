@@ -394,9 +394,9 @@ class DBAEnvironment(BaseModel):
 
         for feedback in feedbacks:
             if feedback['auto']:
-                citations[feedback["feedback"]] = generate_quote_content('[{index}] ' + f'{k["agent"]}.{k["task"]} feedback.', feedback["feedback"])
+                citations[feedback["feedback"]] = generate_quote_content('[{index}] ' + f'{feedback["agent"]}.{feedback["task"]} feedback.', feedback["feedback"])
             else:
-                citations[feedback["refined_response"]] = generate_quote_content('[{index}] ' + f'{k["agent"]}.{k["task"]} editted response.', feedback["refined_response"])
+                citations[feedback["refined_response"]] = generate_quote_content('[{index}] ' + f'{feedback["agent"]}.{feedback["task"]} editted response.', feedback["refined_response"])
 
         citations_list = []
         for k in citations:
