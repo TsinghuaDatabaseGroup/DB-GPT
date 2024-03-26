@@ -345,6 +345,10 @@ python doc2knowledge.py
 
 <span id="-FAQ"></span>
 
+#### 索引顾问工具
+
+我们使用[index_eab](https://github.com/code4DB/Index_EAB)为给定的工作负载推荐索引。函数api是[optimize_index_selection](multiagents/tools/index_advisor)。目前index_eab支持两种算法:Drop和Extend。
+
 ## 💁 常见问题解答
 
 <details><summary><b>🤨 '.sh' 脚本命令无法在Windows系统上执行。</b></summary>

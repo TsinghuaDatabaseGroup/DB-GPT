@@ -1,40 +1,23 @@
-import sys
-sys.path.insert(0, '/home/wuy/DB-GPT')
-from configs import POSTGRESQL_CONFIG
-# from multiagents.tools.index_advisor.index_selection.selection_utils.postgres_dbms import PostgresDatabaseConnector
-# from multiagents.tools.index_advisor.index_selection.selection_utils import selec_com
-# from multiagents.tools.index_advisor.configs import get_index_result
-from multiagents.tools.metrics import advisor
-from multiagents.tools.metrics import get_workload_statistics
-import ast
-from multiagents.initialization import LANGUAGE
 
 import re
 import json
 import sys
 import os
 import time
-# sys.path.insert(0,'./')
+
+sys.path.insert(0, '/home/wuy/DB-GPT')
+from configs import POSTGRESQL_CONFIG
+from multiagents.tools.metrics import advisor
+import ast
+from multiagents.initialization import LANGUAGE
+
 from index_eab.eab_utils.workload import Workload, Table, Column, Query
-# from index_eab.eab_utils.common_utils import get_columns_from_schema, read_row_query
 from index_eab.eab_utils.postgres_dbms import PostgresDatabaseConnector
 
 from index_eab.index_advisor.extend_algorithm import ExtendAlgorithm
 from index_eab.index_advisor.drop_algorithm import DropAlgorithm
 
-# from multiagents.tools.index_advisor.configs import get_index_result
 
-
-
-FUNCTION_DEFINITION = {
-    "optimize_index_selection": {
-        "name": "optimize_index_selection",
-        "description":
-            "使用索引选择算法返回推荐的索引。" if LANGUAGE == "zh"
-            else "returns the recommended index by running the index selection algorithm.",
-        "parameters": {'type': 'object', 'properties': {}}
-    }
-}
 
 
 INDEX_SELECTION_ALGORITHMS = {
@@ -66,13 +49,9 @@ def read_row_query(sql_list, columns, column_sampled_values, _type="template"):
 
         query = Query(query_id, query_text=query_text['sql'], frequency=query_text['frequency'])
         for column in columns:
-            # column_tmp = [col for col in columns if column.name == col.name]
             if column.name in query.text.lower() and \
                     f"{column.table.name}" in query.text.lower():
-                # column.name
-                # print(f"before replace, {query.text.lower()}")
                 query.text = replace_placeholders(query.text.lower(), column.name, column_sampled_values[column])
-                # print(f"after replace, {query.text}\n")
                 query.columns.append(column)
 
         workload.append(query)
@@ -100,19 +79,10 @@ def get_index_result(algo, work_list, connector, columns, column_sampled_values,
     script_path = os.path.abspath(__file__)
     script_dir = os.path.dirname(script_path)
 
-    # exp_conf_file = script_dir + \
-    #     f"/index_selection/selection_data/algo_conf/{algo}_config.json"
-    # with open(exp_conf_file, "r") as rf:
-    #     exp_config = json.load(rf)
-
-    # config = selec_com.find_parameter_list(exp_config["algorithms"][0],
-    #                                        params=sel_params)[0]
     parameters = {"budget_MB": 1500, "max_index_width": 2, "max_indexes": 5, "constraint": "storage"}
     algo='extend'
     queries=read_row_query(work_list, columns, column_sampled_values, _type="")
     workload = Workload(queries)
-    # connector.enable_simulation()
-    # time.sleep(.1)
     try:
         connector.drop_hypo_indexes()
     except Exception as e:

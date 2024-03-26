@@ -503,6 +503,9 @@ python knowledge_clustering.py
 
     If the function actually works, append it to the *api.py* of corresponding module.
 
+#### Index Advisor Tool
+We utilize [index_eab](https://github.com/code4DB/Index_EAB) to recommend indexes for given workloads. The function api is [optimize_index_selection](multiagents/tools/index_advisor). Currently index_eab supports two algorithms: Drop and Extend.
+
 
 <span id="-FAQ"></span>
 
