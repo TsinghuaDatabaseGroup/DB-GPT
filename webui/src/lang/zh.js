@@ -20,6 +20,8 @@ export default {
   setpTitle3: '报告展示',
   setpTip3: '圆桌讨论后，DBA会将讨论结果汇总，出具异常分析诊断报告。',
   KnowledgeListTitle: '知识库列表',
+  IgnoreMessageCache: '缓存有误，点击重新生成',
+  ReferenceTitle: '引用',
   KnowledgeCreteButtonTitle: '创建知识库',
   reportDrawerTitle: '分析报告',
   timeRangeSelectTip: '请选择异常发生时间',

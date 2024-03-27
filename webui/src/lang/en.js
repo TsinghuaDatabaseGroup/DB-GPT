@@ -26,6 +26,8 @@ export default {
   Diagnosis: 'Diagnosis',
   KnowledgeListTitle: 'Knowledge',
   KnowledgeCreteButtonTitle: 'Create Knowledge',
+  IgnoreMessageCache: 'Cache error, click Regenerate',
+  ReferenceTitle: 'Reference',
   NoDiagnosisTask: 'No task is currently running. Please upload the abnormal file for diagnosis',
   SelectExceptionFile: 'Select Exception File',
   StopDiagnosis: 'Stop Diagnose',

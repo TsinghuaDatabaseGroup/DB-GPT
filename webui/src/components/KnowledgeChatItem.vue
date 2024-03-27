@@ -6,7 +6,7 @@
       <!--      <span style="margin: 0 10px; color: red">abc</span>-->
       <!--      <span style="color: #2c59cb">sdada</span>-->
       <el-button v-if="isLast && message.cache" size="small" type="primary" plain style="margin-left: 10px; margin-top: 4px" @click="onIgnoreMessageCacheClick">
-        <el-icon style="margin-right: 6px" size="16"><MostlyCloudy /></el-icon>缓存有误，点击重新生成
+        <el-icon style="margin-right: 6px" size="16"><MostlyCloudy /></el-icon>{{ $t('IgnoreMessageCache') }}
       </el-button>
     </div>
     <div :class="'rowSC ' + roleClass">
@@ -17,7 +17,7 @@
             <div v-if="message.docsDetail.length > 0" class="rowSC" style="width: 100%; margin-bottom: 10px">
               <div class="rowSC" style="color: #888888; font-weight: bold; margin-right: 10px">
                 <img src="@/assets/knowledge_ chat_quote.png" style="width: 20px; margin-right: 10px" />
-                引用
+                {{ $t('ReferenceTitle') }}
               </div>
               <div style="height: 1.5px; flex: 1 1 0; background: #eeeeee" />
             </div>
