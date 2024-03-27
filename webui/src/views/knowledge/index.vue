@@ -1,8 +1,8 @@
 <template>
   <div class="columnSC" style="width: 100%">
     <div class="rowBC" style="padding: 20px; width: 100%">
-      <div style="font-size: 24px; color: #333333">知识库列表</div>
-      <el-button size="default" plain type="primary" @click="onCreateKnowledgeClick">创建知识库</el-button>
+      <div style="font-size: 24px; color: #333333">{{ $t('KnowledgeListTitle') }}</div>
+      <el-button size="default" plain type="primary" @click="onCreateKnowledgeClick">{{ $t('KnowledgeCreteButtonTitle') }}</el-button>
     </div>
     <div class="rowSC wrap knowledges-container" style="padding: 10px 20px; width: 100%">
       <div v-for="(item, index) in knowledge.list" :key="index" class="knowledge-container" @click="onKnowledgeClick(item)">

@@ -69,11 +69,11 @@
 
 <!-- <p align="center">
   <a href="http://dbgpt.dbmind.cn">
-    <img src="img/demo-dbot.jpg" width="800px">
+    <img src="img/demo-dbot_en.png" width="800px">
   </a>
 </p> -->
 
-[![Watch the video](img/chat_diagnosis.png)](https://vimeo.com/905172621?share=copy)
+[![Watch the video](img/demo-dbot_en.png)](https://vimeo.com/905172621?share=copy)
 
 2. With the user feedback function [🔗](multiagents/agent_conf/config_feedback.yaml), you can (1) send feedbacks to make D-Bot follow and refine the intermediate diagnosis results, and (2) edit the diagnosis result by clicking the “Edit” button. *D-Bot can accumulate refinement patterns from the user feedbacks (stored in vector database) and adaptively align to user's diagnosis preference.*
 
@@ -312,16 +312,16 @@ If started correctly, you will see the following interface
 
 - Web UI Knowledge Base Management Page：
 
-![](img/chat_kb.png)
+![](img/chat_kb_en.png)
 
 
 - Web UI Conversation Interface:
 
-![img](img/chat_chat.png)
+![img](img/chat_chat_en.png)
 
 - Web UI UI Diagnostic Page：
 
-![](img/chat_diagnosis.png)
+![](img/demo-dbot_en.png)
 
 
 

@@ -19,6 +19,8 @@ export default {
   setpTip2: '接收任务的同事独立进行异常分析后，会加入群组，进行圆桌讨论。',
   setpTitle3: '报告展示',
   setpTip3: '圆桌讨论后，DBA会将讨论结果汇总，出具异常分析诊断报告。',
+  KnowledgeListTitle: '知识库列表',
+  KnowledgeCreteButtonTitle: '创建知识库',
   reportDrawerTitle: '分析报告',
   timeRangeSelectTip: '请选择异常发生时间',
   modelUsePrefixTip: '诊断报告由',
