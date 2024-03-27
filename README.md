@@ -286,6 +286,11 @@ DIAGNOSTIC_CONFIG_FILE = "config.yaml"
 DIAGNOSTIC_CONFIG_FILE = "config_feedback.yaml"
 ```
 
+- To enable diagnosis in Chinese with [Qwen](https://github.com/QwenLM/Qwen), you can set
+```Python
+DIAGNOSTIC_CONFIG_FILE = "config_qwen.yaml"
+```
+
 - Initialize the knowledge base
 
 ```shell
