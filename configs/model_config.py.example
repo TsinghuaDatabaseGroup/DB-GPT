@@ -46,8 +46,10 @@ ONLINE_LLM_MODEL = {
         "api_key": "",
         "openai_proxy": "",
     },
+    # advise vLLM>=0.3.0, start the server with a chat model
+    # python -m vllm.entrypoints.openai.api_server --served-model-name Qwen1.5-14B-Chat --model your_local_qwen_model_path
     "qwen1.5-vllm": {
-        "model_name": "/root/autodl-tmp/models/Qwen1.5-14B-Chat/",
+        "model_name": "Qwen1.5-14B-Chat",
         "api_base_url": "http://127.0.0.1:8000/v1",
         "api_key": "EMPTY"
     }

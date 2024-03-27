@@ -368,7 +368,19 @@ class DBAEnvironment(BaseModel):
         return report, self.reporter.record
     
     def gen_cite_report(self, report, citations_str):
-        messages = [{'role': 'system', 'content': 'You will be given a database anomaly diagnosis report, and a list of potential citations. Your task is to mark the citation index in the report. For instance, if a paragraph refers to the 2nd citation, you can append "[2]" to the paragraph. For each paragraph of the report, you should check the relativity of all the citations. If the paragraph actually refers to the citation, you can mark its index. Note that sometimes there may be no available citations, or more than one relative citations.\nOnly output the diagnosis report with citation indices.'}, {'role': 'user', 'content': f'Diagnosis Report:{report}\n\nCitations:\n{citations_str}'}]
+        if self.reporter.language == "zh":
+            system_prompt = (
+                "给你一份数据库异常诊断报告和可能的引文列表。"
+                "你的任务是在报告中标记引文索引。例如，一个段落参考了引文2，就在段落后面加上[2]。"
+                "对报告的每个段落，都检查所有的引文。如果这个段落确实与引文相关，就标记它的索引。"
+                "请注意，有时可能没有参考的引文，或者有多个相关引文。"
+                "仅输出带有引文索引的诊断报告。"
+            )
+            user_prompt = f'诊断报告:{report}\n\n引文列表:\n{citations_str}'
+        else:
+            system_prompt = 'You will be given a database anomaly diagnosis report, and a list of potential citations. Your task is to mark the citation index in the report. For instance, if a paragraph refers to the 2nd citation, you can append "[2]" to the paragraph. For each paragraph of the report, you should check the relativity of all the citations. If the paragraph actually refers to the citation, you can mark its index. Note that sometimes there may be no available citations, or more than one relative citations.\nOnly output the diagnosis report with citation indices.'
+            user_prompt = f'Diagnosis Report:{report}\n\nCitations:\n{citations_str}'
+        messages = [{'role': 'system', 'content': system_prompt}, {'role': 'user', 'content': user_prompt}]
         self.reporter.llm.change_messages("", messages)
         reply = self.reporter.llm.parse()
         print(messages)
@@ -382,9 +394,9 @@ class DBAEnvironment(BaseModel):
 
         for feedback in feedbacks:
             if feedback['auto']:
-                citations[feedback["feedback"]] = generate_quote_content('[{index}] ' + f'{k["agent"]}.{k["task"]} feedback.', feedback["feedback"])
+                citations[feedback["feedback"]] = generate_quote_content('[{index}] ' + f'{feedback["agent"]}.{feedback["task"]} feedback.', feedback["feedback"])
             else:
-                citations[feedback["refined_response"]] = generate_quote_content('[{index}] ' + f'{k["agent"]}.{k["task"]} editted response.', feedback["refined_response"])
+                citations[feedback["refined_response"]] = generate_quote_content('[{index}] ' + f'{feedback["agent"]}.{feedback["task"]} editted response.', feedback["refined_response"])
 
         citations_list = []
         for k in citations:
