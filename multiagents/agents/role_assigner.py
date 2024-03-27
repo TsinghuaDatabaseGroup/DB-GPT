@@ -9,7 +9,7 @@ from multiagents.message import RoleAssignerMessage, Message
 
 from multiagents.agents import agent_registry
 from multiagents.agents.base import BaseAgent
-from multiagents.utils.interact import add_select_message, finish_select_edit_message, user_input
+from multiagents.utils.interact import add_select_message, finish_select_edit_message, user_input, add_display_message
 
 import time
 
@@ -36,14 +36,18 @@ class RoleAssignerAgent(BaseAgent):
 
     
     def user_select_experts(self, selected_names, expert_names):
+        if not self.enable_feedback():
+            add_display_message('roleAssignment', self.name, 'Selected experts: ' + str(selected_names), time.strftime("%H:%M:%S", time.localtime()))
+            return selected_names
+        
         if len(selected_names) > 0:
             # print('='*5 + 'SELECTED EXPERTS' + '='*4, flush=True)
             # print(selected_names, flush=True)
             # print('='*25, flush=True)
             if self.language == "zh":
-                select_placeholder = str(selected_names) + '\n\n' + '如果你对已选择的专家满意，请点击\"continue\"。否则请重新选择你更喜欢的专家。'
+                select_placeholder = '选择的专家: ' + str(selected_names) + '\n\n' + '如果你对已选择的专家满意，请点击\"continue\"。否则请重新选择你更喜欢的专家。'
             else:
-                select_placeholder = str(selected_names) + '\n\n' + 'If you are satisfied with the selected experts, please click \"continue\". Otherwise, please select the experts you prefer.'
+                select_placeholder = 'Selected experts: ' + str(selected_names) + '\n\n' + 'If you are satisfied with the selected experts, please click \"continue\". Otherwise, please select the experts you prefer.'
         else:
             if self.language == "zh":
                 select_placeholder = '抱歉我们无法选择合适的专家，请手动选择。'

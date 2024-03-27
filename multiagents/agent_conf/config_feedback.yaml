@@ -168,11 +168,11 @@ agents:
     tool_memory:
       memory_type: chat_history
       llm:
-        llm_type: gpt-4
+        llm_type: feedback-gpt-4
         temperature: 0.7
       recursive: true
     llm:
-      llm_type: gpt-4
+      llm_type: feedback-gpt-4
       temperature: 0.7
       max_tokens: 2048
     tools: *monitor_tools
@@ -202,11 +202,11 @@ agents:
     tool_memory:
       memory_type: chat_history
       llm:
-        llm_type: gpt-4
+        llm_type: feedback-gpt-4
         temperature: 0.7
       recursive: true
     llm:
-      llm_type: gpt-4
+      llm_type: feedback-gpt-4
       temperature: 0.7
       max_tokens: 2048
     tools: *expert_tools

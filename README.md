@@ -75,6 +75,11 @@
 
 [![Watch the video](img/chat_diagnosis.png)](https://vimeo.com/905172621?share=copy)
 
+If you use [interactive LLM expert configuration](multiagents/agent_conf/config_feedback.yaml), you can manipulate the diagnosis by (1) sending feedbacks which our D-Bot follow to refine its diagnosis results, and (2) editing the diagnosis result by clicking the “Edit” button to obtain a preferred one. We also extract and store refinement patterns from the feedbacks, with which D-Bot can adapt its performance by RAG techniques.
+
+<p align="center">
+  <img src="img/feedback-demo.png" width="800px">
+</p>
 
 
 2. On the online website (http://dbgpt.dbmind.cn), you can browse all historical diagnostic results, used metrics, and detailed diagnosis processes.
@@ -96,6 +101,10 @@
 ## 📰 Updates
 
 - [ ] Human Feedback 🔥🔥🔥
+
+    * [x] Test-based Diagnosis Refinement with User Feedbacks [🔗 citation](https://github.com/shreyashankar/spade-experiments)
+
+    * [x] Refinement Patterns Extraction & Management [🔗 citation](https://github.com/THUNLP-MT/TRAN)
 
 - [ ] Language Support (english / chinese)
     * [x] english : default
@@ -262,6 +271,15 @@ $ python copy_config_example.py
 # model_config.py is the model configuration file, you can modify LLM_MODELS to specify the model used, the current model configuration is mainly for knowledge base search, diagnostic related models are still hardcoded in the code, they will be unified here later.
 # prompt_config.py is the prompt configuration file, mainly for LLM dialogue and knowledge base prompts.
 # server_config.py is the server configuration file, mainly for server port numbers, etc.
+```
+
+Note that in [diagnose_config.py](configs/diagnose_config.py.example) we set
+```Python
+DIAGNOSTIC_CONFIG_FILE = "config.yaml"
+```
+where [config.yaml](multiagents/agent_conf/config.yaml) is the default LLM expert configuration file. To enable interactive diagnosis refinement with user feedbacks, you can set
+```Python
+DIAGNOSTIC_CONFIG_FILE = "config_feedback.yaml"
 ```
 
 Initialize the knowledge base

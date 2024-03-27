@@ -18,6 +18,7 @@ class BaseModelArgs(BaseModel):
 class BaseLLM(BaseModel):
     args: BaseModelArgs = Field(default_factory=BaseModelArgs)
     max_retry: int = Field(default=100)
+    enable_feedback: bool = Field(default=False)
 
     @abstractmethod
     def generate_response(self, **kwargs) -> LLMResult:

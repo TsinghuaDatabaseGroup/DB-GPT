@@ -26,6 +26,7 @@ class FeedbackQwenChat(QwenVllmChat):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.enable_feedback = True
         self.kb = DocKnowledgeBase(knowledge_base_name='feedback_qwen')
 
     def feedback(self, messages, instruction, output, feedback):

@@ -86,3 +86,6 @@ class BaseAgent(BaseModel):
             raise ValueError(
                 "input argument `receiver` must be a string or a set of string"
             )
+        
+    def enable_feedback(self):
+        return self.llm is not None and hasattr(self.llm, 'enable_feedback') and self.llm.enable_feedback

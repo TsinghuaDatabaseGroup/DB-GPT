@@ -93,7 +93,8 @@ class ReporterAgent(BaseAgent):
         # self.messages.append(prompt_message)
 
         self.llm.change_messages(self.role_description, self.messages + [prompt_message])
-        add_display_message('reportGeneration', self.name, '\n\n'.join([m['content'] for m in self.messages] + [prompt]), prompt_message['time'], flag=False)
+        if self.enable_feedback():
+            add_display_message('reportGeneration', self.name, '\n\n'.join([m['content'] for m in self.messages] + [prompt]), prompt_message['time'], flag=False)
         new_message = self.llm.parse(role=self.name, task='refine_root_cause')
 
         if isinstance(new_message, dict):
@@ -147,7 +148,8 @@ class ReporterAgent(BaseAgent):
         # self.messages.append(prompt_message)
 
         self.llm.change_messages(self.role_description, self.messages + [prompt_message])
-        add_display_message('reportGeneration', self.name, '\n\n'.join([m['content'] for m in self.messages] + [prompt]), prompt_message['time'], flag=False)
+        if self.enable_feedback():
+            add_display_message('reportGeneration', self.name, '\n\n'.join([m['content'] for m in self.messages] + [prompt]), prompt_message['time'], flag=False)
         new_message = self.llm.parse(role=self.name, task="refine_solution")
 
         if isinstance(new_message, dict):

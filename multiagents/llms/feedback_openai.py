@@ -10,7 +10,7 @@ from .doc_kb import DocKnowledgeBase
 from langchain.docstore.document import Document
 from rank_bm25 import BM25Okapi
 import logging
-from server.utils import run_async
+from multiagents.utils.utils import get_cur_task
 from multiagents.utils.interact import (user_input, add_display_message, add_edit_message, add_feedback_message,
                                         finish_feedback_message, finish_select_edit_message)
 
@@ -112,18 +112,6 @@ def parse_messages(messages, task):
 
     return  None, None
 
-def get_cur_task(task):
-    if task in ['expert_root_cause', 'expert_solution']:
-        return 'expertDiagnosis'
-    
-    if task == 'review':
-        return 'groupDiscussion'
-    
-    if task in ['refine_root_cause', 'refine_solution']:
-        return 'reportGeneration'
-    
-    raise ValueError(f'Invalid task: {task}')
-
 def get_time():
     return time.strftime("%H:%M:%S", time.localtime())
 
@@ -139,9 +127,11 @@ pool = concurrent.futures.ThreadPoolExecutor()
 class FeedbackOpenAIChat(OpenAIChat):
     kb: DocKnowledgeBase = None
     feedbacks: list = []
+
     def __init__(self, max_retry: int = 100, **kwargs):
         super().__init__(max_retry=max_retry, **kwargs)
         self.kb = DocKnowledgeBase()
+        self.enable_feedback = True
 
     async def feedback(self, messages, instruction, output, feedback):
         messages = copy.deepcopy(messages)
@@ -245,7 +235,7 @@ class FeedbackOpenAIChat(OpenAIChat):
             add_feedback_message(cur_task, role, eval_placeholder, refined_reply, get_time())
             eval = user_input(eval_placeholder + '\n')
             finish_feedback_message()
-            if "yes" not in eval.lower():
+            if eval.strip() != '' and "yes" not in eval.lower():
                 refine_placeholder = 'Please input your preferred response in details.'
                 add_edit_message(cur_task, role, refine_placeholder, res['content'], get_time())
                 refined_reply = user_input(refine_placeholder + '\n')

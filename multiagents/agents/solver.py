@@ -163,7 +163,8 @@ class SolverAgent(BaseAgent):
             self.llm.change_messages("你是一个数据库专家。", diag_messages)
         else:
             self.llm.change_messages("You are a database expert", diag_messages)
-        add_display_message('expertDiagnosis', self.name, result_node.messages[-1]['content'] + '\n\n' + prompt, diag_message[0]['time'], flag=False)
+        if self.enable_feedback():
+            add_display_message('expertDiagnosis', self.name, result_node.messages[-1]['content'] + '\n\n' + prompt, diag_message[0]['time'], flag=False)
         root_causes = self.llm.parse(role=self.name, task='expert_root_cause')
         if isinstance(root_causes, dict):
             root_causes = root_causes["content"]
@@ -181,7 +182,8 @@ class SolverAgent(BaseAgent):
             self.llm.change_messages("你是一个数据库专家。", solution_messages)
         else:
             self.llm.change_messages("You are a database expert", solution_messages)
-        add_display_message('expertDiagnosis', self.name, result_node.messages[-1]['content'] + '\n\n' + prompt, solution_message[0]['time'], flag=False)
+        if self.enable_feedback():
+            add_display_message('expertDiagnosis', self.name, result_node.messages[-1]['content'] + '\n\n' + prompt, solution_message[0]['time'], flag=False)
         solutions = self.llm.parse(role=self.name, task='expert_solution')
         if isinstance(solutions, dict):
             solutions = solutions["content"]
@@ -249,7 +251,8 @@ class SolverAgent(BaseAgent):
         self.messages.append(prompt_message)
 
         self.llm.change_messages(self.role_description, self.messages)
-        add_display_message('groupDiscussion', self.name, '\n\n'.join([m["content"] for m in self.messages]), self.messages[-1]['time'], flag=False)
+        if self.enable_feedback():
+            add_display_message('groupDiscussion', self.name, '\n\n'.join([m["content"] for m in self.messages]), self.messages[-1]['time'], flag=False)
         review_message = self.llm.parse(role=self.name, task='review')
 
         return review_message

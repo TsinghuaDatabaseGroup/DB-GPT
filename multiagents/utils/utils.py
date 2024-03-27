@@ -49,3 +49,15 @@ class Singleton(abc.ABCMeta, type):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
+    
+def get_cur_task(task):
+    if task in ['expert_root_cause', 'expert_solution']:
+        return 'expertDiagnosis'
+    
+    if task == 'review':
+        return 'groupDiscussion'
+    
+    if task in ['refine_root_cause', 'refine_solution']:
+        return 'reportGeneration'
+    
+    raise ValueError(f'Invalid task: {task}')

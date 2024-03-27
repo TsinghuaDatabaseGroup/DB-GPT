@@ -1,11 +1,11 @@
 import time
-from configs import DIAGNOSE_USER_FEEDBACK_PATH, DIAGNOSE_RUN_DATA_PATH, DIAGNOSE_RUN_DATA_COPY_PATH, USER_INTERACT_FILE
+from configs import DIAGNOSE_USER_FEEDBACK_PATH, DIAGNOSE_RUN_DATA_PATH, DIAGNOSE_RUN_DATA_COPY_PATH, IS_FEEDBACK_BY_UI
 import shutil
 import json
 
 
 def user_input(placeholder):
-    if USER_INTERACT_FILE:
+    if IS_FEEDBACK_BY_UI:
         while True:
             try:
                 with open(DIAGNOSE_USER_FEEDBACK_PATH, 'r+') as f:

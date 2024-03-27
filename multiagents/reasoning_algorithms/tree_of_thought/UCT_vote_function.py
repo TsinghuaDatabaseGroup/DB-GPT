@@ -404,7 +404,9 @@ class UCT_vote_function(base_search_method):
         if self.language == "zh":
             reflect_message = f"反思内容：{reflection}"
         else:
-            reflect_message = f"Reflection: {reflection}"
+            reflect_message = reflection
+            if not reflect_message.lower().startswith('reflection:'):
+                reflect_message = f"Reflection: {reflect_message}"
         print(colored(reflect_message,"green"))
         add_display_message('expertDiagnosis', self.name, reflect_message, time.strftime("%H:%M:%S", time.localtime()))
 
