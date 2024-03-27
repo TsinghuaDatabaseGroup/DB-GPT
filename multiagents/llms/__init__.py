@@ -10,3 +10,4 @@ from .diag_codellama import DiagCodeLlamaChat
 from .diag_llama2 import DiagLlama2Chat
 from .qwen_vllm import QwenVllmChat
 from .feedback_openai import FeedbackOpenAIChat
+from .feedback_qwen import FeedbackQwenChat

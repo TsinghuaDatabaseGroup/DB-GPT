@@ -40,9 +40,15 @@ class RoleAssignerAgent(BaseAgent):
             # print('='*5 + 'SELECTED EXPERTS' + '='*4, flush=True)
             # print(selected_names, flush=True)
             # print('='*25, flush=True)
-            select_placeholder = str(selected_names) + '\n\n' + 'If you are satisfied with the selected experts, please click \"continue\". Otherwise, please select the experts you prefer.'
+            if self.language == "zh":
+                select_placeholder = str(selected_names) + '\n\n' + '如果你对已选择的专家满意，请点击\"continue\"。否则请重新选择你更喜欢的专家。'
+            else:
+                select_placeholder = str(selected_names) + '\n\n' + 'If you are satisfied with the selected experts, please click \"continue\". Otherwise, please select the experts you prefer.'
         else:
-            select_placeholder = 'We are sorry that we cannot select proper experts. Please manually select the experts.'
+            if self.language == "zh":
+                select_placeholder = '抱歉我们无法选择合适的专家，请手动选择。'
+            else:
+                select_placeholder = 'We are sorry that we cannot select proper experts. Please manually select the experts.'
 
         add_select_message('roleAssignment', self.name, select_placeholder, time.strftime("%H:%M:%S", time.localtime()), expert_names)
         experts_reply = user_input(select_placeholder + '\n')
