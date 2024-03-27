@@ -11,7 +11,8 @@ from langchain.docstore.document import Document
 from rank_bm25 import BM25Okapi
 import logging
 from server.utils import run_async
-from multiagents.utils.interact import user_input, add_display_message, add_edit_message, add_feedback_message, finish_feedback_message, finish_select_edit_message, close_feedback_needInput
+from multiagents.utils.interact import (user_input, add_display_message, add_edit_message, add_feedback_message,
+                                        finish_feedback_message, finish_select_edit_message)
 
 FEEDBACK_ITERATIONS = 3
 
@@ -228,7 +229,7 @@ class FeedbackOpenAIChat(OpenAIChat):
         feedback_placeholder = 'Please input your feedback of the D-Bot response (e.g., "you should response in xxx format.", "you should provide more details on xxx.").'
         add_feedback_message(cur_task, role, feedback_placeholder, res['content'], get_time())
         feedback = user_input(feedback_placeholder + '\n')
-        close_feedback_needInput()
+        finish_feedback_message()
         if feedback.strip() == '' or feedback.lower() == 'continue' or not self.judge_feedback(feedback):
             empty_feedback_placeholder = 'Let\'s continue our diagnosis.'
             add_display_message(cur_task, role, empty_feedback_placeholder, get_time())
@@ -243,7 +244,7 @@ class FeedbackOpenAIChat(OpenAIChat):
             eval_placeholder = 'Are you satisfied with our refined response? Please answer yes or no.'
             add_feedback_message(cur_task, role, eval_placeholder, refined_reply, get_time())
             eval = user_input(eval_placeholder + '\n')
-            close_feedback_needInput()
+            finish_feedback_message()
             if "yes" not in eval.lower():
                 refine_placeholder = 'Please input your preferred response in details.'
                 add_edit_message(cur_task, role, refine_placeholder, res['content'], get_time())
@@ -252,7 +253,7 @@ class FeedbackOpenAIChat(OpenAIChat):
                 finish_select_edit_message(cur_task, role)
             else:
                 self.feedbacks.append({"feedback": feedback, "refined_response": refined_reply, "auto": True, "task": task})
-                finish_feedback_message(cur_task, role)
+                finish_feedback_message()
         else:
             print('='*10 + 'OUTPUT' + '='*9, flush=True)
             print(res, flush=True)

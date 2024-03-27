@@ -66,13 +66,6 @@ def add_feedback_message(cur_task, role, placeholder, message, time):
         f.truncate()
         f.write(json.dumps(state))
 
-def close_feedback_needInput():
-    with open(DIAGNOSE_RUN_DATA_PATH, 'r+') as f:
-        state = json.loads(f.read())
-        state['needInput'] = False
-        f.seek(0)
-        f.truncate()
-        f.write(json.dumps(state))
 
 def finish_feedback_message():
     with open(DIAGNOSE_RUN_DATA_PATH, 'r+') as f:
@@ -81,6 +74,7 @@ def finish_feedback_message():
         f.seek(0)
         f.truncate()
         f.write(json.dumps(state))
+
 
 def finish_select_edit_message(cur_task, role):
     with open(DIAGNOSE_RUN_DATA_PATH, 'r+') as f:
