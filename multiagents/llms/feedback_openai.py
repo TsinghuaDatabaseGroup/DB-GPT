@@ -42,6 +42,7 @@ def parse_assertions(assertions):
         assertions_code[res[i]] = f'async def {res[i]}(prompt: str, response: str)' + res[i + 1].rstrip()
     return assertions_code
 
+# We refer to https://github.com/shreyashankar/spade-experiments.
 async def ask_llm(prompt, response, question):
     # Placeholder for asking an expert a true/false question
     # In practice, this would involve a complex implementation potentially requiring human input
@@ -73,6 +74,7 @@ async def ask_llm(prompt, response, question):
     # return prompt_tokens, completion_tokens, False
     return False
 
+# Split messages into the template and variables.
 def parse_messages(messages, task):
     if task == 'expert_root_cause':
         return messages[1]['content'], "Analyze the diagnosed root causes based on above discussions in details. And do not mention anything about the solutions!!!"
@@ -137,10 +139,12 @@ class FeedbackOpenAIChat(OpenAIChat):
         messages = copy.deepcopy(messages)
         instruction_feedback = f'{instruction}\n\n{feedback}'
 
+        # Generate response using the feedback.
         messages.append({"role": "assistant", "content": output})
         messages.append({"role": "user", "content": feedback})
         reply = call_openai(messages)
 
+        # Extract key points of the instructions and feedback, and build assertions for them.
         _, assertions = await generate_candidate_assertions([instruction, instruction_feedback], [output, reply])
 
         print(f'Generated assertions: {assertions}', flush=True)
@@ -175,6 +179,7 @@ class FeedbackOpenAIChat(OpenAIChat):
             if all([isinstance(row["result"], bool) and row['result'] for row in rows]):
                 break
 
+            # Iteratively refine the response by reflecting from assertion errors.
             messages.append({"role": "assistant", "content": reply})
 
             failed_assertions_str = '\n'.join(failed_assertions)
@@ -187,6 +192,7 @@ class FeedbackOpenAIChat(OpenAIChat):
             return None
         return reply
     
+    # Compare the differences between the original and refined responses, and summarize them into refinement patterns.
     def extract_rules_from_feedback(self, messages, output, preferred_output):
         messages = copy.deepcopy(messages)
         messages.append({"role": "assistant", "content": output})
@@ -204,6 +210,7 @@ class FeedbackOpenAIChat(OpenAIChat):
 
         return valid_rules
 
+    # Judge whether the feedback contains any user requirements.
     def judge_feedback(self, feedback):
         judge_messages = [{'role': 'system', 'content': JUDGE_FEEDBACK_PROMPT}, {'role': 'user', 'content': feedback}]
         reply = call_openai(judge_messages)
@@ -256,6 +263,7 @@ class FeedbackOpenAIChat(OpenAIChat):
 
         return refined_reply
     
+    # We refer to https://github.com/THUNLP-MT/TRAN.
     def remove_conflict_identical(self, new_doc, relevant_doc):
         flag = 0
         doc_rules = relevant_doc.metadata['rules'].split('\n')
@@ -304,6 +312,7 @@ class FeedbackOpenAIChat(OpenAIChat):
                 
                 doc_rules.remove(sim_rule)
         
+        # Update the feedback store with updated rules.
         updated_doc = copy.deepcopy(relevant_doc)
         if new_doc.page_content == relevant_doc.page_content:
             updated_doc.metadata['rules'] = '\n'.join(new_rules + doc_rules)
@@ -322,6 +331,7 @@ class FeedbackOpenAIChat(OpenAIChat):
             return super().parse(role=role, task=task)
         
         try:
+            # Utilize refinement patterns in the feedback store to refine LLM generation by RAG techniques.
             relevant_docs = self.kb.search_docs(vars, metadata_filter={'task': task}, top_k=1)
             if len(relevant_docs) > 0:
                 relevant_rules = '\n'.join([doc.metadata['rules'] for doc in relevant_docs])
@@ -339,6 +349,7 @@ class FeedbackOpenAIChat(OpenAIChat):
             
             rules = self.extract_rules_from_feedback(self.conversation_history, res['content'], refined_reply)
 
+            # Add experience from the current feedback to the feedback store.
             flag = 0
             new_doc = Document(page_content=vars, metadata={'rules': '\n'.join(rules), 'task': task, 'source': task + '|' + vars.replace('|', '\|'), 'messages': str(self.conversation_history), 'response': res['content'], 'refined_response': refined_reply, 'feedback': self.feedbacks[-1]['feedback'], 'auto': self.feedbacks[-1]['auto']})
             if len(relevant_docs) > 0:

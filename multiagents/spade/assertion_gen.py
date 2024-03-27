@@ -1,4 +1,5 @@
 """
+We refer to https://github.com/shreyashankar/spade-experiments.
 Given a prompt template and associated concepts, generate python
 functions that can be used to check for those concepts in LLM responses.
 """

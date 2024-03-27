@@ -1,4 +1,5 @@
 """
+We refer to https://github.com/shreyashankar/spade-experiments.
 This file represents the assertion concept and candidate generator. It takes in a prompt template and outputs a set of assertion concepts to check for, based on our taxonomy of assertion concept categories. Then it synthesizes python functions.
 """
 import json
