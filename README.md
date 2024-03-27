@@ -75,14 +75,16 @@
 
 [![Watch the video](img/chat_diagnosis.png)](https://vimeo.com/905172621?share=copy)
 
-If you use [interactive LLM expert configuration](multiagents/agent_conf/config_feedback.yaml), you can manipulate the diagnosis by (1) sending feedbacks which our D-Bot follow to refine its diagnosis results, and (2) editing the diagnosis result by clicking the “Edit” button to obtain a preferred one. We also extract and store refinement patterns from the feedbacks, with which D-Bot can adapt its performance by RAG techniques.
+2. With the user feedback function [🔗](multiagents/agent_conf/config_feedback.yaml), you can (1) send feedbacks to make D-Bot follow and refine the intermediate diagnosis results, and (2) edit the diagnosis result by clicking the “Edit” button. *D-Bot can accumulate refinement patterns from the user feedbacks (stored in vector database) and adaptively align to user's diagnosis preference.*
+
+<!-- extracted and stored refinement patterns from the feedbacks, with which D-Bot can adapt its performance by RAG techniques. -->
 
 <p align="center">
   <img src="img/feedback-demo.png" width="800px">
 </p>
 
 
-2. On the online website (http://dbgpt.dbmind.cn), you can browse all historical diagnostic results, used metrics, and detailed diagnosis processes.
+3. On the online website (http://dbgpt.dbmind.cn), you can browse all historical diagnosis results, used metrics, and detailed diagnosis processes.
 
 <p align="center">
   <a href="http://dbgpt.dbmind.cn">
@@ -102,9 +104,9 @@ If you use [interactive LLM expert configuration](multiagents/agent_conf/config_
 
 - [ ] Human Feedback 🔥🔥🔥
 
-    * [x] Test-based Diagnosis Refinement with User Feedbacks [🔗 citation](https://github.com/shreyashankar/spade-experiments)
+    * [x] Test-based Diagnosis Refinement with User Feedbacks
 
-    * [x] Refinement Patterns Extraction & Management [🔗 citation](https://github.com/THUNLP-MT/TRAN)
+    * [x] Refinement Patterns Extraction & Management
 
 - [ ] Language Support (english / chinese)
     * [x] english : default
@@ -273,16 +275,18 @@ $ python copy_config_example.py
 # server_config.py is the server configuration file, mainly for server port numbers, etc.
 ```
 
-Note that in [diagnose_config.py](configs/diagnose_config.py.example) we set
+- In [diagnose_config.py](configs/diagnose_config.py.example), we set [config.yaml](multiagents/agent_conf/config.yaml) as the default LLM expert configuration file. 
+
 ```Python
 DIAGNOSTIC_CONFIG_FILE = "config.yaml"
 ```
-where [config.yaml](multiagents/agent_conf/config.yaml) is the default LLM expert configuration file. To enable interactive diagnosis refinement with user feedbacks, you can set
+
+- To enable interactive diagnosis refinement with user feedbacks, you can set
 ```Python
 DIAGNOSTIC_CONFIG_FILE = "config_feedback.yaml"
 ```
 
-Initialize the knowledge base
+- Initialize the knowledge base
 
 ```shell
 $ python init_database.py --recreate-vs
@@ -596,6 +600,8 @@ https://github.com/Vonng/pigsty
 https://github.com/UKPLab/sentence-transformers
 
 https://github.com/chatchat-space/Langchain-Chatchat
+
+https://github.com/shreyashankar/spade-experiments
 
 
 <span id="-citation"></span>
