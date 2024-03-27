@@ -5,6 +5,7 @@ import subprocess
 from fastapi import File, UploadFile, Body
 from configs import (
     DIAGNOSTIC_FILES_PATH,
+    DIAGNOSTIC_CONFIG_FILE,
     DIAGNOSE_RUN_LOG_PATH,
     DIAGNOSE_RUN_PID_PATH,
     DIAGNOSE_USER_FEEDBACK_PATH,
@@ -31,7 +32,7 @@ def diagnose_status():
     return BaseResponse(code=200, msg="Success", data={"is_alive": status()})
 
 
-def run_diagnose_script(file_path: str):
+def run_diagnose_script(file_path: str, config_file_path: str = "config.yaml"):
     with open(DIAGNOSE_RUN_LOG_PATH, 'w') as log_txt:
         cmd = [
             "python3",
@@ -39,7 +40,7 @@ def run_diagnose_script(file_path: str):
             "--anomaly_file",
             file_path,
             "--config_file",
-            "config_qwen.yaml"
+            config_file_path
         ]
         process = subprocess.Popen(
             cmd,
@@ -80,7 +81,7 @@ def run_diagnose(file: UploadFile = File(..., description="上传文件，支持
 
     t = threading.Thread(
         target=run_diagnose_script,
-        args=(file_path,),
+        args=(file_path, DIAGNOSTIC_CONFIG_FILE),
         name=THREADNAME)
     t.start()
 

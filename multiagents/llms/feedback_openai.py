@@ -252,7 +252,7 @@ class FeedbackOpenAIChat(OpenAIChat):
                 finish_select_edit_message(cur_task, role)
             else:
                 self.feedbacks.append({"feedback": feedback, "refined_response": refined_reply, "auto": True, "task": task})
-                finish_feedback_message(cur_task, role)
+                finish_feedback_message()
         else:
             print('='*10 + 'OUTPUT' + '='*9, flush=True)
             print(res, flush=True)

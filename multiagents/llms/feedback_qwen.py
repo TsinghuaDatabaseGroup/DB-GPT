@@ -72,11 +72,11 @@ class FeedbackQwenChat(QwenVllmChat):
             print('=' * 6 + 'REFINED OUTPUT' + '=' * 6, flush=True)
             print(refined_reply, flush=True)
             print('=' * 25, flush=True)
-            eval_placeholder = "你对改进的回答满意吗？请回答满意或不满意。"
+            eval_placeholder = "你对改进的回答满意吗？请只回答“是”或“否”。"
             add_feedback_message(cur_task, role, eval_placeholder, refined_reply, get_time())
             eval_ = user_input(eval_placeholder + '\n')
             close_feedback_needInput()
-            if "不" in eval_:
+            if "否" in eval_:
                 refine_placeholder = '请详细输入你认为正确的回答。'
                 add_edit_message(cur_task, role, refine_placeholder, res['content'], get_time())
                 refined_reply = user_input(refine_placeholder + '\n')
@@ -109,8 +109,7 @@ class FeedbackQwenChat(QwenVllmChat):
 
         if task in ['expert_root_cause', 'expert_solution', 'review', 'refine_root_cause', 'refine_solution']:
             refined_reply = self.interact("", res, role, task)
-            if refined_reply is None:
-                return res
-            res['content'] = refined_reply
+            if refined_reply is not None:
+                res['content'] = refined_reply
 
         return res
