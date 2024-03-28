@@ -366,7 +366,7 @@ class ApiRequest:
         获取异常诊断输出
         '''
         response = self.get(
-            "/diagnose/diagnose_output",
+            "/diagnose/terminal_output",
             stream=False,
         )
         return self._get_response_value(response, as_json=True, value_func=lambda r:r.get("data", {}))
@@ -397,7 +397,7 @@ class ApiRequest:
         '''
         data = {}
         response = self.post(
-            "/alert/report/diagnose_llm_model_list",
+            "/report/diagnose_llm_model_list",
             json=data,
             stream=False,
         )
@@ -413,7 +413,7 @@ class ApiRequest:
             "model": model
         }
         response = self.post(
-            "/alert/report/histories",
+            "/report/histories",
             json=data,
             stream=False,
         )
@@ -428,7 +428,7 @@ class ApiRequest:
             "model": model
         }
         response = self.post(
-            "/alert/report/history_detail",
+            "/report/history_detail",
             json=data,
             stream=False,
         )

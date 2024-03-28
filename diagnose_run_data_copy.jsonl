@@ -1,0 +1,20 @@
+{
+    "currentTask": "roleAssignment",
+    "roleAssignment": {
+        "messages": [],
+        "sender": "RoleAssigner"
+    },
+    "expertDiagnosis": {
+        "experts": []
+    },
+    "groupDiscussion": {
+        "messages": []
+    },
+    "reportGeneration": {
+        "sender": "ChiefDBA",
+        "messages": []
+    },
+    "reportDemonstration": "",
+    "placeholder": "请输入你的反馈意见",
+    "needInput": false
+}

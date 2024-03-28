@@ -69,15 +69,22 @@
 
 <!-- <p align="center">
   <a href="http://dbgpt.dbmind.cn">
-    <img src="img/demo-dbot_chatchat.gif" width="800px">
+    <img src="img/demo-dbot_en.png" width="800px">
   </a>
 </p> -->
 
-[![Watch the video](img/chat_diagnosis.png)](https://vimeo.com/905172621?share=copy)
+[![Watch the video](img/demo-dbot_en.png)](https://vimeo.com/905172621?share=copy)
+
+2. With the user feedback function [🔗](multiagents/agent_conf/config_feedback.yaml), you can (1) send feedbacks to make D-Bot follow and refine the intermediate diagnosis results, and (2) edit the diagnosis result by clicking the “Edit” button. *D-Bot can accumulate refinement patterns from the user feedbacks (stored in vector database) and adaptively align to user's diagnosis preference.*
+
+<!-- extracted and stored refinement patterns from the feedbacks, with which D-Bot can adapt its performance by RAG techniques. -->
+
+<p align="center">
+  <img src="img/feedback-demo.png" width="800px">
+</p>
 
 
-
-2. On the online website (http://dbgpt.dbmind.cn), you can browse all historical diagnostic results, used metrics, and detailed diagnosis processes.
+3. On the online website (http://dbgpt.dbmind.cn), you can browse all historical diagnosis results, used metrics, and detailed diagnosis processes.
 
 <p align="center">
   <a href="http://dbgpt.dbmind.cn">
@@ -96,6 +103,10 @@
 ## 📰 Updates
 
 - [ ] Human Feedback 🔥🔥🔥
+
+    * [x] Test-based Diagnosis Refinement with User Feedbacks
+
+    * [x] Refinement Patterns Extraction & Management
 
 - [ ] Language Support (english / chinese)
     * [x] english : default
@@ -162,6 +173,7 @@
 
 ### 1. Environment Setup
 
+#### 1.1 backend setup
 + First, ensure that your machine has Python (>= 3.10) installed.
 
 ```
@@ -233,6 +245,22 @@ MODEL_PATH = {
 ```
 
 4. Download and config [localized LLMs](multiagents/localized_llms).
+
+#### 1.2 frontend setup
++ Ensure that your machine has Node (>= 18.15.0)
+```
+$ node -v
+v18.15.0
+```
+Install pnpm and dependencies
+```shell
+cd webui
+# pnpm address https://pnpm.io/zh/motivation
+# install dependency(Recommend use pnpm)
+# you can  use "npm -g i pnpm" to install pnpm 
+pnpm install
+```
+
 ### 2. Initialize Knowledge Base and Configuration Files
 
 Copy the configuration files
@@ -247,7 +275,23 @@ $ python copy_config_example.py
 # server_config.py is the server configuration file, mainly for server port numbers, etc.
 ```
 
-Initialize the knowledge base
+- In [diagnose_config.py](configs/diagnose_config.py.example), we set [config.yaml](multiagents/agent_conf/config.yaml) as the default LLM expert configuration file. 
+
+```Python
+DIAGNOSTIC_CONFIG_FILE = "config.yaml"
+```
+
+- To enable interactive diagnosis refinement with user feedbacks, you can set
+```Python
+DIAGNOSTIC_CONFIG_FILE = "config_feedback.yaml"
+```
+
+- To enable diagnosis in Chinese with [Qwen](https://github.com/QwenLM/Qwen), you can set
+```Python
+DIAGNOSTIC_CONFIG_FILE = "config_qwen.yaml"
+```
+
+- Initialize the knowledge base
 
 ```shell
 $ python init_database.py --recreate-vs
@@ -273,16 +317,16 @@ If started correctly, you will see the following interface
 
 - Web UI Knowledge Base Management Page：
 
-![](img/chat_kb.png)
+![](img/chat_kb_en.png)
 
 
 - Web UI Conversation Interface:
 
-![img](img/chat_chat.png)
+![img](img/chat_chat_en.png)
 
 - Web UI UI Diagnostic Page：
 
-![](img/chat_diagnosis.png)
+![](img/demo-dbot_en.png)
 
 
 
@@ -564,6 +608,8 @@ https://github.com/Vonng/pigsty
 https://github.com/UKPLab/sentence-transformers
 
 https://github.com/chatchat-space/Langchain-Chatchat
+
+https://github.com/shreyashankar/spade-experiments
 
 
 <span id="-citation"></span>

@@ -38,19 +38,20 @@ class Inference:
         content = self.reformat(content)
         return content
     
-    def refine_messages(self, messages, mark_idx):
-        if mark_idx == 4 or mark_idx == 5:
+    def refine_messages(self, messages, task):
+        if task in ['expert_root_cause', 'expert_solution']:
             return [messages[0], {"role": "user", "content": 'Diagnosed Root Causes: ' + messages[1]["content"] + '\n\n' + messages[2]["content"]}]
         
-        if mark_idx == 7:
+        if task == 'review':
             if messages[1]["role"] != "assistant":
                 return messages
             
             return [messages[0], {"role": "user", "content": '# Diagnosis Results\n\n' + '\n\n'.join([m["content"] for m in messages[1:]])}]
             
-        if mark_idx == 8 or mark_idx == 9 or mark_idx == 10:
+        if task in ['refine_solution', 'refine_root_cause', 'label']:
             return [messages[0], {"role": "user", "content": '\n\n'.join([m["content"] for m in messages[1:]])}]
             
+        # Merge continuous assistant messages to one.
         new_messages = []
         cnt = 0
         contents = []
@@ -73,16 +74,6 @@ class Inference:
             new_messages.append({"role": "assistant", "content": "\n\n".join(contents)})
             flag |= (cnt > 1)
         return new_messages if flag else messages
-    
-    def classify(self, messages):
-        marks = ["Please describe the following anomaly event in natural language:", "Please give a title for the following anomaly event within 15 words:", "You are mento-carlo-choice-GPT.", "Remember that you are performing a mento-carlo search.", "Analyze the diagnosed root causes based on above discussions in details.", "Give the solutions only based on above messages in details.", "Please provide a searchable summary of the input", "Please review the above diagnosis results, ", "Please optimize the following solutions based on the above review advice.", "Please give the refined root cause analysis based on the above review advice.", "Output all the labels mentioned in the description.", "Now you need to select experts with diverse identity to correctly analyze the root causes of the given alert.", "You can respond as follows to use tool:"]
-
-        for idx,mark in enumerate(marks):
-            for message in messages:
-                content = message["content"]
-                if mark in content:
-                    return idx
-        assert False, messages
 
     def get_model(self):
         raise NotImplementedError

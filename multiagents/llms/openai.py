@@ -13,6 +13,8 @@ import random
 import re
 from openai import OpenAI
 import openai
+from multiagents.utils.interact import add_display_message
+from multiagents.utils.utils import get_cur_task
 
 
 def remove_charts(text):
@@ -127,7 +129,7 @@ class OpenAIChat(BaseChatModel):
         else:
             self.conversation_history = messages
 
-    def parse(self):
+    def parse(self, role="", task=""):
         #messages = self._construct_messages(prompt) # TODO add history messages
         self.args.model = ONLINE_LLM_MODEL["openai-api"]["model_name"]
         messages = self.conversation_history
@@ -144,6 +146,8 @@ class OpenAIChat(BaseChatModel):
                 new_message["role"] = "assistant"
             new_messages.append(new_message)
         messages = new_messages
+
+        output = 'OpenAI service is unavailable. Please try again.'
 
         for i in range(self.TRY_TIME):
             
@@ -162,12 +166,12 @@ class OpenAIChat(BaseChatModel):
                     # with open(f"saved_msg_gpt4/msg_{time.strftime('%H_%M_%S', time.localtime())}.json", "w", encoding='utf8') as f:
                     #     json.dump(saved_msgs, f, ensure_ascii=False, indent=4)
                 except:
-                    output = None
+                    pass
 
-                if output is None:
-                    return {"role": "assistant", "content": "OpenAI service is unavailable. Please try again.", "time": time.strftime("%H:%M:%S", time.localtime())}
-                output = remove_charts(output)
-                return {"role": "assistant", "content": output, "time": time.strftime("%H:%M:%S", time.localtime())}
+                if output is not None:
+                    output = remove_charts(output)
+
+                break
             except:
                 print(f"Generate_response Exception. Try again.")
 
@@ -200,7 +204,12 @@ class OpenAIChat(BaseChatModel):
                 time.sleep(min(i**2, 60))
                 continue
 
-        return {"role": "assistant", "content": "OpenAI service is unavailable. Please try again."}
+        cur_time = time.strftime("%H:%M:%S", time.localtime())
+
+        if not self.enable_feedback and task in ['expert_root_cause', 'expert_solution', 'review', 'refine_root_cause', 'refine_solution']:
+            add_display_message(get_cur_task(task), role, output, cur_time)
+
+        return {"role": "assistant", "content": output, "time": cur_time}
 
     def generate_response(self, prompt: str) -> LLMResult:
         messages = self._construct_messages(prompt)
@@ -273,3 +282,9 @@ class OpenAIChat(BaseChatModel):
                 recv_tokens=response["usage"]["completion_tokens"],
                 total_tokens=response["usage"]["total_tokens"],
             )
+        
+def call_openai(messages):
+    call_openai.chat.change_messages("", messages)
+    reply = call_openai.chat.parse()
+    return reply['content']
+call_openai.chat = OpenAIChat()

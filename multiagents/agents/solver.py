@@ -14,6 +14,7 @@ from multiagents.tools.api_retrieval import APICaller
 from multiagents.reasoning_algorithms import UCT_vote_function, node_to_chain
 from multiagents.reasoning_algorithms import base_env
 from multiagents.tools.retriever import api_matcher
+from multiagents.utils.interact import add_display_message, finish_expert_diagnosis
 
 
 class ToolNotExistError(BaseException):
@@ -141,6 +142,14 @@ class SolverAgent(BaseAgent):
 
         result_node, top_abnormal_metric_values = chain.start(
             simulation_count=1, epsilon_new_node=0.3, choice_count=1, vote_candidates=2, vote_count=1, single_chain_max_step=24)
+        
+        self.knowledge_list = []
+        cur_node = result_node
+        while cur_node is not None:
+            for knowledge in cur_node.knowledge_list:
+                if knowledge not in self.knowledge_list:
+                    self.knowledge_list.append(knowledge)
+            cur_node = cur_node.father
 
         if result_node is None:
             return {}
@@ -154,7 +163,9 @@ class SolverAgent(BaseAgent):
             self.llm.change_messages("你是一个数据库专家。", diag_messages)
         else:
             self.llm.change_messages("You are a database expert", diag_messages)
-        root_causes = self.llm.parse()
+        if self.enable_feedback():
+            add_display_message('expertDiagnosis', self.name, result_node.messages[-1]['content'] + '\n\n' + prompt, diag_message[0]['time'], flag=False)
+        root_causes = self.llm.parse(role=self.name, task='expert_root_cause')
         if isinstance(root_causes, dict):
             root_causes = root_causes["content"]
         else:
@@ -171,12 +182,14 @@ class SolverAgent(BaseAgent):
             self.llm.change_messages("你是一个数据库专家。", solution_messages)
         else:
             self.llm.change_messages("You are a database expert", solution_messages)
-        solutions = self.llm.parse()
+        if self.enable_feedback():
+            add_display_message('expertDiagnosis', self.name, result_node.messages[-1]['content'] + '\n\n' + prompt, solution_message[0]['time'], flag=False)
+        solutions = self.llm.parse(role=self.name, task='expert_solution')
         if isinstance(solutions, dict):
             solutions = solutions["content"]
         else:
             solutions = solutions.content
-
+        finish_expert_diagnosis(self.name)
         # print(colored(f"\nRecommended Solutions: {solutions}","white"))
 
         # thought = ""
@@ -238,7 +251,9 @@ class SolverAgent(BaseAgent):
         self.messages.append(prompt_message)
 
         self.llm.change_messages(self.role_description, self.messages)
-        review_message = self.llm.parse()
+        if self.enable_feedback():
+            add_display_message('groupDiscussion', self.name, '\n\n'.join([m["content"] for m in self.messages]), self.messages[-1]['time'], flag=False)
+        review_message = self.llm.parse(role=self.name, task='review')
 
         return review_message
 

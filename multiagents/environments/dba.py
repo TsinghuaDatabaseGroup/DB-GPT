@@ -5,9 +5,11 @@ import re
 from dateutil import parser, tz
 from datetime import datetime, timedelta
 import time
+import copy
 from termcolor import colored
 from tqdm import tqdm
 from multiagents.utils.utils import AGENT_TYPES
+from multiagents.utils.markdown_format import generate_quote_content
 from multiagents.agents.conversation_agent import BaseAgent
 from multiagents.message import Message, SolverMessage
 from multiagents.tools.metrics import current_diag_time
@@ -25,6 +27,7 @@ from multiagents.environments.role_assigner import (
 
 from . import env_registry as EnvironmentRegistry
 from pydantic import BaseModel
+from multiagents.utils.interact import set_cur_task, init_messages, add_report, add_experts
 
 
 def generate_tools_content(
@@ -127,6 +130,8 @@ class DBAEnvironment(BaseModel):
     success: bool = False
 
     def __init__(self, **kwargs):
+        init_messages()
+        
         def build_components(config: Dict, registry):
             component_type = config.pop("type")
             component = registry.build(component_type, **config)
@@ -229,6 +234,7 @@ class DBAEnvironment(BaseModel):
         # return summarized_diags, labels
 
         # ===================================================
+        set_cur_task("roleAssignment")
         print(
             '<flow>{"title": "根据异常分配诊断专家", "content": "", "isCompleted": 0, "isRuning": 1}</flow>')
         self.reporter.record["anomalyAnalysis"]["RoleAssigner"]["messages"].append(
@@ -255,7 +261,10 @@ class DBAEnvironment(BaseModel):
         if len(selected_experts) > args.max_hired_experts:
             selected_experts = selected_experts[:args.max_hired_experts]
 
-        print("Assigned Experts: ", [expert.name for expert in selected_experts])
+        selected_expert_names = [expert.name for expert in selected_experts]
+        add_experts(selected_expert_names)
+
+        print("Assigned Experts: ", selected_expert_names)
 
         expert_data = []
         for expert in selected_experts:
@@ -288,7 +297,28 @@ class DBAEnvironment(BaseModel):
         # count on these experts to diagnose for the alert        
         report = await self.decision_making(selected_experts, None, previous_plan, advice) # plans: the list of diagnosis messages
 
+        feedbacks = []
+        knowledge_list = []
+        for agent in selected_experts + [self.reporter]:
+            agent_knowledge_list = copy.deepcopy(agent.knowledge_list)
+            for e in agent_knowledge_list:
+                e["agent"] = agent.name
+            agent_feedbacks = []
+            if hasattr(agent.llm, "feedbacks"):
+                agent_feedbacks = copy.deepcopy(agent.llm.feedbacks)
+            for e in agent_feedbacks:
+                e["agent"] = agent.name
+            feedbacks.extend(agent_feedbacks)
+            knowledge_list.extend(agent_knowledge_list)
+
         print(colored(f"Report Generation!","blue"))
+        set_cur_task("reportDemonstration")
+
+        root_cause_cite, solutions_cite, citations_markdown = self.cite_report(self.reporter.report['root cause'], self.reporter.report['solutions'], knowledge_list, feedbacks)
+
+        self.reporter.report['root cause'] = root_cause_cite
+        self.reporter.report['solutions'] = solutions_cite
+        self.reporter.report['citations'] = citations_markdown
         
         with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
 
@@ -312,12 +342,13 @@ class DBAEnvironment(BaseModel):
 | Anomaly Description | {self.reporter.report['anomaly description']}  |
 | Root Cause          | {self.reporter.report['root cause']}  |
 | Solutions           | {self.reporter.report['solutions']}  |\n\n"""
+            report_markdown = report_markdown + f"## Citations\n" + self.reporter.report['citations'].strip() + '\n\n'
             report_markdown = report_markdown + f"## Diagnosis Process\n" + \
                 self.reporter.report['diagnosis process'].strip()
             self.reporter.record["report"] = report_markdown
+            add_report(report_markdown)
 
             pbar.update(1)
-        print(self.reporter.record)
 
         for expert in expert_data:
             # find the matched key in the record
@@ -335,6 +366,58 @@ class DBAEnvironment(BaseModel):
             f'<flow>{{"title": "报告生成", "content": "报告已经生成", "messages": {self.reporter.record["report"]} , "isCompleted": 1, "isRuning": 0}}</flow>')
 
         return report, self.reporter.record
+    
+    def gen_cite_report(self, report, citations_str):
+        if self.reporter.language == "zh":
+            system_prompt = (
+                "给你一份数据库异常诊断报告和可能的引文列表。"
+                "你的任务是在报告中标记引文索引。例如，一个段落参考了引文2，就在段落后面加上[2]。"
+                "对报告的每个段落，都检查所有的引文。如果这个段落确实与引文相关，就标记它的索引。"
+                "请注意，有时可能没有参考的引文，或者有多个相关引文。"
+                "仅输出带有引文索引的诊断报告。"
+            )
+            user_prompt = f'诊断报告:{report}\n\n引文列表:\n{citations_str}'
+        else:
+            system_prompt = 'You will be given a database anomaly diagnosis report, and a list of potential citations. Your task is to mark the citation index in the report. For instance, if a paragraph refers to the 2nd citation, you can append "[2]" to the paragraph. For each paragraph of the report, you should check the relativity of all the citations. If the paragraph actually refers to the citation, you can mark its index. Note that sometimes there may be no available citations, or more than one relative citations.\nOnly output the diagnosis report with citation indices.'
+            user_prompt = f'Diagnosis Report:{report}\n\nCitations:\n{citations_str}'
+        messages = [{'role': 'system', 'content': system_prompt}, {'role': 'user', 'content': user_prompt}]
+        self.reporter.llm.change_messages("", messages)
+        reply = self.reporter.llm.parse()
+        print(messages)
+        print(reply)
+        return reply['content']
+    
+    def cite_report(self, root_cause, solutions, knowledge_list, feedbacks):
+        citations = {}
+        for k in knowledge_list:
+            citations[k['desc']] = generate_quote_content('[{index}] ' + f'{k["source"]}.N.{k["seq_num"]}.', k["desc"])
+
+        for feedback in feedbacks:
+            if feedback['auto']:
+                citations[feedback["feedback"]] = generate_quote_content('[{index}] ' + f'{feedback["agent"]}.{feedback["task"]} feedback.', feedback["feedback"])
+            else:
+                citations[feedback["refined_response"]] = generate_quote_content('[{index}] ' + f'{feedback["agent"]}.{feedback["task"]} editted response.', feedback["refined_response"])
+
+        citations_list = []
+        for k in citations:
+            citations_list.append({'index': len(citations_list) + 1, 'citation': k})
+        citations_str = str(citations_list)
+
+        root_cause_cite = self.gen_cite_report(root_cause, citations_str)
+        solutions_cite = self.gen_cite_report(solutions, citations_str)
+
+        citations_markdown = ''
+
+        i = 1
+        for c in citations_list:
+            if f'[{c["index"]}]' in root_cause_cite or f'[{c["index"]}]' in solutions_cite:
+                root_cause_cite = root_cause_cite.replace(f'[{c["index"]}]', f'[{i}]')
+                solutions_cite = solutions_cite.replace(f'[{c["index"]}]', f'[{i}]')
+                citations_markdown += citations[c["citation"]].replace('[{index}]', f'[{i}]') + '<br>'
+                i += 1
+
+        return root_cause_cite, solutions_cite, citations_markdown
+
 
     def role_assign(
             self,
@@ -366,6 +449,7 @@ class DBAEnvironment(BaseModel):
         # TODO: plan should be string or a special type of object?
 
         # initial_diag: a list of diagnosis messages from selected experts
+        set_cur_task("expertDiagnosis")
         initial_diags = await self.decision_maker.astep(
             agents=agents,
             task_description=self.task_description,
@@ -538,7 +622,7 @@ class DBAEnvironment(BaseModel):
             message = self.reporter.llm._construct_messages(prompt)
             self.reporter.llm.change_messages(
                 self.reporter.role_description, message)
-            summarized_diags = self.reporter.llm.parse()
+            summarized_diags = self.reporter.llm.parse(role=self.reporter.name, task='summary')
 
             # if summarized_diags is of dict type
             if isinstance(summarized_diags, dict):
@@ -563,6 +647,7 @@ class DBAEnvironment(BaseModel):
 
         print(
             '<flow>{"title": "圆桌讨论", "content": "", "isCompleted": 0, "isRuning": 1}</flow>')
+        set_cur_task("groupDiscussion")
         # print(colored(f"Cross Review!", "yellow"))
 
         # discuss over the summarized initial_diags results
@@ -603,6 +688,7 @@ class DBAEnvironment(BaseModel):
         # review the diagnosis results by the reporter
         print(
             '<flow>{"title": "报告生成", "content": "", "isCompleted": 0, "isRuning": 1}</flow>')
+        set_cur_task("reportGeneration")
         self.reporter.update_diagnosis()
         self.reporter.add_diagnosis_labels()
         self.reporter.update_solutions()

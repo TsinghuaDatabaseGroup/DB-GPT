@@ -13,9 +13,11 @@ OPEN_CROSS_DOMAIN = True
 DEFAULT_BIND_HOST = "0.0.0.0" if sys.platform != "win32" else "127.0.0.1"
 
 # webui.py server
+# api_base_url: API_SERVER的地址，用于webui向API_SERVER发送请求使用，如果是服务器中部署，则填写服务器的IP地址或者域名，本地部署则填填写"127.0.0.1"
 WEBUI_SERVER = {
     "host": DEFAULT_BIND_HOST,
-    "port": 8501,
+    "port": 18501,
+    "api_base_url": "XXX.XXX.XX.178:7861"
 }
 
 # api.py server

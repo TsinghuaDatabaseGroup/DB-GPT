@@ -22,6 +22,7 @@ class BaseAgent(BaseModel):
     receiver: Set[str] = Field(default=set({"all"}))
     async_mode: bool = Field(default=True)
     language: str = Field(default="en")
+    knowledge_list: list = Field(default=[])
 
     @abstractmethod
     def step(self, env_description: str = "") -> Message:
@@ -85,3 +86,6 @@ class BaseAgent(BaseModel):
             raise ValueError(
                 "input argument `receiver` must be a string or a set of string"
             )
+        
+    def enable_feedback(self):
+        return self.llm is not None and hasattr(self.llm, 'enable_feedback') and self.llm.enable_feedback

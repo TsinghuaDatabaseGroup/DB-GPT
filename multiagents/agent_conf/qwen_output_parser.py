@@ -36,16 +36,20 @@ class QwenDBDiag(OutputParser):
         m = text.rfind(special_obs_token)
         n = text.rfind(special_answer_token)
 
-        assert m == -1  # 必须没有Observation
+        if not m == -1:  # 必须没有Observation
+            return None
 
-        if i < j < k:  # 有Thought / Action / Action Input
-            assert n == -1
+        if i < j < k and n == -1:  # 只有Thought / Action / Action Input
             action = text[j + len(special_func_token):k].strip()
             action_input = text[k + len(special_args_token):].strip()
+            try:
+                json.loads(action_input)
+            except:
+                return None
+
             return AgentAction(action.lower(), action_input, text)
 
-        elif i < n:  # 有Thought / Final Answer
-            assert j == -1 and k == -1
+        elif i < n and j == -1 and k == -1:  # 只有Thought / Final Answer
             # solution里可能会有换行符（如步骤1.2.3.4）导致解析出错
             final_answer = text[n + len(special_answer_token):].replace('\n', '').strip()
 
@@ -89,4 +93,4 @@ class QwenDBDiag(OutputParser):
             return AgentFinish({"output": final_answer_json}, text)
 
         else:
-            raise OutputParserError(message=text)
+            return None

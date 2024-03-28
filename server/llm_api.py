@@ -4,7 +4,8 @@ from server.utils import (BaseResponse, fschat_controller_address, list_config_l
                           get_httpx_client, get_model_worker_config)
 from typing import List
 
-
+def llm_model() -> BaseResponse:
+    return BaseResponse(data=LLM_MODELS)
 def list_running_models(
     controller_address: str = Body(None, description="Fastchat controller服务器地址", examples=[fschat_controller_address()]),
     placeholder: str = Body(None, description="该参数未使用，占位用"),
