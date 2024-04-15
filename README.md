@@ -447,13 +447,13 @@ We provide scripts that trigger typical anomalies ([anomalies directory](./anoma
 Execute the following command to trigger a single type of anomaly with customized parameters:
 
 ```shell
-python anomaly_trigger/main.py --anomaly MISSING_INDEXES --threads 100 --columns 20 --colsize 100 --nrow 20000
+python anomaly_trigger/main.py --anomaly MISSING_INDEXES --threads 100 --ncolumn 20 --colsize 100 --nrow 20000
 ```
 
 Parameters:
 - `--anomaly`: Specifies the type of anomaly to trigger.
 - `--threads`: Sets the number of concurrent clients.
-- `--columns`: Defines the number of columns.
+- `--ncolumn`: Defines the number of columns.
 - `--colsize`: Determines the size of each column (in bytes).
 - `--nrow`: Indicates the number of rows.
 

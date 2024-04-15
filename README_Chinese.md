@@ -48,8 +48,13 @@
 
 [![Watch the video](img/chat_diagnosis.png)](https://vimeo.com/905172621?share=copy)
 
+2. 通过用户反馈功能 [🔗](multiagents/agent_conf/config_feedback.yaml)，您可以（1）给出反馈，使D-Bot跟踪并细化中间诊断结果，以及（2）通过单击“编辑”按钮编辑诊断结果。*D-Bot可以从用户反馈（存储在向量数据库中）中积累优化模式，并自适应用户的诊断偏好。*
 
-2. 在在线网站（[http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)），您可以浏览所有历史诊断结果、使用的指标和详细的诊断过程。
+<p align="center">
+  <img src="img/feedback-demo.png" width="800px">
+</p>
+
+3. 在在线网站（[http://dbgpt.dbmind.cn](http://dbgpt.dbmind.cn)），您可以浏览所有历史诊断结果、使用的指标和详细的诊断过程。
 
 <!-- <p align="center">
   <a href="http://dbgpt.dbmind.cn">
@@ -73,6 +78,10 @@
 ## 📰 更新
 
 - [ ] 用户反馈机制 🔥🔥🔥
+
+    * [x] 基于用户反馈生成测试优化诊断
+
+    * [x] 优化模式的抽取和管理
 
 - [ ] 语言支持 (英文 / 中文)
     * [x] 默认英文
@@ -156,11 +165,42 @@ $ pip3 install -r requirements_api.txt # 如果只运行API，可以只安装API
 
   > 注意 _pg_stat_statements_ 会持续累积查询统计数据。因此您需要定期清除统计数据：1) 要丢弃所有统计数据，执行 _"SELECT pg_stat_statements_reset();"_; 2) 要丢弃特定查询的统计数据，执行 _"SELECT pg_stat_statements_reset(userid, dbid, queryid);"_。
 
-+ 下载 [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1) 模型参数
++ (可选) 如果您需要在本地或离线环境中运行此项目，您首先需要将所需的模型下载到本地计算机，然后进行正确的配置。
+
+1. 下载 [Sentence Trasformer](https://cloud.tsinghua.edu.cn/f/6e8a3ad547204303a5ae/?dl=1) 模型参数
 
   > 创建新目录 ./multiagents/localized_llms/sentence_embedding/
 
   > 将下载的sentence-transformer.zip压缩包放置在./multiagents/localized_llms/sentence_embedding/目录下；解压压缩包。
+
+
+2. 从 [HuggingFace](https://huggingface.co/models) 下载 LLM 和 Embedding 模型。
+
+下载模型需要首先安装 [Git LFS](https://docs.github.com/zh/repositories/working-with-files/managing-large-files/installing-git-large-file-storage)，然后运行
+
+```Shell
+$ git lfs install
+$ git clone https://huggingface.co/moka-ai/m3e-base
+$ git clone https://huggingface.co/Qwen/Qwen-1_8B-Chat
+```
+
+3. 调整 [模型设置](configs/model_config.py.example) 为下载路径，如
+
+```Python
+EMBEDDING_MODEL = "m3e-base"
+LLM_MODELS = ["Qwen-1_8B-Chat"]
+MODEL_PATH = {
+    "embed_model": {
+        "m3e-base": "m3e-base", # Download path of embedding model.
+    },
+
+    "llm_model": {
+        "Qwen-1_8B-Chat": "Qwen-1_8B-Chat", # Download path of LLM.
+    },
+}
+```
+
+4. 下载并配置 [本地 LLM](multiagents/localized_llms)。
 
 #### 1.2 前端服务配置
 + 首先，确保你的机器安装了 Node (>= 18.15.0)
@@ -177,17 +217,7 @@ cd webui
 pnpm install
 ```
 
-### 2. 模型下载
-
-如需在本地或离线环境下运行本项目，需要首先将项目所需的模型下载至本地，通常开源 LLM 与 Embedding 模型可以从 [HuggingFace](https://huggingface.co/models) 下载。
-
-下载模型需要先[安装 Git LFS](https://docs.github.com/zh/repositories/working-with-files/managing-large-files/installing-git-large-file-storage)，然后运行
-
-```Shell
-$ git lfs install
-$ git clone https://huggingface.co/moka-ai/m3e-base
-```
-### 3. 初始化知识库和配置文件
+### 2. 初始化知识库和配置文件
 
 复制配置文件
 ```shell
@@ -205,13 +235,29 @@ $ python copy_config_example.py
 $ python init_database.py --recreate-vs
  ```
 
-### 4. 一键启动
+ - 在 [diagnose_config.py](configs/diagnose_config.py.example), 我们将 [config.yaml](multiagents/agent_conf/config.yaml) 设置为LLM专家的默认配置文件。
+
+```Python
+DIAGNOSTIC_CONFIG_FILE = "config.yaml"
+```
+
+- 要通过用户反馈交互优化诊断，您可以设置
+```Python
+DIAGNOSTIC_CONFIG_FILE = "config_feedback.yaml"
+```
+
+- 要使用 [Qwen](https://github.com/QwenLM/Qwen) 进行中文诊断，您可以设置
+```Python
+DIAGNOSTIC_CONFIG_FILE = "config_qwen.yaml"
+```
+
+### 3. 一键启动
 
 按照以下命令启动项目
 ```shell
 $ python startup.py -a
 ```
-### 5. 启动界面示例
+### 4. 启动界面示例
 
 如果正常启动，你将能看到以下界面
 
@@ -418,6 +464,8 @@ https://github.com/Vonng/pigsty
 https://github.com/UKPLab/sentence-transformers
 
 https://github.com/chatchat-space/Langchain-Chatchat
+
+https://github.com/shreyashankar/spade-experiments
 
 <span id="-citation"></span>
 
