@@ -1,0 +1,1625 @@
+[
+  {
+    "sql": "SELECT l_orderkey FROM lineitem WHERE l_suppkey <> 8775 AND l_extendedprice >= 72229.68 AND l_partkey > 141608 AND l_shipmode = 'RAIL' AND l_linestatus >= 'F'",
+    "pre_tokens": [
+      "select",
+      "l_orderkey",
+      "from",
+      "lineitem",
+      "where",
+      "l_suppkey",
+      "<>",
+      "8775",
+      "AND",
+      "l_extendedprice",
+      ">=",
+      "72229.68",
+      "AND",
+      "l_partkey",
+      ">",
+      "141608",
+      "AND",
+      "l_shipmode",
+      "=",
+      "'RAIL'",
+      "AND",
+      "l_linestatus",
+      ">=",
+      "'F'"
+    ],
+    "pre_types": [
+      "select",
+      "select#column",
+      "from",
+      "from#table",
+      "where",
+      "where#column",
+      "operator",
+      "l_suppkey#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "l_extendedprice#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "l_partkey#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "l_shipmode#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "l_linestatus#value"
+    ],
+    "pno_tokens": [
+      3033,
+      58,
+      3034,
+      12,
+      3036,
+      60,
+      3009,
+      2341,
+      3021,
+      63,
+      3013,
+      2570,
+      3021,
+      59,
+      3010,
+      2287,
+      3021,
+      72,
+      3008,
+      2905,
+      3021,
+      67,
+      3013,
+      2595
+    ],
+    "table_names": [
+      "lineitem"
+    ],
+    "pcolumn_vecs": [
+      58,
+      60,
+      63,
+      59,
+      72,
+      67
+    ],
+    "extend": {
+      "indexes": [
+        "lineitem#l_extendedprice,l_shipmode",
+        "lineitem#l_partkey"
+      ],
+      "no_cost": 172086.93,
+      "ind_cost": 114053.0
+    },
+    "db2advis": {
+      "indexes": [
+        "lineitem#l_extendedprice",
+        "lineitem#l_shipmode,l_partkey"
+      ],
+      "no_cost": 172086.93,
+      "ind_cost": 78952.83
+    },
+    "auto_admin": {
+      "indexes": [
+        "lineitem#l_extendedprice,l_shipmode"
+      ],
+      "no_cost": 172086.93,
+      "ind_cost": 129964.53
+    },
+    "drop": {
+      "indexes": [
+        "lineitem#l_partkey",
+        "lineitem#l_linestatus",
+        "lineitem#l_extendedprice",
+        "lineitem#l_orderkey",
+        "lineitem#l_shipmode"
+      ],
+      "no_cost": 172086.93,
+      "ind_cost": 133663.55
+    },
+    "relaxation": {
+      "indexes": [
+        "lineitem#l_shipmode,l_partkey",
+        "lineitem#l_extendedprice"
+      ],
+      "no_cost": 172086.93,
+      "ind_cost": 78952.83
+    },
+    "anytime": {
+      "indexes": [
+        "lineitem#l_shipmode,l_partkey",
+        "lineitem#l_extendedprice"
+      ],
+      "no_cost": 172086.93,
+      "ind_cost": 78952.83
+    },
+    "swirl": {
+      "indexes": [
+        "lineitem#l_suppkey",
+        "lineitem#l_linestatus",
+        "lineitem#l_extendedprice"
+      ],
+      "no_cost": 172086.93,
+      "ind_cost": 133663.55,
+      "model_id": "s103g_swirlh1gb_150w"
+    },
+    "drlinda": {
+      "indexes": [
+        "lineitem#l_commitdate",
+        "lineitem#l_partkey",
+        "lineitem#l_linenumber",
+        "customer#c_address",
+        "part#p_size",
+        "lineitem#l_orderkey",
+        "lineitem#l_receiptdate",
+        "lineitem#l_discount",
+        "orders#o_orderdate",
+        "supplier#s_suppkey",
+        "orders#o_orderkey",
+        "lineitem#l_quantity",
+        "partsupp#ps_partkey",
+        "orders#o_shippriority",
+        "lineitem#l_extendedprice"
+      ],
+      "no_cost": 172086.93,
+      "ind_cost": 133663.55,
+      "model_id": "s103g_drlindah1gb_100w_mi15"
+    },
+    "dqn": {
+      "indexes": [
+        "part#p_brand,p_size",
+        "orders#o_custkey,o_clerk,o_orderkey",
+        "lineitem#l_suppkey,l_linestatus",
+        "lineitem#l_suppkey,l_orderkey,l_quantity,l_returnflag",
+        "partsupp#ps_comment,ps_availqty,ps_suppkey"
+      ],
+      "no_cost": 172086.93,
+      "ind_cost": 172086.93,
+      "model_id": "s103g_dqnh1gb_150w"
+    }
+  },
+  {
+    "sql": "SELECT o_shippriority FROM orders WHERE o_clerk > 'Clerk#000000950' AND o_shippriority <> 0 AND o_custkey >= 131045 AND o_orderpriority >= '4-NOT SPECIFIED' AND o_orderkey > 374980",
+    "pre_tokens": [
+      "select",
+      "o_shippriority",
+      "from",
+      "orders",
+      "where",
+      "o_clerk",
+      ">",
+      "'Clerk#000000950'",
+      "AND",
+      "o_shippriority",
+      "<>",
+      "0",
+      "AND",
+      "o_custkey",
+      ">=",
+      "131045",
+      "AND",
+      "o_orderpriority",
+      ">=",
+      "'4-NOT SPECIFIED'",
+      "AND",
+      "o_orderkey",
+      ">",
+      "374980"
+    ],
+    "pre_types": [
+      "select",
+      "select#column",
+      "from",
+      "from#table",
+      "where",
+      "where#column",
+      "operator",
+      "o_clerk#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "o_shippriority#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "o_custkey#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "o_orderpriority#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "o_orderkey#value"
+    ],
+    "pno_tokens": [
+      3033,
+      51,
+      3034,
+      10,
+      3036,
+      50,
+      3010,
+      1564,
+      3021,
+      51,
+      3009,
+      1647,
+      3021,
+      45,
+      3013,
+      1298,
+      3021,
+      49,
+      3013,
+      1542,
+      3021,
+      44,
+      3010,
+      1218
+    ],
+    "table_names": [
+      "orders"
+    ],
+    "pcolumn_vecs": [
+      51,
+      50,
+      51,
+      45,
+      49,
+      44
+    ],
+    "extend": {
+      "indexes": [
+        "orders#o_custkey,o_clerk"
+      ],
+      "no_cost": 41157.6,
+      "ind_cost": 24890.04
+    },
+    "db2advis": {
+      "indexes": [
+        "orders#o_custkey",
+        "orders#o_clerk,o_orderpriority"
+      ],
+      "no_cost": 41157.6,
+      "ind_cost": 16238.81
+    },
+    "auto_admin": {
+      "indexes": [
+        "orders#o_clerk,o_custkey"
+      ],
+      "no_cost": 41157.6,
+      "ind_cost": 20142.22
+    },
+    "drop": {
+      "indexes": [
+        "orders#o_orderpriority",
+        "orders#o_orderkey",
+        "orders#o_shippriority",
+        "orders#o_clerk",
+        "orders#o_custkey"
+      ],
+      "no_cost": 41157.6,
+      "ind_cost": 23335.0
+    },
+    "relaxation": {
+      "indexes": [
+        "orders#o_custkey",
+        "orders#o_clerk,o_orderpriority"
+      ],
+      "no_cost": 41157.6,
+      "ind_cost": 16238.81
+    },
+    "anytime": {
+      "indexes": [
+        "orders#o_custkey",
+        "orders#o_clerk,o_orderpriority"
+      ],
+      "no_cost": 41157.6,
+      "ind_cost": 16238.81
+    },
+    "swirl": {
+      "indexes": [
+        "orders#o_shippriority,o_orderkey",
+        "orders#o_orderkey,o_orderpriority",
+        "orders#o_custkey,o_clerk",
+        "orders#o_orderpriority,o_shippriority",
+        "orders#o_clerk,o_shippriority"
+      ],
+      "no_cost": 41157.6,
+      "ind_cost": 24890.04,
+      "model_id": "s103g_swirlh1gb_150w"
+    },
+    "drlinda": {
+      "indexes": [
+        "supplier#s_name",
+        "lineitem#l_tax",
+        "lineitem#l_shipinstruct",
+        "supplier#s_comment",
+        "partsupp#ps_supplycost",
+        "lineitem#l_receiptdate",
+        "lineitem#l_shipdate",
+        "supplier#s_address",
+        "supplier#s_nationkey",
+        "customer#c_acctbal",
+        "orders#o_custkey",
+        "lineitem#l_quantity",
+        "part#p_brand",
+        "orders#o_shippriority",
+        "lineitem#l_extendedprice"
+      ],
+      "no_cost": 41157.6,
+      "ind_cost": 32741.92,
+      "model_id": "s103g_drlindah1gb_100w_mi15"
+    },
+    "dqn": {
+      "indexes": [
+        "part#p_brand,p_size",
+        "orders#o_custkey,o_clerk,o_orderkey",
+        "lineitem#l_suppkey,l_linestatus",
+        "lineitem#l_suppkey,l_orderkey,l_quantity,l_returnflag",
+        "partsupp#ps_comment,ps_availqty,ps_suppkey"
+      ],
+      "no_cost": 41157.6,
+      "ind_cost": 27120.1,
+      "model_id": "s103g_dqnh1gb_150w"
+    }
+  },
+  {
+    "sql": "SELECT ps_suppkey, p_container FROM part, partsupp WHERE ps_supplycost > 757.42 AND p_partkey = 126438 AND p_name < 'azure sienna cornflower cyan white' AND ps_availqty <= 2967 ORDER BY p_container DESC",
+    "pre_tokens": [
+      "select",
+      "ps_suppkey",
+      "p_container",
+      "from",
+      "part",
+      "partsupp",
+      "where",
+      "ps_supplycost",
+      ">",
+      "757.42",
+      "AND",
+      "p_partkey",
+      "=",
+      "126438",
+      "AND",
+      "p_name",
+      "<",
+      "'azure sienna cornflower cyan white'",
+      "AND",
+      "ps_availqty",
+      "<=",
+      "2967",
+      "order by",
+      "p_container",
+      "DESC"
+    ],
+    "pre_types": [
+      "select",
+      "select#column",
+      "select#column",
+      "from",
+      "from#table",
+      "from#table",
+      "where",
+      "where#column",
+      "operator",
+      "ps_supplycost#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "p_partkey#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "p_name#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "ps_availqty#value",
+      "order by",
+      "order by#column",
+      "order_by_key"
+    ],
+    "pno_tokens": [
+      3033,
+      54,
+      33,
+      3034,
+      8,
+      11,
+      3036,
+      56,
+      3010,
+      1975,
+      3021,
+      27,
+      3008,
+      533,
+      3021,
+      28,
+      3011,
+      573,
+      3021,
+      55,
+      3012,
+      1900,
+      3039,
+      33,
+      3019
+    ],
+    "table_names": [
+      "part",
+      "partsupp"
+    ],
+    "pcolumn_vecs": [
+      54,
+      33,
+      56,
+      27,
+      28,
+      55
+    ],
+    "extend": {
+      "indexes": [
+        "partsupp#ps_supplycost"
+      ],
+      "no_cost": 34242.44,
+      "ind_cost": 29621.02
+    },
+    "db2advis": {
+      "indexes": [
+        "part#p_partkey,p_container",
+        "partsupp#ps_supplycost,ps_availqty"
+      ],
+      "no_cost": 34242.44,
+      "ind_cost": 24952.45
+    },
+    "auto_admin": {
+      "indexes": [
+        "partsupp#ps_supplycost,ps_availqty",
+        "part#p_partkey,p_container"
+      ],
+      "no_cost": 34242.44,
+      "ind_cost": 24952.45
+    },
+    "drop": {
+      "indexes": [
+        "part#p_name",
+        "part#p_container",
+        "partsupp#ps_availqty",
+        "partsupp#ps_supplycost",
+        "part#p_partkey"
+      ],
+      "no_cost": 34242.44,
+      "ind_cost": 29620.64
+    },
+    "relaxation": {
+      "indexes": [
+        "part#p_partkey,p_container",
+        "partsupp#ps_supplycost,ps_availqty"
+      ],
+      "no_cost": 34242.44,
+      "ind_cost": 24952.45
+    },
+    "anytime": {
+      "indexes": [
+        "part#p_partkey,p_container",
+        "partsupp#ps_supplycost,ps_availqty"
+      ],
+      "no_cost": 34242.44,
+      "ind_cost": 24952.45
+    },
+    "swirl": {
+      "indexes": [
+        "partsupp#ps_suppkey,ps_supplycost",
+        "part#p_partkey,p_container",
+        "part#p_name,p_partkey",
+        "supplier#s_suppkey",
+        "partsupp#ps_availqty,ps_suppkey",
+        "part#p_container,p_partkey",
+        "partsupp#ps_supplycost,ps_availqty"
+      ],
+      "no_cost": 34242.44,
+      "ind_cost": 24952.45,
+      "model_id": "s103g_swirlh1gb_150w"
+    },
+    "drlinda": {
+      "indexes": [
+        "lineitem#l_tax",
+        "part#p_mfgr",
+        "partsupp#ps_suppkey",
+        "lineitem#l_discount",
+        "orders#o_clerk",
+        "lineitem#l_shipdate",
+        "orders#o_orderstatus",
+        "partsupp#ps_partkey",
+        "orders#o_orderkey",
+        "orders#o_orderpriority",
+        "customer#c_comment",
+        "lineitem#l_suppkey",
+        "supplier#s_acctbal",
+        "lineitem#l_returnflag",
+        "partsupp#ps_availqty"
+      ],
+      "no_cost": 34242.44,
+      "ind_cost": 30920.15,
+      "model_id": "s103g_drlindah1gb_100w_mi15"
+    },
+    "dqn": {
+      "indexes": [
+        "part#p_brand,p_size",
+        "orders#o_custkey,o_clerk,o_orderkey",
+        "lineitem#l_suppkey,l_linestatus",
+        "lineitem#l_suppkey,l_orderkey,l_quantity,l_returnflag",
+        "partsupp#ps_comment,ps_availqty,ps_suppkey"
+      ],
+      "no_cost": 34242.44,
+      "ind_cost": 34242.44,
+      "model_id": "s103g_dqnh1gb_150w"
+    }
+  },
+  {
+    "sql": "SELECT ps_partkey, p_size FROM partsupp, part WHERE p_brand = 'Brand#22' AND p_container = 'WRAP PACK' AND ps_suppkey >= 602 AND p_retailprice <> 1790.74 AND p_comment = 's. pending accou'",
+    "pre_tokens": [
+      "select",
+      "ps_partkey",
+      "p_size",
+      "from",
+      "partsupp",
+      "part",
+      "where",
+      "p_brand",
+      "=",
+      "'Brand#22'",
+      "AND",
+      "p_container",
+      "=",
+      "'WRAP PACK'",
+      "AND",
+      "ps_suppkey",
+      ">=",
+      "602",
+      "AND",
+      "p_retailprice",
+      "<>",
+      "1790.74",
+      "AND",
+      "p_comment",
+      "=",
+      "'s. pending accou'"
+    ],
+    "pre_types": [
+      "select",
+      "select#column",
+      "select#column",
+      "from",
+      "from#table",
+      "from#table",
+      "where",
+      "where#column",
+      "operator",
+      "p_brand#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "p_container#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "ps_suppkey#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "p_retailprice#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "p_comment#value"
+    ],
+    "pno_tokens": [
+      3033,
+      53,
+      32,
+      3034,
+      11,
+      8,
+      3036,
+      30,
+      3008,
+      614,
+      3021,
+      33,
+      3008,
+      711,
+      3021,
+      54,
+      3013,
+      1870,
+      3021,
+      34,
+      3009,
+      763,
+      3021,
+      35,
+      3008,
+      792
+    ],
+    "table_names": [
+      "partsupp",
+      "part"
+    ],
+    "pcolumn_vecs": [
+      53,
+      32,
+      30,
+      33,
+      54,
+      34,
+      35
+    ],
+    "extend": {
+      "indexes": [
+        "part#p_comment"
+      ],
+      "no_cost": 41719.69,
+      "ind_cost": 34971.8
+    },
+    "db2advis": {
+      "indexes": [
+        "part#p_brand,p_comment"
+      ],
+      "no_cost": 41719.69,
+      "ind_cost": 34963.99
+    },
+    "auto_admin": {
+      "indexes": [
+        "part#p_comment,p_brand"
+      ],
+      "no_cost": 41719.69,
+      "ind_cost": 34963.99
+    },
+    "drop": {
+      "indexes": [
+        "part#p_comment",
+        "partsupp#ps_partkey",
+        "part#p_container",
+        "part#p_size",
+        "part#p_retailprice"
+      ],
+      "no_cost": 41719.69,
+      "ind_cost": 34971.8
+    },
+    "relaxation": {
+      "indexes": [
+        "part#p_brand,p_comment"
+      ],
+      "no_cost": 41719.69,
+      "ind_cost": 34963.99
+    },
+    "anytime": {
+      "indexes": [
+        "part#p_brand,p_comment"
+      ],
+      "no_cost": 41719.69,
+      "ind_cost": 34963.99
+    },
+    "swirl": {
+      "indexes": [
+        "partsupp#ps_partkey,ps_suppkey",
+        "part#p_container,p_brand",
+        "part#p_size,p_brand",
+        "part#p_brand,p_size",
+        "part#p_comment,p_container",
+        "supplier#s_suppkey",
+        "partsupp#ps_suppkey,ps_partkey",
+        "part#p_retailprice,p_comment"
+      ],
+      "no_cost": 41719.69,
+      "ind_cost": 34963.99,
+      "model_id": "s103g_swirlh1gb_150w"
+    },
+    "drlinda": {
+      "indexes": [
+        "customer#c_mktsegment",
+        "part#p_container",
+        "lineitem#l_tax",
+        "part#p_mfgr",
+        "lineitem#l_orderkey",
+        "supplier#s_phone",
+        "lineitem#l_discount",
+        "orders#o_comment",
+        "supplier#s_suppkey",
+        "customer#c_acctbal",
+        "orders#o_custkey",
+        "lineitem#l_shipdate",
+        "lineitem#l_suppkey",
+        "orders#o_totalprice",
+        "customer#c_address"
+      ],
+      "no_cost": 41719.69,
+      "ind_cost": 39505.09,
+      "model_id": "s103g_drlindah1gb_100w_mi15"
+    },
+    "dqn": {
+      "indexes": [
+        "part#p_brand,p_size",
+        "orders#o_custkey,o_clerk,o_orderkey",
+        "lineitem#l_suppkey,l_linestatus",
+        "lineitem#l_suppkey,l_orderkey,l_quantity,l_returnflag",
+        "partsupp#ps_comment,ps_availqty,ps_suppkey"
+      ],
+      "no_cost": 41719.69,
+      "ind_cost": 39486.15,
+      "model_id": "s103g_dqnh1gb_150w"
+    }
+  },
+  {
+    "sql": "SELECT l_tax, ps_supplycost FROM partsupp, lineitem WHERE ps_partkey = 67489 AND l_quantity < 37.0 AND ps_availqty > 7752 AND l_discount = 0.1 ORDER BY ps_supplycost ASC",
+    "pre_tokens": [
+      "select",
+      "l_tax",
+      "ps_supplycost",
+      "from",
+      "partsupp",
+      "lineitem",
+      "where",
+      "ps_partkey",
+      "=",
+      "67489",
+      "AND",
+      "l_quantity",
+      "<",
+      "37.0",
+      "AND",
+      "ps_availqty",
+      ">",
+      "7752",
+      "AND",
+      "l_discount",
+      "=",
+      "0.1",
+      "order by",
+      "ps_supplycost",
+      "ASC"
+    ],
+    "pre_types": [
+      "select",
+      "select#column",
+      "select#column",
+      "from",
+      "from#table",
+      "from#table",
+      "where",
+      "where#column",
+      "operator",
+      "ps_partkey#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "l_quantity#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "ps_availqty#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "l_discount#value",
+      "order by",
+      "order by#column",
+      "order_by_key"
+    ],
+    "pno_tokens": [
+      3033,
+      65,
+      56,
+      3034,
+      11,
+      12,
+      3036,
+      53,
+      3008,
+      1762,
+      3021,
+      62,
+      3011,
+      2470,
+      3021,
+      55,
+      3010,
+      1929,
+      3021,
+      64,
+      3008,
+      2578,
+      3039,
+      56,
+      3020
+    ],
+    "table_names": [
+      "partsupp",
+      "lineitem"
+    ],
+    "pcolumn_vecs": [
+      65,
+      56,
+      53,
+      62,
+      55,
+      64
+    ],
+    "extend": {
+      "indexes": [
+        "lineitem#l_discount,l_quantity"
+      ],
+      "no_cost": 237649.54,
+      "ind_cost": 178235.6
+    },
+    "db2advis": {
+      "indexes": [
+        "partsupp#ps_partkey,ps_supplycost",
+        "lineitem#l_discount,l_quantity"
+      ],
+      "no_cost": 237649.54,
+      "ind_cost": 134443.92
+    },
+    "auto_admin": {
+      "indexes": [
+        "partsupp#ps_partkey,ps_supplycost",
+        "lineitem#l_discount,l_quantity"
+      ],
+      "no_cost": 237649.54,
+      "ind_cost": 134443.92
+    },
+    "drop": {
+      "indexes": [
+        "partsupp#ps_partkey",
+        "partsupp#ps_availqty",
+        "partsupp#ps_supplycost",
+        "lineitem#l_discount",
+        "lineitem#l_quantity"
+      ],
+      "no_cost": 237649.54,
+      "ind_cost": 179406.46
+    },
+    "relaxation": {
+      "indexes": [
+        "partsupp#ps_partkey,ps_supplycost",
+        "lineitem#l_discount,l_quantity"
+      ],
+      "no_cost": 237649.54,
+      "ind_cost": 134443.92
+    },
+    "anytime": {
+      "indexes": [
+        "partsupp#ps_partkey,ps_supplycost",
+        "lineitem#l_discount,l_quantity"
+      ],
+      "no_cost": 237649.54,
+      "ind_cost": 134443.92
+    },
+    "swirl": {
+      "indexes": [
+        "lineitem#l_discount",
+        "partsupp#ps_partkey,ps_supplycost",
+        "lineitem#l_quantity",
+        "partsupp#ps_supplycost,ps_availqty",
+        "partsupp#ps_availqty,ps_supplycost"
+      ],
+      "no_cost": 237649.54,
+      "ind_cost": 135620.4,
+      "model_id": "s103g_swirlh1gb_150w"
+    },
+    "drlinda": {
+      "indexes": [
+        "lineitem#l_commitdate",
+        "customer#c_custkey",
+        "lineitem#l_tax",
+        "part#p_container",
+        "partsupp#ps_suppkey",
+        "lineitem#l_discount",
+        "orders#o_orderstatus",
+        "lineitem#l_quantity",
+        "orders#o_orderpriority",
+        "orders#o_orderkey",
+        "partsupp#ps_comment",
+        "supplier#s_nationkey",
+        "lineitem#l_suppkey",
+        "orders#o_custkey",
+        "partsupp#ps_availqty"
+      ],
+      "no_cost": 237649.54,
+      "ind_cost": 179412.08,
+      "model_id": "s103g_drlindah1gb_100w_mi15"
+    },
+    "dqn": {
+      "indexes": [
+        "part#p_brand,p_size",
+        "orders#o_custkey,o_clerk,o_orderkey",
+        "lineitem#l_suppkey,l_linestatus",
+        "lineitem#l_suppkey,l_orderkey,l_quantity,l_returnflag",
+        "partsupp#ps_comment,ps_availqty,ps_suppkey"
+      ],
+      "no_cost": 237649.54,
+      "ind_cost": 237649.54,
+      "model_id": "s103g_dqnh1gb_150w"
+    }
+  },
+  {
+    "sql": "SELECT l_returnflag, o_totalprice, p_name, ps_partkey FROM orders JOIN lineitem ON l_orderkey = o_orderkey JOIN partsupp ON ps_suppkey = l_suppkey JOIN part ON p_partkey = ps_partkey WHERE l_shipmode < 'TRUCK' AND ps_suppkey > 9929 AND l_returnflag = 'R' AND l_discount > 0.08 ORDER BY o_totalprice ASC, p_name ASC, ps_partkey DESC",
+    "pre_tokens": [
+      "select",
+      "l_returnflag",
+      "o_totalprice",
+      "p_name",
+      "ps_partkey",
+      "from",
+      "orders",
+      "JOIN",
+      "lineitem",
+      "ON",
+      "l_orderkey",
+      "=",
+      "o_orderkey",
+      "JOIN",
+      "partsupp",
+      "ON",
+      "ps_suppkey",
+      "=",
+      "l_suppkey",
+      "JOIN",
+      "part",
+      "ON",
+      "p_partkey",
+      "=",
+      "ps_partkey",
+      "where",
+      "l_shipmode",
+      "<",
+      "'TRUCK'",
+      "AND",
+      "ps_suppkey",
+      ">",
+      "9929",
+      "AND",
+      "l_returnflag",
+      "=",
+      "'R'",
+      "AND",
+      "l_discount",
+      ">",
+      "0.08",
+      "order by",
+      "o_totalprice",
+      "ASC",
+      "p_name",
+      "ASC",
+      "ps_partkey",
+      "DESC"
+    ],
+    "pre_types": [
+      "select",
+      "select#column",
+      "select#column",
+      "select#column",
+      "select#column",
+      "from",
+      "from#join_table",
+      "join",
+      "from#join_table",
+      "on",
+      "from#join_column",
+      "from#join_operator",
+      "from#join_column",
+      "join",
+      "from#join_table",
+      "on",
+      "from#join_column",
+      "from#join_operator",
+      "from#join_column",
+      "join",
+      "from#join_table",
+      "on",
+      "from#join_column",
+      "from#join_operator",
+      "from#join_column",
+      "where",
+      "where#column",
+      "operator",
+      "l_shipmode#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "ps_suppkey#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "l_returnflag#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "l_discount#value",
+      "order by",
+      "order by#column",
+      "order_by_key",
+      "order by#column",
+      "order_by_key",
+      "order by#column",
+      "order_by_key"
+    ],
+    "pno_tokens": [
+      3033,
+      66,
+      47,
+      28,
+      53,
+      3034,
+      10,
+      3031,
+      12,
+      3032,
+      58,
+      3008,
+      44,
+      3031,
+      11,
+      3032,
+      54,
+      3008,
+      60,
+      3031,
+      8,
+      3032,
+      27,
+      3008,
+      53,
+      3036,
+      72,
+      3011,
+      2901,
+      3021,
+      54,
+      3010,
+      1863,
+      3021,
+      66,
+      3008,
+      2594,
+      3021,
+      64,
+      3010,
+      2582,
+      3039,
+      47,
+      3020,
+      28,
+      3020,
+      53,
+      3019
+    ],
+    "table_names": [
+      "orders",
+      "lineitem",
+      "partsupp",
+      "part"
+    ],
+    "pcolumn_vecs": [
+      66,
+      47,
+      28,
+      53,
+      72,
+      54,
+      66,
+      64
+    ],
+    "extend": {
+      "indexes": [
+        "partsupp#ps_suppkey",
+        "orders#o_orderkey",
+        "lineitem#l_discount"
+      ],
+      "no_cost": 267993.72,
+      "ind_cost": 223675.76
+    },
+    "db2advis": {
+      "indexes": [
+        "partsupp#ps_suppkey",
+        "orders#o_orderkey",
+        "lineitem#l_returnflag,l_discount"
+      ],
+      "no_cost": 267993.72,
+      "ind_cost": 203741.53
+    },
+    "auto_admin": {
+      "indexes": [
+        "orders#o_orderkey",
+        "lineitem#l_discount",
+        "partsupp#ps_suppkey"
+      ],
+      "no_cost": 267993.72,
+      "ind_cost": 223675.76
+    },
+    "drop": {
+      "indexes": [
+        "orders#o_orderkey",
+        "partsupp#ps_suppkey",
+        "lineitem#l_discount",
+        "lineitem#l_shipmode",
+        "part#p_partkey"
+      ],
+      "no_cost": 267993.72,
+      "ind_cost": 223675.76
+    },
+    "relaxation": {
+      "indexes": [
+        "orders#o_orderkey",
+        "lineitem#l_returnflag,l_discount",
+        "partsupp#ps_suppkey"
+      ],
+      "no_cost": 267993.72,
+      "ind_cost": 203741.53
+    },
+    "anytime": {
+      "indexes": [
+        "orders#o_orderkey",
+        "lineitem#l_returnflag,l_discount",
+        "partsupp#ps_suppkey"
+      ],
+      "no_cost": 267993.72,
+      "ind_cost": 203741.53
+    },
+    "swirl": {
+      "indexes": [
+        "partsupp#ps_partkey,ps_suppkey",
+        "lineitem#l_discount,l_orderkey",
+        "part#p_partkey,p_name",
+        "orders#o_totalprice,o_orderkey",
+        "part#p_name,p_partkey",
+        "supplier#s_suppkey",
+        "partsupp#ps_suppkey,ps_partkey",
+        "orders#o_orderkey,o_totalprice"
+      ],
+      "no_cost": 267993.72,
+      "ind_cost": 235523.56,
+      "model_id": "s103g_swirlh1gb_150w"
+    },
+    "drlinda": {
+      "indexes": [
+        "part#p_comment",
+        "customer#c_custkey",
+        "customer#c_mktsegment",
+        "lineitem#l_tax",
+        "part#p_mfgr",
+        "lineitem#l_comment",
+        "lineitem#l_discount",
+        "orders#o_orderkey",
+        "customer#c_acctbal",
+        "supplier#s_acctbal",
+        "lineitem#l_quantity",
+        "lineitem#l_suppkey",
+        "lineitem#l_returnflag",
+        "partsupp#ps_availqty",
+        "supplier#s_name"
+      ],
+      "no_cost": 267993.72,
+      "ind_cost": 234793.54,
+      "model_id": "s103g_drlindah1gb_100w_mi15"
+    },
+    "dqn": {
+      "indexes": [
+        "part#p_brand,p_size",
+        "orders#o_custkey,o_clerk,o_orderkey",
+        "lineitem#l_suppkey,l_linestatus",
+        "lineitem#l_suppkey,l_orderkey,l_quantity,l_returnflag",
+        "partsupp#ps_comment,ps_availqty,ps_suppkey"
+      ],
+      "no_cost": 267993.72,
+      "ind_cost": 267993.72,
+      "model_id": "s103g_dqnh1gb_150w"
+    }
+  },
+  {
+    "sql": "SELECT o_clerk, c_nationkey FROM orders, customer WHERE c_phone <> '13-910-218-7828' AND o_totalprice > 36447.99 AND o_orderpriority <> '4-NOT SPECIFIED' AND o_custkey = 82165 ORDER BY o_clerk DESC",
+    "pre_tokens": [
+      "select",
+      "o_clerk",
+      "c_nationkey",
+      "from",
+      "orders",
+      "customer",
+      "where",
+      "c_phone",
+      "<>",
+      "'13-910-218-7828'",
+      "AND",
+      "o_totalprice",
+      ">",
+      "36447.99",
+      "AND",
+      "o_orderpriority",
+      "<>",
+      "'4-NOT SPECIFIED'",
+      "AND",
+      "o_custkey",
+      "=",
+      "82165",
+      "order by",
+      "o_clerk",
+      "DESC"
+    ],
+    "pre_types": [
+      "select",
+      "select#column",
+      "select#column",
+      "from",
+      "from#table",
+      "from#table",
+      "where",
+      "where#column",
+      "operator",
+      "c_phone#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "o_totalprice#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "o_orderpriority#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "o_custkey#value",
+      "order by",
+      "order by#column",
+      "order_by_key"
+    ],
+    "pno_tokens": [
+      3033,
+      50,
+      39,
+      3034,
+      10,
+      9,
+      3036,
+      40,
+      3009,
+      1001,
+      3021,
+      47,
+      3010,
+      1395,
+      3021,
+      49,
+      3009,
+      1542,
+      3021,
+      45,
+      3008,
+      1319,
+      3039,
+      50,
+      3019
+    ],
+    "table_names": [
+      "orders",
+      "customer"
+    ],
+    "pcolumn_vecs": [
+      50,
+      39,
+      40,
+      47,
+      49,
+      45
+    ],
+    "extend": {
+      "indexes": [
+        "orders#o_clerk,o_custkey"
+      ],
+      "no_cost": 331337.31,
+      "ind_cost": 88785.15
+    },
+    "db2advis": {
+      "indexes": [
+        "orders#o_custkey,o_clerk"
+      ],
+      "no_cost": 331337.31,
+      "ind_cost": 35439.28
+    },
+    "auto_admin": {
+      "indexes": [
+        "orders#o_clerk,o_custkey"
+      ],
+      "no_cost": 331337.31,
+      "ind_cost": 88785.15
+    },
+    "drop": {
+      "indexes": [
+        "orders#o_orderpriority",
+        "orders#o_totalprice",
+        "orders#o_clerk",
+        "orders#o_custkey",
+        "customer#c_phone"
+      ],
+      "no_cost": 331337.31,
+      "ind_cost": 204112.9
+    },
+    "relaxation": {
+      "indexes": [
+        "orders#o_custkey,o_clerk"
+      ],
+      "no_cost": 331337.31,
+      "ind_cost": 35439.28
+    },
+    "anytime": {
+      "indexes": [
+        "orders#o_custkey,o_clerk"
+      ],
+      "no_cost": 331337.31,
+      "ind_cost": 35439.28
+    },
+    "swirl": {
+      "indexes": [
+        "customer#c_nationkey,c_phone",
+        "orders#o_totalprice,o_orderpriority",
+        "customer#c_phone,c_nationkey",
+        "orders#o_clerk,o_custkey",
+        "orders#o_custkey,o_orderpriority",
+        "orders#o_orderpriority,o_totalprice"
+      ],
+      "no_cost": 331337.31,
+      "ind_cost": 88785.15,
+      "model_id": "s103g_swirlh1gb_150w"
+    },
+    "drlinda": {
+      "indexes": [
+        "customer#c_mktsegment",
+        "lineitem#l_shipinstruct",
+        "supplier#s_comment",
+        "partsupp#ps_suppkey",
+        "lineitem#l_orderkey",
+        "lineitem#l_discount",
+        "lineitem#l_shipdate",
+        "lineitem#l_quantity",
+        "orders#o_orderpriority",
+        "orders#o_custkey",
+        "partsupp#ps_comment",
+        "lineitem#l_suppkey",
+        "lineitem#l_returnflag",
+        "partsupp#ps_availqty",
+        "supplier#s_name"
+      ],
+      "no_cost": 331337.31,
+      "ind_cost": 293374.78,
+      "model_id": "s103g_drlindah1gb_100w_mi15"
+    },
+    "dqn": {
+      "indexes": [
+        "part#p_brand,p_size",
+        "orders#o_custkey,o_clerk,o_orderkey",
+        "lineitem#l_suppkey,l_linestatus",
+        "lineitem#l_suppkey,l_orderkey,l_quantity,l_returnflag",
+        "partsupp#ps_comment,ps_availqty,ps_suppkey"
+      ],
+      "no_cost": 331337.31,
+      "ind_cost": 35439.28,
+      "model_id": "s103g_dqnh1gb_150w"
+    }
+  },
+  {
+    "sql": "SELECT l_tax, MIN(l_extendedprice) FROM lineitem WHERE l_quantity > 46.0 AND l_suppkey <= 2784 AND l_comment <> 'ic requests. regular dependencies boos' AND l_receiptdate <> '1997-06-10' AND l_returnflag = 'A' GROUP BY l_tax ORDER BY l_tax DESC",
+    "pre_tokens": [
+      "select",
+      "l_tax",
+      "MIN",
+      "l_extendedprice",
+      "from",
+      "lineitem",
+      "where",
+      "l_quantity",
+      ">",
+      "46.0",
+      "AND",
+      "l_suppkey",
+      "<=",
+      "2784",
+      "AND",
+      "l_comment",
+      "<>",
+      "'ic requests. regular dependencies boos'",
+      "AND",
+      "l_receiptdate",
+      "<>",
+      "'1997-06-10'",
+      "AND",
+      "l_returnflag",
+      "=",
+      "'A'",
+      "group by",
+      "l_tax",
+      "order by",
+      "l_tax",
+      "DESC"
+    ],
+    "pre_types": [
+      "select",
+      "select#column",
+      "select#aggregator",
+      "select#aggregate_column",
+      "from",
+      "from#table",
+      "where",
+      "where#column",
+      "operator",
+      "l_quantity#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "l_suppkey#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "l_comment#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "l_receiptdate#value",
+      "conjunction",
+      "where#column",
+      "operator",
+      "l_returnflag#value",
+      "group by",
+      "group by#column",
+      "order by",
+      "order by#column",
+      "order_by_key"
+    ],
+    "pno_tokens": [
+      3033,
+      65,
+      3015,
+      63,
+      3034,
+      12,
+      3036,
+      62,
+      3010,
+      2446,
+      3021,
+      60,
+      3012,
+      2405,
+      3021,
+      73,
+      3009,
+      2932,
+      3021,
+      70,
+      3009,
+      2895,
+      3021,
+      66,
+      3008,
+      2593,
+      3037,
+      65,
+      3039,
+      65,
+      3019
+    ],
+    "table_names": [
+      "lineitem"
+    ],
+    "pcolumn_vecs": [
+      65,
+      63,
+      62,
+      60,
+      73,
+      70,
+      66
+    ],
+    "extend": {
+      "indexes": [
+        "lineitem#l_quantity"
+      ],
+      "no_cost": 170823.07,
+      "ind_cost": 129235.28
+    },
+    "db2advis": {
+      "indexes": [
+        "lineitem#l_quantity",
+        "lineitem#l_returnflag,l_suppkey"
+      ],
+      "no_cost": 170823.07,
+      "ind_cost": 95093.52
+    },
+    "auto_admin": {
+      "indexes": [
+        "lineitem#l_quantity"
+      ],
+      "no_cost": 170823.07,
+      "ind_cost": 129235.28
+    },
+    "drop": {
+      "indexes": [
+        "lineitem#l_extendedprice",
+        "lineitem#l_quantity",
+        "lineitem#l_receiptdate",
+        "lineitem#l_returnflag",
+        "lineitem#l_comment"
+      ],
+      "no_cost": 170823.07,
+      "ind_cost": 129235.28
+    },
+    "relaxation": {
+      "indexes": [
+        "lineitem#l_returnflag,l_suppkey",
+        "lineitem#l_quantity"
+      ],
+      "no_cost": 170823.07,
+      "ind_cost": 95093.52
+    },
+    "anytime": {
+      "indexes": [
+        "lineitem#l_returnflag,l_suppkey",
+        "lineitem#l_quantity"
+      ],
+      "no_cost": 170823.07,
+      "ind_cost": 95093.52
+    },
+    "swirl": {
+      "indexes": [
+        "lineitem#l_receiptdate,l_returnflag",
+        "lineitem#l_suppkey,l_receiptdate"
+      ],
+      "no_cost": 170823.07,
+      "ind_cost": 170823.07,
+      "model_id": "s103g_swirlh1gb_150w"
+    },
+    "drlinda": {
+      "indexes": [
+        "part#p_comment",
+        "part#p_container",
+        "lineitem#l_linenumber",
+        "part#p_partkey",
+        "orders#o_comment",
+        "lineitem#l_orderkey",
+        "lineitem#l_discount",
+        "lineitem#l_shipdate",
+        "supplier#s_suppkey",
+        "partsupp#ps_comment",
+        "orders#o_custkey",
+        "lineitem#l_returnflag",
+        "orders#o_totalprice",
+        "supplier#s_name",
+        "supplier#s_nationkey"
+      ],
+      "no_cost": 170823.07,
+      "ind_cost": 156895.07,
+      "model_id": "s103g_drlindah1gb_100w_mi15"
+    },
+    "dqn": {
+      "indexes": [
+        "part#p_brand,p_size",
+        "orders#o_custkey,o_clerk,o_orderkey",
+        "lineitem#l_suppkey,l_linestatus",
+        "lineitem#l_suppkey,l_orderkey,l_quantity,l_returnflag",
+        "partsupp#ps_comment,ps_availqty,ps_suppkey"
+      ],
+      "no_cost": 170823.07,
+      "ind_cost": 160589.41,
+      "model_id": "s103g_dqnh1gb_150w"
+    }
+  }
+]
