@@ -1,0 +1,294 @@
+[
+  {
+    "table": "region",
+    "rows": 5,
+    "columns": [
+      {
+        "name": "r_regionkey",
+        "type": "integer"
+      },
+      {
+        "name": "r_name",
+        "type": "character"
+      },
+      {
+        "name": "r_comment",
+        "type": "character varying"
+      }
+    ]
+  },
+  {
+    "table": "nation",
+    "rows": 25,
+    "columns": [
+      {
+        "name": "n_nationkey",
+        "type": "integer"
+      },
+      {
+        "name": "n_name",
+        "type": "character"
+      },
+      {
+        "name": "n_regionkey",
+        "type": "integer"
+      },
+      {
+        "name": "n_comment",
+        "type": "character varying"
+      }
+    ]
+  },
+  {
+    "table": "supplier",
+    "rows": 10000,
+    "columns": [
+      {
+        "name": "s_suppkey",
+        "type": "integer"
+      },
+      {
+        "name": "s_name",
+        "type": "character"
+      },
+      {
+        "name": "s_address",
+        "type": "character varying"
+      },
+      {
+        "name": "s_nationkey",
+        "type": "integer"
+      },
+      {
+        "name": "s_phone",
+        "type": "character"
+      },
+      {
+        "name": "s_acctbal",
+        "type": "numeric"
+      },
+      {
+        "name": "s_comment",
+        "type": "character varying"
+      }
+    ]
+  },
+  {
+    "table": "part",
+    "rows": 200000,
+    "columns": [
+      {
+        "name": "p_partkey",
+        "type": "integer"
+      },
+      {
+        "name": "p_name",
+        "type": "character varying"
+      },
+      {
+        "name": "p_mfgr",
+        "type": "character"
+      },
+      {
+        "name": "p_brand",
+        "type": "character"
+      },
+      {
+        "name": "p_type",
+        "type": "character varying"
+      },
+      {
+        "name": "p_size",
+        "type": "integer"
+      },
+      {
+        "name": "p_container",
+        "type": "character"
+      },
+      {
+        "name": "p_retailprice",
+        "type": "numeric"
+      },
+      {
+        "name": "p_comment",
+        "type": "character varying"
+      }
+    ]
+  },
+  {
+    "table": "customer",
+    "rows": 150000,
+    "columns": [
+      {
+        "name": "c_custkey",
+        "type": "integer"
+      },
+      {
+        "name": "c_name",
+        "type": "character varying"
+      },
+      {
+        "name": "c_address",
+        "type": "character varying"
+      },
+      {
+        "name": "c_nationkey",
+        "type": "integer"
+      },
+      {
+        "name": "c_phone",
+        "type": "character"
+      },
+      {
+        "name": "c_acctbal",
+        "type": "numeric"
+      },
+      {
+        "name": "c_mktsegment",
+        "type": "character"
+      },
+      {
+        "name": "c_comment",
+        "type": "character varying"
+      }
+    ]
+  },
+  {
+    "table": "orders",
+    "rows": 1500000,
+    "columns": [
+      {
+        "name": "o_orderkey",
+        "type": "integer"
+      },
+      {
+        "name": "o_custkey",
+        "type": "integer"
+      },
+      {
+        "name": "o_orderstatus",
+        "type": "character"
+      },
+      {
+        "name": "o_totalprice",
+        "type": "numeric"
+      },
+      {
+        "name": "o_orderdate",
+        "type": "date"
+      },
+      {
+        "name": "o_orderpriority",
+        "type": "character"
+      },
+      {
+        "name": "o_clerk",
+        "type": "character"
+      },
+      {
+        "name": "o_shippriority",
+        "type": "integer"
+      },
+      {
+        "name": "o_comment",
+        "type": "character varying"
+      }
+    ]
+  },
+  {
+    "table": "partsupp",
+    "rows": 800000,
+    "columns": [
+      {
+        "name": "ps_partkey",
+        "type": "integer"
+      },
+      {
+        "name": "ps_suppkey",
+        "type": "integer"
+      },
+      {
+        "name": "ps_availqty",
+        "type": "integer"
+      },
+      {
+        "name": "ps_supplycost",
+        "type": "numeric"
+      },
+      {
+        "name": "ps_comment",
+        "type": "character varying"
+      }
+    ]
+  },
+  {
+    "table": "lineitem",
+    "rows": 6001215,
+    "columns": [
+      {
+        "name": "l_orderkey",
+        "type": "integer"
+      },
+      {
+        "name": "l_partkey",
+        "type": "integer"
+      },
+      {
+        "name": "l_suppkey",
+        "type": "integer"
+      },
+      {
+        "name": "l_linenumber",
+        "type": "integer"
+      },
+      {
+        "name": "l_quantity",
+        "type": "numeric"
+      },
+      {
+        "name": "l_extendedprice",
+        "type": "numeric"
+      },
+      {
+        "name": "l_discount",
+        "type": "numeric"
+      },
+      {
+        "name": "l_tax",
+        "type": "numeric"
+      },
+      {
+        "name": "l_returnflag",
+        "type": "character"
+      },
+      {
+        "name": "l_linestatus",
+        "type": "character"
+      },
+      {
+        "name": "l_shipdate",
+        "type": "date"
+      },
+      {
+        "name": "l_commitdate",
+        "type": "date"
+      },
+      {
+        "name": "l_receiptdate",
+        "type": "date"
+      },
+      {
+        "name": "l_shipinstruct",
+        "type": "character"
+      },
+      {
+        "name": "l_shipmode",
+        "type": "character"
+      },
+      {
+        "name": "l_comment",
+        "type": "character varying"
+      }
+    ]
+  }
+]
