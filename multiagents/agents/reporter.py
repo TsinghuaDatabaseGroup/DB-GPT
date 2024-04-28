@@ -42,7 +42,7 @@ class ReporterAgent(BaseAgent):
 
         if self.alert_str == "":
             return
-
+        
 
         anomaly_desc_prompt = self.anomaly_desc_prompt.replace("{anomaly_str}", self.alert_str)
         anomaly_desc_message = self.llm._construct_messages(anomaly_desc_prompt)
