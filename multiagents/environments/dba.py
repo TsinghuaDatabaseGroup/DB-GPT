@@ -186,7 +186,7 @@ class DBAEnvironment(BaseModel):
 
         # print self.reporter.report in pretty dict format
         pretty_report = json.dumps(self.reporter.report, indent=4)
-        print(pretty_report + "\n")
+        # print(pretty_report + "\n")
 
         # ================== vanilla model ==================
         # self.reporter.report["anomaly description"]
@@ -691,7 +691,7 @@ class DBAEnvironment(BaseModel):
         set_cur_task("reportGeneration")
         self.reporter.update_diagnosis()
         self.reporter.add_diagnosis_labels()
-        self.reporter.update_solutions()
+        # self.reporter.update_solutions()
         print(
             f'<flow>{{"title": "报告生成", "content": "报告已经生成", "isCompleted": 1, "isRuning": 0}}</flow>')
 

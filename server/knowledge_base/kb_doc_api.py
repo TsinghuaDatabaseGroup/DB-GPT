@@ -65,9 +65,10 @@ def search_docs(
         kb = KBServiceFactory.get_service(knowledge_base_name, vs_type)
         if kb is None:
             continue
-        docs = kb.search_docs(query, top_k, score_threshold)
+        docs = kb.search_docs(query, top_k * 2, score_threshold)
 
         no_replicate_docs = []
+        # import pdb; pdb.set_trace()
         for i, doc in enumerate(docs):
             if 'cause_name' in doc[0].metadata:
                 not_exist = True
@@ -78,6 +79,9 @@ def search_docs(
                 
                 if not_exist == True:
                     no_replicate_docs.append(doc)
+
+        if len(no_replicate_docs) > top_k:
+            no_replicate_docs = no_replicate_docs[:top_k]
 
         data.extend([DocumentWithScore(page_content=x[0].page_content, metadata=x[0].dict()['metadata'], score=x[1]) for x in no_replicate_docs])
 
