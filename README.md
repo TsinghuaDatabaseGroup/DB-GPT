@@ -102,6 +102,8 @@
 
 ## 📰 Updates
 
+- [ ] Docker for a quick and safe use of D-Bot
+
 - [ ] Human Feedback 🔥🔥🔥
 
     * [x] Test-based Diagnosis Refinement with User Feedbacks

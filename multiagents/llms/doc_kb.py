@@ -51,7 +51,7 @@ class DocKnowledgeBase(BaseModel):
     def search_docs(self, query: str, metadata_filter: dict, top_k: int = VECTOR_SEARCH_TOP_K, score_threshold: float = SCORE_THRESHOLD) -> List[Document]:
         data = []
         for kb in self.kbs:
-            docs = kb.search_docs(query, top_k, score_threshold)
+            docs = kb.search_docs(query, top_k * 2, score_threshold)
 
             filtered_docs = []
             for doc in docs:
@@ -63,10 +63,13 @@ class DocKnowledgeBase(BaseModel):
 
             print(f"知识库采用其中的{len(filtered_docs)}条相关文档：")
             # print filtered_docs separated by \n
-            for doc in filtered_docs:
-                print(doc[0].metadata)
-            print('*' * 100)
-
+            # for doc in filtered_docs:
+            #     print(doc[0].metadata)
+            # print('*' * 100)
+        # take the first top_k of docs 
+        if len(data) > top_k:
+            data = data[:top_k]
+        
         return data
 
     

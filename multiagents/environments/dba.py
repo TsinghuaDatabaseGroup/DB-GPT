@@ -186,7 +186,7 @@ class DBAEnvironment(BaseModel):
 
         # print self.reporter.report in pretty dict format
         pretty_report = json.dumps(self.reporter.report, indent=4)
-        print(pretty_report + "\n")
+        # print(pretty_report + "\n")
 
         # ================== vanilla model ==================
         # self.reporter.report["anomaly description"]
