@@ -82,7 +82,7 @@ class UCT_vote_function(base_search_method):
 
         self.restart(agent)
         self.language = language
-
+    
     # def to_json(self):
     
     #     js_obj = {
@@ -91,7 +91,7 @@ class UCT_vote_function(base_search_method):
     #         "simulations": self.simulations,
     #         "tree":self.tree.to_json_recursive()
     #     }
-
+    
     #     js_obj["answer_generation"] = {
     #         "valid_data": False,
     #         "final_answer": "",
@@ -120,10 +120,11 @@ class UCT_vote_function(base_search_method):
 
         # prefix = DEFAULT_POLICY_USER_PROMPT
         # prefix = prefix.replace("{input_description}",self.env.input_description)
-
+        
         tool_observation = [self.tree.root.env.tool_memory.to_string()]
         #prompt = agent._fill_prompt_template(self.tree.root.env.tool, self.tree.root.env.task_description, tool_observation, self.tree.root.messages)
         prompt = agent._fill_prompt_template(self.tree.root.env.task_description, tool_observation)
+        
         self.role_description = agent.role_description
 
         now_time = datetime.datetime.now()
@@ -141,7 +142,7 @@ class UCT_vote_function(base_search_method):
         self.terminal_node = []
         self.total_vote = 0
         self.good_vote = 0
-
+        
         pass
 
     def start(self,
@@ -153,7 +154,7 @@ class UCT_vote_function(base_search_method):
               single_chain_max_step):
         
         '''
-        epsilon_new_node:以多大概率扩展新节点
+        epsilon_new_node：以多大概率扩展新节点
         vote_candidates：每次投票时选择多少candidate
         vote_count：每次投票时投多少票
         '''
@@ -392,6 +393,7 @@ class UCT_vote_function(base_search_method):
         }
 
         message_list = end_node.messages.copy()
+        # message_list = [end_node.messages[0], end_node.messages[-1]]
         message_list.append(new_message)
 
         self.llm.change_messages(self.role_description, message_list)
@@ -408,6 +410,7 @@ class UCT_vote_function(base_search_method):
             if not reflect_message.lower().startswith('reflection:'):
                 reflect_message = f"Reflection: {reflect_message}"
         print(colored(reflect_message,"green"))
+
         add_display_message('expertDiagnosis', self.name, reflect_message, time.strftime("%H:%M:%S", time.localtime()))
 
         now_time = datetime.datetime.now()
@@ -431,9 +434,8 @@ class UCT_vote_function(base_search_method):
         assert now_node.messages != []
         # self.pruned self.env.check_success()
         first_time = True
-
         top_abnormal_metric_values = []
-        
+
         while now_node.get_depth() < single_chain_max_step and not now_node.is_terminal and not now_node.env.status:
             if first_time:
                 '''
@@ -450,8 +452,6 @@ class UCT_vote_function(base_search_method):
                         # child_des = self.get_former_trice(child,temp_node)
                         # former_candidates_des = former_candidates_des + f"<candidate_{k+1}>\n{child_des}"
                         if temp_node.node_type == "Action Input":
-                            
-
                             # if temp_node.description is str:
                             if isinstance(temp_node.description, str):
                                 try:
@@ -513,13 +513,14 @@ class UCT_vote_function(base_search_method):
                     
                     if parsed_response != None:
                         break
+                    
+                    print("Fail to parse the response, retrying ...")
+                    time.sleep(0.5)
 
                     # print(colored(f"- Analyzing with tools ...","grey"))
                     # with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
                     new_message = self.llm.parse(role=self.name, task="mcts_action")
                     #    pbar.update(1)
-
-                    time.sleep(0.5)
 
                 # action --> temp_node
                 temp_node = tree_node()
@@ -543,7 +544,6 @@ class UCT_vote_function(base_search_method):
                     # and append the observation to tool_observation
                     parameters = []
                     knowledge_list = []
-                    # import pdb; pdb.set_trace()
                     if "whether_is_abnormal_metric" in parsed_response.tool:
                         
                         metric_name = self.name.lower()
@@ -580,6 +580,8 @@ class UCT_vote_function(base_search_method):
                         except:
                             parameters = None
 
+
+                    tmp_start_time = time.time()  # capture starting time
                     observation = None
                     if "obtain_start_and_end_time_of_anomaly" in parsed_response.tool and self.alert_dict != [] and self.alert_dict != None:
                         observation = f"The start time is {self.start_time}, and the end time is {self.end_time}."
@@ -609,6 +611,16 @@ class UCT_vote_function(base_search_method):
                                     knowledge_list = result[2]
                             else:
                                 observation = result
+
+                    # tmp_end_time = time.time()  # capture ending time
+                    # tmp_time_diff = tmp_end_time - tmp_start_time
+                    # # tmp_time_diff reserves .2f
+                    # tmp_time_diff = round(tmp_time_diff, 2)
+
+                    # # write into the log file (append to the last line)
+                    # with open("tool_response_time_tmp.txt", "a") as f:
+                    #     f.write(f"{tmp_time_diff}\n")
+
 
                     # tool_observation.append(
                     #     parsed_response.log.strip()

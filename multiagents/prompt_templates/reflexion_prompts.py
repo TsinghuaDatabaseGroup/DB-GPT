@@ -29,6 +29,7 @@ Remember that you are performing a mento-carlo search. Now That you have done an
 The reflection information can be inherit to later trails:
 1.reflections is short, at most 5 sentence.
 2.reflections give knowledge of the task you are performing.
+3.reflections give tool APIs that you can use but not used in the former try.
 Begin!
 '''
 
@@ -37,6 +38,7 @@ MAKE_REFLEXION_USER_PROMPT_zh = '''
 反思的信息可以继承到后续的尝试，反思的信息必须满足：
 1. 反思信息比较短，最多不超过5句话。
 2. 反思能让你更了解自己执行的任务。
+3. 反思能给出工具API，你可以使用但是在前一次尝试中没有使用。
 反思的回复无需调用工具，无需按照模板，没有固定格式。
 '''
 
