@@ -507,7 +507,7 @@ class UCT_vote_function(base_search_method):
                     pass
             
             if "content" in new_message.keys() and new_message["content"] != None:
-
+                
                 for _ in range(3):
                     parsed_response = self.output_parser.parse(new_message)
                     
@@ -521,7 +521,7 @@ class UCT_vote_function(base_search_method):
                     # with tqdm(total=1, bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt}') as pbar:
                     new_message = self.llm.parse(role=self.name, task="mcts_action")
                     #    pbar.update(1)
-
+                
                 # action --> temp_node
                 temp_node = tree_node()
                 temp_node.node_type = "Thought"
