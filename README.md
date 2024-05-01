@@ -118,6 +118,8 @@
 
     * [x] Knowledgebase + Chat Q&A + Diagnosis + Report Replay
 
+- [x] Result Report with reference
+
 - [ ] Extreme Speed Version for localized llms
 
     * [x] [*4-bit* quantized LLM](https://huggingface.co/curtis-sun/diag-baichuan2-4bit/tree/main) (reducing inference time by 1/3)
