@@ -89,4 +89,4 @@ if __name__ == "__main__":
     start_time = time.time()
     asyncio.run(main(args))
     end_time = time.time()
-    print(f"****Diagnose Finished!****\n****During Time{current_diag_time}****")
+    print(f"****Diagnose Finished!****\n****During Time : {end_time - start_time}****")
