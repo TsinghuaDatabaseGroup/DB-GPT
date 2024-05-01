@@ -126,7 +126,7 @@
     {
         "cause_name": "high_memory_usage",
         "desc": "If the memory usage of the database system is high, it can cause slow program execution.",
-        "steps": "First, identify the process with abnormal memory usage. In this case, we only consider the gaussdb process. Refer to the 'SQL ordered by CPU Time' section in the WDR report to analyze and optimize the relevant statements. Alternatively, refer to Chapter 1.3 for short-term CPU abnormalities.",
+        "steps": "First, identify the process with abnormal memory usage. In this case, we only consider the postgresql process. Refer to the 'SQL ordered by CPU Time' section in the WDR report to analyze and optimize the relevant statements. Alternatively, refer to Chapter 1.3 for short-term CPU abnormalities.",
         "metrics": "['memory_usage']"
     },
     {
