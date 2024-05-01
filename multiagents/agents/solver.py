@@ -17,6 +17,7 @@ from multiagents.reasoning_algorithms import base_env
 from multiagents.tools.retriever import api_matcher
 from multiagents.utils.interact import add_display_message, finish_expert_diagnosis
 from multiagents.llms.sentence_embedding import sentence_embedding
+from multiagents.prompt_templates.roundtable_prompts import ROUND_TABLE_PROMPT, ROUND_TABLE_PROMPT_zh
 
 def cosine_similarity(v1, v2):
     # Normalize the vectors to unit vectors
@@ -264,9 +265,9 @@ class SolverAgent(BaseAgent):
     async def review_step(self) -> CriticMessage:
         """Asynchronous version of step"""
         if self.language == 'zh':
-            prompt = "请检查上述诊断结果，并给出必要的建议，以纠正不清晰的诊断和解决方案。无需调用工具，没有固定模板，但请注意，回复必须为markdown格式。"
+            prompt = ROUND_TABLE_PROMPT_zh
         else:
-            prompt = "Please review the above diagnosis results, and give necessary advice to correct the unclear diagnosis and proposed solutions. Note the review should be in markdown format"
+            prompt = ROUND_TABLE_PROMPT
 
         prompt_message = {
             "role": "user",
