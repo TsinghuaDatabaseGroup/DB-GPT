@@ -1,5 +1,6 @@
 import psycopg2
 import sys
+from utils.database import DB_CONFIG, SERVER_CONFIG
 from utils.database import DBArgs,Database
 import random
 import os
@@ -9,23 +10,6 @@ import time
 import paramiko
 from multiprocessing.pool import *
 import promethues
-
-DB_CONFIG = {
-    "dbname":"sysbench",  # 连接到默认的 "postgres" 数据库
-    "user":"test",  # 替换为你的数据库用户名
-    "password":"xxx",  # 替换为你的数据库密码
-    "host":"localhost",  # 替换为你的数据库主机地址
-    "port": 5432,
-    # "dbtype": "postgresql"
-    }
-
-SERVER_CONFIG = {
-    "host": "localhost",
-    "port": 22,
-    "user": 'root',
-    "password": 'xxxx'
-}
-
 
 def init():
     # add the config
