@@ -1,2 +1,0 @@
-from .knowledge_base import knowledge_base_page
-from .knowledge_extraction import knowledge_extraction_page

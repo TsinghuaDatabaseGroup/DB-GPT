@@ -169,7 +169,7 @@ class SolverAgent(BaseAgent):
         print(f"\n[{self.name}] 开始诊断!")
 
         result_node, top_abnormal_metric_values = chain.start(
-            simulation_count=2, epsilon_new_node=0.3, choice_count=1, vote_candidates=2, vote_count=1, single_chain_max_step=24)
+            simulation_count=1, epsilon_new_node=0.3, choice_count=1, vote_candidates=2, vote_count=1, single_chain_max_step=24)
         
         self.knowledge_list = []
         cur_node = result_node

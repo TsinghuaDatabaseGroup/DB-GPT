@@ -8,7 +8,7 @@ from pathlib import Path
 import asyncio
 from configs import (LLM_MODELS, LLM_DEVICE, EMBEDDING_DEVICE,
                      MODEL_PATH, MODEL_ROOT_PATH, ONLINE_LLM_MODEL, logger, log_verbose,
-                     FSCHAT_MODEL_WORKERS, HTTPX_DEFAULT_TIMEOUT)
+                     FSCHAT_MODEL_WORKERS)
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from langchain.chat_models import ChatOpenAI
@@ -454,7 +454,7 @@ def get_prompt_template(type: str, name: str) -> Optional[str]:
 
 
 def set_httpx_config(
-        timeout: float = HTTPX_DEFAULT_TIMEOUT,
+        timeout: float = 300,
         proxy: Union[str, Dict] = None,
 ):
     '''
@@ -573,7 +573,7 @@ def run_in_thread_pool(
 def get_httpx_client(
         use_async: bool = False,
         proxies: Union[str, Dict] = None,
-        timeout: float = HTTPX_DEFAULT_TIMEOUT,
+        timeout: float = 300,
         **kwargs,
 ) -> Union[httpx.Client, httpx.AsyncClient]:
     '''

@@ -12,7 +12,7 @@ from configs import (
 )
 
 import importlib
-from text_splitter import zh_title_enhance as func_zh_title_enhance
+# from text_splitter import zh_title_enhance as func_zh_title_enhance
 import langchain.document_loaders
 from langchain.docstore.document import Document
 from langchain.text_splitter import TextSplitter

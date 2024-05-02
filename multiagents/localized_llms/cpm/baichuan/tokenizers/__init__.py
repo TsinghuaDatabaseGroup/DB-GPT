@@ -1,1 +1,0 @@
-from .baichuan import BaichuanTokenizer

@@ -1,8 +1,0 @@
-2024-03-10 10:08:42 | ERROR | stderr | [32mINFO[0m:     Started server process [[36m2803[0m]
-2024-03-10 10:08:42 | ERROR | stderr | [32mINFO[0m:     Waiting for application startup.
-2024-03-10 10:08:42 | ERROR | stderr | [32mINFO[0m:     Application startup complete.
-2024-03-10 10:08:42 | ERROR | stderr | [32mINFO[0m:     Uvicorn running on [1mhttp://127.0.0.1:20000[0m (Press CTRL+C to quit)
-2024-03-10 10:13:12 | ERROR | stderr | [32mINFO[0m:     Started server process [[36m3224[0m]
-2024-03-10 10:13:12 | ERROR | stderr | [32mINFO[0m:     Waiting for application startup.
-2024-03-10 10:13:12 | ERROR | stderr | [32mINFO[0m:     Application startup complete.
-2024-03-10 10:13:12 | ERROR | stderr | [32mINFO[0m:     Uvicorn running on [1mhttp://127.0.0.1:20000[0m (Press CTRL+C to quit)
