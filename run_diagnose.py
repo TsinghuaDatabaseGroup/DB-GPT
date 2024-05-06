@@ -25,7 +25,7 @@ async def main(args):
     
     # initialize llm agents
     multi_agents, model_type = MultiAgents.from_task(args.agent_conf_name, args)
-
+    
     create_dir_if_not_exists(f"./alert_results/{model_type}")
 
     report, records = await multi_agents.run(args)

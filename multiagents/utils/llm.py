@@ -91,7 +91,7 @@ class GPT_Forward(LLM):
         prompt_batches = [prompt[i:i + batch_size]
                           for i in range(0, len(prompt), batch_size)]
         if not self.disable_tqdm:
-            # print(
+            print(
                 f"[{self.config['name']}] Generating {len(prompt) * n} completions, "
                 f"split into {len(prompt_batches)} batches of size {batch_size * n}")
         text = []
@@ -108,7 +108,7 @@ class GPT_Forward(LLM):
         prompt_batches = [prompt[i:i + batch_size]
                           for i in range(0, len(prompt), batch_size)]
         if not self.disable_tqdm:
-            # print(
+            print(
                 f"[{self.config['name']}] Generating {len(prompt) * n} completions, "
                 f"split into {len(prompt_batches)} batches of size {batch_size * n}")
         res = []
@@ -132,7 +132,7 @@ class GPT_Forward(LLM):
             log_prob_range_batches = [log_prob_range[i:i + batch_size]
                                       for i in range(0, len(log_prob_range), batch_size)]
         if not self.disable_tqdm:
-            # print(
+            print(
                 f"[{self.config['name']}] Getting log probs for {len(text)} strings, "
                 f"split into {len(text_batches)} batches of (maximum) size {batch_size}")
         log_probs = []
@@ -296,7 +296,7 @@ class GPT_Insert(LLM):
         prompt_batches = [prompt[i:i + batch_size]
                           for i in range(0, len(prompt), batch_size)]
         if not self.disable_tqdm:
-            # print(
+            print(
                 f"[{self.config['name']}] Generating {len(prompt) * n} completions, split into {len(prompt_batches)} batches of (maximum) size {batch_size * n}")
         text = []
         for prompt_batch in tqdm(prompt_batches, disable=self.disable_tqdm):
