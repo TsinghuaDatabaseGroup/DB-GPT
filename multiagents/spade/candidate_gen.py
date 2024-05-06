@@ -5,10 +5,10 @@ This file represents the assertion concept and candidate generator. It takes in 
 import json
 import difflib
 
+# import nltk
+# nltk.download("punkt")
 import nltk
-
-nltk.download("punkt")
-
+nltk.data.path.append('./nltk_data')
 from nltk.tokenize import sent_tokenize
 
 from dotenv import load_dotenv
