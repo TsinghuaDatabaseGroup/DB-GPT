@@ -5,6 +5,7 @@ import json
 from string import Template
 from pydantic import Field
 from typing import List
+import numpy as np
 
 from multiagents.message import SolverMessage, Message, CriticMessage
 from multiagents.memory import BaseMemory, ChatHistoryMemory
@@ -15,6 +16,17 @@ from multiagents.reasoning_algorithms import UCT_vote_function, node_to_chain
 from multiagents.reasoning_algorithms import base_env
 from multiagents.tools.retriever import api_matcher
 from multiagents.utils.interact import add_display_message, finish_expert_diagnosis
+from multiagents.llms.sentence_embedding import sentence_embedding
+from multiagents.prompt_templates.roundtable_prompts import ROUND_TABLE_PROMPT, ROUND_TABLE_PROMPT_zh
+
+def cosine_similarity(v1, v2):
+    # Normalize the vectors to unit vectors
+    v1_norm = v1 / np.linalg.norm(v1)
+    v2_norm = v2 / np.linalg.norm(v2)
+    
+    # Compute the cosine similarity by taking the dot product
+    return np.dot(v1_norm, v2_norm)
+
 
 
 class ToolNotExistError(BaseException):
@@ -98,7 +110,7 @@ class SolverAgent(BaseAgent):
     messages: List[dict] = []
 
     async def step(
-        self, former_solution: str, advice: str, task_description: str = "", **kwargs
+        self, former_solution: str, advice: str, task_description: str, args
     ) -> SolverMessage:
 
         # prompt = self._fill_prompt_template(
@@ -120,7 +132,23 @@ class SolverAgent(BaseAgent):
         # Step1: configure attirbutes in the tasksolving environment
         tasksolving_env = wrap_tasksolving_env(
             task_description, self.tools, self.tool_memory)
+        
+        # Step2: compute the embedding of the alert string
+        alert_embedding = sentence_embedding(self.alert_str)
 
+        top_functions = {}
+        for tool_name in self.tools.functions:
+            simialrity = cosine_similarity(self.tools.functions[tool_name]["embedding"], alert_embedding)
+            top_functions[tool_name] = simialrity
+
+        if len(top_functions) > args.max_api_num:
+            top_functions = dict(sorted(top_functions.items(), key=lambda item: item[1], reverse=True)[:2])
+        self.tools.top_functions = {}
+        for tool_name in top_functions:
+            self.tools.top_functions[tool_name] = self.tools.functions[tool_name]
+        self.tools.functions = self.tools.top_functions
+
+        # Step3: run the UCT algorithm to get the diagnosis results
         chain = UCT_vote_function(
             diag_id=self.diag_id,
             enable_prometheus=self.enable_prometheus,
@@ -141,7 +169,7 @@ class SolverAgent(BaseAgent):
         print(f"\n[{self.name}] 开始诊断!")
 
         result_node, top_abnormal_metric_values = chain.start(
-            simulation_count=1, epsilon_new_node=0.3, choice_count=1, vote_candidates=2, vote_count=1, single_chain_max_step=24)
+            simulation_count=2, epsilon_new_node=0.3, choice_count=1, vote_candidates=2, vote_count=1, single_chain_max_step=24)
         
         self.knowledge_list = []
         cur_node = result_node
@@ -237,9 +265,9 @@ class SolverAgent(BaseAgent):
     async def review_step(self) -> CriticMessage:
         """Asynchronous version of step"""
         if self.language == 'zh':
-            prompt = "请检查上述诊断结果，并给出必要的建议，以纠正不清晰的诊断和解决方案。无需调用工具，没有固定模板，但请注意，回复必须为markdown格式。"
+            prompt = ROUND_TABLE_PROMPT_zh
         else:
-            prompt = "Please review the above diagnosis results, and give necessary advice to correct the unclear diagnosis and proposed solutions. Note the review should be in markdown format"
+            prompt = ROUND_TABLE_PROMPT
 
         prompt_message = {
             "role": "user",

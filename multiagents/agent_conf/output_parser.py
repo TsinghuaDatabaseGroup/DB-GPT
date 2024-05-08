@@ -26,26 +26,41 @@ class DBDiag(OutputParser):
         
         cleaned_output = text.strip()
         cleaned_output = re.sub(r"\n+", "\n", cleaned_output)
-        cleaned_output = cleaned_output.split("\\n")
-        if len(cleaned_output) == 1:
-            cleaned_output = cleaned_output[0].split("\n")
-        
-        if not (len(cleaned_output) >= 3 and (
-            cleaned_output[0].startswith("Thought")
-            and cleaned_output[1].startswith("Action")
-            and (cleaned_output[2].startswith("Action Input") or cleaned_output[2].startswith("Action input"))
-        )):
-            # print the error
+
+        matches = list(re.finditer(r'\n|\\n', cleaned_output))
+
+        # cleaned_output = cleaned_output.split("\\n")
+        # if len(cleaned_output) == 1:
+        #     cleaned_output = cleaned_output[0].split("\n")
+        if len(matches) > 1:
+            raw_thought = cleaned_output[:matches[0].start()]
+            raw_action = cleaned_output[matches[0].end():matches[1].start()]
+            raw_action_input = cleaned_output[matches[1].end():]
+        else:
             return None
 
-        action = cleaned_output[1][len("Action:") :].strip()
-        action_input = cleaned_output[2][len("Action Input:") :].strip()
+        cleaned_output = [raw_thought, raw_action, raw_action_input]
+
+        if not (cleaned_output[0].lower().startswith("thought") and
+                cleaned_output[1].lower().startswith("action") and
+                (cleaned_output[2].lower().startswith("action input"))):
+            return None
+
+        # action = cleaned_output[1][len("Action:") :].strip()
+        # action_input = cleaned_output[2][len("Action Input:") :].strip()
+        # Extract action after "Action:" (case-insensitive)
+        action_split = re.split(r'(?i)^action:', cleaned_output[1], maxsplit=1)
+        action = action_split[1].strip() if len(action_split) > 1 else ""
+
+        # Extract action input after "Action Input:" (case-insensitive)
+        action_input_split = re.split(r'(?i)^action input:', cleaned_output[2], maxsplit=1)
+        action_input = action_input_split[1].strip() if len(action_input_split) > 1 else ""
 
         #print(colored("new action", "red"))
         #print(cleaned_output)
 
-        if action in ["Speak"]:
-            
+        if action.lower() in ["speak"]:
+
             action_input = re.sub(r"\n+", "\n", action_input)
             action_input = action_input.replace("\\\"", "\"")
 

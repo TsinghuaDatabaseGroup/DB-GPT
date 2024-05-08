@@ -31,17 +31,17 @@ def load_memory(memory_config: Dict):
     return memory_registry.build(memory_type, **memory_config)
 
 
-def load_tools(tool_config: List[Dict], max_api_num, agent_name):
+def load_tools(tool_config: List[Dict], agent_name):
 
     if len(tool_config) == 0:
         return []
 
-    caller = APICaller()
+    caller = APICaller() # adopt tool matching model
 
+    # register all the apis from required tools
     for tool in tool_config:
-
         api_module = importlib.import_module(f"""multiagents.tools.{tool["tool_name"]}.api""")
-        register_functions_from_module(api_module, caller, max_api_num, agent_name)
+        register_functions_from_module(api_module, caller, agent_name)
 
     return caller
 
@@ -87,12 +87,11 @@ def prepare_task_config(task, args):
         if agent_configs.get("tool_memory", None) is not None:
             agent_configs["tool_memory"] = load_memory(agent_configs["tool_memory"])
         llm = load_llm(agent_configs.get("llm", "xxxx"))
+
         agent_configs["llm"] = llm
-
-        agent_configs["tools"] = load_tools(agent_configs.get("tools", []), args.max_api_num, agent_configs['name'])
-
+        agent_configs["tools"] = load_tools(agent_configs.get("tools", []), agent_configs['name'])
         agent_configs["name"] = agent_configs['name']
-
+        
         # 临时给qwen写了个output parser, 不会影响之前的（主要是role assigner的config里有个dict）
         if isinstance(agent_configs.get("output_parser", None), str):
             agent_configs["output_parser"] = output_parser_registry.build(agent_configs["output_parser"])

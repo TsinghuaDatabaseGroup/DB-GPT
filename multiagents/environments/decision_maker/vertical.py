@@ -23,13 +23,12 @@ class VerticalDecisionMaker(BaseDecisionMaker):
         task_description: str,
         previous_plan: str = "No solution yet.",
         advice: str = "No advice yet.",
-        *args,
-        **kwargs,
+        args: dict = {}
     ) -> List[dict]:
                         
         results = await asyncio.gather(
             *[
-                agent.step(previous_plan, advice, task_description)
+                agent.step(previous_plan, advice, task_description, args)
                 for agent in agents
             ]
         )

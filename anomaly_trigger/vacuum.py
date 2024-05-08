@@ -34,7 +34,6 @@ class Database():
         self.args = args
         self.conn = self.resetConn(timeout)
 
-
         # self.schema = self.compute_table_schema()
 
     def resetConn(self, timeout=-1):

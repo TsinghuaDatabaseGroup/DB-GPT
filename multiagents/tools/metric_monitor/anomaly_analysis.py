@@ -102,7 +102,7 @@ def metric_analysis_results(agent_name, kb_name, alert_metric, diag_id, enable_p
 
     docs_query = [metric_name for metric_name in top5_abnormal_metrics]
 
-    matched_docs = search_docs(str(docs_query), knowledge_base_name=kb_name, top_k=5, score_threshold=0.4)
+    matched_docs = search_docs(str(docs_query), knowledge_base_name=kb_name, top_k=2, score_threshold=0.4)
 
     docs_str = ""
     knowledge_list = []
@@ -176,23 +176,21 @@ def workload_analysis_results(agent_name, kb_name, diag_id):
         else:
             workload_str = f"The workload queries are:\n{workload_state}\n\n"
 
-        matched_docs = search_docs("workload", knowledge_base_name=kb_name, top_k=5, score_threshold=0.4)
+        matched_docs = search_docs("workload", knowledge_base_name=kb_name, top_k=2, score_threshold=0.4)
 
         if matched_docs != []:
-            docs_str = ""
-            if matched_docs != []:
-                matched_docs_str = ""
-                for i, matched_doc in enumerate(matched_docs):
-                    if 'desc' in matched_doc.metadata:
-                        matched_docs_str = matched_docs_str + f"{i+1}. {matched_doc.metadata['desc']} \n"
-                        knowledge = copy.deepcopy(matched_doc.metadata)
-                        knowledge['kb_name'] = kb_name
-                        knowledge['type'] = 'workload'
-                        knowledge_list.append(knowledge)
-                if LANGUAGE == "zh":
-                    docs_str = f"匹配到的与负载相关的知识是：\n{matched_docs_str}\n\n"
-                else:
-                    docs_str = f"The matched knowledge for analyzing above workload queries is:\n{matched_docs_str}\n\n"
+            matched_docs_str = ""
+            for i, matched_doc in enumerate(matched_docs):
+                if 'desc' in matched_doc.metadata:
+                    matched_docs_str = matched_docs_str + f"{i+1}. {matched_doc.metadata['desc']} \n"
+                    knowledge = copy.deepcopy(matched_doc.metadata)
+                    knowledge['kb_name'] = kb_name
+                    knowledge['type'] = 'workload'
+                    knowledge_list.append(knowledge)
+            if LANGUAGE == "zh":
+                docs_str = f"匹配到的与负载相关的知识是：\n{matched_docs_str}\n\n"
+            else:
+                docs_str = f"The matched knowledge for analyzing above workload queries is:\n{matched_docs_str}\n\n"
 
             workload_str = workload_str + docs_str
     else:
@@ -220,24 +218,23 @@ def slow_query_analysis_results(agent_name, kb_name, diag_id):
             concat_slow_queries = "\n".join([f'{i+1}. The slow query statement is "{sql}"' for i, sql in enumerate(slow_queries)])
             slow_queries_str = f"The slow queries that should be optimized are:\n{concat_slow_queries}\n\n"
 
-        matched_docs = search_docs("slow query", knowledge_base_name=kb_name, top_k=5, score_threshold=0.4)
+        matched_docs = search_docs("slow query", knowledge_base_name=kb_name, top_k=2, score_threshold=0.4)
 
         if matched_docs != []:
-            docs_str = ""
-            if matched_docs != []:
-                matched_docs_str = ""
-                for i, matched_doc in enumerate(matched_docs):
-                    if 'desc' in matched_doc.metadata:
-                        matched_docs_str = matched_docs_str + f"{i+1}. {matched_doc.metadata['desc']} \n"
-                        knowledge = copy.deepcopy(matched_doc.metadata)
-                        knowledge['kb_name'] = kb_name
-                        knowledge['type'] = 'slow_query'
-                        knowledge_list.append(knowledge)
 
-                if LANGUAGE == "zh":
-                    docs_str = f"匹配到的与慢查询相关的知识是：\n{matched_docs_str}\n\n"
-                else:
-                    docs_str = f"The matched knowledge for analyzing above slow queries is:\n{matched_docs_str}\n\n"
+            matched_docs_str = ""
+            for i, matched_doc in enumerate(matched_docs):
+                if 'desc' in matched_doc.metadata:
+                    matched_docs_str = matched_docs_str + f"{i+1}. {matched_doc.metadata['desc']} \n"
+                    knowledge = copy.deepcopy(matched_doc.metadata)
+                    knowledge['kb_name'] = kb_name
+                    knowledge['type'] = 'slow_query'
+                    knowledge_list.append(knowledge)
+
+            if LANGUAGE == "zh":
+                docs_str = f"匹配到的与慢查询相关的知识是：\n{matched_docs_str}\n\n"
+            else:
+                docs_str = f"The matched knowledge for analyzing above slow queries is:\n{matched_docs_str}\n\n"
 
             slow_queries_str = slow_queries_str + docs_str
         else:

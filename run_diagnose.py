@@ -8,7 +8,6 @@ import asyncio
 import time
 from pathlib import Path
 
-
 def create_dir_if_not_exists(dir_path):
     if not os.path.exists(dir_path):
         path = Path(dir_path)
@@ -23,7 +22,7 @@ async def main(args):
 
     create_dir_if_not_exists(f"./alert_results/{str(current_diag_time)}")
     print('<flow>{"title": "初始化专家角色", "content": "", "isCompleted": 0, "isRuning": 1}</flow>')
-
+    
     # initialize llm agents
     multi_agents, model_type = MultiAgents.from_task(args.agent_conf_name, args)
 
@@ -90,4 +89,4 @@ if __name__ == "__main__":
     start_time = time.time()
     asyncio.run(main(args))
     end_time = time.time()
-    print(f"****Diagnose Finished!****\n****During Time{current_diag_time}****")
+    print(f"****Diagnose Finished!****\n****During Time : {end_time - start_time}****")

@@ -295,7 +295,7 @@ class DBAEnvironment(BaseModel):
         
         # ================== Expert Diagnosis ==================
         # count on these experts to diagnose for the alert        
-        report = await self.decision_making(selected_experts, None, previous_plan, advice) # plans: the list of diagnosis messages
+        report = await self.decision_making(selected_experts, None, previous_plan, args, advice) # plans: the list of diagnosis messages
 
         feedbacks = []
         knowledge_list = []
@@ -444,6 +444,7 @@ class DBAEnvironment(BaseModel):
         agents: List[BaseAgent],
         manager: List[BaseAgent],
         previous_plan: str,
+        args,
         advice: str = "No advice yet.",
     ) -> List[SolverMessage]:
         # TODO: plan should be string or a special type of object?
@@ -454,7 +455,8 @@ class DBAEnvironment(BaseModel):
             agents=agents,
             task_description=self.task_description,
             previous_plan=previous_plan,
-            advice=advice)
+            advice=advice,
+            args=args)
 
         expert_data = []
         for expert in agents:

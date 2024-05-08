@@ -104,7 +104,7 @@ prompts:
     Action: optimize_index_selection
     Action Input: {"start_time": ${start_time},"end_time": ${end_time}}
 
-    After you have got the observation from match_diagnose_knowledge, analyze the root causes and  announce it to other experts, and use the following format:
+    After you have got the observation from match_diagnose_knowledge, analyze the root causes and announce it to other experts, and use the following format:
     Thought: I now know the root cause of the anomaly.
     Action: Speak
     Action Input: ({"diagnose": the root causes you found, "solution": the optimization solutions for the root causes split by '\n', "knowledge": the diagnosis knowledge you used})

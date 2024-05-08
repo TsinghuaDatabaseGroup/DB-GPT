@@ -85,10 +85,8 @@ def match_diagnose_knowledge(
     if kb_name == "":
         logging.error(f"The expert name {candidate_agent_name} is not found in knowledge base!")
 
-        # alerts and metrics
-    alert_and_metric_str, abnormal_metric_detailed_values, metrc_knowledge_list = metric_analysis_results(agent_name, kb_name, alert_metric,
-                                                                                    diag_id, enable_prometheus,
-                                                                                    start_time, end_time)
+    # alerts and metrics
+    alert_and_metric_str, abnormal_metric_detailed_values, metrc_knowledge_list = metric_analysis_results(agent_name, kb_name, alert_metric, diag_id, enable_prometheus, start_time, end_time)
 
     if "network" in agent_name:
         if LANGUAGE == "zh":
