@@ -223,7 +223,7 @@ pnpm install
 
 ### 2. 初始化知识库和配置文件
 
-复制配置文件
+复制配置文件，注意查看每个文件的注释，根据自己需求修改
 ```shell
 $ python copy_config_example.py
 # 生成的配置文件在 configs/ 目录下
@@ -234,6 +234,23 @@ $ python copy_config_example.py
 # prompt_config.py 是prompt配置文件，主要是LLM对话和知识库的prompt。
 # server_config.py 是服务配置文件，主要是服务的端口号等。
 ```
+
+**!!! 注意，请在初始化知识库之前修改以下配置，否则可能会导致数据库初始化失败。**
+
+* model_config.py
+```shell
+# EMBEDDING_MODEL   向量化模型，如果选择本地模型，需要按需下载到根目录。
+# LLM_MODELS        LLM，如果选择本地模型，需要按需下载到根目录。
+# ONLINE_LLM_MODEL  如果使用线上模型，需要修改配置。
+```
+
+* server_config.py
+```shell
+# WEBUI_SERVER.api_base_url   需要关注这个参数，如果是在服务器上部署项目，则需要修改配置。
+```
+
+
+
 初始化知识库
 ```shell
 $ python init_database.py --recreate-vs

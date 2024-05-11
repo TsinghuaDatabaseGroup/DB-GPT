@@ -279,6 +279,21 @@ $ python copy_config_example.py
 # server_config.py is the server configuration file, mainly for server port numbers, etc.
 ```
 
+**!!! Attention, please modify the following configurations before initializing the knowledge base, otherwise, it may cause the database initialization to fail.**
+
+* model_config.py
+```shell
+# EMBEDDING_MODEL   Vectorization model, if choosing a local model, it needs to be downloaded to the root directory as required.
+# LLM_MODELS        LLM, if choosing a local model, it needs to be downloaded to the root directory as required.
+# ONLINE_LLM_MODEL  If using an online model, you need to modify the configuration.
+```
+
+* server_config.py
+```shell
+# WEBUI_SERVER.api_base_url   Pay attention to this parameter, if deploying the project on a server, then you need to modify the configuration.
+```
+
+
 - In [diagnose_config.py](configs/diagnose_config.py.example), we set [config.yaml](multiagents/agent_conf/config.yaml) as the default LLM expert configuration file. 
 
 ```Python
