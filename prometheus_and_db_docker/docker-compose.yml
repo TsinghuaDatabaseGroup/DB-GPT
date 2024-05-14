@@ -26,6 +26,8 @@ services:
       POSTGRES_PASSWORD: Test123_456
       POSTGRES_DB: sysbench
       POSTGRES_PORT: 5432
+    ports:
+      - 5432:5432
 
   node_exporter:
     image: prom/node-exporter
