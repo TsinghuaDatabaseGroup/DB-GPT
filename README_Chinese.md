@@ -21,6 +21,7 @@
   <a href="#-quickstart">快速开始</a> •
   <a href="#-anomalies">警报与异常</a> •  
   <a href="#-customize">知识与工具</a> • 
+  <a href="#-docker">Docker部署</a> •   
   <a href="#-FAQ">常见问题</a> •  
   <a href="#-community">社区</a> •  
   <a href="#-contributors">贡献者</a>
@@ -306,6 +307,8 @@ $ python startup.py -a
 
 <span id="-prerequisites"></span>
 
+通过使用<a href="#-docker">Docker部署</a>节省时间。
+
 #### 1. 先决条件
 
 - (可选) 在 PostgreSQL 中启用慢查询日志 ([链接](https://ubiq.co/database-blog/how-to-enable-slow-query-log-in-postgresql/))
@@ -429,6 +432,48 @@ python doc2knowledge.py
 #### 索引顾问工具
 
 我们使用db2advis启发式算法为给定的工作负载推荐索引。函数api是[optimize_index_selection](multiagents/tools/index_advisor)。
+
+
+<span id="-docker"></span>
+
+## 💁 Docker 启动
+
+您可以使用 Docker 快速、安全地使用监控平台和数据库。
+
+### 1. 安装 Docker 和 Docker-Compose
+
+请参考教程（例如在 [CentOS](https://vocus.cc/article/643e9337fd89780001b414fc) 上）安装 Docker 和 Docker-Compose。
+
+## 2. 启动服务
+
+我们使用 docker-compose 来构建和管理多个用于指标监控（prometheus）、告警（alertmanager）、数据库（postgres_db）和告警记录（python_app）的 Docker 容器。
+
+```shell
+cd prometheus_and_db_docker
+docker-compose -p prometheus_service -f docker-compose.yml up --build
+```
+
+> 下次启动 prometheus_service 时，您可以直接执行 "docker-compose -p prometheus_service -f docker-compose.yml up"，而无需重新构建 Docker 容器。
+
+## 3. 运行异常文件并生成新告警
+
+在*anomaly_trigger/utils/database.py*中配置设置（例如，将 "host" 替换为服务器的 IP 地址），并执行异常生成命令，如：
+
+```shell
+cd anomaly_trigger
+python3 main.py --anomaly MISSING_INDEXES --threads 100 --ncolumn 20 --colsize 100 --nrow 20000
+```
+
+> 如果执行后没有记录告警，您可能需要修改参数值，例如 "--threads 100"。
+
+在收到从 prometheus_service 发送到 http://127.0.0.1:8023/alert 的请求后，告警摘要将记录在 prometheus_and_db_docker/alert_history.txt 中，如：
+
+<p align="center">
+    <img src="img/example_alert.png" width="800px">
+</p>
+
+这样，您可以使用标记为 resolved 的告警作为新的异常（存放在 ./diagnostic_files 目录下）由 d-bot 进行诊断。
+
 
 ## 💁 常见问题解答
 

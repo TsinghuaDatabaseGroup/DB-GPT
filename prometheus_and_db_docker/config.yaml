@@ -1,0 +1,4 @@
+PROMETHEUS:
+  api_url: http://prometheus:9090/
+  postgresql_exporter_instance: pg_exporter:9187
+  node_exporter_instance: node_exporter:9100

@@ -1,0 +1,11 @@
+version: '3'
+services:
+  python_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - 8023:8023
+

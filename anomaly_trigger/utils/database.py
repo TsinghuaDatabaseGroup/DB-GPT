@@ -11,7 +11,7 @@ from multiprocessing.pool import *
 DB_CONFIG = {
     "dbname":"sysbench",  # 连接到默认的 "postgres" 数据库
     "user":"test",  # 替换为你的数据库用户名
-    "password":"xxx",  # 替换为你的数据库密码
+    "password":"Test123_456",  # 替换为你的数据库密码
     "host":"localhost",  # 替换为你的数据库主机地址
     "port": 5432,
     # "dbtype": "postgresql"

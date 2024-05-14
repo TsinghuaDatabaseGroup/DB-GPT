@@ -33,6 +33,7 @@
   <a href="#-quickstart">QuickStart</a> •
   <a href="#-anomalies">Alerts And Anomalies</a> •  
   <a href="#-customize">Knowledge And Tools</a> • 
+   <a href="#-docker">Dockers</a> •  
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-citation">Citation</a> •    
@@ -355,6 +356,8 @@ If started correctly, you will see the following interface
 
 #### 1. Prerequisites
 
+Save time by trying out the <a href="#-docker">docker deployment</a>.
+
 - (optional) Enable slow query log in PostgreSQL ([link](https://ubiq.co/database-blog/how-to-enable-slow-query-log-in-postgresql/))
 
     > (1) For *"systemctl restart postgresql"*, the service name can be different (e.g., postgresql-12.service); 
@@ -568,6 +571,47 @@ python knowledge_clustering.py
 
 #### Index Advisor Tool
 We utilize db2advis heuristic algorithm to recommend indexes for given workloads. The function api is [optimize_index_selection](multiagents/tools/index_advisor).
+
+
+<span id="-docker"></span>
+
+## 💁 Docker Start
+
+You can use docker for a quick and safe use of the monitoring platform and database.
+
+### 1. Install Docker and Docker-Compose
+
+Refer to tutorials (e.g., on [CentOS](https://vocus.cc/article/643e9337fd89780001b414fc)) for installing Docker and Docoker-Compose.
+
+## 2. Start service
+
+We use docker-compose to build and manage multiple dockers for metric monitoring (prometheus), alert (alertmanager), database (postgres_db), and alert recoding (python_app).
+
+```shell
+cd prometheus_and_db_docker
+docker-compose  -p prometheus_service  -f docker-compose.yml up --build
+```
+
+> Next time starting the prometheus_service, you can directly execute *"docker-compose  -p prometheus_service  -f docker-compose.yml up"* without building the dockers.
+
+## 3. Run anomaly files and generate new alerts
+
+Configure the settings in *anomaly_trigger/utils/database.py* (e.g., replace "host" with the IP address of the server) and execute an anomaly generation command, like:
+
+```shell
+cd anomaly_trigger
+python3 main.py --anomaly MISSING_INDEXES --threads 100 --ncolumn 20 --colsize 100 --nrow 20000
+```
+
+> You may need to modify the arugment values like "--threads 100" if no alert is recorded after execution.
+
+After receiving a request sent to http://127.0.0.1:8023/alert from *prometheus_service*, the alert summary will be recorded in *prometheus_and_db_docker/alert_history.txt*, like:
+
+<p align="center">
+    <img src="img/example_alert.png" width="800px">
+</p>
+
+This way, you can use the *alert marked as `resolved'* as a new anomaly (under the *./diagnostic_files* directory) for diagnosis by d-bot.
 
 
 <span id="-FAQ"></span>

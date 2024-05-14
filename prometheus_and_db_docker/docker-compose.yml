@@ -1,0 +1,64 @@
+services:
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./node_rules.yml:/usr/local/prometheus/rules/node_rules.yml
+      - ./pgsql_rules.yml:/usr/local/prometheus/rules/pgsql_rules.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+
+  alertmanager:
+    image: prom/alertmanager
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+    ports:
+      - 9093:9093
+
+  postgres_db:
+    image: postgres:12.11
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: Test123_456
+      POSTGRES_DB: sysbench
+      POSTGRES_PORT: 5432
+
+  node_exporter:
+    image: prom/node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /run/udev/data:/run/udev/data:ro  # 添加这一行
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      # - '--collector.filesystem.ignored-mount-points=^/run/user($$|/)'
+    ports:
+      - 9100:9100
+
+  pg_exporter:
+    #image: wrouesnel/postgres_exporter
+    image: vonng/pg_exporter:v0.6.1
+    environment:
+      PG_EXPORTER_URL: 'postgresql://test:Test123_456@postgres_db:5432/sysbench?sslmode=disable'
+    ports:
+      - 9187:9187
+
+  python_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - 8023:8023
+
+networks:
+  default:
+    name: agent_network

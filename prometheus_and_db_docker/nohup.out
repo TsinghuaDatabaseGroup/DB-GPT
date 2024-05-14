@@ -1,0 +1,9 @@
+INFO:     Started server process [72580]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8023 (Press CTRL+C to quit)
+INFO:     127.0.0.1:38470 - "GET /test HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50228 - "GET /alert?query=100+-+%28avg+by+%28instance%29+%28irate%28node_cpu_seconds_total%7Binstance%3D%22172.27.58.65%3A9100%22%2Cmode%3D%22idle%22%7D%5B5m%5D%29%29+%2A+100%29 HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:50232 - "GET /alert?query=%28node_memory_MemTotal_bytes%7Binstance%3D%22172.27.58.65%3A9100%22%7D+-+node_memory_MemAvailable_bytes%7Binstance%3D%22172.27.58.65%3A9100%22%7D%29+%2F+node_memory_MemTotal_bytes%7Binstance%3D%22172.27.58.65%3A9100%22%7D+%2A+100 HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:57652 - "GET /alert?query=100+-+%28avg+by+%28instance%29+%28irate%28node_cpu_seconds_total%7Binstance%3D%22172.27.58.65%3A9100%22%2Cmode%3D%22idle%22%7D%5B5m%5D%29%29+%2A+100%29 HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:57656 - "GET /alert?query=%28node_memory_MemTotal_bytes%7Binstance%3D%22172.27.58.65%3A9100%22%7D+-+node_memory_MemAvailable_bytes%7Binstance%3D%22172.27.58.65%3A9100%22%7D%29+%2F+node_memory_MemTotal_bytes%7Binstance%3D%22172.27.58.65%3A9100%22%7D+%2A+100 HTTP/1.1" 405 Method Not Allowed
