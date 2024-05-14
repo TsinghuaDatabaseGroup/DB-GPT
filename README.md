@@ -105,6 +105,10 @@
 
 - [ ] Docker for a quick and safe use of D-Bot
 
+    * [x] Metric Monitoring (prometheus), Database (postgres_db), Alert (alertmanager) and Alert Recording (python_app).
+
+    * [ ] D-bot (still too large, with over 12GB)
+
 - [ ] Human Feedback 🔥🔥🔥
 
     * [x] Test-based Diagnosis Refinement with User Feedbacks
@@ -575,7 +579,7 @@ We utilize db2advis heuristic algorithm to recommend indexes for given workloads
 
 <span id="-docker"></span>
 
-## 💁 Docker Start
+## 🐳 Docker Start
 
 You can use docker for a quick and safe use of the monitoring platform and database.
 
@@ -585,7 +589,7 @@ Refer to tutorials (e.g., on [CentOS](https://vocus.cc/article/643e9337fd8978000
 
 ## 2. Start service
 
-We use docker-compose to build and manage multiple dockers for metric monitoring (prometheus), alert (alertmanager), database (postgres_db), and alert recoding (python_app).
+We use docker-compose to build and manage multiple dockers for metric monitoring (prometheus), alert (alertmanager), database (postgres_db), and alert recording (python_app).
 
 ```shell
 cd prometheus_and_db_docker

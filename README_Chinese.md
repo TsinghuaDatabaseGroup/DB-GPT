@@ -80,6 +80,10 @@
 
 - [ ] Docker一键部署
 
+    * [x] 指标监控（prometheus）、数据库（postgres_db）、告警（alertmanager）和告警记录（python_app）
+
+    * [ ] D-bot (目前容器过大，超过12GB)
+
 - [ ] 用户反馈机制 🔥🔥🔥
 
     * [x] 基于用户反馈生成测试优化诊断
@@ -436,7 +440,7 @@ python doc2knowledge.py
 
 <span id="-docker"></span>
 
-## 💁 Docker 启动
+## 🐳 Docker 启动
 
 您可以使用 Docker 快速、安全地使用监控平台和数据库。
 
