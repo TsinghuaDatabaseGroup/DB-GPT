@@ -16,7 +16,6 @@ def create_dir_if_not_exists(dir_path):
         except Exception as e:
             print(f"Failed to create directory {dir_path}: {e}")
 
-
 async def main(args):
     global current_diag_time
 

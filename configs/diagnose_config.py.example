@@ -43,3 +43,10 @@ MYSQL_CONFIG = {
   "user": "XX",
   "password": "XXXXXX",
 }
+
+SERVER_CONFIG = {
+  "server_address": "XX.XX.XX.XX",
+  "username": "root",
+  "password": "XXXXXX",
+  "remote_directory": "/root/benchmark"
+}

@@ -83,8 +83,8 @@ def processed_values(data):
 
 
 def prometheus(url, params):
-    conf = read_yaml('PROMETHEUS', 'config.yaml')
-    res = requests.get(url=conf.get('api_url') + url, params=params)
+    # conf = read_yaml('PROMETHEUS', 'config.yaml')
+    res = requests.get(url=prometheus_conf.get('api_url') + url, params=params)
 
     return res.json()
 
@@ -210,7 +210,7 @@ def fetch_prometheus_metrics(args):
     for alert in alerts:
         # 获取alert的startsAt属性，并将其转换为UTC时间格式
         alert_time = alert.get("startsAt")
-        alert_time = alert_time[:-4] + 'Z'
+        alert_time = alert_time# [:-4] + 'Z'
 
         start_time = datetime.strptime(alert_time, "%Y-%m-%dT%H:%M:%S.%fZ").timestamp() - 60 * 5
         end_time = datetime.strptime(alert_time, "%Y-%m-%dT%H:%M:%S.%fZ").timestamp() + 60

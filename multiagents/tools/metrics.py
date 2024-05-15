@@ -37,7 +37,6 @@ dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)
 db = Database(dbargs, timeout=-1)
 WORKLOAD_FILE_NAME = "workload_info.json"
 
-
 def get_workload_statistics():
     with open(WORKLOAD_FILE_NAME, 'r') as f:
         info = json.load(f)
