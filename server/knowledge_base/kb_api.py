@@ -24,7 +24,6 @@ def create_kb(
         info: str = Body(default=""),
         embed_model: str = Body(EMBEDDING_MODEL),
         ) -> BaseResponse:
-    print("====DEFAULT_VS_TYPES===", DEFAULT_VS_TYPES)
     # Create selected knowledge base
     if not validate_kb_name(knowledge_base_name):
         return BaseResponse(code=403, msg="Don't attack me")

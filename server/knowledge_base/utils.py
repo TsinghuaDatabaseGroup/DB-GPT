@@ -149,7 +149,7 @@ def get_loader(loader_name: str, file_path: str, loader_kwargs: Dict = None):
     '''
     loader_kwargs = loader_kwargs or {}
     try:
-        if loader_name in ["RapidOCRPDFLoader", "RapidOCRLoader","FilteredCSVLoader"]:
+        if loader_name in ["RapidOCRPDFLoader", "RapidOCRLoader", "FilteredCSVLoader", "JSONLoader"]:
             document_loaders_module = importlib.import_module('document_loaders')
         else:
             document_loaders_module = importlib.import_module('langchain.document_loaders')
@@ -177,13 +177,8 @@ def get_loader(loader_name: str, file_path: str, loader_kwargs: Dict = None):
         ## TODO：支持更多的自定义CSV读取逻辑
   
     elif loader_name == "JSONLoader":
-        loader_kwargs.setdefault("jq_schema", ".[]")
         loader_kwargs.setdefault("content_key", "metrics")
-        loader_kwargs.setdefault("text_content", True)
         loader_kwargs.setdefault("metadata_func", metadata_func)
-    elif loader_name == "JSONLinesLoader":
-        loader_kwargs.setdefault("jq_schema", ".")
-        loader_kwargs.setdefault("text_content", True)
     
 
     loader = DocumentLoader(file_path, **loader_kwargs)

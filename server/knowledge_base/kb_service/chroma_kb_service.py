@@ -97,10 +97,19 @@ class ChromaKBService(KBService):
                    ) -> List[Dict]:
         print(f"server.knowledge_base.kb_service.chroma_kb_service.do_add_doc 输入的docs参数长度为:{len(docs)}")
         print("*" * 100)
-        texts = [doc.page_content for doc in docs]
-        metadatas = [doc.metadata for doc in docs]
+        try:
+            # 使用列表推导式一次性提取texts和metadatas，以提升效率和可读性
+            texts, metadatas = zip(*[(doc.page_content, doc.metadata) for doc in docs])
+        except ValueError:
+            # 如果docs是空的，zip会引发ValueError。这里处理这种情况，避免程序崩溃。
+            texts, metadatas = [], []
+
+        # 向chroma添加文本及其元数据
         ids = self.chroma.add_texts(texts, metadatas)
-        doc_infos = [{"id": id, "metadata": metadata} for id, metadata in zip(ids, metadatas)]
+
+        # 结合ids和metadatas创建doc_infos。这里直接使用zip而不进行额外的检查，
+        # 因为假定add_texts成功返回与输入等长的ids列表。
+        doc_infos = [{"id": _id, "metadata": metadata} for _id, metadata in zip(ids, metadatas)]
         print("写入数据成功.")
         print("*"*100)
         return doc_infos

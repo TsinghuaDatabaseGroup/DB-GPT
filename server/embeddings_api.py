@@ -18,13 +18,12 @@ def embed_texts(
     对文本进行向量化。返回数据格式：BaseResponse(data=List[List[float]])
     TODO: 也许需要加入缓存机制，减少 token 消耗
     '''
+
     try:
         if embed_model in list_embed_models(): # 使用本地Embeddings模型
             from server.utils import load_local_embeddings
-
             embeddings = load_local_embeddings(model=embed_model)
             return BaseResponse(data=embeddings.embed_documents(texts))
-
         if embed_model in list_online_embed_models(): # 使用在线API
             config = get_model_worker_config(embed_model)
             worker_class = config.get("worker_class")

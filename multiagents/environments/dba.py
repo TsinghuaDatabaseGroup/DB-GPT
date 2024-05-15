@@ -390,7 +390,7 @@ class DBAEnvironment(BaseModel):
     def cite_report(self, root_cause, solutions, knowledge_list, feedbacks):
         citations = {}
         for k in knowledge_list:
-            citations[k['desc']] = generate_quote_content('[{index}] ' + f'{k["source"]}.N.{k["seq_num"]}.', k["desc"])
+            citations[k['desc']] = generate_quote_content('[{index}] ' + f'{k["source"]}.', k["desc"])
 
         for feedback in feedbacks:
             if feedback['auto']:
