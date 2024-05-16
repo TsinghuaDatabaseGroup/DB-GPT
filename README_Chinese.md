@@ -348,9 +348,10 @@ python3 run_diagnose.py --anomaly_file ./test_cases/testing_cases_5.json --confi
 
 我们支持 Prometheus 的 AlertManager。您可以在这里找到有关如何配置 alertmanager 的更多信息：[alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/)。
 
-- 我们提供与 AlertManager 相关的配置文件，包括[alertmanager.yml](./prometheus_service/alertmanager.yml)、[node_rules.yml](prometheus_service/node_rules.yml)和[pgsql_rules.yml](prometheus_service/pgsql_rules.yml)。您可以将其部署到您的 Prometheus 服务器以检索相关的异常。
+- 我们提供与 AlertManager 相关的配置文件，包括[alertmanager.yml](./prometheus_service_docker/alertmanager.yml)、[node_rules.yml](prometheus_service_docker/node_rules.yml)和[pgsql_rules.yml](prometheus_service_docker/pgsql_rules.yml)。您可以将其部署到您的 Prometheus 服务器以检索相关的异常。
 - 我们还提供支持获取警报和指标的服务器，您可以将其部署到您的服务器以获取和存储 Prometheus 的警报和对应时间段内TOP指标。您可以在prometheus_service中获取相关信息。
-- [node_rules.yml](prometheus_service/node_rules.yml)和[pgsql_rules.yml](prometheus_service/pgsql_rules.yml)是引用[https://github.com/Vonng/pigsty](https://github.com/Vonng/pigsty)开源项目，他们的监控做得非常好，感谢他们的努力。
+- [node_rules.yml](prometheus_service_docker/node_rules.yml)和[pgsql_rules.yml](prometheus_service_docker/pgsql_rules.yml)是引用[https://github.com/Vonng/pigsty](https://github.com/Vonng/pigsty)开源项目，他们的监控做得非常好，感谢他们的努力。
+- 详细的配置文件请参考[prometheus_service_docker](prometheus_service_docker/README.md)。
 
 ### 异常模拟
 
@@ -453,7 +454,7 @@ python doc2knowledge.py
 我们使用 docker-compose 来构建和管理多个用于指标监控（prometheus）、告警（alertmanager）、数据库（postgres_db）和告警记录（python_app）的 Docker 容器。
 
 ```shell
-cd prometheus_and_db_docker
+cd prometheus_service_docker
 docker-compose -p prometheus_service -f docker-compose.yml up --build
 ```
 

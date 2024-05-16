@@ -6,18 +6,20 @@ import os
 from datetime import datetime
 import numpy as np
 import requests
-from termcolor import colored
+from yaml_utils import read_prometheus_metrics_yaml
 
-from prometheus_service.yaml_utils import read_yaml, read_prometheus_metrics_yaml
+PROMETHEUS_CONFIG = {
+    "api_url": "http://8.131.129.55:9090/",
+    "postgresql_exporter_instance": "112.27.58.65:9187",
+    "node_exporter_instance": "171.27.58.65:9100"
+}
 
-prometheus_conf = read_yaml('PROMETHEUS', './prometheus_service/config.yaml')
-node_exporter_instance = prometheus_conf.get('node_exporter_instance')
-postgresql_exporter_instance = prometheus_conf.get(
-    'postgresql_exporter_instance')
 prometheus_metrics = read_prometheus_metrics_yaml(
     config_path='./prometheus_service/prometheus_metrics.yaml',
-    node_exporter_instance=node_exporter_instance,
-    postgresql_exporter_instance=postgresql_exporter_instance)
+    node_exporter_instance=PROMETHEUS_CONFIG.get('node_exporter_instance'),
+    postgresql_exporter_instance=PROMETHEUS_CONFIG.get(
+        'postgresql_exporter_instance'))
+
 TOP_N_METRICS = 5
 
 
@@ -47,10 +49,7 @@ def obtain_values_of_metrics(start_time, end_time, metrics):
             required_values[metric.split('{')[0]] = values
         else:
             # raise Exception("No metric values found for the given time range")
-            print(
-                colored(
-                    f"No metric values found for {start_time}-{end_time} of {metric}",
-                    "red"))
+            print(f"No metric values found for {start_time}-{end_time} of {metric}")
 
     return required_values
 
@@ -83,8 +82,7 @@ def processed_values(data):
 
 
 def prometheus(url, params):
-    conf = read_yaml('PROMETHEUS', 'config.yaml')
-    res = requests.get(url=conf.get('api_url') + url, params=params)
+    res = requests.get(url=PROMETHEUS_CONFIG.get('api_url') + url, params=params)
 
     return res.json()
 
@@ -155,7 +153,6 @@ def obtain_exceptions_in_times_with_metric_name(
         start_time: int,
         end_time: int,
         metric_name: str = "cpu"):
-
     metrics_list = prometheus_metrics[f"{metric_name}_metrics"]
 
     detailed_metrics = obtain_values_of_metrics(
@@ -234,12 +231,29 @@ def fetch_prometheus_metrics(args):
         json.dump(args, f)
 
 
-
 if __name__ == '__main__':
+    test_data = {"receiver": "web\\.hook", "status": "resolved", "alerts": [{"status": "resolved",
+                                                                             "labels": {"alertname": "NodeLoadHigh",
+                                                                                        "category": "node",
+                                                                                        "instance": "172.27.58.65:9100",
+                                                                                        "job": "node", "level": "1",
+                                                                                        "severity": "WARN"},
+                                                                             "annotations": {
+                                                                                 "description": "node:ins:stdload1[ins=] = 2.10 > 100%\n",
+                                                                                 "summary": "WARN NodeLoadHigh @172.27.58.65:9100 2.10"},
+                                                                             "startsAt": "2023-09-19T15:28:49.467858611Z",
+                                                                             "endsAt": "2023-09-19T15:30:49.467858611Z",
+                                                                             "generatorURL": "http://iZ2ze0ree1kf7ccu4p1vcyZ:9090/graph?g0.expr=node%3Ains%3Astdload1+%3E+1&g0.tab=1",
+                                                                             "fingerprint": "ab4787213c7dd319"}],
+                 "groupLabels": {"alertname": "NodeLoadHigh"},
+                 "commonLabels": {"alertname": "NodeLoadHigh", "category": "node", "instance": "172.27.58.65:9100",
+                                  "job": "node", "level": "1", "severity": "WARN"},
+                 "commonAnnotations": {"description": "node:ins:stdload1[ins=] = 2.10 > 100%\n",
+                                       "summary": "WARN NodeLoadHigh @172.27.58.65:9100 2.10"},
+                 "externalURL": "http://iZ2ze0ree1kf7ccu4p1vcyZ:9093", "version": "4",
+                 "groupKey": "{}:{alertname=\"NodeLoadHigh\"}", "truncatedAlerts": 0}
 
-    test_data = {"receiver": "web\\.hook", "status": "resolved", "alerts": [{"status": "resolved", "labels": {"alertname": "NodeLoadHigh", "category": "node", "instance": "172.27.58.65:9100", "job": "node", "level": "1", "severity": "WARN"}, "annotations": {"description": "node:ins:stdload1[ins=] = 2.10 > 100%\n", "summary": "WARN NodeLoadHigh @172.27.58.65:9100 2.10"}, "startsAt": "2023-09-19T15:28:49.467858611Z", "endsAt": "2023-09-19T15:30:49.467858611Z", "generatorURL": "http://iZ2ze0ree1kf7ccu4p1vcyZ:9090/graph?g0.expr=node%3Ains%3Astdload1+%3E+1&g0.tab=1", "fingerprint": "ab4787213c7dd319"}], "groupLabels": {"alertname": "NodeLoadHigh"}, "commonLabels": {"alertname": "NodeLoadHigh", "category": "node", "instance": "172.27.58.65:9100", "job": "node", "level": "1", "severity": "WARN"}, "commonAnnotations": {"description": "node:ins:stdload1[ins=] = 2.10 > 100%\n", "summary": "WARN NodeLoadHigh @172.27.58.65:9100 2.10"}, "externalURL": "http://iZ2ze0ree1kf7ccu4p1vcyZ:9093", "version": "4", "groupKey": "{}:{alertname=\"NodeLoadHigh\"}", "truncatedAlerts": 0}
-
-    thread = threading.Thread(target=fetch_prometheus_metrics, args=(test_data, ))
+    thread = threading.Thread(target=fetch_prometheus_metrics, args=(test_data,))
     thread.start()
     print('========END=======')
     # results = {}

@@ -1,6 +1,0 @@
-fastapi
-uvicorn
-numpy
-requests
-termcolor
-pyyaml
