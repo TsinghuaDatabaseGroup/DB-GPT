@@ -453,7 +453,7 @@ python doc2knowledge.py
 
 请参考教程（例如在 [CentOS](https://vocus.cc/article/643e9337fd89780001b414fc) 上）安装 Docker 和 Docker-Compose。
 
-## 2. 启动服务
+### 2. 启动服务
 
 我们使用 docker-compose 来构建和管理多个用于指标监控（prometheus）、告警（alertmanager）、数据库（postgres_db）和告警记录（python_app）的 Docker 容器。
 
@@ -464,7 +464,7 @@ docker-compose -p prometheus_service -f docker-compose.yml up --build
 
 > 下次启动 prometheus_service 时，您可以直接执行 "docker-compose -p prometheus_service -f docker-compose.yml up"，而无需重新构建 Docker 容器。
 
-## 3. 运行异常文件并生成新告警
+### 3. 运行异常文件并生成新告警
 
 在*anomaly_trigger/utils/database.py*中配置设置（例如，将 "host" 替换为服务器的 IP 地址），并执行异常生成命令，如：
 

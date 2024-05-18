@@ -591,7 +591,7 @@ You can use docker for a quick and safe use of the monitoring platform and datab
 
 Refer to tutorials (e.g., on [CentOS](https://vocus.cc/article/643e9337fd89780001b414fc)) for installing Docker and Docoker-Compose.
 
-## 2. Start service
+### 2. Start service
 
 We use docker-compose to build and manage multiple dockers for metric monitoring (prometheus), alert (alertmanager), database (postgres_db), and alert recording (python_app).
 
@@ -602,7 +602,7 @@ docker-compose  -p prometheus_service  -f docker-compose.yml up --build
 
 > Next time starting the prometheus_service, you can directly execute *"docker-compose  -p prometheus_service  -f docker-compose.yml up"* without building the dockers.
 
-## 3. Run anomaly files and generate new alerts
+### 3. Run anomaly files and generate new alerts
 
 Configure the settings in *anomaly_trigger/utils/database.py* (e.g., replace "host" with the IP address of the server) and execute an anomaly generation command, like:
 
