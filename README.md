@@ -41,7 +41,7 @@
 </p>
 
 <p align="center">
-<a href="#-contact">👫 Join Us on WeChat!</a> <bar> <a href="https://www.benchcouncil.org/evaluation/opencs/annual.html#Achievements">🏆 Top 100 Open Project!</a>
+<a href="#-contact">👫 Join Us on WeChat!</a> <bar> <a href="https://www.benchcouncil.org/evaluation/opencs/annual.html#Achievements">🏆 Top 100 Open Project!</a> <bar> <a href="#-citation">🌟 VLDB 2024!</a> 
 </p>
 
 <p align="center">
@@ -654,9 +654,8 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 - ~~Support more knowledge sources~~
 - ~~Query log option (potential to take up disk space and we need to consider it carefully)~~
 - ~~Add more communication mechanisms~~
-- ~~Localized model that reaches D-bot(gpt4)'s capability~~
-- Localized llms that are tailored with domain knolwedge and can generate precise and straigtforward analysis.
-- Prometheus-as-a-Service
+- ~~Prometheus-as-a-Service~~
+- Localized model that reaches D-bot(gpt4)'s capability
 - Support other databases (e.g., mysql/redis)
 
 
@@ -666,6 +665,7 @@ For VS Code, download the Python extension for code. For PyCharm, specify the Py
 
 - [Tsinghua University](https://www.tsinghua.edu.cn/en/)
 - [ModelBest](https://modelbest.cn/)
+- [Pigsty](https://pigsty.cc/)
 - [Enmotech](https://enmotech.com/)
 
 <span id="-projects"></span>
@@ -728,7 +728,7 @@ We thank all the contributors to this project. Do not hesitate if you would like
 ## Contact Information
 👏🏻Welcome to our wechat group!
 <div align= "center">
-<img src="img/dbgpt_group_2024-05-08.png" width="400px">
+<img src="img/dbgpt_group_2024-05-18.png" width="400px">
 </div>
 
 <!-- ## ⭐️ Star History

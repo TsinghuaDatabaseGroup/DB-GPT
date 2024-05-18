@@ -13,7 +13,7 @@
 </div>
 
 <p align="center">
-<a href="#-contact">👫 欢迎扫码加入微信群！</a> <bar> <a href="https://www.benchcouncil.org/evaluation/opencs/annual.html#Achievements">🏆 Top 100 开源项目!
+<a href="#-contact">👫 欢迎扫码加入微信群！</a> <bar> <a href="https://www.benchcouncil.org/evaluation/opencs/annual.html#Achievements">🏆 Top 100 开源项目!  <bar> <a href="#-citation">🌟 VLDB 2024!</a> 
 </p>
 
 <p align="center">
@@ -515,10 +515,10 @@ python3 main.py --anomaly MISSING_INDEXES --threads 100 --ncolumn 20 --colsize 1
 - ~~查询日志选项（可能会占用磁盘空间，我们需要仔细考虑）~~
 - ~~添加更多通信机制~~
 - ~~支持更多知识来源~~
-- 项目工程化，解决依赖问题和代码中的硬编码问题
+- ~~项目工程化，解决依赖问题和代码中的硬编码问题~~
+- ~~独立知识抽取模块~~
 - 达到 D-bot(gpt4)能力的本地化模型
 - 支持其他数据库（例如，mysql/redis）
-- 独立知识抽取模块
 
 <span id="-community"></span>
 
@@ -526,6 +526,7 @@ python3 main.py --anomaly MISSING_INDEXES --threads 100 --ncolumn 20 --colsize 1
 
 - [清华大学](https://www.tsinghua.edu.cn/en/)
 - [面壁科技](https://modelbest.cn/)
+- [Pigsty](https://pigsty.cc/)
 - [云和恩墨](https://enmotech.com/)
 
 <span id="-projects"></span>
@@ -586,5 +587,5 @@ https://github.com/shreyashankar/spade-experiments
 ## 联系我们
 👏🏻欢迎加入我们的微信群
 <div align= "center">
-<img src="img/dbgpt_group_2024-05-08.png" width="400px">
+<img src="img/dbgpt_group_2024-05-18.png" width="400px">
 </div>
