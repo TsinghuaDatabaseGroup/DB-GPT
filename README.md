@@ -454,12 +454,16 @@ python batch_main.py
 
 ### Alert Management
 
-We support AlertManager for Prometheus. You can find more information about how to configure alertmanager here: [alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/).
+Check out how to deploy prometheus and alertmanager in [prometheus_service_docker](prometheus_service_docker/README.md). 
 
-- We provide configuration files associated with AlertManager, The value can be [alertmanager.yml](./prometheus_service_docker/alertmanager.yml) and [node_rules.yml](prometheus_service_docker/node_rules) .yml) and [pgsql_rules.yml](prometheus_service_docker/pgsql_rules.yml). You can deploy it to your Prometheus server to retrieve the associated exceptions.- We also provide webhook server that supports getting alerts. The path is a webhook folder in the root directory that you can deploy to your server to get and store Prometheus's alerts in files. 
+- You can also choose to quickly put your hands on by using our docker (<a href="#-docker">docker deployment</a>)
+
+<!-- You can find more information about how to configure alertmanager here: [alertmanager.md](https://prometheus.io/docs/alerting/latest/configuration/).
+
+- We provide configuration files associated with AlertManager, The value can be [alertmanager.yml](./prometheus_service_docker/alertmanager.yml) and [node_rules.yml](prometheus_service_docker/node_rules) .yml) and [pgsql_rules.yml](prometheus_service_docker/pgsql_rules.yml). You can deploy it to your Prometheus server to retrieve the associated exceptions.
+- We also provide webhook server that supports getting alerts. The path is a webhook folder in the root directory that you can deploy to your server to get and store Prometheus's alerts in files. 
 - Currently, the alert file is obtained using SSh. You need to configure your server information in the [tool_config.yaml](./config/tool_config_example.yaml) in the config folder.
-- [node_rules.yml](prometheus_service_docker/node_rules.yml) and [pgsql_rules.yml](prometheus_service_docker/pgsql_rules.yml) is a reference https://github.com/Vonng/pigsty code in this open source project, their monitoring do very well, thank them for their effort.
-- For details, see [prometheus_service_docker](prometheus_service_docker/README.md)。
+- [node_rules.yml](prometheus_service_docker/node_rules.yml) and [pgsql_rules.yml](prometheus_service_docker/pgsql_rules.yml) is a reference https://github.com/Vonng/pigsty code in this open source project, their monitoring do very well, thank them for their effort. -->
 
 
 ### Anomaly Simulation
