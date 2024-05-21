@@ -15,7 +15,7 @@ PROMETHEUS_CONFIG = {
 }
 
 prometheus_metrics = read_prometheus_metrics_yaml(
-    config_path='./prometheus_service/prometheus_metrics.yaml',
+    config_path='./prometheus_service_docker/prometheus_metrics.yaml',
     node_exporter_instance=PROMETHEUS_CONFIG.get('node_exporter_instance'),
     postgresql_exporter_instance=PROMETHEUS_CONFIG.get(
         'postgresql_exporter_instance'))
