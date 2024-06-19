@@ -7,7 +7,7 @@ from multiagents.tools.metric_monitor.anomaly_analysis import (
     workload_analysis_results
 )
 from multiagents.utils.markdown_format import generate_prometheus_chart_content
-from prometheus_service.prometheus_abnormal_metric import prometheus_metrics
+from prometheus_service_docker.prometheus_abnormal_metric import prometheus_metrics
 from server.knowledge_base.kb_doc_api import search_docs, fetch_expert_kb_names
 from multiagents.initialization import LANGUAGE
 
@@ -26,7 +26,7 @@ FUNCTION_DEFINITION = {
     }
 }
 
-
+# can be removed
 def whether_is_abnormal_metric(
         start_time: int,
         end_time: int,
