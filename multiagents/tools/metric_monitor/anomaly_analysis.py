@@ -1,5 +1,5 @@
 from multiagents.tools.metric_monitor.anomaly_detection import detect_anomalies
-from prometheus_service.prometheus_abnormal_metric import prometheus_metrics
+from prometheus_service_docker.prometheus_abnormal_metric import prometheus_metrics
 from multiagents.tools.metrics import *
 from multiagents.utils.markdown_format import generate_prometheus_chart_content
 from server.knowledge_base.kb_doc_api import search_docs, fetch_expert_kb_names
@@ -18,21 +18,26 @@ def metric_analysis_results(agent_name, kb_name, alert_metric, diag_id, enable_p
     else:
         metric_prefix = "cpu"
 
-    metrics_list = prometheus_metrics[f"{metric_prefix}_metrics"]
+    # alert metric names
     alert_metric_list = []
     alert_metric_list.append(alert_metric)
-    if enable_prometheus == True:
-        detailed_alert_metric = obtain_values_of_metrics(-1,
-            alert_metric_list, int(start_time), int(end_time))
 
-        detailed_metrics = obtain_values_of_metrics(-1,
-            metrics_list, int(start_time), int(end_time))
-    else:
-        detailed_alert_metric = obtain_values_of_metrics(diag_id,
-            alert_metric_list, -1, 1)
+    # system metric names
+    metrics_list = prometheus_metrics[f"{metric_prefix}_metrics"]
 
-        detailed_metrics = obtain_values_of_metrics(diag_id,
-            metrics_list, -1, 1)
+    # if enable_prometheus == True:
+    #     detailed_alert_metric = obtain_values_of_metrics(-1,
+    #         alert_metric_list, int(start_time), int(end_time))
+
+    #     detailed_metrics = obtain_values_of_metrics(-1,
+    #         metrics_list, int(start_time), int(end_time))
+    # else:
+
+    # read alert and metrics from the anomaly file
+    detailed_alert_metric = obtain_values_of_metrics(diag_id,
+        alert_metric_list, -1, 1)
+    detailed_metrics = obtain_values_of_metrics(diag_id,
+        metrics_list, -1, 1)
 
     # identify the abnormal metrics
     top5_abnormal_metrics = {}
