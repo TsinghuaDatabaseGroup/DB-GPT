@@ -37,7 +37,8 @@
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-citation">Citation</a> •    
-  <a href="#-contributors">Contributors</a>
+  <a href="#-contributors">Contributors</a> •   
+  <a href="https://aihomea.com">OpenAI, Azure aggregated API discounted access plan.</a>
 </p>
 
 <p align="center">
