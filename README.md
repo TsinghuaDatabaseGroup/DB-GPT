@@ -37,7 +37,8 @@
   <a href="#-FAQ">FAQ</a> •  
   <a href="#-community">Community</a> •  
   <a href="#-citation">Citation</a> •    
-  <a href="#-contributors">Contributors</a>
+  <a href="#-contributors">Contributors</a> •   
+  <a href="https://aihomea.com">OpenAI, Azure aggregated API discounted access plan.</a>
 </p>
 
 <p align="center">
@@ -728,7 +729,7 @@ We thank all the contributors to this project. Do not hesitate if you would like
 ## Contact Information
 👏🏻Welcome to our wechat group!
 <div align= "center">
-<img src="img/dbgpt_group_2024-06-17.png" width="400px">
+<img src="img/dbgpt_group_2024-07-23.jpg" width="400px">
 </div>
 
 <!-- ## ⭐️ Star History

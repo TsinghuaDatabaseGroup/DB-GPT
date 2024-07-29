@@ -24,7 +24,8 @@
   <a href="#-docker">Docker部署</a> •   
   <a href="#-FAQ">常见问题</a> •  
   <a href="#-community">社区</a> •  
-  <a href="#-contributors">贡献者</a>
+  <a href="#-contributors">贡献者</a> •  
+  <a href="https://aihomea.com">OpenAI，Azure 聚合API优惠接入方案。</a> 
 </p>
 
 <p align="center">
@@ -572,8 +573,6 @@ https://github.com/shreyashankar/spade-experiments
 
 ## 📧 贡献者
 
-<!-- 在你的Readme.md文件中复制粘贴 -->
-
 <a href="https://github.com/TsinghuaDatabaseGroup/DB-GPT/network/dependencies">
   <img src="https://contrib.rocks/image?repo=TsinghuaDatabaseGroup/DB-GPT" />
 </a>
@@ -587,5 +586,5 @@ https://github.com/shreyashankar/spade-experiments
 ## 联系我们
 👏🏻欢迎加入我们的微信群
 <div align= "center">
-<img src="img/dbgpt_group_2024-06-17.png" width="400px">
+<img src="img/dbgpt_group_2024-07-23.jpg" width="400px">
 </div>
