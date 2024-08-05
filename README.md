@@ -729,7 +729,7 @@ We thank all the contributors to this project. Do not hesitate if you would like
 ## Contact Information
 👏🏻Welcome to our wechat group!
 <div align= "center">
-<img src="img/dbgpt_group_2024-07-31.jpg" width="400px">
+<img src="img/dbgpt_group_2024-08-05.jpg" width="400px">
 </div>
 
 <!-- ## ⭐️ Star History
