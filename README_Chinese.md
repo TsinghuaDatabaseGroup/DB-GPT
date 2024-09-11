@@ -584,7 +584,7 @@ https://github.com/shreyashankar/spade-experiments
 <span id="-contact"></span>
 
 ## 联系我们
-👏🏻欢迎加入我们的微信群
+👏🏻欢迎加入我们的微信群，如该二维码过期，可添加微信号：ming621431
 <div align= "center">
-<img src="img/dbgpt_group_2024-08-05.jpg" width="400px">
+<img src="img/dbgpt_group_2024-09-11.jpg" width="400px">
 </div>
