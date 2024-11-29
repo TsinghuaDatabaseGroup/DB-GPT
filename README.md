@@ -727,7 +727,7 @@ We thank all the contributors to this project. Do not hesitate if you would like
 <span id="-contact"></span>
 
 ## Contact Information
-👏🏻Welcome to our wechat group! If the QR code has expired, you can add the WeChat ID: ming621431
+👏🏻Welcome to our wechat group! If the QR code has expired, you can add the WeChat ID: ming621431. <span style="color: red">Please be sure to note [DB-GPT]!!!</span>
 <div align= "center">
 <img src="img/dbgpt_group_2024-09-11.jpg" width="400px">
 </div>
