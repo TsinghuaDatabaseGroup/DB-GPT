@@ -1,6 +1,7 @@
+from configs import DIAGNOSTIC_RESULTS_PATH
 from multiagents.our_argparse import args
 from multiagents.multiagents import MultiAgents
-from multiagents.tools.metrics import db, current_diag_time
+# from multiagents.tools.metrics import db, current_diag_time
 from multiagents.tools.metrics import WORKLOAD_FILE_NAME
 import json
 import os
@@ -18,31 +19,31 @@ def create_dir_if_not_exists(dir_path):
 
 
 async def main(args):
-    global current_diag_time
+    # global current_diag_time
 
-    create_dir_if_not_exists(f"./alert_results/{str(current_diag_time)}")
+    current_diag_time = time.localtime()
+
+    create_dir_if_not_exists(f'{DIAGNOSTIC_RESULTS_PATH}/{time.strftime("%Y-%m-%d-%H-%M-%S", current_diag_time)}')
     print('<flow>{"title": "初始化专家角色", "content": "", "isCompleted": 0, "isRuning": 1}</flow>')
     
     # initialize llm agents
     multi_agents, model_type = MultiAgents.from_task(args.agent_conf_name, args)
 
-    create_dir_if_not_exists(f"./alert_results/{model_type}")
+    create_dir_if_not_exists(f"{DIAGNOSTIC_RESULTS_PATH}/{model_type}")
 
     report, records = await multi_agents.run(args)
 
-    current_diag_time = time.localtime()
-
     cur_time = int(time.mktime(current_diag_time))
 
-    current_diag_time = time.strftime("%Y-%m-%d-%H:%M:%S", current_diag_time)
+    current_diag_time = time.strftime("%Y-%m-%d-%H-%M-%S", current_diag_time)
 
     records["report_generate_time"] = current_diag_time
 
-    with open(f"./alert_results/{model_type}/{str(cur_time)}.jsonl", "w", encoding='utf8') as f:
+    with open(f"{DIAGNOSTIC_RESULTS_PATH}/{model_type}/{str(cur_time)}.jsonl", "w", encoding='utf8') as f:
         json.dump(records, f, ensure_ascii=False, indent=4)
 
-    if os.path.exists(f"./alert_results/{str(current_diag_time)}"):
-        os.system(f"rm -rf ./alert_results/{str(current_diag_time)}")
+    if os.path.exists(f"{DIAGNOSTIC_RESULTS_PATH}/{str(current_diag_time)}"):
+        os.system(f"rm -rf {DIAGNOSTIC_RESULTS_PATH}/{str(current_diag_time)}")
 
     return report, records
 
@@ -60,14 +61,15 @@ if __name__ == "__main__":
     workload_statistics = []
     workload_sqls = ""
 
-    if args.enable_slow_query_log == True:
-        # [slow queries] read from query logs
-        # /var/lib/pgsql/12/data/pg_log/postgresql-Mon.log
-        slow_queries = anomaly_json["slow_queries"]
-    if args.enable_workload_statistics_view == True:
-        workload_statistics = db.obtain_historical_queries_statistics(topn=50)
-    if args.enable_workload_sqls == True:
-        workload_sqls = anomaly_json["workload"]
+    # if args.enable_slow_query_log == True:
+    #     # [slow queries] read from query logs
+    #     # /var/lib/pgsql/12/data/pg_log/postgresql-Mon.log
+    #     slow_queries = anomaly_json["slow_queries"]
+    # if args.enable_workload_statistics_view == True:
+    #     workload_statistics = db.obtain_historical_queries_statistics(topn=50)
+    #
+    # if args.enable_workload_sqls == True:
+    #     workload_sqls = anomaly_json["workload"]
 
     with open(WORKLOAD_FILE_NAME, 'w') as f:
         json.dump({'slow_queries': slow_queries, 'workload_statistics': workload_statistics,

@@ -8,6 +8,8 @@ import time
 import copy
 from termcolor import colored
 from tqdm import tqdm
+
+from configs import DIAGNOSTIC_RESULTS_PATH
 from multiagents.utils.utils import AGENT_TYPES
 from multiagents.utils.markdown_format import generate_quote_content
 from multiagents.agents.conversation_agent import BaseAgent
@@ -543,8 +545,8 @@ class DBAEnvironment(BaseModel):
                         current_diag_time)
                     matches = re.findall(pattern, m_message)
                     for metric_name in matches:
-                        chart_str = f'[chart] ./alert_results/{current_diag_time}/{metric_name}.html'
-                        with open(f"./alert_results/{current_diag_time}/{metric_name}.html", "r") as f:
+                        chart_str = f'[chart] {DIAGNOSTIC_RESULTS_PATH}/{current_diag_time}/{metric_name}.html'
+                        with open(f"{DIAGNOSTIC_RESULTS_PATH}/{current_diag_time}/{metric_name}.html", "r") as f:
                             chart_content = f.read()
 
                         if chart_content != "":

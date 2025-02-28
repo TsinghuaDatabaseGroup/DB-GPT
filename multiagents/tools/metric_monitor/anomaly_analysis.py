@@ -1,3 +1,4 @@
+from configs import DIAGNOSTIC_RESULTS_PATH
 from multiagents.tools.metric_monitor.anomaly_detection import detect_anomalies
 from prometheus_service_docker.prometheus_abnormal_metric import prometheus_metrics
 from multiagents.tools.metrics import *
@@ -75,13 +76,13 @@ def metric_analysis_results(agent_name, kb_name, alert_metric, diag_id, enable_p
             # draw the metric chart
             chart_metric_values = [[i, str(value)] for i, value in enumerate(detailed_values)]
             chart_content = generate_prometheus_chart_content(alert_metric, chart_metric_values, x_label_format="%H:%M", size=(400, 225))
-            with open(f"./alert_results/{current_diag_time}/{alert_metric}.html", "w") as f:
+            with open(f"{DIAGNOSTIC_RESULTS_PATH}/{current_diag_time}/{alert_metric}.html", "w") as f:
                 f.write(chart_content)
 
             if LANGUAGE == "zh":
-                alert_metric_str = f"告警指标{alert_metric}的统计信息是：\n [chart] ./alert_results/{current_diag_time}/{alert_metric}.html\n\n"
+                alert_metric_str = f"告警指标{alert_metric}的统计信息是：\n [chart] {DIAGNOSTIC_RESULTS_PATH}/{current_diag_time}/{alert_metric}.html\n\n"
             else:
-                alert_metric_str = f"The statistics of alert metric {alert_metric} are:\n [chart] ./alert_results/{current_diag_time}/{alert_metric}.html\n\n"
+                alert_metric_str = f"The statistics of alert metric {alert_metric} are:\n [chart] {DIAGNOSTIC_RESULTS_PATH}/{current_diag_time}/{alert_metric}.html\n\n"
     else:
         alert_metric_str = ""
 
@@ -94,12 +95,12 @@ def metric_analysis_results(agent_name, kb_name, alert_metric, diag_id, enable_p
             # draw the metric chart
             chart_metric_values = [[i, str(value)] for i, value in enumerate(metric_values)]
             chart_content = generate_prometheus_chart_content(metric_name, chart_metric_values, x_label_format="%H:%M", size=(400, 225))
-            with open(f"./alert_results/{current_diag_time}/{metric_name}.html", "w") as f:
+            with open(f"{DIAGNOSTIC_RESULTS_PATH}/{current_diag_time}/{metric_name}.html", "w") as f:
                 f.write(chart_content)
             if LANGUAGE == "zh":
-                metric_str += f"{i+1}. 指标 {metric_name} 的异常部分为： {top5_abnormal_metrics[metric_name]} \n [chart] ./alert_results/{current_diag_time}/{metric_name}.html \n"
+                metric_str += f"{i+1}. 指标 {metric_name} 的异常部分为： {top5_abnormal_metrics[metric_name]} \n [chart] {DIAGNOSTIC_RESULTS_PATH}/{current_diag_time}/{metric_name}.html \n"
             else:
-                metric_str += f"{i+1}. {metric_name} contains abnormal patterns: {top5_abnormal_metrics[metric_name]} \n [chart] ./alert_results/{current_diag_time}/{metric_name}.html \n"
+                metric_str += f"{i+1}. {metric_name} contains abnormal patterns: {top5_abnormal_metrics[metric_name]} \n [chart] {DIAGNOSTIC_RESULTS_PATH}/{current_diag_time}/{metric_name}.html \n"
     if top5_abnormal_metrics == {}:
         metric_str = ""
     else:

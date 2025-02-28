@@ -1,4 +1,6 @@
 import logging
+
+from configs import DIAGNOSTIC_RESULTS_PATH
 from multiagents.tools.metric_monitor.anomaly_detection import detect_anomalies
 from multiagents.tools.metrics import *
 from multiagents.tools.metric_monitor.anomaly_analysis import (
@@ -53,17 +55,17 @@ def whether_is_abnormal_metric(
     chart_content = generate_prometheus_chart_content(metric_name, chart_metric_values, x_label_format="%H:%M",
                                                       size=(400, 225))
 
-    with open(f"./alert_results/{current_diag_time}/{metric_name}.html", "w") as f:
+    with open(f"{DIAGNOSTIC_RESULTS_PATH}/{current_diag_time}/{metric_name}.html", "w") as f:
         f.write(chart_content)
 
     if is_abnormal:
         # print(f"{metric_name} is abnormal")
         result_str = f"指标{metric_name}是异常的。\n" if LANGUAGE == "zh" else f"The metric {metric_name} is abnormal \n "
-        return result_str + f"[chart] ./alert_results/{current_diag_time}/{metric_name}.html"
+        return result_str + f"[chart] {DIAGNOSTIC_RESULTS_PATH}/{current_diag_time}/{metric_name}.html"
     else:
         # print(f"{metric_name} is normal")
         return f"无法判断指标{metric_name}是否异常。\n" if LANGUAGE == "zh" \
-            else f"Cannot decide whether the metric {metric_name} is abnormal.\n"  # + f"[chart] ./alert_results/{current_diag_time}/{metric_name}.html"
+            else f"Cannot decide whether the metric {metric_name} is abnormal.\n"
 
 
 def match_diagnose_knowledge(

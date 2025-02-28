@@ -22,7 +22,7 @@ with open(args.anomaly_file, 'r') as f:
 
 def update_current_time():
     current_diag_time = time.localtime()
-    current_diag_time = time.strftime("%Y-%m-%d-%H:%M:%S", current_diag_time)
+    current_diag_time = time.strftime("%Y-%m-%d-%H-%M-%S", current_diag_time)
 
     return current_diag_time
 
@@ -34,7 +34,7 @@ advisor = "db2advis"  # option: extend, db2advis (fast)
 
 # [workload statistics]
 dbargs = DBArgs("postgresql", config=POSTGRESQL_CONFIG)
-db = Database(dbargs, timeout=-1)
+# db = Database(dbargs, timeout=-1)
 WORKLOAD_FILE_NAME = "workload_info.json"
 
 

@@ -31,6 +31,8 @@ class MultiAgents:
         model_type = task_config['llm_type']
         agents = {}
 
+        print("==templates==:", len(agent_templates))
+
         # Reporter
         reporter = load_agent(agent_templates[0])
         
