@@ -1,8 +1,7 @@
 from configs import DIAGNOSTIC_RESULTS_PATH
 from multiagents.our_argparse import args
 from multiagents.multiagents import MultiAgents
-# from multiagents.tools.metrics import db, current_diag_time
-from multiagents.tools.metrics import WORKLOAD_FILE_NAME
+from multiagents.tools.metrics import current_diag_time, WORKLOAD_FILE_NAME
 import json
 import os
 import asyncio
@@ -19,11 +18,9 @@ def create_dir_if_not_exists(dir_path):
 
 
 async def main(args):
-    # global current_diag_time
+    global current_diag_time
 
-    current_diag_time = time.localtime()
-
-    create_dir_if_not_exists(f'{DIAGNOSTIC_RESULTS_PATH}/{time.strftime("%Y-%m-%d-%H-%M-%S", current_diag_time)}')
+    create_dir_if_not_exists(f'{DIAGNOSTIC_RESULTS_PATH}/{str(current_diag_time)}')
     print('<flow>{"title": "初始化专家角色", "content": "", "isCompleted": 0, "isRuning": 1}</flow>')
     
     # initialize llm agents
